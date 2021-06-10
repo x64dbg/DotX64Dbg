@@ -2,11 +2,11 @@
 *.vcxproj.user
 .vs/
 Win32/
-/**/x64/
 !/lua/**
 Release/
+bin/x32
+bin/x64
 Debug/
-bin/
 build/
 src/Libs
 /src/Bindings/vcpkg_installed
