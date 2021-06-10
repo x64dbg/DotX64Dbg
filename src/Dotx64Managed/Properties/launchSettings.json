@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Dotx64Dbg.Managed": {
+      "commandName": "Executable",
+      "executablePath": "E:\\Debugging\\x64Dbg\\x64\\x64dbg.exe",
+      "workingDirectory": "E:\\Debugging\\x64Dbg\\x64",
+      "nativeDebugging": true
+    }
+  }
+}

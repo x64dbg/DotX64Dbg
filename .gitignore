@@ -1,0 +1,13 @@
+/TestingProject/x64
+*.vcxproj.user
+.vs/
+Win32/
+/**/x64/
+!/lua/**
+Release/
+Debug/
+bin/
+build/
+src/Libs
+/src/Bindings/vcpkg_installed
+/src/Dotx64Managed/obj
