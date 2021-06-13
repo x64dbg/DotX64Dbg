@@ -13,5 +13,12 @@
 
         // Called when the plugin is unloaded.
         public void Shutdown() { }
+
+        // Debug Events
+        public void OnExceptionEvent(ExceptionEventInfo ev) { }
+        public void OnThreadCreateEvent(ThreadCreateEventInfo ev) { }
+        public void OnThreadExitEvent(ThreadExitEventInfo ev) { }
+        public void OnProcessCreateEvent(ProcessCreateEventInfo ev) { }
+        public void OnProcessExitEvent(ProcessExitEventInfo ev) { }
     }
 }

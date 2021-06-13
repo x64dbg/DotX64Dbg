@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Dotx64Dbg
 {
-    public static class Manager
+    public static partial class Manager
     {
         static Loader ScriptLoader = new();
 
@@ -12,24 +13,21 @@ namespace Dotx64Dbg
             tests.Run();
         }
 
-        private static void LoadSettings()
-        {
-            if (!Settings.Load(Path.Combine(Utils.GetRootPath(), "dotx64dbg.json")))
-            {
-                Logging.WriteLine("Failed to load settings, using default configuration");
-            }
-        }
-
         public static void Init()
         {
-            LoadSettings();
+            Logging.Initialize();
+
+            if (!Settings.Load(Path.Combine(Utils.GetRootPath(), "dotx64dbg.json")))
+            {
+                Console.WriteLine("Failed to load settings, using default configuration");
+            }
 
             if (Settings.EnableTests)
             {
                 RunTests();
             }
 
-            Logging.WriteLine("Dotx64Dbg.Managed initialized");
+            Console.WriteLine("Dotx64Dbg.Managed initialized");
 
             ScriptLoader.Startup();
         }

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace Dotx64Dbg
 {
@@ -35,7 +36,7 @@ namespace Dotx64Dbg
             Debug.Assert(op3 == Operand.None);
 
             var str = instr.ToString();
-            Logging.WriteLine(str);
+            Console.WriteLine(str);
         }
 
         public void TestOperandImm()

@@ -1,8 +1,14 @@
-﻿namespace Dotx64Dbg
+﻿using System.Collections.Generic;
+
+namespace Dotx64Dbg
 {
-    public class Thread
+    public partial class Thread
     {
         public readonly uint Id;
+
+        public readonly ulong Handle;
+
+        internal static List<Thread> Threads = new();
 
         public bool IsMain { get => Id == Native.Thread.GetMainThreadId(); }
 
@@ -13,6 +19,9 @@
         internal Thread(uint internalId)
         {
             Id = internalId;
+
+            var info = Native.Thread.GetThreadInfo(Id);
+            Handle = info.Handle;
         }
 
         public static Thread GetActive()
@@ -50,11 +59,13 @@
         public static Thread[] GetThreads()
         {
             var threadIds = Native.Thread.GetThreads();
+
             var threads = new Thread[threadIds.Length];
             for (int i = 0; i < threadIds.Length; i++)
             {
                 threads[i] = new Thread(threadIds[i]);
             }
+
             return threads;
         }
 

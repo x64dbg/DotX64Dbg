@@ -19,7 +19,7 @@ namespace Dotx64Dbg
 
         protected override Assembly Load(AssemblyName assemblyName)
         {
-            Logging.WriteLine("LoaderContext.Load({0})", assemblyName.Name);
+            Console.WriteLine("LoaderContext.Load({0})", assemblyName.Name);
             return Assembly.Load(assemblyName);
         }
 
@@ -120,6 +120,18 @@ namespace Dotx64Dbg
 
                 newField.SetValue(newInstance, newValue);
             }
+            else if (newField.FieldType.IsArray)
+            {
+                object newValue;
+
+                if (!ctx.GetNewReference(oldValue, out newValue))
+                {
+                    newValue = ctx.Create(newField.FieldType);
+                    AdaptInstance(ctx, oldValue, oldField.FieldType, newValue, newField.FieldType);
+                }
+
+                newField.SetValue(newInstance, newValue);
+            }
         }
 
         void AdaptInstance(TransitionContext ctx, object oldInstance, Type oldType, object newInstance, Type newType)
@@ -129,17 +141,20 @@ namespace Dotx64Dbg
             var fields = newType.GetRuntimeFields();
             foreach (var newField in fields)
             {
-                var oldField = oldType.GetRuntimeFields().FirstOrDefault(a => a.Name == newField.Name);
-                if (oldField == null)
-                    continue;
+                Console.WriteLine("Runtime: {0}", newField.Name);
 
-                AdaptField(ctx, oldInstance, oldField, newInstance, newField);
+                var oldField = oldType.GetRuntimeFields().FirstOrDefault(a => a.Name == newField.Name);
+                if (oldField != null)
+                {
+                    AdaptField(ctx, oldInstance, oldField, newInstance, newField);
+                }
+
             }
         }
 
         void ReloadPlugin(Plugin plugin, string newAssemblyPath)
         {
-            Logging.WriteLine("Reloading '{0}'", plugin.Info.Name);
+            Console.WriteLine("Reloading '{0}'", plugin.Info.Name);
 
             try
             {
@@ -149,7 +164,7 @@ namespace Dotx64Dbg
                 var pluginClass = GetPluginClass(newAssembly);
                 if (pluginClass != null)
                 {
-                    Logging.WriteLine("Entry class: {0}", pluginClass.Name);
+                    Console.WriteLine("Entry class: {0}", pluginClass.Name);
                 }
 
                 // NOTE: RemapContext stores old references, to fully unload the dll
@@ -197,7 +212,6 @@ namespace Dotx64Dbg
                     }
                 }
 
-
                 if (plugin.Loader != null)
                 {
                     var cur = plugin.Loader;
@@ -217,18 +231,27 @@ namespace Dotx64Dbg
 
                     Task.Run(async delegate
                     {
-                        bool removed = false;
                         await Task.Delay(2000);
+
+                        // Remove previous assembly.
                         try
                         {
                             System.IO.File.Delete(oldAssemblyPath);
-                            removed = true;
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("WARNING: Unable to remove old assembly, ensure no references are stored.");
+                        }
+
+                        // Remove previous debug symbols.
+                        // NOTE: If the debugger is attached this may be locked.
+                        try
+                        {
                             System.IO.File.Delete(oldPdbPath);
                         }
                         catch (Exception)
                         {
-                            if (!removed)
-                                Logging.WriteLine("WARNING: Unable to remove old assembly, ensure no references are stored.");
+                            Console.WriteLine("WARNING: Unable to remove old PDB file, will be removed next start, probably locked by debugger.");
                         }
                     });
                 }
@@ -238,11 +261,11 @@ namespace Dotx64Dbg
             }
             catch (System.Exception ex)
             {
-                Logging.WriteLine("Exception: {0}", ex.ToString());
+                Console.WriteLine("Exception: {0}", ex.ToString());
                 return;
             }
 
-            Logging.WriteLine("Reloaded '{0}'", plugin.Info.Name);
+            Console.WriteLine("Reloaded '{0}'", plugin.Info.Name);
         }
 
         IPlugin CreatePluginInstance(Plugin plugin)

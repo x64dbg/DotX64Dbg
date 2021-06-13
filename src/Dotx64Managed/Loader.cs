@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -58,11 +59,11 @@ namespace Dotx64Dbg
                 }
                 catch (Exception)
                 {
-                    Logging.WriteLine("Unable to create directory for plugins: {0}", PluginsPath);
+                    Console.WriteLine("Unable to create directory for plugins: {0}", PluginsPath);
                 }
             }
 
-            Logging.WriteLine("DotX64Dbg Plugins Path: {0}", PluginsPath);
+            Console.WriteLine("DotX64Dbg Plugins Path: {0}", PluginsPath);
 
             AppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DotX64Dbg");
             if (!Directory.Exists(AppDataPath))
@@ -82,7 +83,7 @@ namespace Dotx64Dbg
             SetupDirectories();
 
             PluginWatch = new FileSystemWatcher(PluginsPath);
-            PluginWatch.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
+            PluginWatch.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.LastWrite;
             PluginWatch.IncludeSubdirectories = false;
             PluginWatch.EnableRaisingEvents = true;
             PluginWatch.Created += OnPluginCreate;
@@ -121,7 +122,7 @@ namespace Dotx64Dbg
         {
             var stopwatch = new Stopwatch();
 
-            Logging.WriteLine("Rebuilding plugin '{0}'...", plugin.Info.Name);
+            Console.WriteLine("Rebuilding plugin '{0}'...", plugin.Info.Name);
             stopwatch.Start();
 
             var compiler = new Compiler(plugin.BuildOutputPath, plugin.Info.Name);
@@ -131,11 +132,11 @@ namespace Dotx64Dbg
 
             if (!res.Success)
             {
-                Logging.WriteLine("Build failed");
+                Console.WriteLine("Build failed");
             }
             else
             {
-                Logging.WriteLine("Compiled plugin '{0}' in {1} ms", plugin.Info.Name, stopwatch.ElapsedMilliseconds);
+                Console.WriteLine("Compiled plugin '{0}' in {1} ms", plugin.Info.Name, stopwatch.ElapsedMilliseconds);
 
                 ReloadPlugin(plugin, res.OutputAssemblyPath);
             }
@@ -169,14 +170,14 @@ namespace Dotx64Dbg
             var jsonFile = Path.Combine(path, "plugin.json");
             if (!File.Exists(jsonFile))
             {
-                Logging.WriteLine("[WARN] Plugin directory {0} has no 'plugin.json', skipping.", path);
+                Console.WriteLine("[WARN] Plugin directory {0} has no 'plugin.json', skipping.", path);
                 return;
             }
 
             var pluginInfo = GetPluginInfo(jsonFile);
             if (pluginInfo == null)
             {
-                Logging.WriteLine("[WARN] Failed to read {0}, skipping.", jsonFile);
+                Console.WriteLine("[WARN] Failed to read {0}, skipping.", jsonFile);
                 return;
             }
 
@@ -211,7 +212,7 @@ namespace Dotx64Dbg
             }
 
             var watcher = new FileSystemWatcher(PluginsPath, "*.*");
-            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
+            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.LastWrite;
             watcher.IncludeSubdirectories = true;
             watcher.EnableRaisingEvents = true;
             watcher.Created += OnSourceCreate;
@@ -222,7 +223,7 @@ namespace Dotx64Dbg
             Watches.Add(watcher, plugin);
             Plugins.Add(plugin);
 
-            Logging.WriteLine("Registered C# plugin '{0}'", plugin.Info.Name);
+            Console.WriteLine("Registered C# plugin '{0}'", plugin.Info.Name);
         }
 
         void OnPluginRemove(object sender, FileSystemEventArgs e)
@@ -240,7 +241,7 @@ namespace Dotx64Dbg
                 if (plugin.Path == e.OldFullPath)
                 {
                     plugin.Path = e.FullPath;
-                    Logging.WriteLine("Plugin {0}, path was renamed.", plugin.Info.Name);
+                    Console.WriteLine("Plugin {0}, path was renamed.", plugin.Info.Name);
                     break;
                 }
             }
@@ -255,7 +256,7 @@ namespace Dotx64Dbg
             Plugin plugin;
             if (!Watches.TryGetValue(watcher, out plugin))
             {
-                Logging.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
+                Console.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
                 return;
             }
 
@@ -273,7 +274,7 @@ namespace Dotx64Dbg
             Plugin plugin;
             if (!Watches.TryGetValue(watcher, out plugin))
             {
-                Logging.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
+                Console.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
                 return;
             }
 
@@ -291,7 +292,7 @@ namespace Dotx64Dbg
             Plugin plugin;
             if (!Watches.TryGetValue(watcher, out plugin))
             {
-                Logging.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
+                Console.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
                 return;
             }
 
@@ -308,7 +309,7 @@ namespace Dotx64Dbg
             Plugin plugin;
             if (!Watches.TryGetValue(watcher, out plugin))
             {
-                Logging.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
+                Console.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
                 return;
             }
 
@@ -333,6 +334,14 @@ namespace Dotx64Dbg
 
                 RebuildTask = null;
             });
+        }
+
+        public List<IPlugin> GetPluginInstances()
+        {
+            return Plugins
+                .Select(x => x.Instance)
+                .Where(x => x != null)
+                .ToList();
         }
     }
 }

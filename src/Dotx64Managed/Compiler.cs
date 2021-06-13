@@ -54,7 +54,7 @@ namespace Dotx64Dbg
             }
             catch (System.Exception ex)
             {
-                Logging.WriteLine($"Exception: {ex.ToString()}");
+                Console.WriteLine($"Exception: {ex.ToString()}");
             }
 
             return new Result();
@@ -110,11 +110,11 @@ namespace Dotx64Dbg
 
                 if (!result.Success)
                 {
-                    Logging.WriteLine("Build failed");
+                    Console.WriteLine("Build failed");
 
                     foreach (var info in result.Diagnostics)
                     {
-                        Logging.WriteLine(info.ToString());
+                        Console.WriteLine(info.ToString());
                     }
                 }
                 else
@@ -129,7 +129,7 @@ namespace Dotx64Dbg
             }
             catch (Exception ex)
             {
-                Logging.WriteLine("Exception: {0}", ex.ToString());
+                Console.WriteLine("Exception: {0}", ex.ToString());
             }
 
             return new Result();
