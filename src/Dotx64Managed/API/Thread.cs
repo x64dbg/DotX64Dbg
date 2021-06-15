@@ -1,19 +1,33 @@
-﻿using System.Collections.Generic;
-
-namespace Dotx64Dbg
+﻿namespace Dotx64Dbg
 {
+    /// <summary>
+    /// A thread object that represents a thread in the debugged process.
+    /// </summary>
     public partial class Thread
     {
+        /// <summary>
+        /// The native thread id.
+        /// </summary>
         public readonly uint Id;
 
+        /// <summary>
+        /// The native thread handle.
+        /// </summary>
         public readonly ulong Handle;
 
-        internal static List<Thread> Threads = new();
-
+        /// <summary>
+        /// If this is the first thread created in the process this will be true.
+        /// </summary>
         public bool IsMain { get => Id == Native.Thread.GetMainThreadId(); }
 
+        /// <summary>
+        /// If this is the currently active thread it will return true.
+        /// </summary>
         public bool IsActive { get => Id == Native.Thread.GetActiveThreadId(); }
 
+        /// <summary>
+        /// The thread object is garbage collected, if the native thread does no longer exist this will return false.
+        /// </summary>
         public bool IsValid { get => Handle != ulong.MaxValue && Native.Thread.IsValid(Id); }
 
         internal Thread(uint internalId)
@@ -31,6 +45,9 @@ namespace Dotx64Dbg
             }
         }
 
+        /// <summary>
+        /// Gets the currently active thread from the debugger.
+        /// </summary>
         public static Thread GetActive()
         {
             var th = new Thread(Native.Thread.GetActiveThreadId());
@@ -40,6 +57,9 @@ namespace Dotx64Dbg
             return th;
         }
 
+        /// <summary>
+        /// Get a thread by its native id.
+        /// </summary>
         public static Thread GetById(uint id)
         {
             if (!Native.Thread.IsValid(id))
@@ -50,6 +70,9 @@ namespace Dotx64Dbg
             return new Thread(id);
         }
 
+        /// <summary>
+        /// Sets the active thread in the debugger.
+        /// </summary>
         public static bool SetActive(Thread thread)
         {
             if (thread == null)
@@ -58,6 +81,9 @@ namespace Dotx64Dbg
             return Native.Thread.SetActiveThreadId(thread.Id);
         }
 
+        /// <summary>
+        /// Gets the first created thread for the process.
+        /// </summary>
         public static Thread GetMain()
         {
             var mainId = Native.Thread.GetMainThreadId();
@@ -67,6 +93,9 @@ namespace Dotx64Dbg
             return new Thread(mainId);
         }
 
+        /// <summary>
+        /// Returns all active threads from the debugger.
+        /// </summary>
         public static Thread[] GetThreads()
         {
             var threadIds = Native.Thread.GetThreads();
@@ -80,6 +109,7 @@ namespace Dotx64Dbg
             return threads;
         }
 
+        /// <summary>Pretty name</summary>
         public override string ToString()
         {
             return $"Thread #{Id}";

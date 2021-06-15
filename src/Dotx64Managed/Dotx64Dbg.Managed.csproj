@@ -3,14 +3,23 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Platforms>x64;x86</Platforms>
-	<SatelliteResourceLanguages>neutral</SatelliteResourceLanguages>
+    <SatelliteResourceLanguages>neutral</SatelliteResourceLanguages>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-
+  
+  <PropertyGroup>
+   <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+   <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+   <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+ </PropertyGroup>
+ 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <DefineConstants>TRACE;_X86_</DefineConstants>
+    <DocumentationFile>..\..\bin\x32\plugins\Dotx64Dbg.Managed.xml</DocumentationFile>
+    <OutputPath>..\..\bin\x32\plugins</OutputPath>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <RootNamespace>Dotx64Dbg</RootNamespace>
@@ -19,23 +28,33 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <DefineConstants>TRACE;_X64_</DefineConstants>
+    <DocumentationFile>..\..\bin\x64\plugins\Dotx64Dbg.Managed.xml</DocumentationFile>
+    <OutputPath>..\..\bin\x64\plugins</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DefineConstants>TRACE;_X86_</DefineConstants>
+    <DocumentationFile>..\..\bin\x32\plugins\Dotx64Dbg.Managed.xml</DocumentationFile>
+    <OutputPath>..\..\bin\x32\plugins</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DefineConstants>TRACE;_X64_</DefineConstants>
+    <DocumentationFile>..\..\bin\x64\plugins\Dotx64Dbg.Managed.xml</DocumentationFile>
+    <OutputPath>..\..\bin\x64\plugins</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="Microsoft.CodeAnalysis.Compilers" Version="3.9.0">
-	  <GeneratePathProperty>true</GeneratePathProperty>
-	  <IncludeAssets></IncludeAssets>
-	</PackageReference>
-	<PackageReference Include="Mono.Cecil" Version="0.11.3" />
-	<PackageReference Include="System.Reactive" Version="5.0.0" />
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Compilers" Version="3.9.0">
+      <GeneratePathProperty>true</GeneratePathProperty>
+      <IncludeAssets></IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Mono.Cecil" Version="0.11.3" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

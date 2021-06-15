@@ -4,18 +4,31 @@ using System.Runtime.InteropServices;
 
 namespace Dotx64Dbg
 {
+    /// <summary>
+    /// Command attribute to dynamically register commands in x64Dbg.
+    /// </summary>
     public class Command : Attribute
     {
+        /// <summary>
+        /// Name of the command.
+        /// </summary>
         public string Name { get; internal set; }
+
+        /// <summary>
+        /// If DebugOnly is set to true the command be only executed when the debugger is active.
+        /// </summary>
         public bool DebugOnly { get; set; } = false;
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public Command(string Name)
         {
             this.Name = Name;
         }
     }
 
-    public static class Commands
+    internal static class Commands
     {
         public delegate bool Handler(string[] args);
         internal delegate void HandlerVoid(string[] args);

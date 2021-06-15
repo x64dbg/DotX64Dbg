@@ -1,39 +1,67 @@
 ﻿namespace Dotx64Dbg
 {
+    /// <summary>
+    /// A class to control the debugger.
+    /// </summary>
     public static class Debugger
     {
+        /// <summary>
+        /// If the debugger has a process and its valid this will be true.
+        /// </summary>
         public static bool IsActive { get => Native.Debugger.IsActive(); }
 
+        /// <summary>
+        /// Waits for the debugger to be paused.
+        /// The function will not return before the debugger paused.
+        /// </summary>
         public static void Wait()
         {
             Native.Debugger.Wait();
         }
 
+        /// <summary>
+        /// Signals the debugger to resume all execution in the debug process, returns immediately.
+        /// </summary>
         public static void Run()
         {
             Native.Debugger.Run();
         }
 
+        /// <summary>
+        /// Signals the debugger to pause, returns immediately.
+        /// </summary>
         public static void Pause()
         {
             Native.Debugger.Pause();
         }
 
+        /// <summary>
+        /// Signals the debugger to stop, returns immediately.
+        /// </summary>
         public static void Stop()
         {
             Native.Debugger.Stop();
         }
 
+        /// <summary>
+        /// Signals the debugger to step in, returns immediately.
+        /// </summary>
         public static void StepIn()
         {
             Native.Debugger.StepIn();
         }
 
+        /// <summary>
+        /// Signals the debugger to step over, returns immediately.
+        /// </summary>
         public static void StepOver()
         {
             Native.Debugger.StepOver();
         }
 
+        /// <summary>
+        /// Signals the debugger to step out, returns immediately.
+        /// </summary>
         public static void StepOut()
         {
             Native.Debugger.StepOut();

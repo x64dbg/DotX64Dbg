@@ -2,8 +2,12 @@
 
 namespace Dotx64Dbg
 {
+    /// <summary>
+    /// Passed in OnExceptionEvent
+    /// </summary>
     public struct ExceptionEventInfo
     {
+
         public uint ProcessId;
         public uint ThreadId;
         public bool FirstChance;
@@ -12,6 +16,9 @@ namespace Dotx64Dbg
         public ulong ExceptionAddress;
     }
 
+    /// <summary>
+    /// Passed in OnThreadCreateEvent
+    /// </summary>
     public struct ThreadCreateEventInfo
     {
         public uint ProcessId;
@@ -20,6 +27,10 @@ namespace Dotx64Dbg
         public ulong ThreadLocalBase;
         public ulong StartAddress;
     }
+
+    /// <summary>
+    /// Passed in OnThreadExitEvent
+    /// </summary>
     public struct ThreadExitEventInfo
     {
         public uint ProcessId;
@@ -27,6 +38,9 @@ namespace Dotx64Dbg
         public uint ExitCode;
     }
 
+    /// <summary>
+    /// Passed in OnProcessCreateEvent
+    /// </summary>
     public struct ProcessCreateEventInfo
     {
         public uint ProcessId;
@@ -43,16 +57,19 @@ namespace Dotx64Dbg
         public short Unicode;
     }
 
+    /// <summary>Passed in OnProcessExitEvent</summary>
     public struct ProcessExitEventInfo
     {
+        /// <summary>Native process id.</summary>
         public uint ProcessId;
         public uint ThreadId;
         public uint ExitCode;
     }
 
+    /// <summary>Class for synchronization between x64Dbg and this plugin.</summary>
     public static partial class Manager
     {
-
+        /// <summary>Internal function, do not call this.</summary>
         public static void OnExceptionEvent(ExceptionEventInfo ev)
         {
             try
@@ -68,6 +85,7 @@ namespace Dotx64Dbg
             }
         }
 
+        /// <summary>Internal function, do not call this.</summary>
         public static void OnThreadCreateEvent(ThreadCreateEventInfo ev)
         {
             try
@@ -84,6 +102,7 @@ namespace Dotx64Dbg
             }
         }
 
+        /// <summary>Internal function, do not call this.</summary>
         public static void OnProcessCreateEvent(ProcessCreateEventInfo ev)
         {
             try
@@ -98,6 +117,8 @@ namespace Dotx64Dbg
                 Console.WriteLine($"Exception {ex.ToString()}");
             }
         }
+
+        /// <summary>Internal function, do not call this.</summary>
         public static void OnThreadExitEvent(ThreadExitEventInfo ev)
         {
             try
@@ -113,6 +134,7 @@ namespace Dotx64Dbg
             }
         }
 
+        /// <summary>Internal function, do not call this.</summary>
         public static void OnProcessExitEvent(ProcessExitEventInfo ev)
         {
             try

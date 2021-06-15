@@ -10,6 +10,12 @@ namespace Dotx64Dbg
     public ref class Memory
     {
     public:
+        /// <summary>
+        /// Attempt to read memory from the debugged process.
+        /// </summary>
+        /// <param name="addr">Virtual address in the debugged process space</param>
+        /// <param name="length">Amount of bytes to read</param>
+        /// <returns>The bytes read from the process</returns>
         static array<System::Byte>^ Read(uint64_t addr, int length)
         {
             array<System::Byte>^ res = gcnew array<System::Byte>(length);
@@ -28,6 +34,13 @@ namespace Dotx64Dbg
             return res;
         }
 
+        /// <summary>
+        /// Attempt to write memory to the debugged process.
+        /// </summary>
+        /// <param name="addr">Virtual address in the debugged process space</param>
+        /// <param name="data">The bytes to be written</param>
+        /// <param name="length">The maximum amount of bytes to write, can not be bigger than `data`</param>
+        /// <returns>The amount of bytes written</returns>
         static int Write(uint64_t addr, array<System::Byte>^ data, int length)
         {
             int maxLength = data->Length < length ? data->Length : length;
@@ -44,6 +57,17 @@ namespace Dotx64Dbg
             }
 
             return bytesWritten;
+        }
+
+        /// <summary>
+        /// Attempt to write memory to the debugged process.
+        /// </summary>
+        /// <param name="addr">Virtual address in the debugged process space</param>
+        /// <param name="data">The bytes to be written</param>
+        /// <returns>The amount of bytes written</returns>
+        static int Write(uint64_t addr, array<System::Byte>^ data)
+        {
+            return Write(addr, data, data->Length);
         }
     };
 }
