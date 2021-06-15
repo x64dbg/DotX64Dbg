@@ -30,6 +30,16 @@
         /// </summary>
         public bool IsValid { get => Handle != ulong.MaxValue && Native.Thread.IsValid(Id); }
 
+        /// <summary>
+        /// Quick accessor for GetMain
+        /// </summary>
+        public static Thread Main { get => GetMain(); }
+
+        /// <summary>
+        /// Quick accessor for GetActive
+        /// </summary>
+        public static Thread Active { get => GetActive(); }
+
         internal Thread(uint internalId)
         {
             Id = internalId;
