@@ -30,8 +30,9 @@ namespace Dotx64Dbg
                 var fileData = System.IO.File.ReadAllText(file);
                 Data = JsonSerializer.Deserialize<SettingsData>(fileData);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"Exception while loading settings, using defaults.\n{ex}");
                 LoadDefaults();
                 return false;
             }
