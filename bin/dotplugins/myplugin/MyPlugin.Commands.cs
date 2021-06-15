@@ -4,10 +4,14 @@ using System;
 public partial class MyPlugin
 {
     // Works at any given time.
-    [Command("Test1")]
+    [Command("TestExpression")]
     void MyCommand(string[] args)
     {
-        Console.WriteLine("Sup dawg");
+        string res;
+        if (Expression.TryFormat("rip = {rip}", out res))
+        {
+            Console.WriteLine($"Working: {res}");
+        }
     }
 
     // Works only when the debugger is active.

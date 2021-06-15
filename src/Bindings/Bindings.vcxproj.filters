@@ -10,6 +10,7 @@
     <ClCompile Include="Instruction.cpp" />
     <ClCompile Include="Decoder.cpp" />
     <ClCompile Include="Commands.cpp" />
+    <ClCompile Include="Expression.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Instruction.hpp" />
