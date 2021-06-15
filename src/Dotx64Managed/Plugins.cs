@@ -92,7 +92,7 @@ namespace Dotx64Dbg
 
             RegisterPlugins();
             GenerateProjects();
-            RebuildPlugins();
+            BeginRebuild(false);
         }
 
         public void Shutdown()
@@ -136,6 +136,8 @@ namespace Dotx64Dbg
                 var projectFilePath = Path.Combine(plugin.Path, plugin.Info.Name + ".csproj");
                 if (File.Exists(projectFilePath))
                     continue;
+
+                Console.WriteLine($"Generating project file for {plugin.Info.Name}");
 
                 var projGen = new ProjectGenerator();
                 projGen.ReferencePathX86 = binaryPathX86;
@@ -274,7 +276,7 @@ namespace Dotx64Dbg
                 }
             }
 
-            BeginRebuild();
+            BeginRebuild(true);
         }
 
         void OnSourceCreate(object sender, FileSystemEventArgs e)
@@ -296,7 +298,7 @@ namespace Dotx64Dbg
                 plugin.SourceFiles.Add(e.FullPath);
             plugin.RequiresRebuild = true;
 
-            BeginRebuild();
+            BeginRebuild(true);
         }
 
         void OnSourceRemove(object sender, FileSystemEventArgs e)
@@ -317,7 +319,7 @@ namespace Dotx64Dbg
             plugin.SourceFiles.Remove(e.FullPath);
             plugin.RequiresRebuild = true;
 
-            BeginRebuild();
+            BeginRebuild(true);
         }
 
         void OnSourceChange(object sender, FileSystemEventArgs e)
@@ -337,7 +339,7 @@ namespace Dotx64Dbg
             //Logging.WriteLine("File change {0}", e.FullPath);
             plugin.RequiresRebuild = true;
 
-            BeginRebuild();
+            BeginRebuild(true);
         }
 
         void OnSourceRename(object sender, RenamedEventArgs e)
@@ -360,10 +362,10 @@ namespace Dotx64Dbg
                 plugin.SourceFiles.Add(e.FullPath);
             plugin.RequiresRebuild = true;
 
-            BeginRebuild();
+            BeginRebuild(true);
         }
 
-        private void BeginRebuild()
+        private void BeginRebuild(bool delayed)
         {
             if (RebuildTask != null)
                 return;
@@ -371,7 +373,9 @@ namespace Dotx64Dbg
             // We delay the rebuilding a bit in case a lot of files are being saved at once.
             RebuildTask = Task.Run(async delegate
             {
-                await Task.Delay(500);
+                if (delayed)
+                    await Task.Delay(500);
+
                 RebuildPlugins();
 
                 RebuildTask = null;
