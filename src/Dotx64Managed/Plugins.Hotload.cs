@@ -337,7 +337,8 @@ namespace Dotx64Dbg
 
         void ReloadPlugin(Plugin plugin, string newAssemblyPath)
         {
-            Console.WriteLine("Reloading '{0}'", plugin.Info.Name);
+            var isReload = plugin.Instance != null;
+            Console.WriteLine($"{(isReload ? "Reloading" : "Loading")} '{plugin.Info.Name}'");
 
             UnloadPluginInstance(plugin);
 
@@ -464,7 +465,7 @@ namespace Dotx64Dbg
 
             LoadPluginInstance(plugin);
 
-            Console.WriteLine("Reloaded '{0}'", plugin.Info.Name);
+            Console.WriteLine($"{(isReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
         }
 
         IPlugin CreatePluginInstance(Plugin plugin)

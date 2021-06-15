@@ -2,7 +2,6 @@
 *.vcxproj.user
 .vs/
 Win32/
-!/lua/**
 Release/
 bin/x32
 bin/x64
@@ -11,3 +10,5 @@ build/
 src/Libs
 /src/Bindings/vcpkg_installed
 /src/Dotx64Managed/obj
+/bin/dotplugins/myplugin/My Plugin.csproj
+/bin/dotplugins/myplugin/obj
