@@ -2,37 +2,11 @@
 using Dotx64Dbg;
 using System.Collections.Generic;
 
-// All classes that have the interface IHotload will fire the OnHotload event
-// when the code is compiled and loaded.
-public class NestedClass : IHotload
-{
-    public static int MyNestedStatic = 0;
-
-    private int XY = 100;
-
-    public void TestFunc()
-    {
-        Console.WriteLine("Hello World");
-    }
-
-    public void OnHotload()
-    {
-        Console.WriteLine("Test::XY = {0}", XY);
-        Console.WriteLine("Test::MyNestedStatic = {0}", ++MyNestedStatic);
-    }
-
-    [Command("Test5")]
-    void NestedCommand(string[] args)
-    {
-        Console.WriteLine("Yup");
-    }
-}
-
 // Plugin Entry. 
 // The hot-load system will try to preserve all members of all classes
 // during the reload. All the assigned values will persist accross 
 // compilations.
-public class MyPlugin : IPlugin, IHotload
+public partial class MyPlugin : IPlugin, IHotload
 {
     private NestedClass Obj = new();
     private List<int> TestList = new();
@@ -169,43 +143,4 @@ public class MyPlugin : IPlugin, IHotload
     public void Shutdown()
     {
     }
-
-    public void OnExceptionEvent(ExceptionEventInfo ev)
-    {
-        Utils.PrintFields(ev);
-    }
-
-    public void OnThreadCreateEvent(ThreadCreateEventInfo ev)
-    {
-        Utils.PrintFields(ev);
-    }
-
-    public void OnThreadExitEvent(ThreadExitEventInfo ev)
-    {
-        Utils.PrintFields(ev);
-    }
-
-    public void OnProcessCreateEvent(ProcessCreateEventInfo ev)
-    {
-        var mainThread = Thread.GetMain();
-        Console.WriteLine($"Main Thread: {mainThread}");
-        Utils.PrintFields(ev);
-
-        var oepData = Memory.Read(ev.StartAddress, 15);
-        using (var decoder = Decoder.Create())
-        {
-            var oepInstr = decoder.Decode(oepData, ev.StartAddress);
-            Console.WriteLine($"OEP {oepInstr}");
-        }
-    }
-
-    public void OnProcessExitEvent(ProcessExitEventInfo ev)
-    {
-        Utils.PrintFields(ev);
-    }
-	
-	public void OnBreakpointEvent(BreakpointEventInfo ev)
-	{
-		Utils.PrintFields(ev);
-	}
 }
