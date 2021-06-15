@@ -14,19 +14,30 @@ namespace Dotx64Dbg
 
         public bool IsActive { get => Id == Native.Thread.GetActiveThreadId(); }
 
-        public bool IsValid { get => Native.Thread.IsValid(Id); }
+        public bool IsValid { get => Handle != ulong.MaxValue && Native.Thread.IsValid(Id); }
 
         internal Thread(uint internalId)
         {
             Id = internalId;
 
             var info = Native.Thread.GetThreadInfo(Id);
-            Handle = info.Handle;
+            if (info != null)
+            {
+                Handle = info.Handle;
+            }
+            else
+            {
+                Handle = ulong.MaxValue;
+            }
         }
 
         public static Thread GetActive()
         {
-            return new Thread(Native.Thread.GetActiveThreadId());
+            var th = new Thread(Native.Thread.GetActiveThreadId());
+            if (!th.IsValid)
+                return null;
+
+            return th;
         }
 
         public static Thread GetById(uint id)

@@ -24,5 +24,10 @@ namespace Dotx64Dbg::Native
             _plugin_logprint(str);
             Marshal::FreeHGlobal((IntPtr)str);
         }
+
+        static void WriteLine()
+        {
+            _plugin_logprint("\n");
+        }
     };
 }

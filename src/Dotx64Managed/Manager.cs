@@ -5,7 +5,8 @@ namespace Dotx64Dbg
 {
     public static partial class Manager
     {
-        static Loader ScriptLoader = new();
+        internal static Plugins PluginManager;
+        internal static int PluginHandle;
 
         private static void RunTests()
         {
@@ -13,9 +14,12 @@ namespace Dotx64Dbg
             tests.Run();
         }
 
-        public static void Init()
+        public static void Init(int pluginHandle)
         {
+            PluginHandle = pluginHandle;
+
             Logging.Initialize();
+            Commands.Initialize();
 
             if (!Settings.Load(Path.Combine(Utils.GetRootPath(), "dotx64dbg.json")))
             {
@@ -29,7 +33,8 @@ namespace Dotx64Dbg
 
             Console.WriteLine("Dotx64Dbg.Managed initialized");
 
-            ScriptLoader.Startup();
+            PluginManager = new();
+            PluginManager.Startup();
         }
 
         public static void Setup()
@@ -38,7 +43,8 @@ namespace Dotx64Dbg
 
         public static void Shutdown()
         {
-            ScriptLoader.Shutdown();
+            PluginManager.Shutdown();
+            PluginManager = null;
         }
     }
 }

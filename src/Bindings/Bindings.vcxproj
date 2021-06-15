@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Breakpoints.cpp" />
+    <ClCompile Include="Commands.cpp" />
     <ClCompile Include="Debugger.cpp" />
     <ClCompile Include="Decoder.cpp" />
     <ClCompile Include="Instruction.cpp" />

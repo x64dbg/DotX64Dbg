@@ -26,11 +26,11 @@ namespace Dotx64Dbg
         public bool RequiresRebuild;
         internal LoaderContext Loader;
         internal string AssemblyPath;
-        internal IPlugin Instance;
+        internal object Instance;
         internal Type InstanceType;
     }
 
-    internal partial class Loader
+    internal partial class Plugins
     {
         string PluginsPath = "dotplugins";
         string AppDataPath;
@@ -38,7 +38,7 @@ namespace Dotx64Dbg
 
         FileSystemWatcher PluginWatch;
 
-        List<Plugin> Plugins = new();
+        List<Plugin> Registered = new();
         Dictionary<FileSystemWatcher, Plugin> Watches = new();
 
         Task RebuildTask;
@@ -91,11 +91,16 @@ namespace Dotx64Dbg
             PluginWatch.Renamed += OnPluginRename;
 
             RegisterPlugins();
+            GenerateProjects();
             RebuildPlugins();
         }
 
         public void Shutdown()
         {
+            if (RebuildTask != null)
+            {
+                RebuildTask.Wait();
+            }
         }
 
         void RegisterPlugins()
@@ -109,12 +114,35 @@ namespace Dotx64Dbg
 
         void RebuildPlugins()
         {
-            foreach (var plugin in Plugins)
+            foreach (var plugin in Registered)
             {
                 if (plugin.RequiresRebuild == false)
                     continue;
 
                 RebuildPlugin(plugin);
+            }
+        }
+
+        void GenerateProjects()
+        {
+            var binaryPathX86 = Path.Combine(Utils.GetRootPath(), "x86", "plugins");
+            var binaryPathX64 = Path.Combine(Utils.GetRootPath(), "x64", "plugins");
+            var assemblies = new string[] {
+                "Dotx64Dbg.Bindings.dll", "Dotx64Dbg.Managed.dll"
+            };
+
+            foreach (var plugin in Registered)
+            {
+                var projectFilePath = Path.Combine(plugin.Path, plugin.Info.Name + ".csproj");
+                if (File.Exists(projectFilePath))
+                    continue;
+
+                var projGen = new ProjectGenerator();
+                projGen.ReferencePathX86 = binaryPathX86;
+                projGen.ReferencePathX64 = binaryPathX64;
+                projGen.References = assemblies;
+
+                projGen.Save(projectFilePath);
             }
         }
 
@@ -212,7 +240,7 @@ namespace Dotx64Dbg
             }
 
             var watcher = new FileSystemWatcher(PluginsPath, "*.*");
-            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.LastWrite;
+            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.Attributes;
             watcher.IncludeSubdirectories = true;
             watcher.EnableRaisingEvents = true;
             watcher.Created += OnSourceCreate;
@@ -221,7 +249,7 @@ namespace Dotx64Dbg
             watcher.Changed += OnSourceChange;
 
             Watches.Add(watcher, plugin);
-            Plugins.Add(plugin);
+            Registered.Add(plugin);
 
             Console.WriteLine("Registered C# plugin '{0}'", plugin.Info.Name);
         }
@@ -236,7 +264,7 @@ namespace Dotx64Dbg
 
         void OnPluginRename(object sender, RenamedEventArgs e)
         {
-            foreach (var plugin in Plugins)
+            foreach (var plugin in Registered)
             {
                 if (plugin.Path == e.OldFullPath)
                 {
@@ -251,6 +279,9 @@ namespace Dotx64Dbg
 
         void OnSourceCreate(object sender, FileSystemEventArgs e)
         {
+            if (!e.FullPath.EndsWith(".cs"))
+                return;
+
             var watcher = sender as FileSystemWatcher;
 
             Plugin plugin;
@@ -261,7 +292,8 @@ namespace Dotx64Dbg
             }
 
             //Logging.WriteLine("File create {0}", e.FullPath);
-            plugin.SourceFiles.Add(e.FullPath);
+            if (!plugin.SourceFiles.Contains(e.FullPath))
+                plugin.SourceFiles.Add(e.FullPath);
             plugin.RequiresRebuild = true;
 
             BeginRebuild();
@@ -269,6 +301,9 @@ namespace Dotx64Dbg
 
         void OnSourceRemove(object sender, FileSystemEventArgs e)
         {
+            if (!e.FullPath.EndsWith(".cs"))
+                return;
+
             var watcher = sender as FileSystemWatcher;
 
             Plugin plugin;
@@ -287,6 +322,9 @@ namespace Dotx64Dbg
 
         void OnSourceChange(object sender, FileSystemEventArgs e)
         {
+            if (!e.FullPath.EndsWith(".cs"))
+                return;
+
             var watcher = sender as FileSystemWatcher;
 
             Plugin plugin;
@@ -304,6 +342,9 @@ namespace Dotx64Dbg
 
         void OnSourceRename(object sender, RenamedEventArgs e)
         {
+            if (!e.FullPath.EndsWith(".cs"))
+                return;
+
             var watcher = sender as FileSystemWatcher;
 
             Plugin plugin;
@@ -315,7 +356,8 @@ namespace Dotx64Dbg
 
             //Logging.WriteLine("File rename {0}, {1}", e.OldFullPath, e.FullPath);
             plugin.SourceFiles.Remove(e.OldFullPath);
-            plugin.SourceFiles.Add(e.FullPath);
+            if (!plugin.SourceFiles.Contains(e.FullPath))
+                plugin.SourceFiles.Add(e.FullPath);
             plugin.RequiresRebuild = true;
 
             BeginRebuild();
@@ -329,7 +371,7 @@ namespace Dotx64Dbg
             // We delay the rebuilding a bit in case a lot of files are being saved at once.
             RebuildTask = Task.Run(async delegate
             {
-                await Task.Delay(100);
+                await Task.Delay(500);
                 RebuildPlugins();
 
                 RebuildTask = null;
@@ -338,8 +380,8 @@ namespace Dotx64Dbg
 
         public List<IPlugin> GetPluginInstances()
         {
-            return Plugins
-                .Select(x => x.Instance)
+            return Registered
+                .Select(x => x.Instance as IPlugin)
                 .Where(x => x != null)
                 .ToList();
         }

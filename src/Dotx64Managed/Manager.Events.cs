@@ -1,4 +1,6 @@
-﻿namespace Dotx64Dbg
+﻿using System;
+
+namespace Dotx64Dbg
 {
     public struct ExceptionEventInfo
     {
@@ -50,44 +52,81 @@
 
     public static partial class Manager
     {
+
         public static void OnExceptionEvent(ExceptionEventInfo ev)
         {
-            ScriptLoader.GetPluginInstances().ForEach(delegate (IPlugin instance)
+            try
             {
-                instance.OnExceptionEvent(ev);
-            });
+                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
+                {
+                    instance.OnExceptionEvent(ev);
+                });
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine($"Exception {ex.ToString()}");
+            }
         }
 
         public static void OnThreadCreateEvent(ThreadCreateEventInfo ev)
         {
-            ScriptLoader.GetPluginInstances().ForEach(delegate (IPlugin instance)
+            try
             {
-                instance.OnThreadCreateEvent(ev);
-            });
+
+                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
+                {
+                    instance.OnThreadCreateEvent(ev);
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception {ex.ToString()}");
+            }
         }
 
         public static void OnProcessCreateEvent(ProcessCreateEventInfo ev)
         {
-            ScriptLoader.GetPluginInstances().ForEach(delegate (IPlugin instance)
+            try
             {
-                instance.OnProcessCreateEvent(ev);
-            });
+                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
+                {
+                    instance.OnProcessCreateEvent(ev);
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception {ex.ToString()}");
+            }
         }
-
         public static void OnThreadExitEvent(ThreadExitEventInfo ev)
         {
-            ScriptLoader.GetPluginInstances().ForEach(delegate (IPlugin instance)
+            try
             {
-                instance.OnThreadExitEvent(ev);
-            });
+                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
+                {
+                    instance.OnThreadExitEvent(ev);
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception {ex.ToString()}");
+            }
         }
 
         public static void OnProcessExitEvent(ProcessExitEventInfo ev)
         {
-            ScriptLoader.GetPluginInstances().ForEach(delegate (IPlugin instance)
+            try
             {
-                instance.OnProcessExitEvent(ev);
-            });
+                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
+                {
+                    instance.OnProcessExitEvent(ev);
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception {ex.ToString()}");
+            }
+
         }
     }
 }

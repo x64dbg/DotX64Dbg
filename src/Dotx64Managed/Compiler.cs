@@ -83,7 +83,7 @@ namespace Dotx64Dbg
                     .ForEach(a => references.Add(MetadataReference.CreateFromFile(Assembly.Load(a).Location)));
 
             var guid = Guid.NewGuid().ToString();
-            var assemblyName = Name;
+            var assemblyName = Name + guid;
             var assemblyPath = Path.Combine(OutputPath, Name + guid + ".dll");
             var debugFilePath = Path.Combine(OutputPath, Name + guid + ".pdb");
 
@@ -95,7 +95,8 @@ namespace Dotx64Dbg
 #else
                 .WithPlatform(Platform.X64)
 #endif
-                ;
+                .WithModuleName(Name + guid)
+            ;
 
 
             var compiler = CSharpCompilation.Create(assemblyName,

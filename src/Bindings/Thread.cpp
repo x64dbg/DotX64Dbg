@@ -12,7 +12,7 @@ namespace Dotx64Dbg::Native
     public ref struct ThreadInfo
     {
         uint32_t Id;
-        uintptr_t Handle;
+        uint64_t Handle;
         uintptr_t IP;
         uint32_t SuspendCount;
         uint32_t LastError;
@@ -94,6 +94,16 @@ namespace Dotx64Dbg::Native
             return res;
         }
 
+        static bool Resume(uint64_t hThread)
+        {
+            return false;
+        }
+
+        static bool Pause(uint64_t hThread)
+        {
+            return false;
+        }
+
         static ThreadInfo^ GetThreadInfo(uint32_t id)
         {
             THREADLIST tl{};
@@ -108,7 +118,7 @@ namespace Dotx64Dbg::Native
 
                 res = gcnew ThreadInfo();
                 res->Id = id;
-                res->Handle = reinterpret_cast<uintptr_t>(th.BasicInfo.Handle);
+                res->Handle = reinterpret_cast<uint64_t>(th.BasicInfo.Handle);
                 res->IP = th.ThreadCip;
                 res->SuspendCount = th.SuspendCount;
                 res->LastError = th.LastError;
@@ -125,166 +135,166 @@ namespace Dotx64Dbg::Native
             return res;
         }
 
-        static array<System::Byte>^ ReadRegister(HANDLE hThread, int reg, int size, int offset)
+        static array<System::Byte>^ ReadRegister(uint64_t hThread, int reg, int size, int offset)
         {
             array<System::Byte>^ res = gcnew array<System::Byte>(size);
 
             pin_ptr<uint8_t> p = &res[0];
             uint8_t* data = p;
 
-            ULONG_PTR val = GetContextDataEx(hThread, reg);
+            ULONG_PTR val = GetContextDataEx(reinterpret_cast<HANDLE>(hThread), reg);
             std::memcpy(data, reinterpret_cast<const uint8_t*>(&val) + offset, size);
 
             return res;
         }
 
-        static array<System::Byte>^ ReadRegister(HANDLE hThread, int reg, int size)
+        static array<System::Byte>^ ReadRegister(uint64_t hThread, int reg, int size)
         {
             return ReadRegister(hThread, reg, size, 0);
         }
 
-        static array<System::Byte>^ GetRegisterData(uintptr_t hThread, Register reg)
+        static array<System::Byte>^ GetRegisterData(uint64_t hThread, Register reg)
         {
             switch (reg)
             {
             case Register::None:
                 return gcnew array<System::Byte>(0);
             case Register::Al:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RAX, 1);
+                return ReadRegister(hThread, UE_RAX, 1);
             case Register::Cl:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RCX, 1);
+                return ReadRegister(hThread, UE_RCX, 1);
             case Register::Dl:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RDX, 1);
+                return ReadRegister(hThread, UE_RDX, 1);
             case Register::Bl:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RBX, 1);
+                return ReadRegister(hThread, UE_RBX, 1);
             case Register::Ah:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RAX, 1, 1);
+                return ReadRegister(hThread, UE_RAX, 1, 1);
             case Register::Ch:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RCX, 1, 1);
+                return ReadRegister(hThread, UE_RCX, 1, 1);
             case Register::Dh:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RDX, 1, 1);
+                return ReadRegister(hThread, UE_RDX, 1, 1);
             case Register::Bh:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RBX, 1, 1);
+                return ReadRegister(hThread, UE_RBX, 1, 1);
             case Register::Spl:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RSP, 1);
+                return ReadRegister(hThread, UE_RSP, 1);
             case Register::Bpl:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RBP, 1);
+                return ReadRegister(hThread, UE_RBP, 1);
             case Register::Sil:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RSI, 1);
+                return ReadRegister(hThread, UE_RSI, 1);
             case Register::Dil:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RDI, 1);
+                return ReadRegister(hThread, UE_RDI, 1);
             case Register::R8b:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R8, 1);
+                return ReadRegister(hThread, UE_R8, 1);
             case Register::R9b:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R9, 1);
+                return ReadRegister(hThread, UE_R9, 1);
             case Register::R10b:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R10, 1);
+                return ReadRegister(hThread, UE_R10, 1);
             case Register::R11b:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R11, 1);
+                return ReadRegister(hThread, UE_R11, 1);
             case Register::R12b:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R12, 1);
+                return ReadRegister(hThread, UE_R12, 1);
             case Register::R13b:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R13, 1);
+                return ReadRegister(hThread, UE_R13, 1);
             case Register::R14b:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R14, 1);
+                return ReadRegister(hThread, UE_R14, 1);
             case Register::R15b:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R15, 1);
+                return ReadRegister(hThread, UE_R15, 1);
             case Register::Ax:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RAX, 2);
+                return ReadRegister(hThread, UE_RAX, 2);
             case Register::Cx:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RCX, 2);
+                return ReadRegister(hThread, UE_RCX, 2);
             case Register::Dx:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RDX, 2);
+                return ReadRegister(hThread, UE_RDX, 2);
             case Register::Bx:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RBX, 2);
+                return ReadRegister(hThread, UE_RBX, 2);
             case Register::Sp:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RSP, 2);
+                return ReadRegister(hThread, UE_RSP, 2);
             case Register::Bp:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RBP, 2);
+                return ReadRegister(hThread, UE_RBP, 2);
             case Register::Si:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RSI, 2);
+                return ReadRegister(hThread, UE_RSI, 2);
             case Register::Di:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RDI, 2);
+                return ReadRegister(hThread, UE_RDI, 2);
             case Register::R8w:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R8, 2);
+                return ReadRegister(hThread, UE_R8, 2);
             case Register::R9w:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R9, 2);
+                return ReadRegister(hThread, UE_R9, 2);
             case Register::R10w:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R10, 2);
+                return ReadRegister(hThread, UE_R10, 2);
             case Register::R11w:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R11, 2);
+                return ReadRegister(hThread, UE_R11, 2);
             case Register::R12w:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R12, 2);
+                return ReadRegister(hThread, UE_R12, 2);
             case Register::R13w:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R13, 2);
+                return ReadRegister(hThread, UE_R13, 2);
             case Register::R14w:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R14, 2);
+                return ReadRegister(hThread, UE_R14, 2);
             case Register::R15w:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R15, 2);
+                return ReadRegister(hThread, UE_R15, 2);
             case Register::Eax:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RAX, 4);
+                return ReadRegister(hThread, UE_RAX, 4);
             case Register::Ecx:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RCX, 4);
+                return ReadRegister(hThread, UE_RCX, 4);
             case Register::Edx:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RDX, 4);
+                return ReadRegister(hThread, UE_RDX, 4);
             case Register::Ebx:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RBX, 4);
+                return ReadRegister(hThread, UE_RBX, 4);
             case Register::Esp:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RSP, 4);
+                return ReadRegister(hThread, UE_RSP, 4);
             case Register::Ebp:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RBP, 4);
+                return ReadRegister(hThread, UE_RBP, 4);
             case Register::Esi:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RSI, 4);
+                return ReadRegister(hThread, UE_RSI, 4);
             case Register::Edi:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RDI, 4);
+                return ReadRegister(hThread, UE_RDI, 4);
             case Register::R8d:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R8, 4);
+                return ReadRegister(hThread, UE_R8, 4);
             case Register::R9d:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R9, 4);
+                return ReadRegister(hThread, UE_R9, 4);
             case Register::R10d:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R10, 4);
+                return ReadRegister(hThread, UE_R10, 4);
             case Register::R11d:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R11, 4);
+                return ReadRegister(hThread, UE_R11, 4);
             case Register::R12d:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R12, 4);
+                return ReadRegister(hThread, UE_R12, 4);
             case Register::R13d:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R13, 4);
+                return ReadRegister(hThread, UE_R13, 4);
             case Register::R14d:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R14, 4);
+                return ReadRegister(hThread, UE_R14, 4);
             case Register::R15d:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R15, 4);
+                return ReadRegister(hThread, UE_R15, 4);
             case Register::Rax:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RAX, 8);
+                return ReadRegister(hThread, UE_RAX, 8);
             case Register::Rcx:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RCX, 8);
+                return ReadRegister(hThread, UE_RCX, 8);
             case Register::Rdx:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RDX, 8);
+                return ReadRegister(hThread, UE_RDX, 8);
             case Register::Rbx:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RBP, 8);
+                return ReadRegister(hThread, UE_RBP, 8);
             case Register::Rsp:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RSP, 8);
+                return ReadRegister(hThread, UE_RSP, 8);
             case Register::Rbp:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RBP, 8);
+                return ReadRegister(hThread, UE_RBP, 8);
             case Register::Rsi:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RSI, 8);
+                return ReadRegister(hThread, UE_RSI, 8);
             case Register::Rdi:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_RDI, 8);
+                return ReadRegister(hThread, UE_RDI, 8);
             case Register::R8:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R8, 8);
+                return ReadRegister(hThread, UE_R8, 8);
             case Register::R9:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R9, 8);
+                return ReadRegister(hThread, UE_R9, 8);
             case Register::R10:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R10, 8);
+                return ReadRegister(hThread, UE_R10, 8);
             case Register::R11:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R11, 8);
+                return ReadRegister(hThread, UE_R11, 8);
             case Register::R12:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R12, 8);
+                return ReadRegister(hThread, UE_R12, 8);
             case Register::R13:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R13, 8);
+                return ReadRegister(hThread, UE_R13, 8);
             case Register::R14:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R14, 8);
+                return ReadRegister(hThread, UE_R14, 8);
             case Register::R15:
-                return ReadRegister(reinterpret_cast<HANDLE>(hThread), UE_R15, 8);
+                return ReadRegister(hThread, UE_R15, 8);
             case Register::St0:
                 break;
             case Register::St1:
@@ -669,168 +679,168 @@ namespace Dotx64Dbg::Native
             return gcnew array<System::Byte>(0);
         }
 
-        static void WriteRegister(HANDLE hThread, array<System::Byte>^ data, int reg, int size, int offset)
+        static void WriteRegister(uint64_t hThread, array<System::Byte>^ data, int reg, int size, int offset)
         {
             pin_ptr<uint8_t> p = &data[0];
             const uint8_t* ptr = p;
 
             // This is terrible, but to preserve the data when the write happens on smaller regs we need the
             // value not to be zero.
-            ULONG_PTR val = size < sizeof(ULONG_PTR) ? GetContextDataEx(hThread, reg) : 0;
+            ULONG_PTR val = size < sizeof(ULONG_PTR) ? GetContextDataEx(reinterpret_cast<HANDLE>(hThread), reg) : 0;
 
             std::memcpy(reinterpret_cast<uint8_t*>(&val) + offset, ptr, std::min<size_t>(data->Length, size));
 
-            SetContextDataEx(hThread, reg, val);
+            SetContextDataEx(reinterpret_cast<HANDLE>(hThread), reg, val);
         }
 
-        static void WriteRegister(HANDLE hThread, array<System::Byte>^ data, int reg, int size)
+        static void WriteRegister(uint64_t hThread, array<System::Byte>^ data, int reg, int size)
         {
             WriteRegister(hThread, data, reg, size, 0);
             GuiUpdateRegisterView();
         }
 
-        static void SetRegisterData(uintptr_t hThread, Register reg, array<System::Byte>^ data)
+        static void SetRegisterData(uint64_t hThread, Register reg, array<System::Byte>^ data)
         {
             switch (reg)
             {
             case Register::None:
                 return;
             case Register::Al:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RAX, 1);
+                return WriteRegister(hThread, data, UE_RAX, 1);
             case Register::Cl:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RCX, 1);
+                return WriteRegister(hThread, data, UE_RCX, 1);
             case Register::Dl:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RDX, 1);
+                return WriteRegister(hThread, data, UE_RDX, 1);
             case Register::Bl:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RBX, 1);
+                return WriteRegister(hThread, data, UE_RBX, 1);
             case Register::Ah:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RAX, 1, 1);
+                return WriteRegister(hThread, data, UE_RAX, 1, 1);
             case Register::Ch:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RCX, 1, 1);
+                return WriteRegister(hThread, data, UE_RCX, 1, 1);
             case Register::Dh:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RDX, 1, 1);
+                return WriteRegister(hThread, data, UE_RDX, 1, 1);
             case Register::Bh:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RBX, 1, 1);
+                return WriteRegister(hThread, data, UE_RBX, 1, 1);
             case Register::Spl:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RSP, 1);
+                return WriteRegister(hThread, data, UE_RSP, 1);
             case Register::Bpl:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RBP, 1);
+                return WriteRegister(hThread, data, UE_RBP, 1);
             case Register::Sil:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RSI, 1);
+                return WriteRegister(hThread, data, UE_RSI, 1);
             case Register::Dil:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RDI, 1);
+                return WriteRegister(hThread, data, UE_RDI, 1);
             case Register::R8b:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R8, 1);
+                return WriteRegister(hThread, data, UE_R8, 1);
             case Register::R9b:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R9, 1);
+                return WriteRegister(hThread, data, UE_R9, 1);
             case Register::R10b:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R10, 1);
+                return WriteRegister(hThread, data, UE_R10, 1);
             case Register::R11b:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R11, 1);
+                return WriteRegister(hThread, data, UE_R11, 1);
             case Register::R12b:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R12, 1);
+                return WriteRegister(hThread, data, UE_R12, 1);
             case Register::R13b:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R13, 1);
+                return WriteRegister(hThread, data, UE_R13, 1);
             case Register::R14b:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R14, 1);
+                return WriteRegister(hThread, data, UE_R14, 1);
             case Register::R15b:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R15, 1);
+                return WriteRegister(hThread, data, UE_R15, 1);
             case Register::Ax:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RAX, 2);
+                return WriteRegister(hThread, data, UE_RAX, 2);
             case Register::Cx:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RCX, 2);
+                return WriteRegister(hThread, data, UE_RCX, 2);
             case Register::Dx:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RDX, 2);
+                return WriteRegister(hThread, data, UE_RDX, 2);
             case Register::Bx:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RBX, 2);
+                return WriteRegister(hThread, data, UE_RBX, 2);
             case Register::Sp:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RSP, 2);
+                return WriteRegister(hThread, data, UE_RSP, 2);
             case Register::Bp:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RBP, 2);
+                return WriteRegister(hThread, data, UE_RBP, 2);
             case Register::Si:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RSI, 2);
+                return WriteRegister(hThread, data, UE_RSI, 2);
             case Register::Di:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RDI, 2);
+                return WriteRegister(hThread, data, UE_RDI, 2);
             case Register::R8w:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R8, 2);
+                return WriteRegister(hThread, data, UE_R8, 2);
             case Register::R9w:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R9, 2);
+                return WriteRegister(hThread, data, UE_R9, 2);
             case Register::R10w:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R10, 2);
+                return WriteRegister(hThread, data, UE_R10, 2);
             case Register::R11w:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R11, 2);
+                return WriteRegister(hThread, data, UE_R11, 2);
             case Register::R12w:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R12, 2);
+                return WriteRegister(hThread, data, UE_R12, 2);
             case Register::R13w:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R13, 2);
+                return WriteRegister(hThread, data, UE_R13, 2);
             case Register::R14w:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R14, 2);
+                return WriteRegister(hThread, data, UE_R14, 2);
             case Register::R15w:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R15, 2);
+                return WriteRegister(hThread, data, UE_R15, 2);
             case Register::Eax:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RAX, 4);
+                return WriteRegister(hThread, data, UE_RAX, 4);
             case Register::Ecx:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RCX, 4);
+                return WriteRegister(hThread, data, UE_RCX, 4);
             case Register::Edx:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RDX, 4);
+                return WriteRegister(hThread, data, UE_RDX, 4);
             case Register::Ebx:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RBX, 4);
+                return WriteRegister(hThread, data, UE_RBX, 4);
             case Register::Esp:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RSP, 4);
+                return WriteRegister(hThread, data, UE_RSP, 4);
             case Register::Ebp:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RBP, 4);
+                return WriteRegister(hThread, data, UE_RBP, 4);
             case Register::Esi:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RSI, 4);
+                return WriteRegister(hThread, data, UE_RSI, 4);
             case Register::Edi:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RDI, 4);
+                return WriteRegister(hThread, data, UE_RDI, 4);
             case Register::R8d:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R8, 4);
+                return WriteRegister(hThread, data, UE_R8, 4);
             case Register::R9d:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R9, 4);
+                return WriteRegister(hThread, data, UE_R9, 4);
             case Register::R10d:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R10, 4);
+                return WriteRegister(hThread, data, UE_R10, 4);
             case Register::R11d:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R11, 4);
+                return WriteRegister(hThread, data, UE_R11, 4);
             case Register::R12d:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R12, 4);
+                return WriteRegister(hThread, data, UE_R12, 4);
             case Register::R13d:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R13, 4);
+                return WriteRegister(hThread, data, UE_R13, 4);
             case Register::R14d:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R14, 4);
+                return WriteRegister(hThread, data, UE_R14, 4);
             case Register::R15d:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R15, 4);
+                return WriteRegister(hThread, data, UE_R15, 4);
             case Register::Rax:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RAX, 8);
+                return WriteRegister(hThread, data, UE_RAX, 8);
             case Register::Rcx:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RCX, 8);
+                return WriteRegister(hThread, data, UE_RCX, 8);
             case Register::Rdx:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RDX, 8);
+                return WriteRegister(hThread, data, UE_RDX, 8);
             case Register::Rbx:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RBP, 8);
+                return WriteRegister(hThread, data, UE_RBP, 8);
             case Register::Rsp:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RSP, 8);
+                return WriteRegister(hThread, data, UE_RSP, 8);
             case Register::Rbp:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RBP, 8);
+                return WriteRegister(hThread, data, UE_RBP, 8);
             case Register::Rsi:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RSI, 8);
+                return WriteRegister(hThread, data, UE_RSI, 8);
             case Register::Rdi:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_RDI, 8);
+                return WriteRegister(hThread, data, UE_RDI, 8);
             case Register::R8:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R8, 8);
+                return WriteRegister(hThread, data, UE_R8, 8);
             case Register::R9:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R9, 8);
+                return WriteRegister(hThread, data, UE_R9, 8);
             case Register::R10:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R10, 8);
+                return WriteRegister(hThread, data, UE_R10, 8);
             case Register::R11:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R11, 8);
+                return WriteRegister(hThread, data, UE_R11, 8);
             case Register::R12:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R12, 8);
+                return WriteRegister(hThread, data, UE_R12, 8);
             case Register::R13:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R13, 8);
+                return WriteRegister(hThread, data, UE_R13, 8);
             case Register::R14:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R14, 8);
+                return WriteRegister(hThread, data, UE_R14, 8);
             case Register::R15:
-                return WriteRegister(reinterpret_cast<HANDLE>(hThread), data, UE_R15, 8);
+                return WriteRegister(hThread, data, UE_R15, 8);
             case Register::St0:
                 break;
             case Register::St1:

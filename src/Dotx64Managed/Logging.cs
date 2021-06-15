@@ -17,6 +17,10 @@ namespace Dotx64Dbg
         {
             Native.Logging.WriteLine(value);
         }
+        public override void WriteLine()
+        {
+            Native.Logging.WriteLine();
+        }
     }
 
     public static class Logging

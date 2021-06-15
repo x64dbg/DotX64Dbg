@@ -3,9 +3,9 @@
 
 struct Wrapper
 {
-    static void Init()
+    static void Init(int pluginHandle)
     {
-        Dotx64Dbg::Manager::Init();
+        Dotx64Dbg::Manager::Init(pluginHandle);
     }
 
     static void Setup()
@@ -53,23 +53,7 @@ struct Wrapper
         }
         case CREATE_PROCESS_DEBUG_EVENT:
         {
-            auto& src = ev->DebugEvent->u.CreateProcessInfo;
-
-            Dotx64Dbg::ProcessCreateEventInfo dst;
-            dst.ProcessId = ev->DebugEvent->dwProcessId;
-            dst.ThreadId = ev->DebugEvent->dwThreadId;
-            dst.FileHandle = reinterpret_cast<uint64_t>(src.hFile);
-            dst.ProcessHandle = reinterpret_cast<uint64_t>(src.hProcess);
-            dst.ThreadHandle = reinterpret_cast<uint64_t>(src.hThread);
-            dst.ImageBase = reinterpret_cast<uint64_t>(src.lpBaseOfImage);
-            dst.DebugInfoFileOffset = src.dwDebugInfoFileOffset;
-            dst.DebugInfoSize = src.nDebugInfoSize;
-            dst.ThreadLocalBase = reinterpret_cast<uint64_t>(src.lpThreadLocalBase);
-            dst.StartAddress = reinterpret_cast<uint64_t>(src.lpStartAddress);
-            dst.ImageName = reinterpret_cast<uint64_t>(src.lpImageName);
-            dst.Unicode = src.fUnicode;
-
-            Dotx64Dbg::Manager::OnProcessCreateEvent(dst);
+            // Moved to OnProcessCreate plugin callback.
             break;
         }
         case EXIT_THREAD_DEBUG_EVENT:
@@ -118,6 +102,27 @@ struct Wrapper
         }
         }
     }
+
+    static void OnProcessCreate(PLUG_CB_CREATEPROCESS* info)
+    {
+        auto* src = info->CreateProcessInfo;
+
+        Dotx64Dbg::ProcessCreateEventInfo dst;
+        dst.ProcessId = info->fdProcessInfo->dwProcessId;
+        dst.ThreadId = info->fdProcessInfo->dwThreadId;
+        dst.FileHandle = reinterpret_cast<uint64_t>(src->hFile);
+        dst.ProcessHandle = reinterpret_cast<uint64_t>(info->fdProcessInfo->hProcess);
+        dst.ThreadHandle = reinterpret_cast<uint64_t>(info->fdProcessInfo->hThread);
+        dst.ImageBase = reinterpret_cast<uint64_t>(src->lpBaseOfImage);
+        dst.DebugInfoFileOffset = src->dwDebugInfoFileOffset;
+        dst.DebugInfoSize = src->nDebugInfoSize;
+        dst.ThreadLocalBase = reinterpret_cast<uint64_t>(src->lpThreadLocalBase);
+        dst.StartAddress = reinterpret_cast<uint64_t>(src->lpStartAddress);
+        dst.ImageName = reinterpret_cast<uint64_t>(src->lpImageName);
+        dst.Unicode = src->fUnicode;
+
+        Dotx64Dbg::Manager::OnProcessCreateEvent(dst);
+    }
 };
 
 // Unmanaged section.
@@ -143,6 +148,11 @@ PLUG_EXPORT void CBEXCEPTION(CBTYPE cbType, PLUG_CB_EXCEPTION* info)
 
 PLUG_EXPORT void CBPAUSEDEBUG(CBTYPE cbType, PLUG_CB_PAUSEDEBUG* info)
 {
+}
+
+PLUG_EXPORT void CBCREATEPROCESS(CBTYPE cbType, PLUG_CB_CREATEPROCESS* info)
+{
+    Wrapper::OnProcessCreate(info);
 }
 
 PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)
@@ -176,7 +186,7 @@ PLUG_EXPORT void CBEXITTHREAD(CBTYPE cbType, PLUG_CB_EXITTHREAD* info)
 
 PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 {
-    Wrapper::Init();
+    Wrapper::Init(initStruct->pluginHandle);
 
     initStruct->pluginVersion = 1;
     initStruct->sdkVersion = 1;

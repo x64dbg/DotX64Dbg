@@ -81,8 +81,13 @@ namespace Dotx64Dbg
         }
     }
 
-    internal partial class Loader
+    internal partial class Plugins
     {
+        internal bool IsSystemType(Type t)
+        {
+            return false;
+        }
+
         Type GetPluginClass(Assembly assembly)
         {
             var entries = assembly.GetTypes().Where(a => a.GetInterface("IPlugin") != null).ToArray();
@@ -108,29 +113,55 @@ namespace Dotx64Dbg
             {
                 newField.SetValue(newInstance, oldValue);
             }
-            else if (newField.FieldType.IsClass)
-            {
-                object newValue;
-
-                if (!ctx.GetNewReference(oldValue, out newValue))
-                {
-                    newValue = ctx.Create(newField.FieldType);
-                    AdaptInstance(ctx, oldValue, oldField.FieldType, newValue, newField.FieldType);
-                }
-
-                newField.SetValue(newInstance, newValue);
-            }
             else if (newField.FieldType.IsArray)
             {
                 object newValue;
 
-                if (!ctx.GetNewReference(oldValue, out newValue))
+                var elemType = newField.FieldType.GetElementType();
+                if (elemType.IsValueType)
                 {
-                    newValue = ctx.Create(newField.FieldType);
-                    AdaptInstance(ctx, oldValue, oldField.FieldType, newValue, newField.FieldType);
+                    newField.SetValue(newInstance, oldValue);
+                }
+                else if (elemType.IsClass)
+                {
+                    throw new Exception("Unsupported state transfer of nested array");
+                }
+                else
+                {
+                    // TODO: Iterate and swap everything.
+                    if (!ctx.GetNewReference(oldValue, out newValue))
+                    {
+                        newValue = ctx.Create(newField.FieldType);
+                        AdaptInstance(ctx, oldValue, oldField.FieldType, newValue, newField.FieldType);
+                    }
+                }
+            }
+            else if (newField.FieldType.IsClass)
+            {
+                object newValue;
+
+                var fieldType = newField.FieldType;
+                if (fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(List<>))
+                {
+                    var listType = fieldType.GenericTypeArguments[0];
+                    if (listType.IsValueType)
+                    {
+                        // Swap
+                        newField.SetValue(newInstance, oldValue);
+                        oldField.SetValue(oldInstance, null);
+                    }
+                }
+                else
+                {
+                    if (!ctx.GetNewReference(oldValue, out newValue))
+                    {
+                        newValue = ctx.Create(newField.FieldType);
+                        AdaptInstance(ctx, oldValue, oldField.FieldType, newValue, newField.FieldType);
+                    }
+
+                    newField.SetValue(newInstance, newValue);
                 }
 
-                newField.SetValue(newInstance, newValue);
             }
         }
 
@@ -151,10 +182,161 @@ namespace Dotx64Dbg
 
             }
         }
+        void AdaptClasses(TransitionContext ctx, Assembly oldAssembly, Assembly newAssembly)
+        {
+            foreach (var newType in newAssembly.GetTypes())
+            {
+                if (!newType.IsClass)
+                    continue;
+
+                // TODO: Fix all statics.
+            }
+        }
+
+        void UnloadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
+        {
+            processed.Add(obj);
+
+            var instType = obj.GetType();
+            var funcs = instType.GetRuntimeMethods();
+
+            foreach (var fn in funcs)
+            {
+                var attribs = fn.GetCustomAttributes();
+                foreach (var attrib in attribs)
+                {
+                    if (attrib is Command cmd)
+                    {
+                        Commands.Remove(cmd.Name);
+                    }
+                }
+            }
+
+            var fields = instType.GetRuntimeFields();
+            foreach (var field in fields)
+            {
+                var fieldType = field.FieldType;
+                if (IsSystemType(field.FieldType))
+                    continue;
+
+                if (fieldType.IsClass && !fieldType.IsArray)
+                {
+                    var nextObj = field.GetValue(obj);
+                    if (!processed.Contains(nextObj))
+                        UnloadPluginInstanceRecursive(plugin, nextObj, processed);
+                }
+            }
+
+            var props = instType.GetRuntimeProperties();
+            foreach (var prop in props)
+            {
+                var fieldType = prop.PropertyType;
+                if (IsSystemType(fieldType))
+                    continue;
+                if (prop.GetIndexParameters().Count() > 0)
+                    continue;
+                if (fieldType.IsClass && !fieldType.IsArray)
+                {
+                    var nextObj = prop.GetValue(obj);
+                    if (!processed.Contains(nextObj))
+                        UnloadPluginInstanceRecursive(plugin, nextObj, processed);
+                }
+            }
+        }
+
+        void UnloadPluginInstance(Plugin plugin)
+        {
+            if (plugin.Instance == null)
+                return;
+
+            UnloadPluginInstanceRecursive(plugin, plugin.Instance, new());
+        }
+
+        void LoadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
+        {
+            processed.Add(obj);
+
+            var instType = obj.GetType();
+            var funcs = instType.GetRuntimeMethods();
+
+            foreach (var fn in funcs)
+            {
+                var attribs = fn.GetCustomAttributes();
+                foreach (var attrib in attribs)
+                {
+                    if (attrib is Command cmd)
+                    {
+                        Commands.Handler cb = null;
+
+                        if (fn.ReturnType == typeof(void))
+                        {
+                            var cb2 = fn.CreateDelegate<Commands.HandlerVoid>(obj);
+                            cb = (string[] args) =>
+                            {
+                                cb2(args);
+                                return true;
+                            };
+                        }
+                        else if (fn.ReturnType == typeof(bool))
+                        {
+                            cb = fn.CreateDelegate<Commands.Handler>(obj);
+                        }
+                        Commands.Register(cmd.Name, cmd.DebugOnly, cb);
+                    }
+                }
+            }
+
+            var fields = instType.GetRuntimeFields();
+            foreach (var field in fields)
+            {
+                var fieldType = field.FieldType;
+                if (IsSystemType(fieldType))
+                    continue;
+
+                if (fieldType.IsClass && !fieldType.IsArray)
+                {
+                    var nextObj = field.GetValue(obj);
+                    if (!processed.Contains(nextObj))
+                    {
+                        LoadPluginInstanceRecursive(plugin, nextObj, processed);
+                    }
+                }
+            }
+
+            var props = instType.GetRuntimeProperties();
+            foreach (var prop in props)
+            {
+                var fieldType = prop.PropertyType;
+                if (IsSystemType(fieldType))
+                    continue;
+                if (prop.GetIndexParameters().Count() > 0)
+                    continue;
+
+                if (fieldType.IsClass && !fieldType.IsArray)
+                {
+                    var nextObj = prop.GetValue(obj);
+                    if (!processed.Contains(nextObj))
+                    {
+                        LoadPluginInstanceRecursive(plugin, nextObj, processed);
+                    }
+                }
+            }
+
+        }
+
+        void LoadPluginInstance(Plugin plugin)
+        {
+            if (plugin.Instance == null)
+                return;
+
+            LoadPluginInstanceRecursive(plugin, plugin.Instance, new());
+        }
 
         void ReloadPlugin(Plugin plugin, string newAssemblyPath)
         {
             Console.WriteLine("Reloading '{0}'", plugin.Info.Name);
+
+            UnloadPluginInstance(plugin);
 
             try
             {
@@ -176,6 +358,7 @@ namespace Dotx64Dbg
 
                     if (plugin.Instance != null)
                     {
+                        AdaptClasses(ctx, plugin.Loader.Current, newAssembly);
                         AdaptInstance(ctx, plugin.Instance, plugin.InstanceType, newInstance, pluginClass);
 
                         plugin.Instance = newInstance as IPlugin;
@@ -191,10 +374,19 @@ namespace Dotx64Dbg
                             ctor.Invoke(newInstance, Array.Empty<object>());
                         }
 
+
                         var startup = pluginClass.GetMethod("Startup");
                         if (startup != null)
                         {
-                            startup.Invoke(newInstance, Array.Empty<object>());
+                            try
+                            {
+                                startup.Invoke(newInstance, Array.Empty<object>());
+                            }
+                            catch (Exception ex)
+                            {
+
+                                throw;
+                            }
                         }
                     }
 
@@ -264,6 +456,8 @@ namespace Dotx64Dbg
                 Console.WriteLine("Exception: {0}", ex.ToString());
                 return;
             }
+
+            LoadPluginInstance(plugin);
 
             Console.WriteLine("Reloaded '{0}'", plugin.Info.Name);
         }

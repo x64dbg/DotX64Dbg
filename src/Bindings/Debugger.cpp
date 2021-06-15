@@ -2,6 +2,8 @@
 #include "pluginsdk/_plugins.h"
 #include "pluginsdk/_scriptapi_debug.h"
 
+#include <msclr/marshal.h>
+
 namespace Dotx64Dbg::Native
 {
     public ref class Debugger
@@ -45,6 +47,24 @@ namespace Dotx64Dbg::Native
         static bool IsActive()
         {
             return DbgIsDebugging();
+        }
+
+        static bool RunCommand(System::String^ cmd)
+        {
+            msclr::interop::marshal_context oMarshalContext;
+
+            const char* cstr = oMarshalContext.marshal_as<const char*>(cmd);
+
+            return DbgCmdExecDirect(cstr);
+        }
+
+        static bool RunCommandAsync(System::String^ cmd)
+        {
+            msclr::interop::marshal_context oMarshalContext;
+
+            const char* cstr = oMarshalContext.marshal_as<const char*>(cmd);
+
+            return DbgCmdExec(cstr);
         }
     };
 }

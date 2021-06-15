@@ -49,13 +49,13 @@ namespace Dotx64Dbg
             Native.Thread.SetRegisterData(Handle, reg, BitConverter.GetBytes(val));
         }
 
-        private BigInteger GetRegister(Register reg)
+        public BigInteger GetRegister(Register reg)
         {
             var bytes = Native.Thread.GetRegisterData(Handle, reg);
             return new BigInteger(bytes, true);
         }
 
-        private void SetRegister(Register reg, BigInteger val)
+        public void SetRegister(Register reg, BigInteger val)
         {
             Native.Thread.SetRegisterData(Handle, reg, val.ToByteArray());
         }

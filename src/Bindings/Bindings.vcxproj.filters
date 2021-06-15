@@ -9,6 +9,7 @@
     <ClCompile Include="Thread.cpp" />
     <ClCompile Include="Instruction.cpp" />
     <ClCompile Include="Decoder.cpp" />
+    <ClCompile Include="Commands.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Instruction.hpp" />
