@@ -19,10 +19,4 @@ public partial class NestedClass : IHotload
         Console.WriteLine("Test::XY = {0}", XY);
         Console.WriteLine("Test::MyNestedStatic = {0}", ++MyNestedStatic);
     }
-
-    [Command("Test5")]
-    void NestedCommand(string[] args)
-    {
-        Console.WriteLine("Yup");
-    }
 }

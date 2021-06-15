@@ -29,28 +29,6 @@ public partial class MyPlugin : IPlugin, IHotload
         Obj2 = Obj;
     }
 
-    // Works at any given time.
-    [Command("Test1")]
-    void MyCommand(string[] args)
-    {
-        Console.WriteLine("Sup dawg");
-    }
-
-    // Works only when the debugger is active.
-    [Command("Test2", DebugOnly = true)]
-    void MyCommand2(string[] args)
-    {
-        Console.WriteLine("Oh no");
-    }
-
-    // Allows to return a status
-    [Command("Test3")]
-    bool MyCommand3(string[] args)
-    {
-        Console.WriteLine("Oh no");
-        return false; // Indicates failure.
-    }
-
     // Called as soon the plugin is fully initialized, this is called after
     // the constructor and only once the for the initial plugin load.
     public void Startup()
