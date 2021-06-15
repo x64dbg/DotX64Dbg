@@ -19,7 +19,9 @@ namespace Dotx64Dbg
 
         protected override Assembly Load(AssemblyName assemblyName)
         {
+#if DEBUG
             Console.WriteLine("LoaderContext.Load({0})", assemblyName.Name);
+#endif
             return Assembly.Load(assemblyName);
         }
 
@@ -172,8 +174,9 @@ namespace Dotx64Dbg
             var fields = newType.GetRuntimeFields();
             foreach (var newField in fields)
             {
+#if DEBUG
                 Console.WriteLine("Runtime: {0}", newField.Name);
-
+#endif
                 var oldField = oldType.GetRuntimeFields().FirstOrDefault(a => a.Name == newField.Name);
                 if (oldField != null)
                 {
@@ -346,7 +349,9 @@ namespace Dotx64Dbg
                 var pluginClass = GetPluginClass(newAssembly);
                 if (pluginClass != null)
                 {
+#if DEBUG
                     Console.WriteLine("Entry class: {0}", pluginClass.Name);
+#endif
                 }
 
                 // NOTE: RemapContext stores old references, to fully unload the dll

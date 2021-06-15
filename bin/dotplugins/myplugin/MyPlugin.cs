@@ -203,4 +203,9 @@ public class MyPlugin : IPlugin, IHotload
     {
         Utils.PrintFields(ev);
     }
+	
+	public void OnBreakpointEvent(BreakpointEventInfo ev)
+	{
+		Utils.PrintFields(ev);
+	}
 }

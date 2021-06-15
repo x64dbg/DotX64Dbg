@@ -2,8 +2,19 @@
 #include "pluginsdk/_plugins.h"
 #include "pluginsdk/_scriptapi_debug.h"
 
-namespace Dotx64Dbg
+namespace Dotx64Dbg::Native
 {
+    public enum BreakpointType
+    {
+        None = 0,
+        Normal = (1 << 0),
+        Hardware = (1 << 1),
+        Memory = (1 << 2),
+        Dll = (1 << 3),
+        Exception = (1 << 4),
+        System = (1 << 5),
+    };
+
     public enum HardwareType
     {
         HardwareAccess,
@@ -14,6 +25,7 @@ namespace Dotx64Dbg
     public ref class Breakpoints
     {
     public:
+
         static void SetBreakpoint(duint address)
         {
             Script::Debug::SetBreakpoint(address);
@@ -44,7 +56,6 @@ namespace Dotx64Dbg
                 break;
             default:
                 break;
-
             }
         }
 

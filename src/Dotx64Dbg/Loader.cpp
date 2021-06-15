@@ -1,5 +1,7 @@
 ﻿#include "pluginsdk/bridgemain.h"
 #include "pluginsdk/_plugins.h"
+#include "pluginsdk/_scriptapi_memory.h"
+#include "pluginsdk/_scriptapi_register.h"
 
 struct Wrapper
 {
@@ -26,7 +28,7 @@ struct Wrapper
         {
             auto& src = ev->DebugEvent->u.Exception;
 
-            Dotx64Dbg::ExceptionEventInfo dst;
+            Dotx64Dbg::ExceptionEventInfo dst{};
             dst.ProcessId = ev->DebugEvent->dwProcessId;
             dst.ThreadId = ev->DebugEvent->dwThreadId;
             dst.FirstChance = src.dwFirstChance ? true : false;
@@ -41,7 +43,7 @@ struct Wrapper
         {
             auto& src = ev->DebugEvent->u.CreateThread;
 
-            Dotx64Dbg::ThreadCreateEventInfo dst;
+            Dotx64Dbg::ThreadCreateEventInfo dst{};
             dst.ProcessId = ev->DebugEvent->dwProcessId;
             dst.ThreadId = ev->DebugEvent->dwThreadId;
             dst.Handle = reinterpret_cast<uint64_t>(src.hThread);
@@ -60,7 +62,7 @@ struct Wrapper
         {
             auto& src = ev->DebugEvent->u.ExitThread;
 
-            Dotx64Dbg::ThreadExitEventInfo dst;
+            Dotx64Dbg::ThreadExitEventInfo dst{};
             dst.ProcessId = ev->DebugEvent->dwProcessId;
             dst.ThreadId = ev->DebugEvent->dwThreadId;
             dst.ExitCode = src.dwExitCode;
@@ -72,7 +74,7 @@ struct Wrapper
         {
             auto& src = ev->DebugEvent->u.ExitProcess;
 
-            Dotx64Dbg::ProcessExitEventInfo dst;
+            Dotx64Dbg::ProcessExitEventInfo dst{};
             dst.ProcessId = ev->DebugEvent->dwProcessId;
             dst.ThreadId = ev->DebugEvent->dwThreadId;
             dst.ExitCode = src.dwExitCode;
@@ -107,7 +109,7 @@ struct Wrapper
     {
         auto* src = info->CreateProcessInfo;
 
-        Dotx64Dbg::ProcessCreateEventInfo dst;
+        Dotx64Dbg::ProcessCreateEventInfo dst{};
         dst.ProcessId = info->fdProcessInfo->dwProcessId;
         dst.ThreadId = info->fdProcessInfo->dwThreadId;
         dst.FileHandle = reinterpret_cast<uint64_t>(src->hFile);
@@ -122,6 +124,51 @@ struct Wrapper
         dst.Unicode = src->fUnicode;
 
         Dotx64Dbg::Manager::OnProcessCreateEvent(dst);
+    }
+
+    static void OnBreakpointEvent(PLUG_CB_BREAKPOINT* info, bool systemBp)
+    {
+        Dotx64Dbg::BreakpointEventInfo dst{};
+
+        if (info == nullptr && systemBp)
+        {
+            auto addr = Script::Register::Get(Script::Register::CIP);
+            char modName[1024]{};
+            DbgGetModuleAt(addr, modName);
+
+            dst.Type = Dotx64Dbg::Breakpoints::Type::System;
+            dst.Address = addr;
+            dst.Name = gcnew System::String("System Breakpoint");
+            dst.Slot = 0xFFFF;
+            dst.HitCount = 1;
+            dst.Active = false;
+            dst.Module = gcnew System::String(modName);
+        }
+        else
+        {
+            const auto* bp = info->breakpoint;
+
+            dst.Type = (Dotx64Dbg::Breakpoints::Type)bp->type;
+            dst.Address = bp->addr;
+            dst.Enabled = bp->enabled;
+            dst.Singleshot = bp->singleshoot;
+            dst.Active = bp->active;
+            dst.Name = gcnew System::String(bp->name);
+            dst.Module = gcnew System::String(bp->mod);
+            dst.Slot = bp->slot;
+            dst.TypeEx = bp->typeEx;
+            dst.Size = static_cast<int>(bp->hwSize);
+            dst.HitCount = bp->hitCount;
+            dst.FastResume = bp->fastResume;
+            dst.Silent = bp->silent;
+            dst.BreakCondition = gcnew System::String(bp->breakCondition);
+            dst.LogText = gcnew System::String(bp->logText);
+            dst.LogCondition = gcnew System::String(bp->logCondition);
+            dst.CommandText = gcnew System::String(bp->commandText);
+            dst.CommandCondition = gcnew System::String(bp->commandCondition);
+        }
+
+        Dotx64Dbg::Manager::OnBreakpointEvent(dst);
     }
 };
 
@@ -153,6 +200,16 @@ PLUG_EXPORT void CBPAUSEDEBUG(CBTYPE cbType, PLUG_CB_PAUSEDEBUG* info)
 PLUG_EXPORT void CBCREATEPROCESS(CBTYPE cbType, PLUG_CB_CREATEPROCESS* info)
 {
     Wrapper::OnProcessCreate(info);
+}
+
+PLUG_EXPORT void CBBREAKPOINT(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
+{
+    Wrapper::OnBreakpointEvent(info, false);
+}
+
+PLUG_EXPORT void CBSYSTEMBREAKPOINT(CBTYPE cbType, PLUG_CB_SYSTEMBREAKPOINT* info)
+{
+    Wrapper::OnBreakpointEvent(nullptr, true);
 }
 
 PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)

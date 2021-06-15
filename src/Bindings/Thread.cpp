@@ -526,29 +526,29 @@ namespace Dotx64Dbg::Native
             case Register::Zmm31:
                 break;
             case Register::Flags:
-                break;
+                return ReadRegister(hThread, UE_RFLAGS, 2);
             case Register::EFlags:
-                break;
+                return ReadRegister(hThread, UE_RFLAGS, 4);
             case Register::RFlags:
-                break;
+                return ReadRegister(hThread, UE_RFLAGS, 8);
             case Register::Ip:
-                break;
+                return ReadRegister(hThread, UE_RIP, 2);
             case Register::Eip:
-                break;
+                return ReadRegister(hThread, UE_RIP, 4);
             case Register::Rip:
-                break;
+                return ReadRegister(hThread, UE_RIP, 8);
             case Register::Es:
-                break;
+                return ReadRegister(hThread, UE_SEG_ES, 2);
             case Register::Cs:
-                break;
+                return ReadRegister(hThread, UE_SEG_CS, 2);
             case Register::Ss:
-                break;
+                return ReadRegister(hThread, UE_SEG_SS, 2);
             case Register::Ds:
-                break;
+                return ReadRegister(hThread, UE_SEG_DS, 2);
             case Register::Fs:
-                break;
+                return ReadRegister(hThread, UE_SEG_FS, 2);
             case Register::Gs:
-                break;
+                return ReadRegister(hThread, UE_SEG_GS, 2);
             case Register::Gdtr:
                 break;
             case Register::Ldtr:
@@ -1072,29 +1072,29 @@ namespace Dotx64Dbg::Native
             case Register::Zmm31:
                 break;
             case Register::Flags:
-                break;
+                return WriteRegister(hThread, data, UE_RFLAGS, 2);
             case Register::EFlags:
-                break;
+                return WriteRegister(hThread, data, UE_RFLAGS, 4);
             case Register::RFlags:
-                break;
+                return WriteRegister(hThread, data, UE_RFLAGS, 8);
             case Register::Ip:
-                break;
+                return WriteRegister(hThread, data, UE_RIP, 2);
             case Register::Eip:
-                break;
+                return WriteRegister(hThread, data, UE_RIP, 4);
             case Register::Rip:
-                break;
+                return WriteRegister(hThread, data, UE_RIP, 8);
             case Register::Es:
-                break;
+                return WriteRegister(hThread, data, UE_SEG_ES, 2);
             case Register::Cs:
-                break;
+                return WriteRegister(hThread, data, UE_SEG_CS, 2);
             case Register::Ss:
-                break;
+                return WriteRegister(hThread, data, UE_SEG_SS, 2);
             case Register::Ds:
-                break;
+                return WriteRegister(hThread, data, UE_SEG_DS, 2);
             case Register::Fs:
-                break;
+                return WriteRegister(hThread, data, UE_SEG_FS, 2);
             case Register::Gs:
-                break;
+                return WriteRegister(hThread, data, UE_SEG_GS, 2);
             case Register::Gdtr:
                 break;
             case Register::Ldtr:

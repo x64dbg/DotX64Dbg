@@ -15,7 +15,7 @@
  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
-    <DefineConstants>TRACE;_X86_</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;_X86_</DefineConstants>
     <DocumentationFile>..\..\bin\x32\plugins\Dotx64Dbg.Managed.xml</DocumentationFile>
     <OutputPath>..\..\bin\x32\plugins</OutputPath>
   </PropertyGroup>
@@ -27,7 +27,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
-    <DefineConstants>TRACE;_X64_</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;_X64_</DefineConstants>
     <DocumentationFile>..\..\bin\x64\plugins\Dotx64Dbg.Managed.xml</DocumentationFile>
     <OutputPath>..\..\bin\x64\plugins</OutputPath>
   </PropertyGroup>

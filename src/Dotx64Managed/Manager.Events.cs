@@ -66,6 +66,29 @@ namespace Dotx64Dbg
         public uint ExitCode;
     }
 
+    /// <summary>Passed in OnBreakpointEvent</summary>
+    public struct BreakpointEventInfo
+    {
+        public Breakpoints.Type Type;
+        public ulong Address;
+        public bool Enabled;
+        public bool Singleshot;
+        public bool Active;
+        public string Name;
+        public string Module;
+        public ushort Slot;
+        public int TypeEx;
+        public int Size;
+        public uint HitCount;
+        public bool FastResume;
+        public bool Silent;
+        public string BreakCondition;
+        public string LogText;
+        public string LogCondition;
+        public string CommandText;
+        public string CommandCondition;
+    }
+
     /// <summary>Class for synchronization between x64Dbg and this plugin.</summary>
     public static partial class Manager
     {
@@ -149,6 +172,21 @@ namespace Dotx64Dbg
                 Console.WriteLine($"Exception {ex.ToString()}");
             }
 
+        }
+
+        public static void OnBreakpointEvent(BreakpointEventInfo ev)
+        {
+            try
+            {
+                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
+                {
+                    instance.OnBreakpointEvent(ev);
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception {ex.ToString()}");
+            }
         }
     }
 }
