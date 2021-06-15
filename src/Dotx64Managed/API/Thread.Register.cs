@@ -5,46 +5,46 @@ namespace Dotx64Dbg
 {
     public partial class Thread
     {
-        private byte GetGPRegisterU8(Register reg)
+        private byte GetRegisterU8(Register reg)
         {
             var bytes = Native.Thread.GetRegisterData(Handle, reg);
             return bytes[0];
         }
 
-        private void SetGPRegisterU8(Register reg, byte val)
+        private void SetRegisterU8(Register reg, byte val)
         {
             Native.Thread.SetRegisterData(Handle, reg, BitConverter.GetBytes(val));
         }
 
-        private ushort GetGPRegisterU16(Register reg)
+        private ushort GetRegisterU16(Register reg)
         {
             var bytes = Native.Thread.GetRegisterData(Handle, reg);
             return BitConverter.ToUInt16(bytes);
         }
 
-        private void SetGPRegisterU16(Register reg, ushort val)
+        private void SetRegisterU16(Register reg, ushort val)
         {
             Native.Thread.SetRegisterData(Handle, reg, BitConverter.GetBytes(val));
         }
 
-        private uint GetGPRegisterU32(Register reg)
+        private uint GetRegisterU32(Register reg)
         {
             var bytes = Native.Thread.GetRegisterData(Handle, reg);
             return BitConverter.ToUInt32(bytes);
         }
 
-        private void SetGPRegisterU32(Register reg, uint val)
+        private void SetRegisterU32(Register reg, uint val)
         {
             Native.Thread.SetRegisterData(Handle, reg, BitConverter.GetBytes(val));
         }
 
-        private ulong GetGPRegisterU64(Register reg)
+        private ulong GetRegisterU64(Register reg)
         {
             var bytes = Native.Thread.GetRegisterData(Handle, reg);
             return BitConverter.ToUInt64(bytes);
         }
 
-        private void SetGPRegisterU64(Register reg, ulong val)
+        private void SetRegisterU64(Register reg, ulong val)
         {
             Native.Thread.SetRegisterData(Handle, reg, BitConverter.GetBytes(val));
         }
@@ -60,81 +60,81 @@ namespace Dotx64Dbg
             Native.Thread.SetRegisterData(Handle, reg, val.ToByteArray());
         }
 
-        public byte Al { get => GetGPRegisterU8(Register.Al); set => SetGPRegisterU8(Register.Al, value); }
-        public byte Cl { get => GetGPRegisterU8(Register.Cl); set => SetGPRegisterU8(Register.Cl, value); }
-        public byte Dl { get => GetGPRegisterU8(Register.Dl); set => SetGPRegisterU8(Register.Dl, value); }
-        public byte Bl { get => GetGPRegisterU8(Register.Bl); set => SetGPRegisterU8(Register.Bl, value); }
-        public byte Ah { get => GetGPRegisterU8(Register.Ah); set => SetGPRegisterU8(Register.Ah, value); }
-        public byte Ch { get => GetGPRegisterU8(Register.Ch); set => SetGPRegisterU8(Register.Ch, value); }
-        public byte Dh { get => GetGPRegisterU8(Register.Dh); set => SetGPRegisterU8(Register.Dh, value); }
-        public byte Bh { get => GetGPRegisterU8(Register.Bh); set => SetGPRegisterU8(Register.Bh, value); }
-        public byte Spl { get => GetGPRegisterU8(Register.Spl); set => SetGPRegisterU8(Register.Spl, value); }
-        public byte Bpl { get => GetGPRegisterU8(Register.Bpl); set => SetGPRegisterU8(Register.Bpl, value); }
-        public byte Sil { get => GetGPRegisterU8(Register.Sil); set => SetGPRegisterU8(Register.Sil, value); }
-        public byte Dil { get => GetGPRegisterU8(Register.Dil); set => SetGPRegisterU8(Register.Dil, value); }
+        public byte Al { get => GetRegisterU8(Register.Al); set => SetRegisterU8(Register.Al, value); }
+        public byte Cl { get => GetRegisterU8(Register.Cl); set => SetRegisterU8(Register.Cl, value); }
+        public byte Dl { get => GetRegisterU8(Register.Dl); set => SetRegisterU8(Register.Dl, value); }
+        public byte Bl { get => GetRegisterU8(Register.Bl); set => SetRegisterU8(Register.Bl, value); }
+        public byte Ah { get => GetRegisterU8(Register.Ah); set => SetRegisterU8(Register.Ah, value); }
+        public byte Ch { get => GetRegisterU8(Register.Ch); set => SetRegisterU8(Register.Ch, value); }
+        public byte Dh { get => GetRegisterU8(Register.Dh); set => SetRegisterU8(Register.Dh, value); }
+        public byte Bh { get => GetRegisterU8(Register.Bh); set => SetRegisterU8(Register.Bh, value); }
+        public byte Spl { get => GetRegisterU8(Register.Spl); set => SetRegisterU8(Register.Spl, value); }
+        public byte Bpl { get => GetRegisterU8(Register.Bpl); set => SetRegisterU8(Register.Bpl, value); }
+        public byte Sil { get => GetRegisterU8(Register.Sil); set => SetRegisterU8(Register.Sil, value); }
+        public byte Dil { get => GetRegisterU8(Register.Dil); set => SetRegisterU8(Register.Dil, value); }
 #if _X64_
-        public byte R8b { get => GetGPRegisterU8(Register.R8b); set => SetGPRegisterU8(Register.R8b, value); }
-        public byte R9b { get => GetGPRegisterU8(Register.R9b); set => SetGPRegisterU8(Register.R9b, value); }
-        public byte R10b { get => GetGPRegisterU8(Register.R10b); set => SetGPRegisterU8(Register.R10b, value); }
-        public byte R11b { get => GetGPRegisterU8(Register.R11b); set => SetGPRegisterU8(Register.R11b, value); }
-        public byte R12b { get => GetGPRegisterU8(Register.R12b); set => SetGPRegisterU8(Register.R12b, value); }
-        public byte R13b { get => GetGPRegisterU8(Register.R13b); set => SetGPRegisterU8(Register.R13b, value); }
-        public byte R14b { get => GetGPRegisterU8(Register.R14b); set => SetGPRegisterU8(Register.R14b, value); }
-        public byte R15b { get => GetGPRegisterU8(Register.R15b); set => SetGPRegisterU8(Register.R15b, value); }
+        public byte R8b { get => GetRegisterU8(Register.R8b); set => SetRegisterU8(Register.R8b, value); }
+        public byte R9b { get => GetRegisterU8(Register.R9b); set => SetRegisterU8(Register.R9b, value); }
+        public byte R10b { get => GetRegisterU8(Register.R10b); set => SetRegisterU8(Register.R10b, value); }
+        public byte R11b { get => GetRegisterU8(Register.R11b); set => SetRegisterU8(Register.R11b, value); }
+        public byte R12b { get => GetRegisterU8(Register.R12b); set => SetRegisterU8(Register.R12b, value); }
+        public byte R13b { get => GetRegisterU8(Register.R13b); set => SetRegisterU8(Register.R13b, value); }
+        public byte R14b { get => GetRegisterU8(Register.R14b); set => SetRegisterU8(Register.R14b, value); }
+        public byte R15b { get => GetRegisterU8(Register.R15b); set => SetRegisterU8(Register.R15b, value); }
 #endif
-        public ushort Ax { get => GetGPRegisterU16(Register.Ax); set => SetGPRegisterU16(Register.Ax, value); }
-        public ushort Cx { get => GetGPRegisterU16(Register.Cx); set => SetGPRegisterU16(Register.Cx, value); }
-        public ushort Dx { get => GetGPRegisterU16(Register.Dx); set => SetGPRegisterU16(Register.Dx, value); }
-        public ushort Bx { get => GetGPRegisterU16(Register.Bx); set => SetGPRegisterU16(Register.Bx, value); }
-        public ushort Sp { get => GetGPRegisterU16(Register.Sp); set => SetGPRegisterU16(Register.Sp, value); }
-        public ushort Bp { get => GetGPRegisterU16(Register.Bp); set => SetGPRegisterU16(Register.Bp, value); }
-        public ushort Si { get => GetGPRegisterU16(Register.Si); set => SetGPRegisterU16(Register.Si, value); }
-        public ushort Di { get => GetGPRegisterU16(Register.Di); set => SetGPRegisterU16(Register.Di, value); }
+        public ushort Ax { get => GetRegisterU16(Register.Ax); set => SetRegisterU16(Register.Ax, value); }
+        public ushort Cx { get => GetRegisterU16(Register.Cx); set => SetRegisterU16(Register.Cx, value); }
+        public ushort Dx { get => GetRegisterU16(Register.Dx); set => SetRegisterU16(Register.Dx, value); }
+        public ushort Bx { get => GetRegisterU16(Register.Bx); set => SetRegisterU16(Register.Bx, value); }
+        public ushort Sp { get => GetRegisterU16(Register.Sp); set => SetRegisterU16(Register.Sp, value); }
+        public ushort Bp { get => GetRegisterU16(Register.Bp); set => SetRegisterU16(Register.Bp, value); }
+        public ushort Si { get => GetRegisterU16(Register.Si); set => SetRegisterU16(Register.Si, value); }
+        public ushort Di { get => GetRegisterU16(Register.Di); set => SetRegisterU16(Register.Di, value); }
 #if _X64_
-        public ushort R8w { get => GetGPRegisterU16(Register.R8w); set => SetGPRegisterU16(Register.R8w, value); }
-        public ushort R9w { get => GetGPRegisterU16(Register.R9w); set => SetGPRegisterU16(Register.R9w, value); }
-        public ushort R10w { get => GetGPRegisterU16(Register.R10w); set => SetGPRegisterU16(Register.R10w, value); }
-        public ushort R11w { get => GetGPRegisterU16(Register.R11w); set => SetGPRegisterU16(Register.R11w, value); }
-        public ushort R12w { get => GetGPRegisterU16(Register.R12w); set => SetGPRegisterU16(Register.R12w, value); }
-        public ushort R13w { get => GetGPRegisterU16(Register.R13w); set => SetGPRegisterU16(Register.R13w, value); }
-        public ushort R14w { get => GetGPRegisterU16(Register.R14w); set => SetGPRegisterU16(Register.R14w, value); }
-        public ushort R15w { get => GetGPRegisterU16(Register.R15w); set => SetGPRegisterU16(Register.R15w, value); }
+        public ushort R8w { get => GetRegisterU16(Register.R8w); set => SetRegisterU16(Register.R8w, value); }
+        public ushort R9w { get => GetRegisterU16(Register.R9w); set => SetRegisterU16(Register.R9w, value); }
+        public ushort R10w { get => GetRegisterU16(Register.R10w); set => SetRegisterU16(Register.R10w, value); }
+        public ushort R11w { get => GetRegisterU16(Register.R11w); set => SetRegisterU16(Register.R11w, value); }
+        public ushort R12w { get => GetRegisterU16(Register.R12w); set => SetRegisterU16(Register.R12w, value); }
+        public ushort R13w { get => GetRegisterU16(Register.R13w); set => SetRegisterU16(Register.R13w, value); }
+        public ushort R14w { get => GetRegisterU16(Register.R14w); set => SetRegisterU16(Register.R14w, value); }
+        public ushort R15w { get => GetRegisterU16(Register.R15w); set => SetRegisterU16(Register.R15w, value); }
 #endif 
 
-        public uint Eax { get => GetGPRegisterU32(Register.Eax); set => SetGPRegisterU32(Register.Eax, value); }
-        public uint Ecx { get => GetGPRegisterU32(Register.Ecx); set => SetGPRegisterU32(Register.Ecx, value); }
-        public uint Edx { get => GetGPRegisterU32(Register.Edx); set => SetGPRegisterU32(Register.Edx, value); }
-        public uint Ebx { get => GetGPRegisterU32(Register.Ebx); set => SetGPRegisterU32(Register.Ebx, value); }
-        public uint Esp { get => GetGPRegisterU32(Register.Esp); set => SetGPRegisterU32(Register.Esp, value); }
-        public uint Ebp { get => GetGPRegisterU32(Register.Ebp); set => SetGPRegisterU32(Register.Ebp, value); }
-        public uint Esi { get => GetGPRegisterU32(Register.Esi); set => SetGPRegisterU32(Register.Esi, value); }
-        public uint Edi { get => GetGPRegisterU32(Register.Edi); set => SetGPRegisterU32(Register.Edi, value); }
+        public uint Eax { get => GetRegisterU32(Register.Eax); set => SetRegisterU32(Register.Eax, value); }
+        public uint Ecx { get => GetRegisterU32(Register.Ecx); set => SetRegisterU32(Register.Ecx, value); }
+        public uint Edx { get => GetRegisterU32(Register.Edx); set => SetRegisterU32(Register.Edx, value); }
+        public uint Ebx { get => GetRegisterU32(Register.Ebx); set => SetRegisterU32(Register.Ebx, value); }
+        public uint Esp { get => GetRegisterU32(Register.Esp); set => SetRegisterU32(Register.Esp, value); }
+        public uint Ebp { get => GetRegisterU32(Register.Ebp); set => SetRegisterU32(Register.Ebp, value); }
+        public uint Esi { get => GetRegisterU32(Register.Esi); set => SetRegisterU32(Register.Esi, value); }
+        public uint Edi { get => GetRegisterU32(Register.Edi); set => SetRegisterU32(Register.Edi, value); }
 
 #if _X64_
-        public uint R8d { get => GetGPRegisterU32(Register.R8d); set => SetGPRegisterU32(Register.R8d, value); }
-        public uint R9d { get => GetGPRegisterU32(Register.R9d); set => SetGPRegisterU32(Register.R9d, value); }
-        public uint R10d { get => GetGPRegisterU32(Register.R10d); set => SetGPRegisterU32(Register.R10d, value); }
-        public uint R11d { get => GetGPRegisterU32(Register.R11d); set => SetGPRegisterU32(Register.R11d, value); }
-        public uint R12d { get => GetGPRegisterU32(Register.R12d); set => SetGPRegisterU32(Register.R12d, value); }
-        public uint R13d { get => GetGPRegisterU32(Register.R13d); set => SetGPRegisterU32(Register.R13d, value); }
-        public uint R14d { get => GetGPRegisterU32(Register.R14d); set => SetGPRegisterU32(Register.R14d, value); }
-        public uint R15d { get => GetGPRegisterU32(Register.R15d); set => SetGPRegisterU32(Register.R15d, value); }
-        public ulong Rax { get => GetGPRegisterU64(Register.Rax); set => SetGPRegisterU64(Register.Rax, value); }
-        public ulong Rcx { get => GetGPRegisterU64(Register.Rcx); set => SetGPRegisterU64(Register.Rcx, value); }
-        public ulong Rdx { get => GetGPRegisterU64(Register.Rdx); set => SetGPRegisterU64(Register.Rdx, value); }
-        public ulong Rbx { get => GetGPRegisterU64(Register.Rbx); set => SetGPRegisterU64(Register.Rbx, value); }
-        public ulong Rsp { get => GetGPRegisterU64(Register.Rsp); set => SetGPRegisterU64(Register.Rsp, value); }
-        public ulong Rbp { get => GetGPRegisterU64(Register.Rbp); set => SetGPRegisterU64(Register.Rbp, value); }
-        public ulong Rsi { get => GetGPRegisterU64(Register.Rsi); set => SetGPRegisterU64(Register.Rsi, value); }
-        public ulong Rdi { get => GetGPRegisterU64(Register.Rdi); set => SetGPRegisterU64(Register.Rdi, value); }
-        public ulong R8 { get => GetGPRegisterU64(Register.R8); set => SetGPRegisterU64(Register.R8, value); }
-        public ulong R9 { get => GetGPRegisterU64(Register.R9); set => SetGPRegisterU64(Register.R9, value); }
-        public ulong R10 { get => GetGPRegisterU64(Register.R10); set => SetGPRegisterU64(Register.R10, value); }
-        public ulong R11 { get => GetGPRegisterU64(Register.R11); set => SetGPRegisterU64(Register.R11, value); }
-        public ulong R12 { get => GetGPRegisterU64(Register.R12); set => SetGPRegisterU64(Register.R12, value); }
-        public ulong R13 { get => GetGPRegisterU64(Register.R13); set => SetGPRegisterU64(Register.R13, value); }
-        public ulong R14 { get => GetGPRegisterU64(Register.R14); set => SetGPRegisterU64(Register.R14, value); }
-        public ulong R15 { get => GetGPRegisterU64(Register.R15); set => SetGPRegisterU64(Register.R15, value); }
+        public uint R8d { get => GetRegisterU32(Register.R8d); set => SetRegisterU32(Register.R8d, value); }
+        public uint R9d { get => GetRegisterU32(Register.R9d); set => SetRegisterU32(Register.R9d, value); }
+        public uint R10d { get => GetRegisterU32(Register.R10d); set => SetRegisterU32(Register.R10d, value); }
+        public uint R11d { get => GetRegisterU32(Register.R11d); set => SetRegisterU32(Register.R11d, value); }
+        public uint R12d { get => GetRegisterU32(Register.R12d); set => SetRegisterU32(Register.R12d, value); }
+        public uint R13d { get => GetRegisterU32(Register.R13d); set => SetRegisterU32(Register.R13d, value); }
+        public uint R14d { get => GetRegisterU32(Register.R14d); set => SetRegisterU32(Register.R14d, value); }
+        public uint R15d { get => GetRegisterU32(Register.R15d); set => SetRegisterU32(Register.R15d, value); }
+        public ulong Rax { get => GetRegisterU64(Register.Rax); set => SetRegisterU64(Register.Rax, value); }
+        public ulong Rcx { get => GetRegisterU64(Register.Rcx); set => SetRegisterU64(Register.Rcx, value); }
+        public ulong Rdx { get => GetRegisterU64(Register.Rdx); set => SetRegisterU64(Register.Rdx, value); }
+        public ulong Rbx { get => GetRegisterU64(Register.Rbx); set => SetRegisterU64(Register.Rbx, value); }
+        public ulong Rsp { get => GetRegisterU64(Register.Rsp); set => SetRegisterU64(Register.Rsp, value); }
+        public ulong Rbp { get => GetRegisterU64(Register.Rbp); set => SetRegisterU64(Register.Rbp, value); }
+        public ulong Rsi { get => GetRegisterU64(Register.Rsi); set => SetRegisterU64(Register.Rsi, value); }
+        public ulong Rdi { get => GetRegisterU64(Register.Rdi); set => SetRegisterU64(Register.Rdi, value); }
+        public ulong R8 { get => GetRegisterU64(Register.R8); set => SetRegisterU64(Register.R8, value); }
+        public ulong R9 { get => GetRegisterU64(Register.R9); set => SetRegisterU64(Register.R9, value); }
+        public ulong R10 { get => GetRegisterU64(Register.R10); set => SetRegisterU64(Register.R10, value); }
+        public ulong R11 { get => GetRegisterU64(Register.R11); set => SetRegisterU64(Register.R11, value); }
+        public ulong R12 { get => GetRegisterU64(Register.R12); set => SetRegisterU64(Register.R12, value); }
+        public ulong R13 { get => GetRegisterU64(Register.R13); set => SetRegisterU64(Register.R13, value); }
+        public ulong R14 { get => GetRegisterU64(Register.R14); set => SetRegisterU64(Register.R14, value); }
+        public ulong R15 { get => GetRegisterU64(Register.R15); set => SetRegisterU64(Register.R15, value); }
 #endif
         public BigInteger St0 { get => GetRegister(Register.St0); set => SetRegister(Register.St0, value); }
         public BigInteger St1 { get => GetRegister(Register.St1); set => SetRegister(Register.St1, value); }
@@ -252,23 +252,23 @@ namespace Dotx64Dbg
         public BigInteger Zmm30 { get => GetRegister(Register.Zmm30); set => SetRegister(Register.Zmm30, value); }
         public BigInteger Zmm31 { get => GetRegister(Register.Zmm31); set => SetRegister(Register.Zmm31, value); }
         public BigInteger Flags { get => GetRegister(Register.Flags); set => SetRegister(Register.Flags, value); }
-        public BigInteger EFlags { get => GetRegister(Register.EFlags); set => SetRegister(Register.EFlags, value); }
+        public uint EFlags { get => GetRegisterU32(Register.EFlags); set => SetRegisterU32(Register.EFlags, value); }
 #if _X64_
-        public BigInteger RFlags { get => GetRegister(Register.RFlags); set => SetRegister(Register.RFlags, value); }
+        public ulong RFlags { get => GetRegisterU64(Register.RFlags); set => SetRegisterU64(Register.RFlags, value); }
 #endif
-        public BigInteger Ip { get => GetRegister(Register.Ip); set => SetRegister(Register.Ip, value); }
-        public BigInteger Eip { get => GetRegister(Register.Eip); set => SetRegister(Register.Eip, value); }
+        public ushort Ip { get => GetRegisterU16(Register.Ip); set => SetRegisterU16(Register.Ip, value); }
+        public uint Eip { get => GetRegisterU32(Register.Eip); set => SetRegisterU32(Register.Eip, value); }
 
 #if _X64_
-        public BigInteger Rip { get => GetRegister(Register.Rip); set => SetRegister(Register.Rip, value); }
+        public ulong Rip { get => GetRegisterU64(Register.Rip); set => SetRegisterU64(Register.Rip, value); }
 #endif
 
-        public BigInteger Es { get => GetRegister(Register.Es); set => SetRegister(Register.Es, value); }
-        public BigInteger Cs { get => GetRegister(Register.Cs); set => SetRegister(Register.Cs, value); }
-        public BigInteger Ss { get => GetRegister(Register.Ss); set => SetRegister(Register.Ss, value); }
-        public BigInteger Ds { get => GetRegister(Register.Ds); set => SetRegister(Register.Ds, value); }
-        public BigInteger Fs { get => GetRegister(Register.Fs); set => SetRegister(Register.Fs, value); }
-        public BigInteger Gs { get => GetRegister(Register.Gs); set => SetRegister(Register.Gs, value); }
+        public ushort Es { get => GetRegisterU16(Register.Es); set => SetRegisterU16(Register.Es, value); }
+        public ushort Cs { get => GetRegisterU16(Register.Cs); set => SetRegisterU16(Register.Cs, value); }
+        public ushort Ss { get => GetRegisterU16(Register.Ss); set => SetRegisterU16(Register.Ss, value); }
+        public ushort Ds { get => GetRegisterU16(Register.Ds); set => SetRegisterU16(Register.Ds, value); }
+        public ushort Fs { get => GetRegisterU16(Register.Fs); set => SetRegisterU16(Register.Fs, value); }
+        public ushort Gs { get => GetRegisterU16(Register.Gs); set => SetRegisterU16(Register.Gs, value); }
         public BigInteger Gdtr { get => GetRegister(Register.Gdtr); set => SetRegister(Register.Gdtr, value); }
         public BigInteger Ldtr { get => GetRegister(Register.Ldtr); set => SetRegister(Register.Ldtr, value); }
         public BigInteger Idtr { get => GetRegister(Register.Idtr); set => SetRegister(Register.Idtr, value); }
@@ -297,22 +297,41 @@ namespace Dotx64Dbg
         public BigInteger Cr13 { get => GetRegister(Register.Cr13); set => SetRegister(Register.Cr13, value); }
         public BigInteger Cr14 { get => GetRegister(Register.Cr14); set => SetRegister(Register.Cr14, value); }
         public BigInteger Cr15 { get => GetRegister(Register.Cr15); set => SetRegister(Register.Cr15, value); }
-        public BigInteger Dr0 { get => GetRegister(Register.Dr0); set => SetRegister(Register.Dr0, value); }
-        public BigInteger Dr1 { get => GetRegister(Register.Dr1); set => SetRegister(Register.Dr1, value); }
-        public BigInteger Dr2 { get => GetRegister(Register.Dr2); set => SetRegister(Register.Dr2, value); }
-        public BigInteger Dr3 { get => GetRegister(Register.Dr3); set => SetRegister(Register.Dr3, value); }
-        public BigInteger Dr4 { get => GetRegister(Register.Dr4); set => SetRegister(Register.Dr4, value); }
-        public BigInteger Dr5 { get => GetRegister(Register.Dr5); set => SetRegister(Register.Dr5, value); }
-        public BigInteger Dr6 { get => GetRegister(Register.Dr6); set => SetRegister(Register.Dr6, value); }
-        public BigInteger Dr7 { get => GetRegister(Register.Dr7); set => SetRegister(Register.Dr7, value); }
-        public BigInteger Dr8 { get => GetRegister(Register.Dr8); set => SetRegister(Register.Dr8, value); }
-        public BigInteger Dr9 { get => GetRegister(Register.Dr9); set => SetRegister(Register.Dr9, value); }
-        public BigInteger Dr10 { get => GetRegister(Register.Dr10); set => SetRegister(Register.Dr10, value); }
-        public BigInteger Dr11 { get => GetRegister(Register.Dr11); set => SetRegister(Register.Dr11, value); }
-        public BigInteger Dr12 { get => GetRegister(Register.Dr12); set => SetRegister(Register.Dr12, value); }
-        public BigInteger Dr13 { get => GetRegister(Register.Dr13); set => SetRegister(Register.Dr13, value); }
-        public BigInteger Dr14 { get => GetRegister(Register.Dr14); set => SetRegister(Register.Dr14, value); }
-        public BigInteger Dr15 { get => GetRegister(Register.Dr15); set => SetRegister(Register.Dr15, value); }
+#if _X64_
+        public ulong Dr0 { get => GetRegisterU64(Register.Dr0); set => SetRegisterU64(Register.Dr0, value); }
+        public ulong Dr1 { get => GetRegisterU64(Register.Dr1); set => SetRegisterU64(Register.Dr1, value); }
+        public ulong Dr2 { get => GetRegisterU64(Register.Dr2); set => SetRegisterU64(Register.Dr2, value); }
+        public ulong Dr3 { get => GetRegisterU64(Register.Dr3); set => SetRegisterU64(Register.Dr3, value); }
+        public ulong Dr4 { get => GetRegisterU64(Register.Dr4); set => SetRegisterU64(Register.Dr4, value); }
+        public ulong Dr5 { get => GetRegisterU64(Register.Dr5); set => SetRegisterU64(Register.Dr5, value); }
+        public ulong Dr6 { get => GetRegisterU64(Register.Dr6); set => SetRegisterU64(Register.Dr6, value); }
+        public ulong Dr7 { get => GetRegisterU64(Register.Dr7); set => SetRegisterU64(Register.Dr7, value); }
+        public ulong Dr8 { get => GetRegisterU64(Register.Dr8); set => SetRegisterU64(Register.Dr8, value); }
+        public ulong Dr9 { get => GetRegisterU64(Register.Dr9); set => SetRegisterU64(Register.Dr9, value); }
+        public ulong Dr10 { get => GetRegisterU64(Register.Dr10); set => SetRegisterU64(Register.Dr10, value); }
+        public ulong Dr11 { get => GetRegisterU64(Register.Dr11); set => SetRegisterU64(Register.Dr11, value); }
+        public ulong Dr12 { get => GetRegisterU64(Register.Dr12); set => SetRegisterU64(Register.Dr12, value); }
+        public ulong Dr13 { get => GetRegisterU64(Register.Dr13); set => SetRegisterU64(Register.Dr13, value); }
+        public ulong Dr14 { get => GetRegisterU64(Register.Dr14); set => SetRegisterU64(Register.Dr14, value); }
+        public ulong Dr15 { get => GetRegisterU64(Register.Dr15); set => SetRegisterU64(Register.Dr15, value); }
+#else
+        public uint Dr0 { get => GetRegisterU32(Register.Dr0); set => SetRegisterU32(Register.Dr0, value); }
+        public uint Dr1 { get => GetRegisterU32(Register.Dr1); set => SetRegisterU32(Register.Dr1, value); }
+        public uint Dr2 { get => GetRegisterU32(Register.Dr2); set => SetRegisterU32(Register.Dr2, value); }
+        public uint Dr3 { get => GetRegisterU32(Register.Dr3); set => SetRegisterU32(Register.Dr3, value); }
+        public uint Dr4 { get => GetRegisterU32(Register.Dr4); set => SetRegisterU32(Register.Dr4, value); }
+        public uint Dr5 { get => GetRegisterU32(Register.Dr5); set => SetRegisterU32(Register.Dr5, value); }
+        public uint Dr6 { get => GetRegisterU32(Register.Dr6); set => SetRegisterU32(Register.Dr6, value); }
+        public uint Dr7 { get => GetRegisterU32(Register.Dr7); set => SetRegisterU32(Register.Dr7, value); }
+        public uint Dr8 { get => GetRegisterU32(Register.Dr8); set => SetRegisterU32(Register.Dr8, value); }
+        public uint Dr9 { get => GetRegisterU32(Register.Dr9); set => SetRegisterU32(Register.Dr9, value); }
+        public uint Dr10 { get => GetRegisterU32(Register.Dr10); set => SetRegisterU32(Register.Dr10, value); }
+        public uint Dr11 { get => GetRegisterU32(Register.Dr11); set => SetRegisterU32(Register.Dr11, value); }
+        public uint Dr12 { get => GetRegisterU32(Register.Dr12); set => SetRegisterU32(Register.Dr12, value); }
+        public uint Dr13 { get => GetRegisterU32(Register.Dr13); set => SetRegisterU32(Register.Dr13, value); }
+        public uint Dr14 { get => GetRegisterU32(Register.Dr14); set => SetRegisterU32(Register.Dr14, value); }
+        public uint Dr15 { get => GetRegisterU32(Register.Dr15); set => SetRegisterU32(Register.Dr15, value); }
+#endif
         public BigInteger K0 { get => GetRegister(Register.K0); set => SetRegister(Register.K0, value); }
         public BigInteger K1 { get => GetRegister(Register.K1); set => SetRegister(Register.K1, value); }
         public BigInteger K2 { get => GetRegister(Register.K2); set => SetRegister(Register.K2, value); }
