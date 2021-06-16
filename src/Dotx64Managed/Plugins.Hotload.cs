@@ -255,6 +255,26 @@ namespace Dotx64Dbg
             UnloadPluginInstanceRecursive(plugin, plugin.Instance, new());
         }
 
+        void RegisterPluginCommand(MethodInfo fn, Command cmd, object obj)
+        {
+            Commands.Handler cb = null;
+
+            if (fn.ReturnType == typeof(void))
+            {
+                var cb2 = fn.CreateDelegate<Commands.HandlerVoid>(obj);
+                cb = (string[] args) =>
+                {
+                    cb2(args);
+                    return true;
+                };
+            }
+            else if (fn.ReturnType == typeof(bool))
+            {
+                cb = fn.CreateDelegate<Commands.Handler>(obj);
+            }
+            Commands.Register(cmd.Name, cmd.DebugOnly, cb);
+        }
+
         void LoadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
         {
             processed.Add(obj);
@@ -269,22 +289,7 @@ namespace Dotx64Dbg
                 {
                     if (attrib is Command cmd)
                     {
-                        Commands.Handler cb = null;
-
-                        if (fn.ReturnType == typeof(void))
-                        {
-                            var cb2 = fn.CreateDelegate<Commands.HandlerVoid>(obj);
-                            cb = (string[] args) =>
-                            {
-                                cb2(args);
-                                return true;
-                            };
-                        }
-                        else if (fn.ReturnType == typeof(bool))
-                        {
-                            cb = fn.CreateDelegate<Commands.Handler>(obj);
-                        }
-                        Commands.Register(cmd.Name, cmd.DebugOnly, cb);
+                        RegisterPluginCommand(fn, cmd, obj);
                     }
                 }
             }
