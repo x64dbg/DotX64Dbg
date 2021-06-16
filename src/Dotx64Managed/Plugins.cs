@@ -169,6 +169,9 @@ namespace Dotx64Dbg
                 Console.WriteLine("Compiled plugin '{0}' in {1} ms", plugin.Info.Name, stopwatch.ElapsedMilliseconds);
 
                 ReloadPlugin(plugin, res.OutputAssemblyPath);
+
+                // Successfully built.
+                plugin.RequiresRebuild = false;
             }
         }
 
@@ -241,7 +244,7 @@ namespace Dotx64Dbg
                 }
             }
 
-            var watcher = new FileSystemWatcher(PluginsPath, "*.*");
+            var watcher = new FileSystemWatcher(path, "*.*");
             watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.Attributes;
             watcher.IncludeSubdirectories = true;
             watcher.EnableRaisingEvents = true;
@@ -384,6 +387,11 @@ namespace Dotx64Dbg
 
         public List<IPlugin> GetPluginInstances()
         {
+            // If we are currently rebuilding we have to wait.
+            var rebuildTask = RebuildTask;
+            if (rebuildTask != null)
+                rebuildTask.Wait();
+
             return Registered
                 .Select(x => x.Instance as IPlugin)
                 .Where(x => x != null)
