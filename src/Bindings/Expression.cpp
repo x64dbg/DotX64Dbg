@@ -5,14 +5,14 @@
 
 #include <msclr/marshal.h>
 
+using namespace System;
+using namespace System::Runtime::InteropServices;
+
 namespace Dotx64Dbg
 {
-    using namespace System::Runtime::InteropServices;
-
     public ref class Expression
     {
     public:
-
         /// <summary>
         /// Evaluates the given expression and results the evaluated value.
         /// </summary>
@@ -104,6 +104,20 @@ namespace Dotx64Dbg
             }
 
             return gcnew System::String(buf);
+        }
+
+        /// <summary>
+        /// Checks if the provided expression is valid.
+        /// </summary>
+        /// <param name="expr">Expression to validate</param>
+        /// <returns>True if the expression is valid, false in case of errors</returns>
+        static bool IsValidExpression(System::String^ expr)
+        {
+            msclr::interop::marshal_context oMarshalContext;
+
+            const char* cstr = oMarshalContext.marshal_as<const char*>(expr);
+
+            return DbgIsValidExpression(cstr);
         }
     };
 }

@@ -11,6 +11,7 @@
     <ClCompile Include="Decoder.cpp" />
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="Expression.cpp" />
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Instruction.hpp" />

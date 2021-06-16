@@ -16,7 +16,8 @@ namespace Dotx64Dbg::Native
 
         static void Run()
         {
-            Script::Debug::Run();
+            //Script::Debug::Run();
+            DbgCmdExec("run");
         }
 
         static void Pause()
@@ -26,22 +27,26 @@ namespace Dotx64Dbg::Native
 
         static void Stop()
         {
-            Script::Debug::Stop();
+            //Script::Debug::Stop();
+            DbgCmdExec("stop");
         }
 
         static void StepIn()
         {
-            Script::Debug::StepIn();
+            //Script::Debug::StepIn();
+            DbgCmdExec("sti");
         }
 
         static void StepOver()
         {
-            Script::Debug::StepOver();
+            //Script::Debug::StepOver();
+            DbgCmdExec("sto");
         }
 
         static void StepOut()
         {
-            Script::Debug::StepOut();
+            //Script::Debug::StepOut();
+            DbgCmdExec("rtr");
         }
 
         static bool IsActive()

@@ -28,4 +28,16 @@ public partial class MyPlugin
         Console.WriteLine("Oh no");
         return false; // Indicates failure.
     }
+
+    [Command("Selection")]
+    void PrintSelection(string[] args)
+    {
+        var sel = Dotx64Dbg.UI.Disassembly.GetSelection();
+        if (sel == null)
+        {
+            Console.WriteLine("No selection");
+            return;
+        }
+        Console.WriteLine($"Selection Start: {sel.Start:X}, End: {sel.End:X}");
+    }
 }

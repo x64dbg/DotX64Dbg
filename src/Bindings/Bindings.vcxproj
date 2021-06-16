@@ -169,6 +169,7 @@
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Plugin.cpp" />
     <ClCompile Include="Thread.cpp" />
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Instruction.hpp" />

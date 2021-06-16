@@ -1,4 +1,6 @@
-﻿namespace Dotx64Dbg
+﻿using System.Threading.Tasks;
+
+namespace Dotx64Dbg
 {
     /// <summary>
     /// A class to control the debugger.
@@ -14,15 +16,25 @@
         /// Waits for the debugger to be paused.
         /// The function will not return before the debugger paused.
         /// </summary>
-        public static void Wait()
+        public static async Task Wait()
         {
-            Native.Debugger.Wait();
+            var t = Task.Run(delegate ()
+            {
+                Native.Debugger.Wait();
+            });
+            await t;
         }
 
         /// <summary>
         /// Signals the debugger to resume all execution in the debug process, returns immediately.
         /// </summary>
         public static void Run()
+        {
+            Native.Debugger.Run();
+            Native.Debugger.Wait();
+        }
+
+        public static void RunAsync()
         {
             Native.Debugger.Run();
         }
@@ -49,6 +61,12 @@
         public static void StepIn()
         {
             Native.Debugger.StepIn();
+            Native.Debugger.Wait();
+        }
+
+        public static void StepInAsync()
+        {
+            Native.Debugger.StepIn();
         }
 
         /// <summary>
@@ -57,12 +75,23 @@
         public static void StepOver()
         {
             Native.Debugger.StepOver();
+            Native.Debugger.Wait();
+        }
+        public static void StepOverAsync()
+        {
+            Native.Debugger.StepOver();
         }
 
         /// <summary>
         /// Signals the debugger to step out, returns immediately.
         /// </summary>
         public static void StepOut()
+        {
+            Native.Debugger.StepOut();
+            Native.Debugger.Wait();
+        }
+
+        public static void StepOutAsync()
         {
             Native.Debugger.StepOut();
         }
