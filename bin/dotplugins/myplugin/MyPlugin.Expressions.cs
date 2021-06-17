@@ -1,10 +1,17 @@
 using Dotx64Dbg;
+using System;
 
 public partial class MyPlugin
 {
     [Expression("expr_no_input")]
     public nuint MyExpr1()
     {
+        var th = Thread.Active;
+        if (th != null)
+            return (nuint)th.Rip;
+        else
+            Console.WriteLine("No active thread");
+
         return 0;
 
     }

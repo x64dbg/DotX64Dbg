@@ -177,7 +177,7 @@ namespace Dotx64Dbg
 
         internal static bool Remove(string name)
         {
-            if (Registered.ContainsKey(name))
+            if (!Registered.ContainsKey(name))
             {
                 return false;
             }

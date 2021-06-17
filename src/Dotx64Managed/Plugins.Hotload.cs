@@ -201,25 +201,6 @@ namespace Dotx64Dbg
             processed.Add(obj);
 
             var instType = obj.GetType();
-            var funcs = instType.GetRuntimeMethods();
-
-            /*
-            foreach (var fn in funcs)
-            {
-                var attribs = fn.GetCustomAttributes();
-                foreach (var attrib in attribs)
-                {
-                    if (attrib is Command cmd)
-                    {
-                        Commands.Remove(cmd.Name);
-                    }
-                    if (attrib is Expression expr)
-                    {
-                        Expressions.Remove(expr.Name);
-                    }
-                }
-            }
-            */
 
             var fields = instType.GetRuntimeFields();
             foreach (var field in fields)
