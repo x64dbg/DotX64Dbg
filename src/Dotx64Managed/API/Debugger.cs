@@ -16,13 +16,9 @@ namespace Dotx64Dbg
         /// Waits for the debugger to be paused.
         /// The function will not return before the debugger paused.
         /// </summary>
-        public static async Task Wait()
+        public static void WaitForPause()
         {
-            var t = Task.Run(delegate ()
-            {
-                Native.Debugger.Wait();
-            });
-            await t;
+            Native.Debugger.Wait();
         }
 
         /// <summary>
@@ -31,12 +27,12 @@ namespace Dotx64Dbg
         public static void Run()
         {
             Native.Debugger.Run();
-            Native.Debugger.Wait();
         }
 
         public static void RunAsync()
         {
-            Native.Debugger.Run();
+            //Native.Debugger.Run();
+            Debugger.RunCommandAsync("run");
         }
 
         /// <summary>
@@ -61,12 +57,11 @@ namespace Dotx64Dbg
         public static void StepIn()
         {
             Native.Debugger.StepIn();
-            Native.Debugger.Wait();
         }
 
         public static void StepInAsync()
         {
-            Native.Debugger.StepIn();
+            Debugger.RunCommandAsync("sti");
         }
 
         /// <summary>
@@ -75,11 +70,11 @@ namespace Dotx64Dbg
         public static void StepOver()
         {
             Native.Debugger.StepOver();
-            Native.Debugger.Wait();
         }
+
         public static void StepOverAsync()
         {
-            Native.Debugger.StepOver();
+            Debugger.RunCommandAsync("sto");
         }
 
         /// <summary>
@@ -88,12 +83,11 @@ namespace Dotx64Dbg
         public static void StepOut()
         {
             Native.Debugger.StepOut();
-            Native.Debugger.Wait();
         }
 
         public static void StepOutAsync()
         {
-            Native.Debugger.StepOut();
+            Debugger.RunCommandAsync("rtr");
         }
 
         /// <summary>

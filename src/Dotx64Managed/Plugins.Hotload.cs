@@ -8,46 +8,6 @@ using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
-    internal class LoaderContext : AssemblyLoadContext
-    {
-        public Assembly Current;
-
-        public LoaderContext()
-            : base(true)
-        {
-        }
-
-        protected override Assembly Load(AssemblyName assemblyName)
-        {
-#if DEBUG
-            Console.WriteLine("LoaderContext.Load({0})", assemblyName.Name);
-#endif
-            return Assembly.Load(assemblyName);
-        }
-
-        public Assembly LoadFromFile(string path)
-        {
-            Current = LoadFromAssemblyPath(path);
-            return Current;
-        }
-
-        public bool UnloadCurrent()
-        {
-            if (Current == null)
-                return false;
-
-            Unload();
-            Current = null;
-
-            return true;
-        }
-
-        public bool IsLoaded()
-        {
-            return Current != null;
-        }
-    }
-
     class TransitionContext : IDisposable
     {
         Dictionary<object, object> ReferenceMap = new();
@@ -175,7 +135,7 @@ namespace Dotx64Dbg
             foreach (var newField in fields)
             {
 #if DEBUG
-                Console.WriteLine("Runtime: {0}", newField.Name);
+                Console.WriteLine("[DEBUG] Runtime: {0}", newField.Name);
 #endif
                 var oldField = oldType.GetRuntimeFields().FirstOrDefault(a => a.Name == newField.Name);
                 if (oldField != null)
@@ -381,14 +341,14 @@ namespace Dotx64Dbg
             {
                 UnloadPluginInstance(plugin);
 
-                var loader = new LoaderContext();
+                var loader = new AssemblyLoader();
                 var newAssembly = loader.LoadFromFile(newAssemblyPath);
 
                 var pluginClass = GetPluginClass(newAssembly);
                 if (pluginClass != null)
                 {
 #if DEBUG
-                    Console.WriteLine("Entry class: {0}", pluginClass.Name);
+                    Console.WriteLine("[DEBUG] Entry class: {0}", pluginClass.Name);
 #endif
                 }
 

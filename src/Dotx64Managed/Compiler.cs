@@ -29,7 +29,7 @@ namespace Dotx64Dbg
             Name = name;
         }
 
-        private List<SyntaxTree> ParseCode(string[] files)
+        private List<SyntaxTree> ParseCode(string[] files, bool forScripting)
         {
             List<SyntaxTree> parsed = new();
 
@@ -38,19 +38,26 @@ namespace Dotx64Dbg
                 if (!file.EndsWith(".cs"))
                     continue;
 
-                var parsedFile = ParseFile(file);
+                var parsedFile = ParseFile(file, forScripting);
                 parsed.Add(parsedFile);
             }
 
             return parsed;
         }
 
-        public Result Compile(string[] files)
+        public Result Compile(string[] files, bool forScripting = false)
         {
             try
             {
-                var parsed = ParseCode(files);
-                return Compile(parsed);
+                var parsed = ParseCode(files, forScripting);
+                if (parsed.Count == 0)
+                {
+                    return new Result()
+                    {
+                        success = false
+                    };
+                }
+                return Compile(parsed, false);
             }
             catch (System.Exception ex)
             {
@@ -60,7 +67,7 @@ namespace Dotx64Dbg
             return new Result();
         }
 
-        private Result Compile(List<SyntaxTree> parsed)
+        private Result Compile(List<SyntaxTree> parsed, bool forScripting = false)
         {
             var references = new List<MetadataReference>
             {
@@ -87,7 +94,7 @@ namespace Dotx64Dbg
             var assemblyPath = Path.Combine(OutputPath, Name + guid + ".dll");
             var debugFilePath = Path.Combine(OutputPath, Name + guid + ".pdb");
 
-            var options = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+            var options = new CSharpCompilationOptions(forScripting ? OutputKind.ConsoleApplication : OutputKind.DynamicallyLinkedLibrary)
                 .WithOptimizationLevel(OptimizationLevel.Debug)
                 .WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default)
 #if _X86_
@@ -136,7 +143,7 @@ namespace Dotx64Dbg
             return new Result();
         }
 
-        private SyntaxTree ParseFile(string file)
+        private SyntaxTree ParseFile(string file, bool forScripting)
         {
             var encoding = Encoding.UTF8;
 
@@ -152,6 +159,7 @@ namespace Dotx64Dbg
             var options = CSharpParseOptions.Default
                 .WithLanguageVersion(LanguageVersion.CSharp9)
                 .WithPreprocessorSymbols(preprocessorSymbols.ToArray())
+                .WithKind(forScripting ? SourceCodeKind.Script : SourceCodeKind.Regular)
                 ;
             var parsedTree = SyntaxFactory.ParseSyntaxTree(codeString, options, file);
 

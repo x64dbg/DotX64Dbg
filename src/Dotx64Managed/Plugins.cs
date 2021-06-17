@@ -24,7 +24,7 @@ namespace Dotx64Dbg
         public string BuildOutputPath;
         public List<string> SourceFiles;
         public bool RequiresRebuild;
-        internal LoaderContext Loader;
+        internal AssemblyLoader Loader;
         internal string AssemblyPath;
         internal object Instance;
         internal Type InstanceType;
@@ -78,7 +78,7 @@ namespace Dotx64Dbg
             }
         }
 
-        public void Startup()
+        public void Initialize()
         {
             SetupDirectories();
 

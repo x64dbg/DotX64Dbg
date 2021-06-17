@@ -21,6 +21,7 @@ namespace Dotx64Dbg
             Logging.Initialize();
             Commands.Initialize();
             Expressions.Initialize();
+            ScriptLoader.Initialize();
 
             if (!Settings.Load(Path.Combine(Utils.GetRootPath(), "dotx64dbg.json")))
             {
@@ -35,7 +36,7 @@ namespace Dotx64Dbg
             Console.WriteLine("Dotx64Dbg.Managed initialized");
 
             PluginManager = new();
-            PluginManager.Startup();
+            PluginManager.Initialize();
         }
 
         public static void Setup()

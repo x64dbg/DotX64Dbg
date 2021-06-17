@@ -5,7 +5,7 @@ public partial class MyPlugin
 {
     public void OnExceptionEvent(ExceptionEventInfo ev)
     {
-        Utils.PrintFields(ev);
+        //Utils.PrintFields(ev);
     }
 
     public void OnThreadCreateEvent(ThreadCreateEventInfo ev)
@@ -37,29 +37,8 @@ public partial class MyPlugin
         Utils.PrintFields(ev);
     }
 
-    // Bad
     public void OnBreakpointEvent(BreakpointEventInfo ev)
     {
-        Utils.PrintFields(ev);
-        if (ev.Type == Breakpoints.Type.System)
-        {
-            Console.WriteLine("Resuming process");
-
-            Debugger.RunCommandAsync("run");
-            Debugger.RunCommand("log test");
-        }
-    }
-
-    // Ok
-    public void OnBreakpointEvent2(BreakpointEventInfo ev)
-    {
-        Utils.PrintFields(ev);
-        if (ev.Type == Breakpoints.Type.System)
-        {
-            Console.WriteLine("Resuming process");
-
-            Debugger.RunCommandAsync("run");
-            Debugger.RunCommandAsync("log test");
-        }
+        //Utils.PrintFields(ev);
     }
 }
