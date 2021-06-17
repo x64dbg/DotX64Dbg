@@ -2,7 +2,7 @@ using System;
 using Dotx64Dbg;
 using static Dotx64Dbg.Scripting;
 
-Dotx64Dbg.UI.UpdatesEnabled = false;
+UI.UpdatesEnabled = false;
 
 for(int i = 0; i < 100; i++)
 {
@@ -14,5 +14,4 @@ for(int i = 0; i < 100; i++)
 	Print($"{Rip:X}");
 }
 
-Dotx64Dbg.UI.UpdatesEnabled = true;
-Dotx64Dbg.UI.Update();
+UI.UpdatesEnabled = true;

@@ -34,5 +34,20 @@ namespace Dotx64Dbg
         {
             Debugger.Run();
         }
+
+        public static void Pause()
+        {
+            Debugger.Pause();
+        }
+
+        public static void Stop()
+        {
+            Debugger.Stop();
+        }
+
+        public static void Skip(int numInstructions = 1)
+        {
+            Debugger.RunCommand($"skip {numInstructions}");
+        }
     }
 }
