@@ -20,6 +20,7 @@ namespace Dotx64Dbg
 
             Logging.Initialize();
             Commands.Initialize();
+            Expressions.Initialize();
 
             if (!Settings.Load(Path.Combine(Utils.GetRootPath(), "dotx64dbg.json")))
             {

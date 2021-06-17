@@ -10,7 +10,7 @@
     <ClCompile Include="Instruction.cpp" />
     <ClCompile Include="Decoder.cpp" />
     <ClCompile Include="Commands.cpp" />
-    <ClCompile Include="Expression.cpp" />
+    <ClCompile Include="Expressions.cpp" />
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@ public partial class MyPlugin
     void MyCommand(string[] args)
     {
         string res;
-        if (Expression.TryFormat("rip = {rip}", out res))
+        if (Expressions.TryFormat("rip = {rip}", out res))
         {
             Console.WriteLine($"Working: {res}");
         }

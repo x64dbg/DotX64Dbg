@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Dotx64Dbg
@@ -35,7 +36,8 @@ namespace Dotx64Dbg
 
         internal struct CommandInfo
         {
-            public Handler handler;
+            public Plugin Plugin;
+            public Handler Handler;
         }
 
         static Dictionary<string, CommandInfo> Registered;
@@ -61,19 +63,21 @@ namespace Dotx64Dbg
                 args[i] = Marshal.PtrToStringAnsi(stringPtr);
             }
 
-            return info.handler(args);
+            return info.Handler(args);
         }
 
-        public static bool Register(string cmd, bool debugOnly, Handler handler)
+        public static bool Register(Plugin Plugin, string cmd, bool debugOnly, Handler handler)
         {
             if (Registered.ContainsKey(cmd))
             {
-                throw new Exception($"Command '{cmd}' already registered");
+                //throw new Exception($"Command '{cmd}' already registered");
+                return false;
             }
 
             CommandInfo info = new()
             {
-                handler = handler
+                Plugin = Plugin,
+                Handler = handler
             };
 
             Registered.Add(cmd, info);
@@ -88,7 +92,8 @@ namespace Dotx64Dbg
         {
             if (!Registered.ContainsKey(cmd))
             {
-                throw new Exception($"Command '{cmd}' not registered");
+                //throw new Exception($"Command '{cmd}' not registered");
+                return false;
             }
 
             Registered.Remove(cmd);
@@ -109,6 +114,19 @@ namespace Dotx64Dbg
             Registered.Clear();
 
             return res;
+        }
+
+        public static bool RemoveAllFor(Plugin plugin)
+        {
+            Registered.Where(x => x.Value.Plugin == plugin)
+                .Select(x => x.Key)
+                .ToList()
+                .ForEach(name =>
+            {
+                Remove(name);
+            });
+
+            return true;
         }
 
     }

@@ -203,6 +203,7 @@ namespace Dotx64Dbg
             var instType = obj.GetType();
             var funcs = instType.GetRuntimeMethods();
 
+            /*
             foreach (var fn in funcs)
             {
                 var attribs = fn.GetCustomAttributes();
@@ -212,8 +213,13 @@ namespace Dotx64Dbg
                     {
                         Commands.Remove(cmd.Name);
                     }
+                    if (attrib is Expression expr)
+                    {
+                        Expressions.Remove(expr.Name);
+                    }
                 }
             }
+            */
 
             var fields = instType.GetRuntimeFields();
             foreach (var field in fields)
@@ -253,9 +259,12 @@ namespace Dotx64Dbg
                 return;
 
             UnloadPluginInstanceRecursive(plugin, plugin.Instance, new());
+
+            Commands.RemoveAllFor(plugin);
+            Expressions.RemoveAllFor(plugin);
         }
 
-        void RegisterPluginCommand(MethodInfo fn, Command cmd, object obj)
+        void RegisterPluginCommand(Plugin plugin, MethodInfo fn, Command cmd, object obj)
         {
             Commands.Handler cb = null;
 
@@ -272,7 +281,45 @@ namespace Dotx64Dbg
             {
                 cb = fn.CreateDelegate<Commands.Handler>(obj);
             }
-            Commands.Register(cmd.Name, cmd.DebugOnly, cb);
+            Commands.Register(plugin, cmd.Name, cmd.DebugOnly, cb);
+        }
+
+        void RegisterExpression(Plugin plugin, MethodInfo fn, Expression expr, object obj)
+        {
+            if (fn.ReturnType != typeof(nuint))
+            {
+                throw new Exception($"Expression functions must return 'nuint', Function: {fn.Name}");
+            }
+
+            var args = fn.GetParameters();
+            foreach (var arg in args)
+            {
+                if (arg.ParameterType != typeof(nuint))
+                {
+                    throw new Exception($"Expression arguments must be 'nuint', Function: {fn.Name}");
+                }
+            }
+
+            if (args.Length == 0)
+            {
+                var cb = fn.CreateDelegate<Expressions.ExpressionFunc0>(obj);
+                Expressions.Register(plugin, expr.Name, cb);
+            }
+            else if (args.Length == 1)
+            {
+                var cb = fn.CreateDelegate<Expressions.ExpressionFunc1>(obj);
+                Expressions.Register(plugin, expr.Name, cb);
+            }
+            else if (args.Length == 2)
+            {
+                var cb = fn.CreateDelegate<Expressions.ExpressionFunc2>(obj);
+                Expressions.Register(plugin, expr.Name, cb);
+            }
+            else if (args.Length == 3)
+            {
+                var cb = fn.CreateDelegate<Expressions.ExpressionFunc3>(obj);
+                Expressions.Register(plugin, expr.Name, cb);
+            }
         }
 
         void LoadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
@@ -289,7 +336,11 @@ namespace Dotx64Dbg
                 {
                     if (attrib is Command cmd)
                     {
-                        RegisterPluginCommand(fn, cmd, obj);
+                        RegisterPluginCommand(plugin, fn, cmd, obj);
+                    }
+                    else if (attrib is Expression expr)
+                    {
+                        RegisterExpression(plugin, fn, expr, obj);
                     }
                 }
             }
@@ -345,10 +396,10 @@ namespace Dotx64Dbg
             var isReload = plugin.Instance != null;
             Console.WriteLine($"{(isReload ? "Reloading" : "Loading")} '{plugin.Info.Name}'");
 
-            UnloadPluginInstance(plugin);
-
             try
             {
+                UnloadPluginInstance(plugin);
+
                 var loader = new LoaderContext();
                 var newAssembly = loader.LoadFromFile(newAssemblyPath);
 
@@ -461,14 +512,14 @@ namespace Dotx64Dbg
 
                 plugin.Loader = loader;
                 plugin.AssemblyPath = newAssemblyPath;
+
+                LoadPluginInstance(plugin);
             }
             catch (System.Exception ex)
             {
                 Console.WriteLine("Exception: {0}", ex.ToString());
                 return;
             }
-
-            LoadPluginInstance(plugin);
 
             Console.WriteLine($"{(isReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
         }

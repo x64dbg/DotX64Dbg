@@ -163,7 +163,7 @@
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="Debugger.cpp" />
     <ClCompile Include="Decoder.cpp" />
-    <ClCompile Include="Expression.cpp" />
+    <ClCompile Include="Expressions.cpp" />
     <ClCompile Include="Instruction.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Memory.cpp" />

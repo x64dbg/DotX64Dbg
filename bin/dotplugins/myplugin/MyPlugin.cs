@@ -33,14 +33,8 @@ public partial class MyPlugin : IPlugin, IHotload
     // the constructor and only once the for the initial plugin load.
     public void Startup()
     {
-        var test = new NestedClass();
-        test.TestFunc();
-
         // Writes to x64Dbg log.
         Console.WriteLine("Sheaaeeet, wuasaaa");
-
-        TestList.Add(12);
-        TestList.Add(13);
     }
 
     // Called whenever code changes are hot-loaded.

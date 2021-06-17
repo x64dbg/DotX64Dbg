@@ -8,23 +8,13 @@
 using namespace System;
 using namespace System::Runtime::InteropServices;
 
-namespace Dotx64Dbg
+namespace Dotx64Dbg::Native
 {
-    public ref class Expression
+    public delegate System::UIntPtr ExpressionHandler(int argc, System::IntPtr, System::IntPtr);
+
+    public ref class Expressions
     {
     public:
-        /// <summary>
-        /// Evaluates the given expression and results the evaluated value.
-        /// </summary>
-        /// <param name="expr">Expression</param>
-        /// <param name="value">Resulting value</param>
-        /// <returns>True on success, false in case of errors</returns>
-        /// <example>
-        /// <code>
-        /// ulong val = 0;
-        /// if(Expression.TryEvaluate("rip", val)) { Console.WriteLine("Value of rip {0}", val); }
-        /// </code>
-        /// </example>
         static bool TryEvaluate(System::String^ expr, [Out] uint64_t% value)
         {
             msclr::interop::marshal_context oMarshalContext;
@@ -38,10 +28,6 @@ namespace Dotx64Dbg
             return res;
         }
 
-        /// <summary>
-        /// Same as TryEvaluate except the function throws if the expression is invalid.
-        /// </summary>
-        /// <see cref="TryEvaluate"/>
         static uint64_t Evaluate(System::String^ expr)
         {
             uint64_t res = 0;
@@ -52,19 +38,6 @@ namespace Dotx64Dbg
             return res;
         }
 
-
-        /// <summary>
-        /// Formats the given the expression and results the formatted string.
-        /// </summary>
-        /// <param name="expr">Expression to format</param>
-        /// <param name="value">Resulting formatted expression</param>
-        /// <returns>True on success, false in case of any errors</returns>
-        /// <example>
-        /// <code>
-        /// string formatted;
-        /// if(Expression.TryFormat("rip = {rip}", formatted)) { Console.WriteLine("Formatted: {0}", formatted); }
-        /// </code>
-        /// </example>
         static bool TryFormat(System::String^ expr, [Out] System::String^% value)
         {
             if (!DbgFunctions()->StringFormatInline)
@@ -84,10 +57,6 @@ namespace Dotx64Dbg
             return true;
         }
 
-        /// <summary>
-        /// Same as TryFormat except the function throws if the expression is invalid.
-        /// </summary>
-        /// <see cref="TryFormat"/>
         static System::String^ Format(System::String^ expr)
         {
             if (!DbgFunctions()->StringFormatInline)
@@ -106,11 +75,6 @@ namespace Dotx64Dbg
             return gcnew System::String(buf);
         }
 
-        /// <summary>
-        /// Checks if the provided expression is valid.
-        /// </summary>
-        /// <param name="expr">Expression to validate</param>
-        /// <returns>True if the expression is valid, false in case of errors</returns>
         static bool IsValidExpression(System::String^ expr)
         {
             msclr::interop::marshal_context oMarshalContext;
@@ -119,5 +83,29 @@ namespace Dotx64Dbg
 
             return DbgIsValidExpression(cstr);
         }
+
+        static bool RegisterExpression(int pluginHandle, System::String^ name, int argc, ExpressionHandler^ cb)
+        {
+            GCHandle gcCb = GCHandle::Alloc(cb);
+
+            IntPtr ip = Marshal::GetFunctionPointerForDelegate(cb);
+            auto* fn = static_cast<CBPLUGINEXPRFUNCTION>(ip.ToPointer());
+
+            msclr::interop::marshal_context oMarshalContext;
+
+            const char* cstr = oMarshalContext.marshal_as<const char*>(name);
+            return _plugin_registerexprfunction(pluginHandle, cstr, argc, fn, nullptr);
+        }
+
+        static bool UnregisterExpression(int pluginHandle, System::String^ name)
+        {
+            msclr::interop::marshal_context oMarshalContext;
+
+            const char* cstr = oMarshalContext.marshal_as<const char*>(name);
+
+            return _plugin_unregisterexprfunction(pluginHandle, cstr);
+        }
+
     };
+
 }
