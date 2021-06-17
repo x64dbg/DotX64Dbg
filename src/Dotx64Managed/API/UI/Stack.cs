@@ -12,17 +12,17 @@ namespace Dotx64Dbg
             /// <returns>Selection</returns>
             public static Selection GetSelection()
             {
-                return Selection.FromNative(NativeUI.UI.GetSelection((NativeUI.WindowType)WndType));
+                return Selection.FromNative(Native.UI.GetSelection((Native.UI.WindowType)WndType));
             }
 
             public static bool SetSelection(Selection selection)
             {
-                return NativeUI.UI.SetSelection((NativeUI.WindowType)WndType, selection.ToNative());
+                return Native.UI.SetSelection((Native.UI.WindowType)WndType, selection.ToNative());
             }
 
             public static void Update()
             {
-                NativeUI.UI.Update((NativeUI.WindowType)WndType);
+                Native.UI.Update((Native.UI.WindowType)WndType);
             }
         }
     }

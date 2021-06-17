@@ -11,12 +11,12 @@ namespace Dotx64Dbg
     {
         public enum WindowType
         {
-            Disassembly = NativeUI.WindowType.Disassembly,
-            Dump = NativeUI.WindowType.Dump,
-            Stack = NativeUI.WindowType.Stack,
-            Graph = NativeUI.WindowType.Graph,
-            MemoryMap = NativeUI.WindowType.MemoryMap,
-            SymbolModule = NativeUI.WindowType.SymbolModule,
+            Disassembly = Native.UI.WindowType.Disassembly,
+            Dump = Native.UI.WindowType.Dump,
+            Stack = Native.UI.WindowType.Stack,
+            Graph = Native.UI.WindowType.Graph,
+            MemoryMap = Native.UI.WindowType.MemoryMap,
+            SymbolModule = Native.UI.WindowType.SymbolModule,
         };
 
         public class Selection
@@ -25,22 +25,22 @@ namespace Dotx64Dbg
 
             public Selection(ulong start, ulong end) { Start = start; End = end; }
 
-            internal Selection(NativeUI.Selection sel)
+            internal Selection(Native.UI.Selection sel)
             {
                 Start = sel.Start;
                 End = sel.End;
             }
 
-            internal static Selection FromNative(NativeUI.Selection sel)
+            internal static Selection FromNative(Native.UI.Selection sel)
             {
                 if (sel == null)
                     return null;
                 return new Selection() { Start = sel.Start, End = sel.End };
             }
 
-            internal NativeUI.Selection ToNative()
+            internal Native.UI.Selection ToNative()
             {
-                return new NativeUI.Selection()
+                return new Native.UI.Selection()
                 {
                     Start = this.Start,
                     End = this.End,
@@ -69,18 +69,18 @@ namespace Dotx64Dbg
         {
             get
             {
-                return NativeUI.UI.UpdatesEnabled();
+                return Native.UI.UpdatesEnabled();
             }
 
             set
             {
-                NativeUI.UI.EnableUpdates(value);
+                Native.UI.EnableUpdates(value);
             }
         }
 
         public static void Update()
         {
-            NativeUI.UI.Update();
+            Native.UI.Update();
         }
     }
 }

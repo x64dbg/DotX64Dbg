@@ -9,7 +9,7 @@ namespace Dotx64Dbg
             /// </summary>
             public static void Clear()
             {
-                NativeUI.UI.ClearLog();
+                Native.UI.ClearLog();
             }
         }
     }

@@ -4,53 +4,51 @@
 using namespace System;
 using namespace System::Runtime::InteropServices;
 
-namespace Dotx64Dbg::NativeUI
-{
-    /// <summary>
-    /// Selection holds the start and end address of the selected elements in a window.
-    /// </summary>
-    public ref class Selection
-    {
-    public:
-        /// <summary>
-        /// Start address of the selection.
-        /// </summary>
-        duint Start;
-
-        /// <summary>
-        /// End address of the selection.
-        /// </summary>
-        duint End;
-
-        /// <summary>
-        /// The size of the selection, End - Start.
-        /// </summary>
-        property duint Size
-        {
-            duint get()
-            {
-                return End - Start;
-            }
-        }
-    };
-
-    public enum class WindowType
-    {
-        Disassembly = GUI_DISASSEMBLY,
-        Dump = GUI_DUMP,
-        Stack = GUI_STACK,
-        Graph = GUI_GRAPH,
-        MemoryMap = GUI_MEMMAP,
-        SymbolModule = GUI_SYMMOD,
-    };
-}
-
-namespace Dotx64Dbg::NativeUI
+namespace Dotx64Dbg::Native
 {
     public ref class UI
     {
     public:
-        static Dotx64Dbg::NativeUI::Selection^ GetSelection(Dotx64Dbg::NativeUI::WindowType wndType)
+        /// <summary>
+        /// Selection holds the start and end address of the selected elements in a window.
+        /// </summary>
+        ref class Selection
+        {
+        public:
+            /// <summary>
+            /// Start address of the selection.
+            /// </summary>
+            duint Start;
+
+            /// <summary>
+            /// End address of the selection.
+            /// </summary>
+            duint End;
+
+            /// <summary>
+            /// The size of the selection, End - Start.
+            /// </summary>
+            property duint Size
+            {
+                duint get()
+                {
+                    return End - Start;
+                }
+            }
+        };
+
+        enum class WindowType
+        {
+            Disassembly = GUI_DISASSEMBLY,
+            Dump = GUI_DUMP,
+            Stack = GUI_STACK,
+            Graph = GUI_GRAPH,
+            MemoryMap = GUI_MEMMAP,
+            SymbolModule = GUI_SYMMOD,
+        };
+
+    public:
+        static Selection^ GetSelection(WindowType wndType)
         {
             GUISELECTIONTYPE wndType2 = static_cast<GUISELECTIONTYPE>(wndType);
 
@@ -58,7 +56,7 @@ namespace Dotx64Dbg::NativeUI
             if (!GuiSelectionGet(wndType2, &data))
                 return nullptr;
 
-            NativeUI::Selection^ res = gcnew NativeUI::Selection();
+            Selection^ res = gcnew Selection();
             res->Start = data.start;
             // NOTE: This is always off by 1, long term bug that wont be fixed for compatibility
             // reasons.
@@ -67,7 +65,7 @@ namespace Dotx64Dbg::NativeUI
             return res;
         }
 
-        static bool SetSelection(Dotx64Dbg::NativeUI::WindowType wndType, Dotx64Dbg::NativeUI::Selection^ sel)
+        static bool SetSelection(WindowType wndType, Selection^ sel)
         {
             if (sel == nullptr)
                 return false;
@@ -85,26 +83,26 @@ namespace Dotx64Dbg::NativeUI
             GuiUpdateAllViews();
         }
 
-        static void Update(Dotx64Dbg::NativeUI::WindowType wndType)
+        static void Update(WindowType wndType)
         {
             switch (wndType)
             {
-            case Dotx64Dbg::NativeUI::WindowType::Disassembly:
+            case WindowType::Disassembly:
                 GuiUpdateDisassemblyView();
                 break;
-            case Dotx64Dbg::NativeUI::WindowType::Dump:
+            case WindowType::Dump:
                 GuiUpdateDumpView();
                 break;
-            case Dotx64Dbg::NativeUI::WindowType::Stack:
+            case WindowType::Stack:
                 GuiUpdateCallStack();
                 break;
-            case Dotx64Dbg::NativeUI::WindowType::Graph:
+            case WindowType::Graph:
                 GuiUpdateGraphView();
                 break;
-            case Dotx64Dbg::NativeUI::WindowType::MemoryMap:
+            case WindowType::MemoryMap:
                 GuiUpdateMemoryView();
                 break;
-            case Dotx64Dbg::NativeUI::WindowType::SymbolModule:
+            case WindowType::SymbolModule:
                 GuiUpdateAllViews();
                 break;
             default:
@@ -119,8 +117,8 @@ namespace Dotx64Dbg::NativeUI
 
         static void EnableUpdates(bool enabled)
         {
-            if (enabled == true)
-                GuiUpdateEnable(false);
+            if (enabled)
+                GuiUpdateEnable(true);
             else
                 GuiUpdateDisable();
         }
