@@ -1,13 +1,16 @@
-namespace Dotx64Dbg.UI
+namespace Dotx64Dbg
 {
-    public static class Log
+    public static partial class UI
     {
-        /// <summary>
-        /// Clears log window.
-        /// </summary>
-        public static void Clear()
+        public static class Log
         {
-            Native.UI.ClearLog();
+            /// <summary>
+            /// Clears log window.
+            /// </summary>
+            public static void Clear()
+            {
+                NativeUI.UI.ClearLog();
+            }
         }
     }
 }

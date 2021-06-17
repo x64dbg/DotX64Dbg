@@ -4,7 +4,7 @@
 using namespace System;
 using namespace System::Runtime::InteropServices;
 
-namespace Dotx64Dbg::UI
+namespace Dotx64Dbg::NativeUI
 {
     /// <summary>
     /// Selection holds the start and end address of the selected elements in a window.
@@ -45,22 +45,20 @@ namespace Dotx64Dbg::UI
     };
 }
 
-namespace Dotx64Dbg::Native
+namespace Dotx64Dbg::NativeUI
 {
     public ref class UI
     {
     public:
-        static Dotx64Dbg::UI::Selection^ GetSelection(Dotx64Dbg::UI::WindowType wndType)
+        static Dotx64Dbg::NativeUI::Selection^ GetSelection(Dotx64Dbg::NativeUI::WindowType wndType)
         {
-            using namespace Dotx64Dbg::UI;
-
             GUISELECTIONTYPE wndType2 = static_cast<GUISELECTIONTYPE>(wndType);
 
             SELECTIONDATA data{};
             if (!GuiSelectionGet(wndType2, &data))
                 return nullptr;
 
-            Selection^ res = gcnew Selection();
+            NativeUI::Selection^ res = gcnew NativeUI::Selection();
             res->Start = data.start;
             // NOTE: This is always off by 1, long term bug that wont be fixed for compatibility
             // reasons.
@@ -69,7 +67,7 @@ namespace Dotx64Dbg::Native
             return res;
         }
 
-        static bool SetSelection(Dotx64Dbg::UI::WindowType wndType, Dotx64Dbg::UI::Selection^ sel)
+        static bool SetSelection(Dotx64Dbg::NativeUI::WindowType wndType, Dotx64Dbg::NativeUI::Selection^ sel)
         {
             if (sel == nullptr)
                 return false;
@@ -82,26 +80,31 @@ namespace Dotx64Dbg::Native
             return GuiSelectionSet(wndType2, &data);
         }
 
-        static void Update(Dotx64Dbg::UI::WindowType wndType)
+        static void Update()
+        {
+            GuiUpdateAllViews();
+        }
+
+        static void Update(Dotx64Dbg::NativeUI::WindowType wndType)
         {
             switch (wndType)
             {
-            case Dotx64Dbg::UI::WindowType::Disassembly:
+            case Dotx64Dbg::NativeUI::WindowType::Disassembly:
                 GuiUpdateDisassemblyView();
                 break;
-            case Dotx64Dbg::UI::WindowType::Dump:
+            case Dotx64Dbg::NativeUI::WindowType::Dump:
                 GuiUpdateDumpView();
                 break;
-            case Dotx64Dbg::UI::WindowType::Stack:
+            case Dotx64Dbg::NativeUI::WindowType::Stack:
                 GuiUpdateCallStack();
                 break;
-            case Dotx64Dbg::UI::WindowType::Graph:
+            case Dotx64Dbg::NativeUI::WindowType::Graph:
                 GuiUpdateGraphView();
                 break;
-            case Dotx64Dbg::UI::WindowType::MemoryMap:
+            case Dotx64Dbg::NativeUI::WindowType::MemoryMap:
                 GuiUpdateMemoryView();
                 break;
-            case Dotx64Dbg::UI::WindowType::SymbolModule:
+            case Dotx64Dbg::NativeUI::WindowType::SymbolModule:
                 GuiUpdateAllViews();
                 break;
             default:

@@ -11,7 +11,7 @@ namespace Dotx64Dbg
 {
     internal class ScriptLoader
     {
-        static string PluginOutputPath;
+        static string ScriptBuildOutputPath;
         static Task ActiveScript;
 
         private static bool RunScriptCommand(string[] args)
@@ -33,16 +33,17 @@ namespace Dotx64Dbg
                 Directory.CreateDirectory(AppDataPath);
             }
 
-            PluginOutputPath = Path.Combine(AppDataPath, "Scripts");
-            if (!Directory.Exists(PluginOutputPath))
+            ScriptBuildOutputPath = Path.Combine(AppDataPath, "Scripts");
+            if (!Directory.Exists(ScriptBuildOutputPath))
             {
-                Directory.CreateDirectory(PluginOutputPath);
+                Directory.CreateDirectory(ScriptBuildOutputPath);
             }
         }
 
         public static void Initialize()
         {
             SetupDirectories();
+            CleanupJunk();
 
             Commands.Register(null, "dotscript", false, RunScriptCommand);
         }
@@ -56,6 +57,20 @@ namespace Dotx64Dbg
                 throw new Exception("Assembly has no Script entry.");
             }
             return entries.First();
+        }
+
+        private static void CleanupJunk()
+        {
+            foreach (var file in Directory.GetFiles(ScriptBuildOutputPath))
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
 
         public static bool ExecuteScript(string assemblyFile)
@@ -93,7 +108,11 @@ namespace Dotx64Dbg
                 {
                     Console.WriteLine($"Exception: {ex}");
                 }
+
                 ActiveScript = null;
+
+                GC.Collect();
+                CleanupJunk();
             });
 
             return false;
@@ -108,7 +127,7 @@ namespace Dotx64Dbg
             Console.WriteLine("Building script '{0}'...", file);
             stopwatch.Start();
 
-            var compiler = new Compiler(PluginOutputPath, scriptName);
+            var compiler = new Compiler(ScriptBuildOutputPath, scriptName);
 
             var res = compiler.Compile(new string[] { file }, true);
             stopwatch.Stop();

@@ -1,26 +1,29 @@
-namespace Dotx64Dbg.UI
+namespace Dotx64Dbg
 {
-    public static class Dump
+    public static partial class UI
     {
-        internal static WindowType WndType = WindowType.Dump;
-
-        /// <summary>
-        /// Returns the selected range from the dump.
-        /// </summary>
-        /// <returns>Selection</returns>
-        public static Selection GetSelection()
+        public static class Dump
         {
-            return Native.UI.GetSelection(WndType);
-        }
+            internal static WindowType WndType = WindowType.Dump;
 
-        public static bool SetSelection(Selection selection)
-        {
-            return Native.UI.SetSelection(WndType, selection);
-        }
+            /// <summary>
+            /// Returns the selected range from the dump.
+            /// </summary>
+            /// <returns>Selection</returns>
+            public static Selection GetSelection()
+            {
+                return Selection.FromNative(NativeUI.UI.GetSelection((NativeUI.WindowType)WndType));
+            }
 
-        public static void Update()
-        {
-            Native.UI.Update(WndType);
+            public static bool SetSelection(Selection selection)
+            {
+                return NativeUI.UI.SetSelection((NativeUI.WindowType)WndType, selection.ToNative());
+            }
+
+            public static void Update()
+            {
+                NativeUI.UI.Update((NativeUI.WindowType)WndType);
+            }
         }
     }
 }
