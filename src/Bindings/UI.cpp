@@ -18,19 +18,19 @@ namespace Dotx64Dbg::Native
             /// <summary>
             /// Start address of the selection.
             /// </summary>
-            duint Start;
+            uint64_t Start;
 
             /// <summary>
             /// End address of the selection.
             /// </summary>
-            duint End;
+            uint64_t End;
 
             /// <summary>
             /// The size of the selection, End - Start.
             /// </summary>
-            property duint Size
+            property uint64_t Size
             {
-                duint get()
+                uint64_t get()
                 {
                     return End - Start;
                 }
@@ -71,8 +71,8 @@ namespace Dotx64Dbg::Native
                 return false;
 
             SELECTIONDATA data{};
-            data.start = sel->Start;
-            data.end = sel->End;
+            data.start = (duint)sel->Start;
+            data.end = (duint)sel->End;
 
             GUISELECTIONTYPE wndType2 = static_cast<GUISELECTIONTYPE>(wndType);
             return GuiSelectionSet(wndType2, &data);
