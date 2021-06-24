@@ -1,0 +1,76 @@
+name: CI
+on: [pull_request]
+defaults:
+  run:
+    shell: cmd
+jobs:
+  build:
+    name: Windows
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dotnet-version: ['5.0.0']
+        platform: [x86, x64]
+    env:
+      CONFIGURATION: Release
+      PLATFORM: ${{ matrix.platform }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+      - name: Setup Vcpkg
+        uses: lukka/run-vcpkg@v6
+        with:
+          vcpkgGitCommitId: 9d7244f2f6a4f6a34c4e0b3ecbf391323e379a43
+          setupOnly: true
+      # Too lazy to do this the right way.
+      - name: Vcpkg integration
+        run: |
+          %VCPKG_ROOT%/vcpkg integrate install
+      - name: Zydis
+        run: |
+          %VCPKG_ROOT%/vcpkg install zydis:${{ matrix.platform }}-windows-static
+      - name: Nuget dependencies
+        run: |
+          cd src
+          msbuild Dotx64Dbg.sln -t:restore -p:RestorePackagesConfig=true
+          cd ..
+      - name: Build
+        run: |
+          cd src
+          msbuild Dotx64Dbg.sln /p:platform=${{ matrix.platform }}
+          cd ..
+      - name: Upload artifacts (CI)
+        uses: actions/upload-artifact@v2
+        with:
+          name: dotx64Dbg-${{ runner.os }}-${{ matrix.platform }}
+          path: bin
+          if-no-files-found: error
+  package:
+    needs: build
+    name: Package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch artifacts 
+        uses: actions/download-artifact@v2
+        with: 
+          path: artifacts
+      - name: Display structure of downloaded files
+        shell: bash
+        run: ls -R
+        working-directory: artifacts
+      - name: Merge artifacts
+        shell: bash
+        run: |
+          mkdir package
+          cp -R -n ./artifacts/dotx64Dbg-Windows-x64/* ./package/
+          cp -R -n ./artifacts/dotx64Dbg-Windows-x86/* ./package/
+          find ./package -type f -name '*.pdb' -delete
+      - name: Upload package (CI)
+        uses: actions/upload-artifact@v2
+        with:
+          name: dotx64dbg
+          path: package
+          if-no-files-found: error
