@@ -77,8 +77,6 @@ namespace Dotx64Dbg
             }
             else if (newField.FieldType.IsArray)
             {
-                object newValue;
-
                 var elemType = newField.FieldType.GetElementType();
                 if (elemType.IsValueType)
                 {
@@ -91,6 +89,7 @@ namespace Dotx64Dbg
                 else
                 {
                     // TODO: Iterate and swap everything.
+                    object newValue;
                     if (!ctx.GetNewReference(oldValue, out newValue))
                     {
                         newValue = ctx.Create(newField.FieldType);
@@ -140,7 +139,10 @@ namespace Dotx64Dbg
                 var oldField = oldType.GetRuntimeFields().FirstOrDefault(a => a.Name == newField.Name);
                 if (oldField != null)
                 {
-                    AdaptField(ctx, oldInstance, oldField, newInstance, newField);
+                    if (oldField.FieldType == newField.FieldType)
+                    {
+                        AdaptField(ctx, oldInstance, oldField, newInstance, newField);
+                    }
                 }
 
             }
@@ -158,6 +160,9 @@ namespace Dotx64Dbg
 
         void UnloadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
         {
+            if (obj == null)
+                return;
+
             processed.Add(obj);
 
             var instType = obj.GetType();
@@ -265,6 +270,9 @@ namespace Dotx64Dbg
 
         void LoadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
         {
+            if (obj == null)
+                return;
+
             processed.Add(obj);
 
             var instType = obj.GetType();
@@ -456,7 +464,7 @@ namespace Dotx64Dbg
 
                 LoadPluginInstance(plugin);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Exception: {0}", ex.ToString());
                 return;
@@ -464,17 +472,6 @@ namespace Dotx64Dbg
 
             Console.WriteLine($"{(isReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
         }
-
-        IPlugin CreatePluginInstance(Plugin plugin)
-        {
-            return null;
-        }
-
-        void UnloadPlugin(Plugin plugin)
-        {
-
-        }
-
 
     }
 }
