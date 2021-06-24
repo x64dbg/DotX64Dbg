@@ -204,6 +204,9 @@ namespace Dotx64Dbg
             if (plugin.Instance == null)
                 return;
 
+            if (Canceller.IsCancellationRequested)
+                return;
+
             UnloadPluginInstanceRecursive(plugin, plugin.Instance, new());
 
             Commands.RemoveAllFor(plugin);
@@ -212,6 +215,9 @@ namespace Dotx64Dbg
 
         void RegisterPluginCommand(Plugin plugin, MethodInfo fn, Command cmd, object obj)
         {
+            if (Canceller.IsCancellationRequested)
+                return;
+
             Commands.Handler cb = null;
 
             if (fn.ReturnType == typeof(void))
@@ -227,11 +233,16 @@ namespace Dotx64Dbg
             {
                 cb = fn.CreateDelegate<Commands.Handler>(obj);
             }
-            Commands.Register(plugin, cmd.Name, cmd.DebugOnly, cb);
+
+            if (!Canceller.IsCancellationRequested)
+                Commands.Register(plugin, cmd.Name, cmd.DebugOnly, cb);
         }
 
         void RegisterExpression(Plugin plugin, MethodInfo fn, Expression expr, object obj)
         {
+            if (Canceller.IsCancellationRequested)
+                return;
+
             if (fn.ReturnType != typeof(nuint))
             {
                 throw new Exception($"Expression functions must return 'nuint', Function: {fn.Name}");
@@ -270,6 +281,9 @@ namespace Dotx64Dbg
 
         void LoadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
         {
+            if (Canceller.IsCancellationRequested)
+                return;
+
             if (obj == null)
                 return;
 
@@ -334,6 +348,9 @@ namespace Dotx64Dbg
 
         void LoadPluginInstance(Plugin plugin)
         {
+            if (Canceller.IsCancellationRequested)
+                return;
+
             if (plugin.Instance == null)
                 return;
 
@@ -342,6 +359,9 @@ namespace Dotx64Dbg
 
         void ReloadPlugin(Plugin plugin, string newAssemblyPath)
         {
+            if (Canceller.IsCancellationRequested)
+                return;
+
             var isReload = plugin.Instance != null;
             Console.WriteLine($"{(isReload ? "Reloading" : "Loading")} '{plugin.Info.Name}'");
 
@@ -432,6 +452,8 @@ namespace Dotx64Dbg
                         GC.WaitForPendingFinalizers();
                     }
 
+                    Canceller.Token.ThrowIfCancellationRequested();
+
                     Task.Run(async delegate
                     {
                         await Task.Delay(2000);
@@ -469,6 +491,9 @@ namespace Dotx64Dbg
                 Console.WriteLine("Exception: {0}", ex.ToString());
                 return;
             }
+
+            if (Canceller.IsCancellationRequested)
+                return;
 
             Console.WriteLine($"{(isReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
         }

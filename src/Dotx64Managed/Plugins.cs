@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dotx64Dbg
@@ -41,6 +42,7 @@ namespace Dotx64Dbg
         List<Plugin> Registered = new();
         Dictionary<FileSystemWatcher, Plugin> Watches = new();
 
+        CancellationTokenSource Canceller { get; set; }
         Task RebuildTask;
 
         private void SetupDirectories()
@@ -99,6 +101,7 @@ namespace Dotx64Dbg
         {
             if (RebuildTask != null)
             {
+                Canceller.Cancel();
                 RebuildTask.Wait();
             }
         }
@@ -374,14 +377,22 @@ namespace Dotx64Dbg
                 return;
 
             // We delay the rebuilding a bit in case a lot of files are being saved at once.
+            Canceller = new();
             RebuildTask = Task.Run(async delegate
             {
-                if (delayed)
-                    await Task.Delay(500);
+                try
+                {
+                    if (delayed)
+                        await Task.Delay(500, Canceller.Token);
 
-                RebuildPlugins();
-
+                    RebuildPlugins();
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("Rebuild task aborted.");
+                }
                 RebuildTask = null;
+                Canceller = null;
             });
         }
 
