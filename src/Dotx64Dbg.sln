@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Dotx64DbgManagedTests\Tests.csproj", "{DA258F05-6D8A-4A10-B9AC-E01F8249B060}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -46,6 +48,14 @@ Global
 		{5153260B-62B5-41EE-B38C-C611091D4C6C}.Release|x64.Build.0 = Release|x64
 		{5153260B-62B5-41EE-B38C-C611091D4C6C}.Release|x86.ActiveCfg = Release|Win32
 		{5153260B-62B5-41EE-B38C-C611091D4C6C}.Release|x86.Build.0 = Release|Win32
+		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Debug|x64.ActiveCfg = Debug|x64
+		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Debug|x64.Build.0 = Debug|x64
+		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Debug|x86.ActiveCfg = Debug|x86
+		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Debug|x86.Build.0 = Debug|x86
+		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Release|x64.ActiveCfg = Release|x64
+		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Release|x64.Build.0 = Release|x64
+		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Release|x86.ActiveCfg = Release|x86
+		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

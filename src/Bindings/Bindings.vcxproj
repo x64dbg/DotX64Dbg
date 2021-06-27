@@ -117,6 +117,7 @@
     <Link>
       <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(SolutionDir)include;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>x64dbg.dll;x64bridge.dll;TitanEngine.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -130,6 +131,7 @@
     <Link>
       <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(SolutionDir)include;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>x32dbg.dll;x32bridge.dll;TitanEngine.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -143,6 +145,7 @@
     <Link>
       <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(SolutionDir)include;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>x32dbg.dll;x32bridge.dll;TitanEngine.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,6 +159,7 @@
     <Link>
       <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(SolutionDir)include;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>x64dbg.dll;x64bridge.dll;TitanEngine.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -857,7 +857,398 @@ namespace Dotx64Dbg {
         return 0;
     }
 
-    static const char* RegisterGetName(Register id)
+    inline Register RegisterGetRoot(Register id)
+    {
+        switch (id)
+        {
+        case Register::Al:
+        case Register::Ax:
+        case Register::Ah:
+#ifdef _M_AMD64
+            return Register::Rax;
+#else
+            return Register::Eax;
+#endif
+        case Register::Cl:
+        case Register::Cx:
+        case Register::Ch:
+#ifdef _M_AMD64
+            return Register::Rcx;
+#else
+            return Register::Ecx;
+#endif
+        case Register::Dl:
+        case Register::Dx:
+        case Register::Dh:
+#ifdef _M_AMD64
+            return Register::Rdx;
+#else
+            return Register::Edx;
+#endif
+        case Register::Bl:
+        case Register::Bx:
+        case Register::Bh:
+#ifdef _M_AMD64
+            return Register::Rbx;
+#else
+            return Register::Ebx;
+#endif
+        case Register::Sp:
+        case Register::Spl:
+#ifdef _M_AMD64
+            return Register::Rsp;
+#else
+            return Register::Esp;
+#endif
+        case Register::Bpl:
+        case Register::Bp:
+#ifdef _M_AMD64
+            return Register::Rbp;
+#else
+            return Register::Ebp;
+#endif
+        case Register::Si:
+        case Register::Sil:
+#ifdef _M_AMD64
+            return Register::Rsi;
+#else
+            return Register::Esi;
+#endif
+        case Register::Di:
+        case Register::Dil:
+#ifdef _M_AMD64
+            return Register::Rdi;
+#else
+            return Register::Edi;
+#endif
+#ifdef _M_AMD64
+        case Register::R8b:
+        case Register::R8w:
+            return Register::R8;
+        case Register::R9b:
+        case Register::R9w:
+            return Register::R9;
+        case Register::R10b:
+        case Register::R10w:
+            return Register::R10;
+        case Register::R11b:
+        case Register::R11w:
+            return Register::R11;
+        case Register::R12b:
+        case Register::R12w:
+            return Register::R12;
+        case Register::R13b:
+        case Register::R13w:
+            return Register::R13;
+        case Register::R14b:
+        case Register::R14w:
+            return Register::R14;
+        case Register::R15b:
+        case Register::R15w:
+            return Register::R15;
+#endif
+        case Register::Eax:
+#ifdef _M_AMD64
+            return Register::Rax;
+#endif
+        case Register::Ecx:
+#ifdef _M_AMD64
+            return Register::Rcx;
+#endif
+        case Register::Edx:
+#ifdef _M_AMD64
+            return Register::Rdx;
+#endif
+        case Register::Ebx:
+#ifdef _M_AMD64
+            return Register::Rbx;
+#endif
+        case Register::Esp:
+#ifdef _M_AMD64
+            return Register::Rsp;
+#endif
+        case Register::Ebp:
+#ifdef _M_AMD64
+            return Register::Rbp;
+#endif
+        case Register::Esi:
+#ifdef _M_AMD64
+            return Register::Rsi;
+#endif
+        case Register::Edi:
+#ifdef _M_AMD64
+            return Register::Rdi;
+#endif
+            break;
+#ifdef _M_AMD64
+        case Register::R8d:
+#ifdef _M_AMD64
+            return Register::R8;
+#endif
+        case Register::R9d:
+#ifdef _M_AMD64
+            return Register::R9;
+#endif
+        case Register::R10d:
+#ifdef _M_AMD64
+            return Register::R10;
+#endif
+        case Register::R11d:
+#ifdef _M_AMD64
+            return Register::R11;
+#endif
+        case Register::R12d:
+#ifdef _M_AMD64
+            return Register::R12;
+#endif
+        case Register::R13d:
+#ifdef _M_AMD64
+            return Register::R13;
+#endif
+        case Register::R14d:
+#ifdef _M_AMD64
+            return Register::R14;
+#endif
+        case Register::R15d:
+#ifdef _M_AMD64
+            return Register::R15;
+#endif
+            break;
+#endif
+        case Register::Flags:
+#ifdef _M_AMD64
+            return Register::RFlags;
+#else
+            return Register::EFlags;
+#endif
+        case Register::EFlags:
+#ifdef _M_AMD64
+            return Register::RFlags;
+#endif
+        case Register::RFlags:
+        case Register::Ip:
+#ifdef _M_AMD64
+            return Register::Rip;
+#else
+            return Register::Eip;
+#endif
+        case Register::Eip:
+#ifdef _M_AMD64
+            return Register::Rip;
+#endif
+        case Register::Rip:
+            break;
+        }
+        return Register::None;
+    }
+
+    inline Register RegisterGetParent(Register id)
+    {
+        switch (id)
+        {
+        case Register::Al:
+            return Register::Ax;
+        case Register::Ax:
+            return Register::Eax;
+        case Register::Ah:
+            return Register::Ax;
+        case Register::Cl:
+            return Register::Cx;
+        case Register::Cx:
+            return Register::Ecx;
+        case Register::Ch:
+            return Register::Cx;
+        case Register::Dl:
+            return Register::Dx;
+        case Register::Dx:
+            return Register::Edx;
+        case Register::Dh:
+            return Register::Dx;
+        case Register::Bl:
+            return Register::Bx;
+        case Register::Bx:
+            return Register::Ebx;
+        case Register::Bh:
+            return Register::Bx;
+        case Register::Sp:
+            return Register::Esp;
+        case Register::Spl:
+            return Register::Sp;
+        case Register::Bpl:
+            return Register::Bp;
+        case Register::Bp:
+            return Register::Ebp;
+        case Register::Si:
+            return Register::Esi;
+        case Register::Sil:
+            return Register::Si;
+        case Register::Di:
+            return Register::Edi;
+        case Register::Dil:
+            return Register::Di;
+#ifdef _M_AMD64
+        case Register::R8b:
+            return Register::R8w;
+        case Register::R8w:
+            return Register::R8d;
+        case Register::R9b:
+            return Register::R9w;
+        case Register::R9w:
+            return Register::R9d;
+        case Register::R10b:
+            return Register::R10w;
+        case Register::R10w:
+            return Register::R10d;
+        case Register::R11b:
+            return Register::R11w;
+        case Register::R11w:
+            return Register::R11d;
+        case Register::R12b:
+            return Register::R12w;
+        case Register::R12w:
+            return Register::R12d;
+        case Register::R13b:
+            return Register::R13w;
+        case Register::R13w:
+            return Register::R13d;
+        case Register::R14b:
+            return Register::R14w;
+        case Register::R14w:
+            return Register::R14d;
+        case Register::R15b:
+            return Register::R15w;
+        case Register::R15w:
+            return Register::R15d;
+#endif
+        case Register::Eax:
+#ifdef _M_AMD64
+            return Register::Rax;
+#else
+            return Register::None;
+#endif
+        case Register::Ecx:
+#ifdef _M_AMD64
+            return Register::Rcx;
+#else
+            return Register::None;
+#endif
+        case Register::Edx:
+#ifdef _M_AMD64
+            return Register::Rdx;
+#else
+            return Register::None;
+#endif
+        case Register::Ebx:
+#ifdef _M_AMD64
+            return Register::Rbx;
+#endif
+        case Register::Esp:
+#ifdef _M_AMD64
+            return Register::Rsp;
+#else
+            return Register::None;
+#endif
+        case Register::Ebp:
+#ifdef _M_AMD64
+            return Register::Rbp;
+#else
+            return Register::None;
+#endif
+        case Register::Esi:
+#ifdef _M_AMD64
+            return Register::Rsi;
+#else
+            return Register::None;
+#endif
+        case Register::Edi:
+#ifdef _M_AMD64
+            return Register::Rdi;
+#else
+            return Register::None;
+#endif
+
+#ifdef _M_AMD64
+        case Register::R8d:
+#ifdef _M_AMD64
+            return Register::R8;
+#else
+            return Register::None;
+#endif
+        case Register::R9d:
+#ifdef _M_AMD64
+            return Register::R9;
+#else
+            return Register::None;
+#endif
+        case Register::R10d:
+#ifdef _M_AMD64
+            return Register::R10;
+#else
+            return Register::None;
+#endif
+        case Register::R11d:
+#ifdef _M_AMD64
+            return Register::R11;
+#else
+            return Register::None;
+#endif
+        case Register::R12d:
+#ifdef _M_AMD64
+            return Register::R12;
+#else
+            return Register::None;
+#endif
+        case Register::R13d:
+#ifdef _M_AMD64
+            return Register::R13;
+#else
+            return Register::None;
+#endif
+        case Register::R14d:
+#ifdef _M_AMD64
+            return Register::R14;
+#else
+            return Register::None;
+#endif
+        case Register::R15d:
+#ifdef _M_AMD64
+            return Register::R15;
+#else
+            return Register::None;
+#endif
+
+#endif
+        case Register::Flags:
+#ifdef _M_AMD64
+            return Register::RFlags;
+#else
+            return Register::EFlags;
+#endif
+        case Register::EFlags:
+#ifdef _M_AMD64
+            return Register::RFlags;
+#endif
+        case Register::RFlags:
+        case Register::Ip:
+#ifdef _M_AMD64
+            return Register::Rip;
+#else
+            return Register::Eip;
+#endif
+        case Register::Eip:
+#ifdef _M_AMD64
+            return Register::Rip;
+#else
+            return Register::None;
+#endif
+        case Register::Rip:
+            break;
+        }
+
+        return Register::None;
+    }
+
+    inline const char* RegisterGetName(Register id)
     {
         return RegisterNames[static_cast<int>(id)];
     }
