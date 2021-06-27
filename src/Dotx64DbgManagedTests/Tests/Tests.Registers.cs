@@ -220,5 +220,102 @@ namespace Dotx64Dbg.Managed.Tests
             AssertEq(Operand.R15.ParentId, Register.None);
 #endif
         }
+
+        [Test]
+        public void TestMutating()
+        {
+            AssertEq(Operand.Al.MutatesParent, false);
+            AssertEq(Operand.Cl.MutatesParent, false);
+            AssertEq(Operand.Dl.MutatesParent, false);
+            AssertEq(Operand.Bl.MutatesParent, false);
+            AssertEq(Operand.Ah.MutatesParent, false);
+            AssertEq(Operand.Ch.MutatesParent, false);
+            AssertEq(Operand.Dh.MutatesParent, false);
+            AssertEq(Operand.Bh.MutatesParent, false);
+            AssertEq(Operand.Spl.MutatesParent, false);
+            AssertEq(Operand.Bpl.MutatesParent, false);
+            AssertEq(Operand.Sil.MutatesParent, false);
+            AssertEq(Operand.Dil.MutatesParent, false);
+#if _X64_
+            AssertEq(Operand.R8b.MutatesParent, false);
+            AssertEq(Operand.R9b.MutatesParent, false);
+            AssertEq(Operand.R10b.MutatesParent, false);
+            AssertEq(Operand.R11b.MutatesParent, false);
+            AssertEq(Operand.R12b.MutatesParent, false);
+            AssertEq(Operand.R13b.MutatesParent, false);
+            AssertEq(Operand.R14b.MutatesParent, false);
+            AssertEq(Operand.R15b.MutatesParent, false);
+#endif
+            AssertEq(Operand.Ax.MutatesParent, false);
+            AssertEq(Operand.Cx.MutatesParent, false);
+            AssertEq(Operand.Dx.MutatesParent, false);
+            AssertEq(Operand.Bx.MutatesParent, false);
+            AssertEq(Operand.Sp.MutatesParent, false);
+            AssertEq(Operand.Bp.MutatesParent, false);
+            AssertEq(Operand.Si.MutatesParent, false);
+            AssertEq(Operand.Di.MutatesParent, false);
+#if _X64_
+            AssertEq(Operand.R8w.MutatesParent, false);
+            AssertEq(Operand.R9w.MutatesParent, false);
+            AssertEq(Operand.R10w.MutatesParent, false);
+            AssertEq(Operand.R11w.MutatesParent, false);
+            AssertEq(Operand.R12w.MutatesParent, false);
+            AssertEq(Operand.R13w.MutatesParent, false);
+            AssertEq(Operand.R14w.MutatesParent, false);
+            AssertEq(Operand.R15w.MutatesParent, false);
+#endif
+
+#if _X64_
+            AssertEq(Operand.Eax.MutatesParent, true);
+            AssertEq(Operand.Ecx.MutatesParent, true);
+            AssertEq(Operand.Edx.MutatesParent, true);
+            AssertEq(Operand.Ebx.MutatesParent, true);
+            AssertEq(Operand.Esp.MutatesParent, true);
+            AssertEq(Operand.Ebp.MutatesParent, true);
+            AssertEq(Operand.Edi.MutatesParent, true);
+            AssertEq(Operand.Esi.MutatesParent, true);
+            AssertEq(Operand.R8d.MutatesParent, true);
+            AssertEq(Operand.R9d.MutatesParent, true);
+            AssertEq(Operand.R10d.MutatesParent, true);
+            AssertEq(Operand.R11d.MutatesParent, true);
+            AssertEq(Operand.R12d.MutatesParent, true);
+            AssertEq(Operand.R13d.MutatesParent, true);
+            AssertEq(Operand.R14d.MutatesParent, true);
+            AssertEq(Operand.R15d.MutatesParent, true);
+            AssertEq(Operand.Rax.MutatesParent, false);
+            AssertEq(Operand.Rcx.MutatesParent, false);
+            AssertEq(Operand.Rdx.MutatesParent, false);
+            AssertEq(Operand.Rbx.MutatesParent, false);
+            AssertEq(Operand.Rsp.MutatesParent, false);
+            AssertEq(Operand.Rbp.MutatesParent, false);
+            AssertEq(Operand.Rdi.MutatesParent, false);
+            AssertEq(Operand.Rsi.MutatesParent, false);
+            AssertEq(Operand.R8.MutatesParent, false);
+            AssertEq(Operand.R9.MutatesParent, false);
+            AssertEq(Operand.R10.MutatesParent, false);
+            AssertEq(Operand.R11.MutatesParent, false);
+            AssertEq(Operand.R12.MutatesParent, false);
+            AssertEq(Operand.R13.MutatesParent, false);
+            AssertEq(Operand.R14.MutatesParent, false);
+            AssertEq(Operand.R15.MutatesParent, false);
+#else
+            AssertEq(Operand.Eax.MutatesParent, false);
+            AssertEq(Operand.Ecx.MutatesParent, false);
+            AssertEq(Operand.Edx.MutatesParent, false);
+            AssertEq(Operand.Ebx.MutatesParent, false);
+            AssertEq(Operand.Esp.MutatesParent, false);
+            AssertEq(Operand.Ebp.MutatesParent, false);
+            AssertEq(Operand.Edi.MutatesParent, false);
+            AssertEq(Operand.Esi.MutatesParent, false);
+            AssertEq(Operand.R8d.MutatesParent, false);
+            AssertEq(Operand.R9d.MutatesParent, false);
+            AssertEq(Operand.R10d.MutatesParent, false);
+            AssertEq(Operand.R11d.MutatesParent, false);
+            AssertEq(Operand.R12d.MutatesParent, false);
+            AssertEq(Operand.R13d.MutatesParent, false);
+            AssertEq(Operand.R14d.MutatesParent, false);
+            AssertEq(Operand.R15d.MutatesParent, false);
+#endif
+        }
     }
 }
