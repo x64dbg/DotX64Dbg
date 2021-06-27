@@ -1,6 +1,86 @@
 ﻿
 namespace Dotx64Dbg {
 
+    public enum class RegisterClass
+    {
+        Invalid,
+        /**
+        * @brief   8-bit general-purpose registers.
+        */
+        Gp8,
+        /**
+        * @brief   16-bit general-purpose registers.
+        */
+        Gp16,
+        /**
+        * @brief   32-bit general-purpose registers.
+        */
+        Gp32,
+        /**
+        * @brief   64-bit general-purpose registers.
+        */
+        Gp64,
+        /**
+        * @brief   Floating point legacy registers.
+        */
+        X87,
+        /**
+        * @brief   Floating point multimedia registers.
+        */
+        Mmx,
+        /**
+        * @brief   128-bit vector registers.
+        */
+        Xmm,
+        /**
+        * @brief   256-bit vector registers.
+        */
+        Ymm,
+        /**
+        * @brief   512-bit vector registers.
+        */
+        Zmm,
+        /**
+        * @brief   Flags registers.
+        */
+        Flags,
+        /**
+        * @brief   Instruction-pointer registers.
+        */
+        IP,
+        /**
+        * @brief   Segment registers.
+        */
+        Segment,
+        /**
+        * @brief   Test registers.
+        */
+        Test,
+        /**
+        * @brief   Control registers.
+        */
+        Control,
+        /**
+        * @brief   Debug registers.
+        */
+        Debug,
+        /**
+        * @brief   Mask registers.
+        */
+        Mask,
+        /**
+        * @brief   Bound registers.
+        */
+        Bound,
+    };
+
+    public enum class RegisterCategory
+    {
+        Gp,
+        X87,
+        Simd,
+    };
+
     public enum class Register
     {
         None,
@@ -560,6 +640,11 @@ namespace Dotx64Dbg {
         "pkru",
         "xcr0",
     };
+
+    inline const char* RegisterGetName(Register id)
+    {
+        return RegisterNames[static_cast<int>(id)];
+    }
 
     inline int RegisterGetSize(Register id)
     {
@@ -1248,8 +1333,299 @@ namespace Dotx64Dbg {
         return Register::None;
     }
 
-    inline const char* RegisterGetName(Register id)
+    inline int32_t RegisterGetOffsetForRoot(Register id)
     {
-        return RegisterNames[static_cast<int>(id)];
+        switch (id)
+        {
+        case Register::Ah:
+        case Register::Bh:
+        case Register::Ch:
+        case Register::Dh:
+            return 8;
+        }
+        return 0;
     }
+
+    inline RegisterClass RegisterGetClass(Register id)
+    {
+        switch (id)
+        {
+        case Register::None:
+            return RegisterClass::Invalid;
+        case Register::Al:
+        case Register::Cl:
+        case Register::Dl:
+        case Register::Bl:
+        case Register::Ah:
+        case Register::Ch:
+        case Register::Dh:
+        case Register::Bh:
+        case Register::Spl:
+        case Register::Bpl:
+        case Register::Sil:
+        case Register::Dil:
+        case Register::R8b:
+        case Register::R9b:
+        case Register::R10b:
+        case Register::R11b:
+        case Register::R12b:
+        case Register::R13b:
+        case Register::R14b:
+        case Register::R15b:
+            return RegisterClass::Gp8;
+        case Register::Ax:
+        case Register::Cx:
+        case Register::Dx:
+        case Register::Bx:
+        case Register::Sp:
+        case Register::Bp:
+        case Register::Si:
+        case Register::Di:
+        case Register::R8w:
+        case Register::R9w:
+        case Register::R10w:
+        case Register::R11w:
+        case Register::R12w:
+        case Register::R13w:
+        case Register::R14w:
+        case Register::R15w:
+            return RegisterClass::Gp16;
+        case Register::Eax:
+        case Register::Ecx:
+        case Register::Edx:
+        case Register::Ebx:
+        case Register::Esp:
+        case Register::Ebp:
+        case Register::Esi:
+        case Register::Edi:
+        case Register::R8d:
+        case Register::R9d:
+        case Register::R10d:
+        case Register::R11d:
+        case Register::R12d:
+        case Register::R13d:
+        case Register::R14d:
+        case Register::R15d:
+            return RegisterClass::Gp32;
+        case Register::Rax:
+        case Register::Rcx:
+        case Register::Rdx:
+        case Register::Rbx:
+        case Register::Rsp:
+        case Register::Rbp:
+        case Register::Rsi:
+        case Register::Rdi:
+        case Register::R8:
+        case Register::R9:
+        case Register::R10:
+        case Register::R11:
+        case Register::R12:
+        case Register::R13:
+        case Register::R14:
+        case Register::R15:
+            return RegisterClass::Gp64;
+        case Register::St0:
+        case Register::St1:
+        case Register::St2:
+        case Register::St3:
+        case Register::St4:
+        case Register::St5:
+        case Register::St6:
+        case Register::St7:
+            return RegisterClass::X87;
+        case Register::X87Control:
+        case Register::X87Status:
+        case Register::X87Tag:
+            return RegisterClass::Control;
+        case Register::Mm0:
+        case Register::Mm1:
+        case Register::Mm2:
+        case Register::Mm3:
+        case Register::Mm4:
+        case Register::Mm5:
+        case Register::Mm6:
+        case Register::Mm7:
+            return RegisterClass::Mmx;
+        case Register::Xmm0:
+        case Register::Xmm1:
+        case Register::Xmm2:
+        case Register::Xmm3:
+        case Register::Xmm4:
+        case Register::Xmm5:
+        case Register::Xmm6:
+        case Register::Xmm7:
+        case Register::Xmm8:
+        case Register::Xmm9:
+        case Register::Xmm10:
+        case Register::Xmm11:
+        case Register::Xmm12:
+        case Register::Xmm13:
+        case Register::Xmm14:
+        case Register::Xmm15:
+        case Register::Xmm16:
+        case Register::Xmm17:
+        case Register::Xmm18:
+        case Register::Xmm19:
+        case Register::Xmm20:
+        case Register::Xmm21:
+        case Register::Xmm22:
+        case Register::Xmm23:
+        case Register::Xmm24:
+        case Register::Xmm25:
+        case Register::Xmm26:
+        case Register::Xmm27:
+        case Register::Xmm28:
+        case Register::Xmm29:
+        case Register::Xmm30:
+        case Register::Xmm31:
+            return RegisterClass::Xmm;
+        case Register::Ymm0:
+        case Register::Ymm1:
+        case Register::Ymm2:
+        case Register::Ymm3:
+        case Register::Ymm4:
+        case Register::Ymm5:
+        case Register::Ymm6:
+        case Register::Ymm7:
+        case Register::Ymm8:
+        case Register::Ymm9:
+        case Register::Ymm10:
+        case Register::Ymm11:
+        case Register::Ymm12:
+        case Register::Ymm13:
+        case Register::Ymm14:
+        case Register::Ymm15:
+        case Register::Ymm16:
+        case Register::Ymm17:
+        case Register::Ymm18:
+        case Register::Ymm19:
+        case Register::Ymm20:
+        case Register::Ymm21:
+        case Register::Ymm22:
+        case Register::Ymm23:
+        case Register::Ymm24:
+        case Register::Ymm25:
+        case Register::Ymm26:
+        case Register::Ymm27:
+        case Register::Ymm28:
+        case Register::Ymm29:
+        case Register::Ymm30:
+        case Register::Ymm31:
+            return RegisterClass::Ymm;
+        case Register::Zmm0:
+        case Register::Zmm1:
+        case Register::Zmm2:
+        case Register::Zmm3:
+        case Register::Zmm4:
+        case Register::Zmm5:
+        case Register::Zmm6:
+        case Register::Zmm7:
+        case Register::Zmm8:
+        case Register::Zmm9:
+        case Register::Zmm10:
+        case Register::Zmm11:
+        case Register::Zmm12:
+        case Register::Zmm13:
+        case Register::Zmm14:
+        case Register::Zmm15:
+        case Register::Zmm16:
+        case Register::Zmm17:
+        case Register::Zmm18:
+        case Register::Zmm19:
+        case Register::Zmm20:
+        case Register::Zmm21:
+        case Register::Zmm22:
+        case Register::Zmm23:
+        case Register::Zmm24:
+        case Register::Zmm25:
+        case Register::Zmm26:
+        case Register::Zmm27:
+        case Register::Zmm28:
+        case Register::Zmm29:
+        case Register::Zmm30:
+        case Register::Zmm31:
+            return RegisterClass::Zmm;
+        case Register::Flags:
+        case Register::EFlags:
+        case Register::RFlags:
+            return RegisterClass::Flags;
+        case Register::Ip:
+        case Register::Eip:
+        case Register::Rip:
+            return RegisterClass::IP;
+        case Register::Es:
+        case Register::Cs:
+        case Register::Ss:
+        case Register::Ds:
+        case Register::Fs:
+        case Register::Gs:
+        case Register::Gdtr:
+        case Register::Ldtr:
+        case Register::Idtr:
+            return RegisterClass::Segment;
+        case Register::Tr:
+        case Register::Tr0:
+        case Register::Tr1:
+        case Register::Tr2:
+        case Register::Tr3:
+        case Register::Tr4:
+        case Register::Tr5:
+        case Register::Tr6:
+        case Register::Tr7:
+            return RegisterClass::Test;
+        case Register::Cr0:
+        case Register::Cr1:
+        case Register::Cr2:
+        case Register::Cr3:
+        case Register::Cr4:
+        case Register::Cr5:
+        case Register::Cr6:
+        case Register::Cr7:
+        case Register::Cr8:
+        case Register::Cr9:
+        case Register::Cr10:
+        case Register::Cr11:
+        case Register::Cr12:
+        case Register::Cr13:
+        case Register::Cr14:
+        case Register::Cr15:
+            return RegisterClass::Control;
+        case Register::Dr0:
+        case Register::Dr1:
+        case Register::Dr2:
+        case Register::Dr3:
+        case Register::Dr4:
+        case Register::Dr5:
+        case Register::Dr6:
+        case Register::Dr7:
+        case Register::Dr8:
+        case Register::Dr9:
+        case Register::Dr10:
+        case Register::Dr11:
+        case Register::Dr12:
+        case Register::Dr13:
+        case Register::Dr14:
+        case Register::Dr15:
+            return RegisterClass::Debug;
+        case Register::K0:
+        case Register::K1:
+        case Register::K2:
+        case Register::K3:
+        case Register::K4:
+        case Register::K5:
+        case Register::K6:
+        case Register::K7:
+            return RegisterClass::Mask;
+        case Register::Bnd0:
+        case Register::Bnd1:
+        case Register::Bnd2:
+        case Register::Bnd3:
+        case Register::BndCfg:
+        case Register::BndStatus:
+            return RegisterClass::Bound;
+        }
+        return RegisterClass::Invalid;
+    }
+
+
 }

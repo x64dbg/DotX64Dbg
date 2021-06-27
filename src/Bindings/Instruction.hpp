@@ -207,7 +207,7 @@ namespace Dotx64Dbg {
             /// <summary>
             /// This is equivalent to checking against Register.None
             /// </summary>
-            property bool Valid
+            property bool IsValid
             {
                 bool get()
                 {
@@ -223,6 +223,33 @@ namespace Dotx64Dbg {
                 Register get()
                 {
                     return _Value;
+                }
+            }
+
+            property RegisterClass Class
+            {
+                RegisterClass get()
+                {
+                    return RegisterGetClass(_Value);
+                }
+            }
+
+            /// <summary>
+            /// This will be true if the register class is one of the general purpose types.
+            /// </summary>
+            property bool IsGp
+            {
+                bool get()
+                {
+                    switch (Class)
+                    {
+                    case RegisterClass::Gp8:
+                    case RegisterClass::Gp16:
+                    case RegisterClass::Gp32:
+                    case RegisterClass::Gp64:
+                        return true;
+                    }
+                    return false;
                 }
             }
 
@@ -306,6 +333,43 @@ namespace Dotx64Dbg {
             OpReg^ GetParent()
             {
                 return gcnew OpReg(RegisterGetParent(_Value));
+            }
+
+            /// <see cref="GetPosition" />
+            property int Position
+            {
+                int get()
+                {
+                    return GetPosition();
+                }
+            }
+
+            /// <summary>
+            /// This returns number of bits offset from the root register.
+            /// In case of Register.Ax this would result 8.
+            /// <returns>Returns number of bits at where the register is located in the root register</returns>
+            /// </summary>
+            int GetPosition()
+            {
+                return RegisterGetOffsetForRoot(_Value);
+            }
+
+            /// <summary>
+            /// A small helper to determine if the parent register would be mutated
+            /// if the register is modified.
+            /// This is primarily useful for the 64 bit architecture where modifying a register
+            /// such as eax would result in the upper 32 bit of rax being modified/mutated.
+            /// </summary>
+            property bool MutatesParent
+            {
+                bool get()
+                {
+#ifdef _M_AMD64
+                    if (IsGp && Size == 32)
+                        return true;
+#endif
+                    return false;
+                }
             }
 
             System::String^ ToString() override
