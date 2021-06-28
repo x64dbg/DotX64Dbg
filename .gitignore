@@ -12,3 +12,4 @@ src/Libs
 /src/Dotx64Managed/obj
 /bin/dotplugins/myplugin/My Plugin.csproj
 /bin/dotplugins/myplugin/obj
+/src/Dotx64DbgManagedTests/obj
