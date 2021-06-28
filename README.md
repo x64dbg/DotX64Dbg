@@ -1,4 +1,4 @@
-# DotX64Dbg
+# DotX64Dbg (EARLY ALPHA)
 Plugins and Scripting with C# for x64Dbg.
 
 # Create Plugins for X64Dbg with ease
