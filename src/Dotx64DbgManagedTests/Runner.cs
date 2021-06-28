@@ -69,7 +69,7 @@ namespace Dotx64Dbg.Managed.Tests
             var testFuncs = GetMethodsWithAttribute<Test>();
             foreach (var func in testFuncs)
             {
-                TestGroup entry = tests.Count > 0 ? tests.Single(x => x.ClassType == func.DeclaringType) : null;
+                TestGroup entry = tests.Find(x => x.ClassType == func.DeclaringType);
                 if (entry == null)
                 {
                     entry = new TestGroup()

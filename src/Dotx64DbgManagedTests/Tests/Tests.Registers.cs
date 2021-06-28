@@ -13,7 +13,7 @@ namespace Dotx64Dbg.Managed.Tests
     {
         public TestRegisters()
         {
-            // Warm-up purpose. Dll loading is deferred.
+            // Warm-up
             _ = Operand.Al.RootId;
         }
 
