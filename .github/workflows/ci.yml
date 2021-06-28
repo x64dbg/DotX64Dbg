@@ -11,10 +11,12 @@ jobs:
       fail-fast: false
       matrix:
         dotnet-version: ['5.0.0']
-        platform: [x86, x64]
+        platform: 
+          - {arch: 'x86', dir: 'x32'}
+          - {arch: 'x64', dir: 'x64'}
     env:
       CONFIGURATION: Release
-      PLATFORM: ${{ matrix.platform }}
+      PLATFORM: ${{ matrix.platform.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -31,21 +33,27 @@ jobs:
           %VCPKG_ROOT%/vcpkg integrate install
       - name: Zydis
         run: |
-          %VCPKG_ROOT%/vcpkg install zydis:${{ matrix.platform }}-windows-static
+          %VCPKG_ROOT%/vcpkg install zydis:${{ matrix.platform.arch }}-windows-static
       - name: Nuget dependencies
         run: |
           cd src
-          msbuild Dotx64Dbg.sln -t:restore -p:RestorePackagesConfig=true
+          msbuild Dotx64Dbg.sln -t:restore -p:RestorePackagesConfig=true -maxcpucount:2 -m
           cd ..
       - name: Build
         run: |
           cd src
-          msbuild Dotx64Dbg.sln /p:platform=${{ matrix.platform }}
+          msbuild Dotx64Dbg.sln /p:platform=${{ matrix.platform.arch }}
           cd ..
+      - name: Tests
+        run: |
+          pushd .
+          cd bin\${{ matrix.platform.dir }}\tests
+          Tests.exe
+          popd
       - name: Upload artifacts (CI)
         uses: actions/upload-artifact@v2
         with:
-          name: dotx64Dbg-${{ runner.os }}-${{ matrix.platform }}
+          name: dotx64Dbg-${{ runner.os }}-${{ matrix.platform.arch }}
           path: bin
           if-no-files-found: error
   package:
@@ -67,6 +75,8 @@ jobs:
           mkdir package
           cp -R -n ./artifacts/dotx64Dbg-Windows-x64/* ./package/
           cp -R -n ./artifacts/dotx64Dbg-Windows-x86/* ./package/
+          rm -R ./package/x32/tests
+          rm -R ./package/x64/tests
           find ./package -type f -name '*.pdb' -delete
       - name: Upload package (CI)
         uses: actions/upload-artifact@v2
