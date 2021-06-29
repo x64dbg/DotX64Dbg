@@ -22,22 +22,6 @@ code which means its a lot harder to hide malicious code in there.
 There is currently no official release. You can grab the latest artifacts
 from the CI to try it out or build it yourself.
 
-# Building
-
-## Requirements
-- Net 5.0 SDK.
-- Visual Studio 2019 Community or greater.
-- Vcpkg
-- Zydis
-
-## Vcpkg
-Vcpkg is currently required with the integration setup. This is planned
-to change in the future.
-
-## Building
-After everything is setup you should be open Dotx64Dbg.sln and be able
-to build the entire solution.
-
 # Your first Plugin
 Creating new plugins is as easy as creating a new folder with two new files.
 By default the DotX64Dbg plugins are located in the root directory of X64Dbg 
@@ -106,6 +90,22 @@ APIs as plugins. To execute scripts use following command:
 dotscript <path to script file>
 ```
 You can find an example script [here](bin/dotscripts/TestScript.cs)
+
+# Building
+
+## Requirements
+- Net 5.0 SDK.
+- Visual Studio 2019 Community or greater.
+- Vcpkg
+- Zydis
+
+## Vcpkg
+Vcpkg is currently required with the integration setup. This is planned
+to change in the future.
+
+## Building
+After everything is setup you should be open Dotx64Dbg.sln and be able
+to build the entire solution.
 
 # Documentation
 The plan is to document all public API which also makes the documentation
