@@ -1,6 +1,8 @@
 #include "pluginsdk/bridgemain.h"
 #include "pluginsdk/_plugins.h"
 
+#include <msclr/marshal.h>
+
 using namespace System;
 using namespace System::Runtime::InteropServices;
 
@@ -58,9 +60,7 @@ namespace Dotx64Dbg::Native
 
             Selection^ res = gcnew Selection();
             res->Start = data.start;
-            // NOTE: This is always off by 1, long term bug that wont be fixed for compatibility
-            // reasons.
-            res->End = data.end + 1;
+            res->End = data.end;
 
             return res;
         }
@@ -128,5 +128,36 @@ namespace Dotx64Dbg::Native
             GuiLogClear();
         }
 
+        ref class Menu
+        {
+        public:
+            static int Add(int parent, System::String^ name)
+            {
+                msclr::interop::marshal_context oMarshalContext;
+
+                const char* cstr = oMarshalContext.marshal_as<const char*>(name);
+
+                return _plugin_menuadd(parent, cstr);
+            }
+
+            static bool AddEntry(int parent, int id, System::String^ name)
+            {
+                msclr::interop::marshal_context oMarshalContext;
+
+                const char* cstr = oMarshalContext.marshal_as<const char*>(name);
+
+                return _plugin_menuaddentry(parent, id, cstr);
+            }
+
+            static bool RemoveEntry(int pluginHandle, int id)
+            {
+                return _plugin_menuentryremove(pluginHandle, id);
+            }
+
+            static bool Remove(int id)
+            {
+                return _plugin_menuremove(id);
+            }
+        };
     };
 }

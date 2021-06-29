@@ -59,7 +59,7 @@ namespace Dotx64Dbg
             //
             // Summary:
             //     The size of the selection, End - Start.
-            public ulong Size { get; }
+            public ulong Size { get => End - Start; }
         }
 
         /// <summary>

@@ -40,7 +40,7 @@ namespace Dotx64Dbg
             public Handler Handler;
         }
 
-        static Dictionary<string, CommandInfo> Registered;
+        internal static Dictionary<string, CommandInfo> Registered;
 
         internal static void Initialize()
         {
@@ -66,7 +66,7 @@ namespace Dotx64Dbg
             return info.Handler(args);
         }
 
-        public static bool Register(Plugin Plugin, string cmd, bool debugOnly, Handler handler)
+        internal static bool Register(Plugin Plugin, string cmd, bool debugOnly, Handler handler)
         {
             if (Registered.ContainsKey(cmd))
             {
@@ -88,7 +88,7 @@ namespace Dotx64Dbg
             });
         }
 
-        public static bool Remove(string cmd)
+        internal static bool Remove(string cmd)
         {
             if (!Registered.ContainsKey(cmd))
             {
@@ -101,7 +101,7 @@ namespace Dotx64Dbg
             return Native.Commands.UnregisterCommand(Manager.PluginHandle, cmd);
         }
 
-        public static bool RemoveAll()
+        internal static bool RemoveAll()
         {
             bool res = true;
 
@@ -116,7 +116,7 @@ namespace Dotx64Dbg
             return res;
         }
 
-        public static bool RemoveAllFor(Plugin plugin)
+        internal static bool RemoveAllFor(Plugin plugin)
         {
             Registered.Where(x => x.Value.Plugin == plugin)
                 .Select(x => x.Key)

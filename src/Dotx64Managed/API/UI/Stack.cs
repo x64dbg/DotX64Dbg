@@ -5,6 +5,9 @@ namespace Dotx64Dbg
         public static class Stack
         {
             internal static WindowType WndType = WindowType.Stack;
+            internal static Menu.Id MenuId = 0;
+
+            public const Menu.Root Menu = UI.Menu.Root.Stack;
 
             /// <summary>
             /// Returns the selected range from the stack.
@@ -23,6 +26,16 @@ namespace Dotx64Dbg
             public static void Update()
             {
                 Native.UI.Update((Native.UI.WindowType)WndType);
+            }
+
+            internal static Menu.Id GetMenuId()
+            {
+                return MenuId;
+            }
+
+            internal static void SetMenuId(Menu.Id id)
+            {
+                MenuId = id;
             }
         }
     }

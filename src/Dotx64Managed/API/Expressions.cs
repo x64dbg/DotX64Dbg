@@ -107,7 +107,7 @@ namespace Dotx64Dbg
 
         internal static int PointerSize = Marshal.SizeOf(typeof(System.IntPtr));
 
-        private static void Register(Plugin plugin, string name)
+        internal static void Register(Plugin plugin, string name)
         {
             var info = new ExpressionInfo()
             {

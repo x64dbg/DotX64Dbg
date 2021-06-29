@@ -20,6 +20,19 @@ struct Wrapper
         Dotx64Dbg::Manager::Shutdown();
     }
 
+    static void SetMenuData(PLUG_SETUPSTRUCT* setupStruct)
+    {
+        Dotx64Dbg::MenuData data;
+        data.hMenu = setupStruct->hMenu;
+        data.hMenuDisasm = setupStruct->hMenuDisasm;
+        data.hMenuDump = setupStruct->hMenuDump;
+        data.hMenuStack = setupStruct->hMenuStack;
+        data.hMenuGraph = setupStruct->hMenuGraph;
+        data.hMenuMemmap = setupStruct->hMenuMemmap;
+        data.hMenuSymmod = setupStruct->hMenuSymmod;
+        Dotx64Dbg::Manager::SetMenuData(data);
+    }
+
     static void DebugEvent(PLUG_CB_DEBUGEVENT* ev)
     {
         switch (ev->DebugEvent->dwDebugEventCode)
@@ -170,6 +183,11 @@ struct Wrapper
 
         Dotx64Dbg::Manager::OnBreakpointEvent(dst);
     }
+
+    static void MenuCallback(int id)
+    {
+        Dotx64Dbg::Manager::OnMenuCallback(id);
+    }
 };
 
 // Unmanaged section.
@@ -179,6 +197,7 @@ struct Wrapper
 
 PLUG_EXPORT void CBMENUENTRY(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
 {
+    Wrapper::MenuCallback(info->hEntry);
 }
 
 PLUG_EXPORT void CBINITDEBUG(CBTYPE cbType, PLUG_CB_INITDEBUG* info)
@@ -255,10 +274,10 @@ PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 PLUG_EXPORT bool plugstop()
 {
     Wrapper::Shutdown();
-
     return true;
 }
 
 PLUG_EXPORT void plugsetup(PLUG_SETUPSTRUCT* setupStruct)
 {
+    Wrapper::SetMenuData(setupStruct);
 }

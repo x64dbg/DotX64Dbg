@@ -5,6 +5,10 @@ namespace Dotx64Dbg
         public static class Disassembly
         {
             internal static WindowType WndType = WindowType.Disassembly;
+            internal static Menu.Id MenuId = 0;
+
+            public const Menu.Root Menu = UI.Menu.Root.Disassembly;
+
 
             /// <summary>
             /// Returns the selected range from the disassembly.
@@ -12,7 +16,10 @@ namespace Dotx64Dbg
             /// <returns>Selection</returns>
             public static Selection GetSelection()
             {
-                return Selection.FromNative(Native.UI.GetSelection((Native.UI.WindowType)WndType));
+                var sel = Selection.FromNative(Native.UI.GetSelection((Native.UI.WindowType)WndType));
+                // NOTE: Compensate that disassembly selection is off by 1, include entire instruction length.
+                sel.End++;
+                return sel;
             }
 
             public static bool SetSelection(Selection selection)
@@ -23,6 +30,16 @@ namespace Dotx64Dbg
             public static void Update()
             {
                 Native.UI.Update((Native.UI.WindowType)WndType);
+            }
+
+            internal static Menu.Id GetMenu()
+            {
+                return MenuId;
+            }
+
+            internal static void SetMenuId(Menu.Id id)
+            {
+                MenuId = id;
             }
         }
     }

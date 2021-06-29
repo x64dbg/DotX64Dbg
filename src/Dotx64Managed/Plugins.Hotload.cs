@@ -139,7 +139,7 @@ namespace Dotx64Dbg
                 var oldField = oldType.GetRuntimeFields().FirstOrDefault(a => a.Name == newField.Name);
                 if (oldField != null)
                 {
-                    if (oldField.FieldType == newField.FieldType)
+                    if (oldField.FieldType.Name == newField.FieldType.Name)
                     {
                         AdaptField(ctx, oldInstance, oldField, newInstance, newField);
                     }
@@ -211,6 +211,7 @@ namespace Dotx64Dbg
 
             Commands.RemoveAllFor(plugin);
             Expressions.RemoveAllFor(plugin);
+            Menus.RemoveAllFor(plugin);
         }
 
         void RegisterPluginCommand(Plugin plugin, MethodInfo fn, Command cmd, object obj)
@@ -279,6 +280,16 @@ namespace Dotx64Dbg
             }
         }
 
+        void RegisterMenu(Plugin plugin, MethodInfo fn, UI.Menu menu, object obj)
+        {
+            var cb = fn.CreateDelegate<UI.Menu.MenuDelegate>(obj);
+
+            var menuPath = menu.Path;
+            var rootMenu = menu.Parent.ToString();
+
+            Menus.Register(plugin, $"{rootMenu}/{plugin.Info.Name}/{menuPath}", cb);
+        }
+
         void LoadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
         {
             if (Canceller.IsCancellationRequested)
@@ -304,6 +315,10 @@ namespace Dotx64Dbg
                     else if (attrib is Expression expr)
                     {
                         RegisterExpression(plugin, fn, expr, obj);
+                    }
+                    else if (attrib is UI.Menu menu)
+                    {
+                        RegisterMenu(plugin, fn, menu, obj);
                     }
                 }
             }

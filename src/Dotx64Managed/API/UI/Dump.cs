@@ -5,6 +5,9 @@ namespace Dotx64Dbg
         public static class Dump
         {
             internal static WindowType WndType = WindowType.Dump;
+            internal static Menu.Id MenuId = 0;
+
+            public const Menu.Root Menu = UI.Menu.Root.Dump;
 
             /// <summary>
             /// Returns the selected range from the dump.
@@ -23,6 +26,16 @@ namespace Dotx64Dbg
             public static void Update()
             {
                 Native.UI.Update((Native.UI.WindowType)WndType);
+            }
+
+            internal static Menu.Id GetMenuId()
+            {
+                return MenuId;
+            }
+
+            internal static void SetMenuId(Menu.Id id)
+            {
+                MenuId = id;
             }
         }
     }

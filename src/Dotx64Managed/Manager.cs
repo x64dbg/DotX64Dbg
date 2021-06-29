@@ -22,6 +22,7 @@ namespace Dotx64Dbg
             Commands.Initialize();
             Expressions.Initialize();
             ScriptLoader.Initialize();
+            Menus.Initialize();
 
             if (!Settings.Load(Path.Combine(Utils.GetRootPath(), "dotx64dbg.json")))
             {
@@ -47,6 +48,16 @@ namespace Dotx64Dbg
         {
             PluginManager.Shutdown();
             PluginManager = null;
+        }
+
+        public static void SetMenuData(MenuData data)
+        {
+            Menus.SetMenuData(data);
+        }
+
+        public static void OnMenuCallback(int id)
+        {
+            Menus.HandleCallback(id);
         }
     }
 }
