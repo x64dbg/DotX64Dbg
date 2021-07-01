@@ -15,7 +15,10 @@ namespace Dotx64Dbg
             /// <returns>Selection</returns>
             public static Selection GetSelection()
             {
-                return Selection.FromNative(Native.UI.GetSelection((Native.UI.WindowType)WndType));
+                var sel = Selection.FromNative(Native.UI.GetSelection((Native.UI.WindowType)WndType));
+                // NOTE: Compensate that selection is off by 1, include entire length.
+                sel.End++;
+                return sel;
             }
 
             public static bool SetSelection(Selection selection)
