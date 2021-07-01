@@ -14,6 +14,12 @@ public partial class MyPlugin
         }
     }
 
+	[Command("SetStatusText")]
+	void SetStatusBarText(string[] args)
+	{
+		UI.StatusBar.Text = args[1] ?? "";
+	}
+
     // Works only when the debugger is active.
     [Command("Test2", DebugOnly = true)]
     void MyCommand2(string[] args)

@@ -78,6 +78,15 @@ namespace Dotx64Dbg::Native
             return GuiSelectionSet(wndType2, &data);
         }
 
+        static void SetStatusBarText(String^ str)
+        {
+            msclr::interop::marshal_context oMarshalContext;
+
+            const char* cstr = oMarshalContext.marshal_as<const char*>(str);
+
+            GuiAddStatusBarMessage(cstr);
+        }
+
         static void Update()
         {
             GuiUpdateAllViews();
