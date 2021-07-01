@@ -35,5 +35,15 @@ public partial class MyPlugin
         var selection = Stack.GetSelection();
         Console.WriteLine($"{this} Stack selection, Start {selection.Start:X}, End {selection.End:X}, Len: {selection.Size:X}");
     }
+	
+	[Menu(Dump.Menu, "Do something with selected dump")]
+    public void TestMenu05()
+    {
+        Console.WriteLine("Do something with selected dump");
+
+        var selection = Dump.GetSelection();
+        Console.WriteLine($"{this} Dump selection, Start {selection.Start:X}, End {selection.End:X}, Len: {selection.Size:X}");
+    }
+	
 }
 
