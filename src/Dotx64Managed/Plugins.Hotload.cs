@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -74,20 +75,23 @@ namespace Dotx64Dbg
 
         void AdaptField(TransitionContext ctx, object oldInstance, FieldInfo oldField, object newInstance, FieldInfo newField)
         {
+            var newFieldType = newField.FieldType;
+            var oldFieldType = oldField.FieldType;
+
             var oldValue = oldField.GetValue(oldInstance);
             if (oldValue == null)
             {
                 newField.SetValue(newInstance, null);
             }
-            else if (newField.FieldType.IsValueType)
+            else if (newFieldType.IsValueType)
             {
                 newField.SetValue(newInstance, oldValue);
             }
-            else if (newField.FieldType.IsPrimitive)
+            else if (newFieldType.IsPrimitive)
             {
                 newField.SetValue(newInstance, oldValue);
             }
-            else if (newField.FieldType.IsArray)
+            else if (newFieldType.IsArray)
             {
                 var elemType = newField.FieldType.GetElementType();
                 if (elemType.IsValueType)
@@ -111,20 +115,40 @@ namespace Dotx64Dbg
             }
             else if (newField.FieldType.IsClass)
             {
-                object newValue;
-
-                var fieldType = newField.FieldType;
-                if (fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(List<>))
+                if (newFieldType.IsGenericType && newFieldType.GetGenericTypeDefinition() == typeof(List<>) &&
+                    oldFieldType.IsGenericType && oldFieldType.GetGenericTypeDefinition() == typeof(List<>))
                 {
-                    var listType = fieldType.GenericTypeArguments[0];
-                    if (listType.IsValueType)
+                    var newListType = newFieldType.GenericTypeArguments[0];
+                    var oldListType = oldFieldType.GenericTypeArguments[0];
+                    if (newListType.IsValueType)
                     {
                         // Swap
                         newField.SetValue(newInstance, oldValue);
                         oldField.SetValue(oldInstance, null);
                     }
+                    else if (newListType.IsClass)
+                    {
+                        var oldList = (IList)oldValue;
+                        var newList = (IList)typeof(List<>)
+                            .MakeGenericType(newListType)
+                            .GetConstructor(System.Type.EmptyTypes)
+                            .Invoke(null);
+
+                        foreach (var oldListEntry in oldList)
+                        {
+                            object newValue;
+                            if (!ctx.GetNewReference(oldValue, out newValue))
+                            {
+                                newValue = ctx.Create(newListType);
+                                AdaptInstance(ctx, oldListEntry, oldListType, newValue, newListType);
+                            }
+
+                            newList.Add(newValue);
+                        }
+                        newField.SetValue(newInstance, newList);
+                    }
                 }
-                else if (fieldType == typeof(Type))
+                else if (newFieldType == typeof(Type))
                 {
                     // Lookup the new type info.
                     var typeInfo = oldValue as Type;
@@ -143,12 +167,13 @@ namespace Dotx64Dbg
 
                     }
                 }
-                else if (fieldType == typeof(System.Object) && oldValue.GetType().IsValueType)
+                else if (newFieldType == typeof(System.Object) && oldValue.GetType().IsValueType)
                 {
                     newField.SetValue(newInstance, oldValue);
                 }
                 else
                 {
+                    object newValue;
                     if (!ctx.GetNewReference(oldValue, out newValue))
                     {
                         newValue = ctx.Create(newField.FieldType);
@@ -466,7 +491,6 @@ namespace Dotx64Dbg
                         {
                             ctor.Invoke(newInstance, Array.Empty<object>());
                         }
-
 
                         var startup = pluginClass.GetMethod("Startup");
                         if (startup != null)
