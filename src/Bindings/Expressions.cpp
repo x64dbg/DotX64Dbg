@@ -25,7 +25,7 @@ namespace Dotx64Dbg::Native
             bool res = Script::Misc::ParseExpression(cstr, &val);
 
 #ifdef _WIN64
-            value = IntPtr((unsigned long long)val);
+            value = IntPtr((long long)val);
 #else
             value = IntPtr((int)val);
 #endif
