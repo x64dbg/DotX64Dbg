@@ -21,12 +21,18 @@ public partial class MyPlugin : IPlugin, IHotload
 
     public static byte[] Shit = new byte[] { 0xEC };
 
+    public Type TestType;
+    public dynamic Something;
+
     public MyPlugin()
     {
         Console.WriteLine("Constructor, only called during first load");
         X = 100;
         Y = 300;
         Obj2 = Obj;
+        TestType = typeof(MyPlugin);
+        Something = 1;
+        Console.WriteLine($"Init Something: {Something}");
     }
 
     // Called as soon the plugin is fully initialized, this is called after
@@ -40,6 +46,9 @@ public partial class MyPlugin : IPlugin, IHotload
     // Called whenever code changes are hot-loaded.
     public void OnHotload()
     {
+        Console.WriteLine($"Something: {Something}");
+        Something = "foo";
+
         foreach (var x in TestList)
         {
             Console.WriteLine($"List {x}");
