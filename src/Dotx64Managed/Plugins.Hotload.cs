@@ -145,7 +145,6 @@ namespace Dotx64Dbg
 
                     newField.SetValue(newInstance, newValue);
                 }
-
             }
         }
 
@@ -466,7 +465,6 @@ namespace Dotx64Dbg
                             }
                             catch (Exception ex)
                             {
-
                                 throw;
                             }
                         }
@@ -516,7 +514,9 @@ namespace Dotx64Dbg
                         }
                         catch (Exception)
                         {
+#if DEBUG
                             Console.WriteLine("WARNING: Unable to remove old assembly, ensure no references are stored.");
+#endif
                         }
 
                         // Remove previous debug symbols.
@@ -527,7 +527,9 @@ namespace Dotx64Dbg
                         }
                         catch (Exception)
                         {
+#if DEBUG
                             Console.WriteLine("WARNING: Unable to remove old PDB file, will be removed next start, probably locked by debugger.");
+#endif
                         }
                     });
                 }
