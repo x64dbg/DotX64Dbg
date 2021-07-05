@@ -4,64 +4,61 @@
 
 namespace Dotx64Dbg::Native
 {
-    public enum BreakpointType
-    {
-        None = 0,
-        Normal = (1 << 0),
-        Hardware = (1 << 1),
-        Memory = (1 << 2),
-        Dll = (1 << 3),
-        Exception = (1 << 4),
-        System = (1 << 5),
-    };
-
-    public enum HardwareType
-    {
-        HardwareAccess,
-        HardwareWrite,
-        HardwareExecute
-    };
-
     public ref class Breakpoints
     {
     public:
-
-        static void SetBreakpoint(duint address)
+        enum class BreakpointType
         {
-            Script::Debug::SetBreakpoint(address);
+            None = 0,
+            Normal = (1 << 0),
+            Hardware = (1 << 1),
+            Memory = (1 << 2),
+            Dll = (1 << 3),
+            Exception = (1 << 4),
+            System = (1 << 5),
+        };
+
+        enum class HardwareType
+        {
+            HardwareAccess = 0,
+            HardwareWrite,
+            HardwareExecute
+        };
+
+        static bool SetBreakpoint(duint address)
+        {
+            return Script::Debug::SetBreakpoint(address);
         }
 
-        static void DeleteBreakpoint(duint address)
+        static bool DeleteBreakpoint(duint address)
         {
-            Script::Debug::DeleteBreakpoint(address);
+            return Script::Debug::DeleteBreakpoint(address);
         }
 
-        static void DisableBreakpoint(duint address)
+        static bool DisableBreakpoint(duint address)
         {
-            Script::Debug::DisableBreakpoint(address);
+            return Script::Debug::DisableBreakpoint(address);
         }
 
-        static void SetHardwareBreakpoint(duint address, HardwareType type)
+        static bool SetHardwareBreakpoint(duint address, HardwareType type)
         {
             switch (type)
             {
-            case HardwareAccess:
-                Script::Debug::SetHardwareBreakpoint(address, Script::Debug::HardwareType::HardwareAccess);
-                break;
-            case HardwareWrite:
-                Script::Debug::SetHardwareBreakpoint(address, Script::Debug::HardwareType::HardwareWrite);
-                break;
-            case HardwareExecute:
-                Script::Debug::SetHardwareBreakpoint(address, Script::Debug::HardwareType::HardwareExecute);
-                break;
+            case HardwareType::HardwareAccess:
+                return Script::Debug::SetHardwareBreakpoint(address, Script::Debug::HardwareType::HardwareAccess);
+            case HardwareType::HardwareWrite:
+                return Script::Debug::SetHardwareBreakpoint(address, Script::Debug::HardwareType::HardwareWrite);
+            case HardwareType::HardwareExecute:
+                return Script::Debug::SetHardwareBreakpoint(address, Script::Debug::HardwareType::HardwareExecute);
             default:
                 break;
             }
+            return false;
         }
 
-        static void DeleteHardwareBreakpoint(duint address)
+        static bool DeleteHardwareBreakpoint(duint address)
         {
-            Script::Debug::DeleteHardwareBreakpoint(address);
+            return Script::Debug::DeleteHardwareBreakpoint(address);
         }
     };
 }
