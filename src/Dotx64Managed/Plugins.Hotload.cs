@@ -12,6 +12,14 @@ namespace Dotx64Dbg
     {
         Dictionary<object, object> ReferenceMap = new();
         List<object> NewObjects = new();
+        public Assembly OldAssembly { get; }
+        public Assembly NewAssembly { get; }
+
+        public TransitionContext(Assembly oldAssembly, Assembly newAssembly)
+        {
+            OldAssembly = oldAssembly;
+            NewAssembly = newAssembly;
+        }
 
         public void Dispose()
         {
@@ -67,7 +75,11 @@ namespace Dotx64Dbg
         void AdaptField(TransitionContext ctx, object oldInstance, FieldInfo oldField, object newInstance, FieldInfo newField)
         {
             var oldValue = oldField.GetValue(oldInstance);
-            if (newField.FieldType.IsValueType)
+            if (oldValue == null)
+            {
+                newField.SetValue(newInstance, null);
+            }
+            else if (newField.FieldType.IsValueType)
             {
                 newField.SetValue(newInstance, oldValue);
             }
@@ -112,6 +124,13 @@ namespace Dotx64Dbg
                         oldField.SetValue(oldInstance, null);
                     }
                 }
+                else if (fieldType == typeof(Type))
+                {
+                    // Lookup the new type info.
+                    var typeInfo = oldValue as Type;
+                    var newTypeInfo = ctx.NewAssembly.GetTypes().Single(x => x.FullName == typeInfo.FullName);
+                    newField.SetValue(newInstance, newTypeInfo);
+                }
                 else
                 {
                     if (!ctx.GetNewReference(oldValue, out newValue))
@@ -128,6 +147,9 @@ namespace Dotx64Dbg
 
         void AdaptInstance(TransitionContext ctx, object oldInstance, Type oldType, object newInstance, Type newType)
         {
+            if (oldType.Assembly != ctx.OldAssembly)
+                return;
+
             ctx.MapReference(oldInstance, newInstance);
 
             var fields = newType.GetRuntimeFields();
@@ -161,6 +183,9 @@ namespace Dotx64Dbg
         void UnloadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
         {
             if (obj == null)
+                return;
+
+            if (obj.GetType().Assembly != plugin.Loader.Current)
                 return;
 
             processed.Add(obj);
@@ -298,6 +323,9 @@ namespace Dotx64Dbg
             if (obj == null)
                 return;
 
+            if (obj.GetType().Assembly != plugin.Loader.Current)
+                return;
+
             processed.Add(obj);
 
             var instType = obj.GetType();
@@ -397,7 +425,7 @@ namespace Dotx64Dbg
 
                 // NOTE: RemapContext stores old references, to fully unload the dll
                 // it must be disposed first.
-                using (var ctx = new TransitionContext())
+                using (var ctx = new TransitionContext(plugin.Loader?.Current, newAssembly))
                 {
                     var newInstance = ctx.Create(pluginClass);
                     var hotReload = false;
