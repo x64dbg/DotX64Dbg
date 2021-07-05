@@ -11,8 +11,6 @@ namespace Dotx64Dbg
         /// <summary>
         /// Adding this attribute to functions dynamically registers a new menu.
         /// </summary>
-        /// <param name="parent">One of the root menus such as Disassembly or Stack</param>
-        /// <param name="path">This must be a path such as "My Menu" or "Sub Menus/Entry"</param>
         /// <remarks>
         /// Menus that have children can not be clicked.
         /// </remarks>
@@ -30,6 +28,14 @@ namespace Dotx64Dbg
 
             public Root Parent { get; init; }
 
+            /// <summary>
+            /// Adding this attribute to functions dynamically registers a new menu.
+            /// </summary>
+            /// <param name="parent">One of the root menus such as Disassembly or Stack</param>
+            /// <param name="path">This must be a path such as "My Menu" or "Sub Menus/Entry"</param>
+            /// <remarks>
+            /// Menus that have children can not be clicked.
+            /// </remarks>
             public Menu(Root parent, string path)
             {
                 Path = path;
