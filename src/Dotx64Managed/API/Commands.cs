@@ -84,7 +84,15 @@ namespace Dotx64Dbg
 
             return Native.Commands.RegisterCommand(Manager.PluginHandle, cmd, debugOnly, delegate (int argc, System.IntPtr argv)
             {
-                return CommandHandler(cmd, argc, argv);
+                try
+                {
+                    return CommandHandler(cmd, argc, argv);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex}");
+                    return false;
+                }
             });
         }
 
