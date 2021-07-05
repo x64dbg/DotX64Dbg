@@ -128,8 +128,20 @@ namespace Dotx64Dbg
                 {
                     // Lookup the new type info.
                     var typeInfo = oldValue as Type;
-                    var newTypeInfo = ctx.NewAssembly.GetTypes().Single(x => x.FullName == typeInfo.FullName);
-                    newField.SetValue(newInstance, newTypeInfo);
+                    if (typeInfo.Assembly == ctx.OldAssembly)
+                    {
+                        // From plugin assembly.
+                        var types = ctx.NewAssembly.GetTypes();
+                        var newTypeInfo = Array.Find(types, x => x.FullName == typeInfo.FullName);
+                        newField.SetValue(newInstance, newTypeInfo);
+                    }
+                    else
+                    {
+                        // External, swap.
+                        newField.SetValue(newInstance, oldValue);
+                        oldField.SetValue(oldInstance, null);
+
+                    }
                 }
                 else if (fieldType == typeof(System.Object) && oldValue.GetType().IsValueType)
                 {
