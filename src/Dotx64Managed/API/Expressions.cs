@@ -50,18 +50,22 @@ namespace Dotx64Dbg
         /// if(Expression.TryEvaluate("rip", val)) { Console.WriteLine("Value of rip {0}", val); }
         /// </code>
         /// </example>
-        public static bool TryEvaluate(string expr, out ulong value)
+
+        public static bool TryEvaluate(string expr, out nuint value)
         {
-            return Native.Expressions.TryEvaluate(expr, out value);
+            IntPtr val;
+            var res = Native.Expressions.TryEvaluate(expr, out val);
+            value = (nuint)(nint)val;
+            return res;
         }
 
         /// <summary>
         /// Same as TryEvaluate except the function throws if the expression is invalid.
         /// </summary>
         /// <see cref="TryEvaluate"/>
-        public static ulong Evaluate(string expr)
+        public static nuint Evaluate(string expr)
         {
-            return Native.Expressions.Evaluate(expr);
+            return (nuint)(nint)Native.Expressions.Evaluate(expr);
         }
 
         /// <summary>
@@ -134,7 +138,7 @@ namespace Dotx64Dbg
         {
             var registered = Native.Expressions.RegisterExpression(Manager.PluginHandle, name, 1, delegate (int argc, System.IntPtr argv, System.IntPtr x)
             {
-                var arg0 = (ulong)Marshal.ReadIntPtr(argv, 0 * PointerSize);
+                var arg0 = (nint)Marshal.ReadIntPtr(argv, 0 * PointerSize);
                 return func((nuint)arg0);
             });
             if (registered)
@@ -148,8 +152,8 @@ namespace Dotx64Dbg
         {
             var registered = Native.Expressions.RegisterExpression(Manager.PluginHandle, name, 2, delegate (int argc, System.IntPtr argv, System.IntPtr x)
             {
-                var arg0 = (ulong)Marshal.ReadIntPtr(argv, 0 * PointerSize);
-                var arg1 = (ulong)Marshal.ReadIntPtr(argv, 1 * PointerSize);
+                var arg0 = (nint)Marshal.ReadIntPtr(argv, 0 * PointerSize);
+                var arg1 = (nint)Marshal.ReadIntPtr(argv, 1 * PointerSize);
                 return func((nuint)arg0, (nuint)arg1);
             });
             if (registered)
@@ -163,9 +167,9 @@ namespace Dotx64Dbg
         {
             var registered = Native.Expressions.RegisterExpression(Manager.PluginHandle, name, 3, delegate (int argc, System.IntPtr argv, System.IntPtr x)
             {
-                var arg0 = (ulong)Marshal.ReadIntPtr(argv, 0 * PointerSize);
-                var arg1 = (ulong)Marshal.ReadIntPtr(argv, 1 * PointerSize);
-                var arg2 = (ulong)Marshal.ReadIntPtr(argv, 2 * PointerSize);
+                var arg0 = (nint)Marshal.ReadIntPtr(argv, 0 * PointerSize);
+                var arg1 = (nint)Marshal.ReadIntPtr(argv, 1 * PointerSize);
+                var arg2 = (nint)Marshal.ReadIntPtr(argv, 2 * PointerSize);
                 return func((nuint)arg0, (nuint)arg1, (nuint)arg2);
             });
             if (registered)

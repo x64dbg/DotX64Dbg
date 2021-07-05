@@ -15,7 +15,7 @@ namespace Dotx64Dbg::Native
     public ref class Expressions
     {
     public:
-        static bool TryEvaluate(System::String^ expr, [Out] uint64_t% value)
+        static bool TryEvaluate(System::String^ expr, [Out] IntPtr% value)
         {
             msclr::interop::marshal_context oMarshalContext;
 
@@ -24,13 +24,17 @@ namespace Dotx64Dbg::Native
             duint val = 0;
             bool res = Script::Misc::ParseExpression(cstr, &val);
 
-            value = val;
+#ifdef _WIN64
+            value = IntPtr((unsigned long long)val);
+#else
+            value = IntPtr((int)val);
+#endif
             return res;
         }
 
-        static uint64_t Evaluate(System::String^ expr)
+        static System::IntPtr Evaluate(System::String^ expr)
         {
-            uint64_t res = 0;
+            IntPtr res = IntPtr(0);
             if (!TryEvaluate(expr, res))
             {
                 throw gcnew System::Exception("Invalid expression");
