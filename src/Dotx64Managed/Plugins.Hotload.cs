@@ -174,6 +174,7 @@ namespace Dotx64Dbg
                 else if (newFieldType == typeof(string))
                 {
                     newField.SetValue(newInstance, oldValue);
+                    oldField.SetValue(oldInstance, null);
                 }
                 else
                 {
