@@ -131,6 +131,10 @@ namespace Dotx64Dbg
                     var newTypeInfo = ctx.NewAssembly.GetTypes().Single(x => x.FullName == typeInfo.FullName);
                     newField.SetValue(newInstance, newTypeInfo);
                 }
+                else if (fieldType == typeof(System.Object) && oldValue.GetType().IsValueType)
+                {
+                    newField.SetValue(newInstance, oldValue);
+                }
                 else
                 {
                     if (!ctx.GetNewReference(oldValue, out newValue))
@@ -150,13 +154,17 @@ namespace Dotx64Dbg
             if (oldType.Assembly != ctx.OldAssembly)
                 return;
 
+#if DEBUG
+            Console.WriteLine($"[DEBUG] Adapting instance of Class: {oldType.Name}");
+#endif
+
             ctx.MapReference(oldInstance, newInstance);
 
             var fields = newType.GetRuntimeFields();
             foreach (var newField in fields)
             {
 #if DEBUG
-                Console.WriteLine("[DEBUG] Runtime: {0}", newField.Name);
+                Console.WriteLine($"[DEBUG] Field: {newField.Name}, Type: {newField.FieldType}");
 #endif
                 var oldField = oldType.GetRuntimeFields().FirstOrDefault(a => a.Name == newField.Name);
                 if (oldField != null)
