@@ -15,6 +15,7 @@ namespace Dotx64Dbg
     {
         private string OutputPath;
         private string Name;
+        private string[] Dependencies = Array.Empty<string>();
 
         public class Result
         {
@@ -27,6 +28,12 @@ namespace Dotx64Dbg
         {
             OutputPath = outputPath;
             Name = name;
+        }
+
+        public Compiler WithDependencies(string[] deps)
+        {
+            Dependencies = deps;
+            return this;
         }
 
         private List<SyntaxTree> ParseCode(string[] files, bool forScripting)
@@ -69,26 +76,36 @@ namespace Dotx64Dbg
 
         private Result Compile(List<SyntaxTree> parsed, bool forScripting = false)
         {
-            var references = new List<MetadataReference>
-            {
-                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(Logging).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(System.Runtime.CompilerServices.DynamicAttribute).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(Console).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(Native.Logging).Assembly.Location),
-            };
-
             var coreAssemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
-            references.Add(MetadataReference.CreateFromFile(Path.Combine(coreAssemblyPath, "mscorlib.dll")));
-            references.Add(MetadataReference.CreateFromFile(Path.Combine(coreAssemblyPath, "System.dll")));
-            references.Add(MetadataReference.CreateFromFile(Path.Combine(coreAssemblyPath, "System.Core.dll")));
-            references.Add(MetadataReference.CreateFromFile(Path.Combine(coreAssemblyPath, "System.Runtime.dll")));
+
+            var assemblyRefs = new HashSet<string>();
+            assemblyRefs.Add(typeof(object).Assembly.Location);
+            assemblyRefs.Add(typeof(Logging).Assembly.Location);
+            assemblyRefs.Add(typeof(System.Runtime.CompilerServices.DynamicAttribute).Assembly.Location);
+            assemblyRefs.Add(typeof(Console).Assembly.Location);
+            assemblyRefs.Add(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location);
+            assemblyRefs.Add(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location);
+            assemblyRefs.Add(typeof(Native.Logging).Assembly.Location);
+
+            assemblyRefs.Add(Path.Combine(coreAssemblyPath, "mscorlib.dll"));
+            assemblyRefs.Add(Path.Combine(coreAssemblyPath, "System.dll"));
+            assemblyRefs.Add(Path.Combine(coreAssemblyPath, "System.Core.dll"));
+            assemblyRefs.Add(Path.Combine(coreAssemblyPath, "System.Runtime.dll"));
 
             Assembly.GetExecutingAssembly().GetReferencedAssemblies()
                     .ToList()
-                    .ForEach(a => references.Add(MetadataReference.CreateFromFile(Assembly.Load(a).Location)));
+                    .ForEach(a => assemblyRefs.Add(Assembly.Load(a).Location));
+
+            foreach (var dep in Dependencies)
+            {
+                assemblyRefs.Add(Path.Combine(coreAssemblyPath, dep));
+            }
+
+            var references = new List<MetadataReference>();
+            foreach (var assemblyRef in assemblyRefs)
+            {
+                references.Add(MetadataReference.CreateFromFile(assemblyRef));
+            }
 
             var guid = Guid.NewGuid().ToString();
             var assemblyName = Name + guid;

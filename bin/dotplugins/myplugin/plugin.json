@@ -4,7 +4,9 @@
   "Version": "1.0.0",
   "Author": "Bob",
   "Website": "http://github.com/x64Dbg",
-
+  "Dependencies": [
+    "System.Console.dll"
+  ],
   "Settings": {
     "Test": true
   }

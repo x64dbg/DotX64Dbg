@@ -9,16 +9,18 @@ using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
-    class PluginInfo
+    internal class PluginInfo
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public string Version { get; set; }
         public string Author { get; set; }
         public string Website { get; set; }
+
+        public string[] Dependencies { get; set; }
     }
 
-    class Plugin
+    internal class Plugin
     {
         public PluginInfo Info;
         public string Path;
@@ -158,7 +160,8 @@ namespace Dotx64Dbg
             Console.WriteLine("Rebuilding plugin '{0}'...", plugin.Info.Name);
             stopwatch.Start();
 
-            var compiler = new Compiler(plugin.BuildOutputPath, plugin.Info.Name);
+            var compiler = new Compiler(plugin.BuildOutputPath, plugin.Info.Name)
+                .WithDependencies(plugin.Info.Dependencies ?? Array.Empty<string>());
 
             var res = compiler.Compile(plugin.SourceFiles.ToArray());
             stopwatch.Stop();
