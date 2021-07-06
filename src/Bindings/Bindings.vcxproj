@@ -175,6 +175,7 @@
     <ClCompile Include="Instruction.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="Module.cpp" />
     <ClCompile Include="Plugin.cpp" />
     <ClCompile Include="Thread.cpp" />
     <ClCompile Include="UI.cpp" />
