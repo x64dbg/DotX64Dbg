@@ -7,13 +7,23 @@ using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
+    internal class BadRegisterAccess : Exception
+    {
+        internal BadRegisterAccess(string message)
+            : base(message)
+        {
+        }
+    }
+
     public static partial class Scripting
     {
         internal static Thread GetThread()
         {
             var active = Thread.Active;
+
             if (active == null)
-                throw new Exception("Register access requires an active thread");
+                throw new BadRegisterAccess("Register access requires an active thread");
+
             return active;
         }
 

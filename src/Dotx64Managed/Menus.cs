@@ -64,7 +64,7 @@ namespace Dotx64Dbg
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Exception: {ex}");
+                    Utils.PrintException(ex);
                 }
             }
         }

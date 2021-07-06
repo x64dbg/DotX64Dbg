@@ -30,5 +30,16 @@ namespace Dotx64Dbg
 
             Console.WriteLine("}");
         }
+
+        internal static string GetExceptionMessage(Exception ex)
+        {
+            return ex.ToString();
+        }
+
+        internal static void PrintException(Exception ex)
+        {
+            ex = ex.InnerException ?? ex;
+            Console.WriteLine($"Exception: {GetExceptionMessage(ex)}");
+        }
     }
 }

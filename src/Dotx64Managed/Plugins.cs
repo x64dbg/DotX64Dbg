@@ -160,7 +160,7 @@ namespace Dotx64Dbg
             Console.WriteLine("Rebuilding plugin '{0}'...", plugin.Info.Name);
             stopwatch.Start();
 
-            var compiler = new Compiler(plugin.BuildOutputPath, plugin.Info.Name)
+            var compiler = new Compiler(plugin.Info.Name, plugin.BuildOutputPath)
                 .WithDependencies(plugin.Info.Dependencies ?? Array.Empty<string>());
 
             var res = compiler.Compile(plugin.SourceFiles.ToArray());

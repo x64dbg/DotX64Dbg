@@ -59,5 +59,10 @@ namespace Dotx64Dbg
         {
             Menus.HandleCallback(id);
         }
+
+        public static bool EvalScript(string code)
+        {
+            return ScriptLoader.ExecuteCode(code);
+        }
     }
 }

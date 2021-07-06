@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
 using System;
@@ -16,15 +17,18 @@ namespace Dotx64Dbg
         private string OutputPath;
         private string Name;
         private string[] Dependencies = Array.Empty<string>();
+        private bool ForScripting = false;
 
         public class Result
         {
             internal bool success = false;
             public bool Success { get => success; }
             public string OutputAssemblyPath;
+            public MemoryStream AssemblyStream;
+            public MemoryStream DebugStream;
         }
 
-        public Compiler(string outputPath, string name)
+        public Compiler(string name, string outputPath = "")
         {
             OutputPath = outputPath;
             Name = name;
@@ -64,11 +68,26 @@ namespace Dotx64Dbg
                         success = false
                     };
                 }
-                return Compile(parsed, false);
+                return Compile(parsed, forScripting);
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine($"Exception: {ex.ToString()}");
+                Utils.PrintException(ex);
+            }
+
+            return new Result();
+        }
+
+        public Result Compile(string code)
+        {
+            try
+            {
+                List<SyntaxTree> parsed = new() { ParseCode(code, true) };
+                return Compile(parsed, true);
+            }
+            catch (System.Exception ex)
+            {
+                Utils.PrintException(ex);
             }
 
             return new Result();
@@ -123,6 +142,14 @@ namespace Dotx64Dbg
                 .WithModuleName(Name + guid)
             ;
 
+            if (forScripting)
+            {
+                options = options.WithUsings(new[] {
+                    "System",
+                    "Dotx64Dbg",
+                    "Dotx64Dbg.Scripting",
+                });
+            }
 
             var compiler = CSharpCompilation.Create(assemblyName,
                 parsed,
@@ -131,8 +158,19 @@ namespace Dotx64Dbg
 
             try
             {
+                var res = new Result();
+                EmitResult result;
 
-                EmitResult result = compiler.Emit(assemblyPath, debugFilePath);
+                if (forScripting)
+                {
+                    res.AssemblyStream = new MemoryStream();
+                    res.DebugStream = new MemoryStream();
+                    result = compiler.Emit(res.AssemblyStream, res.DebugStream);
+                }
+                else
+                {
+                    result = compiler.Emit(assemblyPath, debugFilePath);
+                }
 
                 if (!result.Success)
                 {
@@ -142,11 +180,14 @@ namespace Dotx64Dbg
                     {
                         Console.WriteLine(info.ToString());
                     }
+
+                    res.AssemblyStream.Dispose();
+                    res.DebugStream.Dispose();
+                    res.AssemblyStream = null;
+                    res.DebugStream = null;
                 }
                 else
                 {
-                    var res = new Result();
-
                     res.success = true;
                     res.OutputAssemblyPath = assemblyPath;
 
@@ -155,7 +196,7 @@ namespace Dotx64Dbg
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception: {0}", ex.ToString());
+                Utils.PrintException(ex);
             }
 
             return new Result();
@@ -163,17 +204,25 @@ namespace Dotx64Dbg
 
         private SyntaxTree ParseFile(string file, bool forScripting)
         {
-            var encoding = Encoding.UTF8;
+            var code = System.IO.File.ReadAllText(file, Encoding.UTF8);
+            return ParseCode(code, forScripting, file);
+        }
 
+        private UsingDirectiveSyntax CreateUsingDirective(string usingName)
+        {
+            var name = SyntaxFactory.ParseName(usingName);
+            return SyntaxFactory.UsingDirective(name);
+        }
+
+        private SyntaxTree ParseCode(string code, bool forScripting, string file = "")
+        {
             var preprocessorSymbols = new List<string>();
 #if _X64_
             preprocessorSymbols.Add("_X64_");
 #elif _X86_
             preprocessorSymbols.Add("_X86_");
 #endif
-
-            var fileContents = System.IO.File.ReadAllText(file, encoding);
-            var codeString = SourceText.From(fileContents, encoding);
+            var codeString = SourceText.From(code, Encoding.UTF8);
             var options = CSharpParseOptions.Default
                 .WithLanguageVersion(LanguageVersion.CSharp9)
                 .WithPreprocessorSymbols(preprocessorSymbols.ToArray())

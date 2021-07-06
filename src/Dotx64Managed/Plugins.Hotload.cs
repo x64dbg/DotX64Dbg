@@ -504,7 +504,7 @@ namespace Dotx64Dbg
                             {
                                 startup.Invoke(newInstance, Array.Empty<object>());
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
                                 throw;
                             }
@@ -582,7 +582,7 @@ namespace Dotx64Dbg
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception: {0}", ex.ToString());
+                Utils.PrintException(ex);
                 return;
             }
 

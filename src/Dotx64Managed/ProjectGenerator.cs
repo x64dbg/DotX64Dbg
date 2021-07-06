@@ -79,7 +79,7 @@ namespace Dotx64Dbg
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine($"Exception: {ex}");
+                Utils.PrintException(ex);
                 return false;
             }
 

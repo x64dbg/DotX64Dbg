@@ -188,6 +188,12 @@ struct Wrapper
     {
         Dotx64Dbg::Manager::OnMenuCallback(id);
     }
+
+    static bool EvalScript(const char* input)
+    {
+        auto str = gcnew System::String(input);
+        return Dotx64Dbg::Manager::EvalScript(str);
+    }
 };
 
 // Unmanaged section.
@@ -246,6 +252,7 @@ PLUG_EXPORT void CBDEBUGEVENT(CBTYPE cbType, PLUG_CB_DEBUGEVENT* info)
 
 PLUG_EXPORT void CBLOADDLL(CBTYPE cbType, PLUG_CB_LOADDLL* info)
 {
+
 }
 
 PLUG_EXPORT void CBUNLOADDLL(CBTYPE cbType, PLUG_CB_UNLOADDLL* info)
@@ -260,6 +267,17 @@ PLUG_EXPORT void CBEXITTHREAD(CBTYPE cbType, PLUG_CB_EXITTHREAD* info)
 {
 }
 
+bool CBEXECUTESCRIPT(const char* text)
+{
+    return Wrapper::EvalScript(text);
+}
+
+void CBSCRIPTAUTOCOMPLETE(const char* text, char** entries, int* entryCount)
+{
+    if (entryCount)
+        *entryCount = 0;
+}
+
 PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 {
     Wrapper::Init(initStruct->pluginHandle);
@@ -267,6 +285,15 @@ PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
     initStruct->pluginVersion = 1;
     initStruct->sdkVersion = 1;
     strncpy_s(initStruct->pluginName, "DotX64Dbg", _TRUNCATE);
+
+    SCRIPTTYPEINFO sti = {};
+    sti.execute = CBEXECUTESCRIPT;
+    // Lets hope this never collides with any other plugin :shrug:
+    sti.id = 'D' + 'o' + 't' + 'x' + '6' + '4' + 'D' + 'b' + 'g';
+    strcpy_s(sti.name, "Dotx64Dbg");
+
+    GuiRegisterScriptLanguage(&sti);
+
 
     return true;
 }

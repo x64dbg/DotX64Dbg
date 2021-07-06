@@ -22,7 +22,7 @@ namespace Dotx64Dbg
                 return false;
             }
 
-            return Execute(args[1]);
+            return ExecuteScriptFile(args[1]);
         }
 
         private static void SetupDirectories()
@@ -43,8 +43,6 @@ namespace Dotx64Dbg
         public static void Initialize()
         {
             SetupDirectories();
-            CleanupJunk();
-
             Commands.Register(null, "dotscript", false, RunScriptCommand);
         }
 
@@ -59,24 +57,14 @@ namespace Dotx64Dbg
             return entries.First();
         }
 
-        private static void CleanupJunk()
+        public static bool ExecuteScriptAssembly(Compiler.Result data)
         {
-            foreach (var file in Directory.GetFiles(ScriptBuildOutputPath))
-            {
-                try
-                {
-                    File.Delete(file);
-                }
-                catch (Exception)
-                {
-                }
-            }
-        }
+            // Make sure the stream positions are at 0.
+            data.AssemblyStream.Position = 0;
+            data.DebugStream.Position = 0;
 
-        public static bool ExecuteScript(string assemblyFile)
-        {
             var loader = new AssemblyLoader();
-            var newAssembly = loader.LoadFromFile(assemblyFile);
+            var newAssembly = loader.LoadFromStream(data.AssemblyStream, data.DebugStream);
 
             var scriptClass = GetScriptClass(newAssembly);
             if (scriptClass != null)
@@ -106,19 +94,18 @@ namespace Dotx64Dbg
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Exception: {ex}");
+                    Utils.PrintException(ex);
                 }
 
                 ActiveScript = null;
 
                 GC.Collect();
-                CleanupJunk();
             });
 
             return false;
         }
 
-        public static bool Execute(string file)
+        public static bool ExecuteScriptFile(string file)
         {
             var scriptName = Path.GetFileNameWithoutExtension(file);
 
@@ -127,7 +114,7 @@ namespace Dotx64Dbg
             Console.WriteLine("Building script '{0}'...", file);
             stopwatch.Start();
 
-            var compiler = new Compiler(ScriptBuildOutputPath, scriptName);
+            var compiler = new Compiler(scriptName);
 
             var res = compiler.Compile(new string[] { file }, true);
             stopwatch.Stop();
@@ -139,13 +126,26 @@ namespace Dotx64Dbg
             else
             {
                 Console.WriteLine("Compiled script '{0}' in {1} ms", file, stopwatch.ElapsedMilliseconds);
-
-                ExecuteScript(res.OutputAssemblyPath);
+                ExecuteScriptAssembly(res);
             }
 
             return true;
         }
 
+        public static bool ExecuteCode(string code)
+        {
+            var compiler = new Compiler("script");
+
+            Console.WriteLine($"> {code}");
+
+            var res = compiler.Compile(code);
+            if (!res.Success)
+            {
+                return false;
+            }
+
+            return ExecuteScriptAssembly(res);
+        }
 
     }
 }
