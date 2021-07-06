@@ -17,7 +17,6 @@ namespace Dotx64Dbg
         private string OutputPath;
         private string Name;
         private string[] Dependencies = Array.Empty<string>();
-        private bool ForScripting = false;
 
         public class Result
         {

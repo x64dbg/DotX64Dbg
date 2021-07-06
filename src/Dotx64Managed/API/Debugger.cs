@@ -36,7 +36,7 @@ namespace Dotx64Dbg
         }
 
         /// <summary>
-        /// Signals the debugger to pause, returns immediately.
+        /// Signals the debugger to pause, will block until the debugger stopped.
         /// </summary>
         public static void Pause()
         {
@@ -44,7 +44,7 @@ namespace Dotx64Dbg
         }
 
         /// <summary>
-        /// Signals the debugger to stop, returns immediately.
+        /// Signals the debugger to stop, will block until the debugger stopped.
         /// </summary>
         public static void Stop()
         {
@@ -52,7 +52,7 @@ namespace Dotx64Dbg
         }
 
         /// <summary>
-        /// Signals the debugger to step in, returns immediately.
+        /// Signals the debugger to step in, will block until the debugger stopped.
         /// </summary>
         public static void StepIn()
         {
@@ -65,7 +65,7 @@ namespace Dotx64Dbg
         }
 
         /// <summary>
-        /// Signals the debugger to step over, returns immediately.
+        /// Signals the debugger to step over, will block until the debugger stopped.
         /// </summary>
         public static void StepOver()
         {
@@ -78,7 +78,7 @@ namespace Dotx64Dbg
         }
 
         /// <summary>
-        /// Signals the debugger to step out, returns immediately.
+        /// Signals the debugger to step out, will block until the debugger stopped.
         /// </summary>
         public static void StepOut()
         {

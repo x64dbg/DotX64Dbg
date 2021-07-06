@@ -15,7 +15,7 @@ namespace Dotx64Dbg.Managed.Tests
             // Warm-up
             _ = Analysis.RegisterMaskGp.None;
             _ = Register.Al;
-            _ = Operand.Reg(Register.Al);
+            _ = Operands.Reg(Register.Al);
         }
 
         [Test]

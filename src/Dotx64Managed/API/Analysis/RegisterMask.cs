@@ -93,7 +93,7 @@ namespace Dotx64Dbg.Analysis
 #else
                     var regId = Register.Eax + i;
 #endif
-                    res[idx] = Operand.Reg(regId);
+                    res[idx] = Operands.Reg(regId);
                     idx++;
                 }
             }

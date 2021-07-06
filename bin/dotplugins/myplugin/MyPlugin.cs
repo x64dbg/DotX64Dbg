@@ -18,6 +18,7 @@ public partial class MyPlugin : IPlugin, IHotload
     public static int MyPublicStatic = 0;
     private static int MyPrivateStatic = 0;
     private static int NewStatic = 100;
+    private AssemblerTest Assembler = new AssemblerTest();
 
     public static byte[] Shit = new byte[] { 0xEC };
 

@@ -7,6 +7,8 @@ namespace Dotx64Dbg
     {
         public readonly nuint Base;
 
+        public static Module Main { get => GetMain(); }
+
         public string Name { get => GetName(); }
 
         public string Path { get => GetPath(); }

@@ -85,7 +85,7 @@ namespace Dotx64Dbg {
 
         IOperand^ ConvertOperandReg(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
         {
-            return Operand::Reg(static_cast<Register>(op.reg.value));
+            return gcnew Operand::OpReg(static_cast<Register>(op.reg.value));
         }
 
         IOperand^ ConvertOperandMem(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)

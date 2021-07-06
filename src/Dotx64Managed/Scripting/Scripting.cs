@@ -25,9 +25,21 @@ namespace Dotx64Dbg
             Debugger.StepIn();
         }
 
+        public static void Sti(int steps)
+        {
+            for (int i = 0; i < steps; i++)
+                Sti();
+        }
+
         public static void Sto()
         {
             Debugger.StepOver();
+        }
+
+        public static void Sto(int steps)
+        {
+            for (int i = 0; i < steps; i++)
+                Sto();
         }
 
         public static void Run()

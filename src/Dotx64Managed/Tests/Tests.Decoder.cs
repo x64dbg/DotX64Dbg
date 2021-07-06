@@ -18,7 +18,7 @@ namespace Dotx64Dbg
         }
         public void TestInstruction()
         {
-            var instr = new Instruction(Mnemonic.Add, Operand.Reg(Register.Rax), Operand.Imm(32));
+            var instr = new Instruction(Mnemonic.Add, Operands.Reg(Register.Rax), Operands.Imm(32));
 
             var op0 = instr.GetOperand(0);
             Debug.Assert(op0.Type == OperandType.Register);
@@ -41,50 +41,50 @@ namespace Dotx64Dbg
 
         public void TestOperandImm()
         {
-            var imm1 = Operand.Imm(1);
+            var imm1 = Operands.Imm(1);
             Debug.Assert(imm1.Size == 8);
 
-            var imm2 = Operand.Imm(0xFF);
+            var imm2 = Operands.Imm(0xFF);
             Debug.Assert(imm2.Size == 8);
 
-            var imm3 = Operand.Imm(0xFF + 1);
+            var imm3 = Operands.Imm(0xFF + 1);
             Debug.Assert(imm3.Size == 16);
 
-            var imm4 = Operand.Imm(-1);
+            var imm4 = Operands.Imm(-1);
             Debug.Assert(imm4.Size == 8);
 
-            var imm5 = Operand.Imm(-255);
+            var imm5 = Operands.Imm(-255);
             Debug.Assert(imm5.Size == 8);
 
-            var imm6 = Operand.Imm(-256);
+            var imm6 = Operands.Imm(-256);
             Debug.Assert(imm6.Size == 16);
         }
 
         public void TestOperandReg()
         {
-            var al = Operand.Reg(Register.Al);
+            var al = Operands.Reg(Register.Al);
             Debug.Assert(al.Size == 8);
 
-            var ax = Operand.Reg(Register.Ax);
+            var ax = Operands.Reg(Register.Ax);
             Debug.Assert(ax.Size == 16);
 
-            var eax = Operand.Reg(Register.Eax);
+            var eax = Operands.Reg(Register.Eax);
             Debug.Assert(eax.Size == 32);
 
-            var rax = Operand.Reg(Register.Rax);
+            var rax = Operands.Reg(Register.Rax);
             Debug.Assert(rax.Size == 64);
         }
 
         public void TestOperandMemory8()
         {
-            var mem1 = Operand.byte_ptr(Register.Rax);
+            var mem1 = Operands.BytePtr(Register.Rax);
             Debug.Assert(mem1.Size == 8);
             Debug.Assert(mem1.Base == Register.Rax);
 
             var str1 = mem1.ToString();
             Debug.Assert(str1 == "byte ptr [rax]");
 
-            var mem2 = Operand.byte_ptr(Register.Rax, Register.Rdx);
+            var mem2 = Operands.BytePtr(Register.Rax, Register.Rdx);
             Debug.Assert(mem2.Size == 8);
             Debug.Assert(mem2.Base == Register.Rax);
             Debug.Assert(mem2.Index == Register.Rdx);
@@ -95,14 +95,14 @@ namespace Dotx64Dbg
 
         public void TestOperandMemory16()
         {
-            var mem1 = Operand.word_ptr(Register.Rax);
+            var mem1 = Operands.WordPtr(Register.Rax);
             Debug.Assert(mem1.Size == 16);
             Debug.Assert(mem1.Base == Register.Rax);
 
             var str1 = mem1.ToString();
             Debug.Assert(str1 == "word ptr [rax]");
 
-            var mem2 = Operand.word_ptr(Register.Rax, Register.Rdx);
+            var mem2 = Operands.WordPtr(Register.Rax, Register.Rdx);
             Debug.Assert(mem2.Size == 16);
             Debug.Assert(mem2.Base == Register.Rax);
             Debug.Assert(mem2.Index == Register.Rdx);
