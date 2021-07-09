@@ -100,10 +100,11 @@ public partial class MyPlugin : IPlugin, IHotload
             Console.WriteLine($"Al = {mainThread.Al:X}");
 
             Console.WriteLine($"Rax = {mainThread.Rax:X}");
-        }
-
-        var res = Memory.Read(0x00007FF67A766E88, 22);
+			
+			
+        var res = Memory.Read(mainThread.Rip, 22);
         Console.WriteLine("Data: {0}", res);
+        }
 
         // Value X and Y have will be 100, 300
         Console.WriteLine("X = {0}, Y = {1}, Z = {2}, MyPublicStatic = {3}, MyPrivateStatic = {4}", X, Y, Z, MyPublicStatic, MyPrivateStatic);
