@@ -169,6 +169,21 @@ namespace Dotx64Dbg {
             res->Address = addr;
             res->Id = static_cast<Mnemonic>(instr.mnemonic);
 
+            if (instr.attributes & ZYDIS_ATTRIB_HAS_LOCK)
+                res->Attribs |= Instruction::Attributes::Lock;
+
+            if (instr.attributes & ZYDIS_ATTRIB_HAS_REP)
+                res->Attribs |= Instruction::Attributes::Rep;
+
+            if (instr.attributes & ZYDIS_ATTRIB_HAS_REPE)
+                res->Attribs |= Instruction::Attributes::RepEq;
+
+            if (instr.attributes & ZYDIS_ATTRIB_HAS_REPNE)
+                res->Attribs |= Instruction::Attributes::RepNe;
+
+            if (instr.attributes & ZYDIS_ATTRIB_HAS_REPNZ)
+                res->Attribs |= Instruction::Attributes::RepNz;
+
             for (int i = 0; i < instr.operand_count; i++)
             {
                 auto& op = instr.operands[i];

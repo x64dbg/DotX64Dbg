@@ -38,9 +38,150 @@ namespace Dotx64Dbg {
             auto op3 = convertOp(instr->GetOperand(3));
 
             auto mnemonic = convertMnemonic(instr->Id);
-            if (_assembler->emit(mnemonic, op0, op1, op2, op3) != asmjit::kErrorOk)
+
+            if ((instr->Attribs & Instruction::Attributes::Lock) != Instruction::Attributes::None)
+                _assembler->lock();
+
+            if ((instr->Attribs & Instruction::Attributes::Rep) != Instruction::Attributes::None)
+                _assembler->rep();
+
+            if ((instr->Attribs & Instruction::Attributes::RepNe) != Instruction::Attributes::None)
+                _assembler->repne();
+
+            if ((instr->Attribs & Instruction::Attributes::RepEq) != Instruction::Attributes::None)
+                _assembler->repe();
+
+            if ((instr->Attribs & Instruction::Attributes::RepNz) != Instruction::Attributes::None)
+                _assembler->repnz();
+
+            switch (instr->Id)
             {
-                return false;
+            case Mnemonic::Cmpsb:
+                if (_assembler->cmpsb() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Cmpsw:
+                if (_assembler->cmpsw() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Cmpsd:
+                if (_assembler->cmpsd() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Cmpsq:
+                if (_assembler->cmpsq() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Movsb:
+                if (_assembler->movsb() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Movsw:
+                if (_assembler->movsw() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Movsd:
+                if (_assembler->movsd() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Movsq:
+                if (_assembler->movsq() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Lodsb:
+                if (_assembler->lodsb() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Lodsw:
+                if (_assembler->lodsw() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Lodsd:
+                if (_assembler->lodsd() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Lodsq:
+                if (_assembler->lodsq() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Stosb:
+                if (_assembler->stosb() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Stosw:
+                if (_assembler->stosw() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Stosd:
+                if (_assembler->stosd() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Stosq:
+                if (_assembler->stosq() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Scasb:
+                if (_assembler->scasb() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Scasw:
+                if (_assembler->scasw() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Scasd:
+                if (_assembler->scasd() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            case Mnemonic::Scasq:
+                if (_assembler->scasq() != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
+            default:
+                if (_assembler->emit(mnemonic, op0, op1, op2, op3) != asmjit::kErrorOk)
+                {
+                    return false;
+                }
+                break;
             }
 
             return true;

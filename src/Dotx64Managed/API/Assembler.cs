@@ -13,7 +13,9 @@ namespace Dotx64Dbg
 
         internal Dotx64Dbg.Encoder Encoder;
 
-        bool disposed = false;
+        internal bool disposed = false;
+
+        internal Instruction.Attributes AttribState;
 
         public class Label
         {
@@ -89,45 +91,42 @@ namespace Dotx64Dbg
             return this;
         }
 
-
-        internal Assembler CreateInstr()
-        {
-            var node = new NodeInstr() { Value = new Instruction() };
-            Cursor = Nodes.InsertAfter(Cursor, node);
-            return this;
-        }
-
         internal Assembler CreateInstr(Mnemonic id)
         {
-            var node = new NodeInstr() { Value = new Instruction(id) };
+            var node = new NodeInstr() { Value = new Instruction(AttribState, id) };
+            AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0)
         {
-            var node = new NodeInstr() { Value = new Instruction(id, op0) };
+            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0) };
+            AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0, IOperand op1)
         {
-            var node = new NodeInstr() { Value = new Instruction(id, op0, op1) };
+            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0, op1) };
+            AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0, IOperand op1, IOperand op2)
         {
-            var node = new NodeInstr() { Value = new Instruction(id, op0, op1, op2) };
+            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0, op1, op2) };
+            AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0, IOperand op1, IOperand op2, IOperand op3)
         {
-            var node = new NodeInstr() { Value = new Instruction(id, op0, op1, op2, op3) };
+            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0, op1, op2, op3) };
+            AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
@@ -178,6 +177,23 @@ namespace Dotx64Dbg
         {
             var node = new NodeData() { Value = BitConverter.GetBytes(val) };
             Cursor = Nodes.InsertAfter(Cursor, node);
+            return this;
+        }
+
+        public Assembler Lock()
+        {
+            AttribState |= Instruction.Attributes.Lock;
+            return this;
+        }
+
+        public Assembler Rep()
+        {
+            AttribState |= Instruction.Attributes.Rep;
+            return this;
+        }
+        public Assembler RepNe()
+        {
+            AttribState |= Instruction.Attributes.RepNe;
             return this;
         }
 

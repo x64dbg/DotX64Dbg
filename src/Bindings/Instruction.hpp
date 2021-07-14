@@ -502,10 +502,57 @@ namespace Dotx64Dbg {
         array<IOperand^>^ Operands;
 
     public:
+
+        [System::Flags]
+        enum class Attributes
+        {
+            None = 0,
+            Lock = (1 << 0),
+            Rep = (1 << 1),
+            RepNe = (1 << 2),
+            RepEq = (1 << 3),
+            RepNz = (1 << 4),
+        };
+
         Instruction()
         {
             Id = Mnemonic::Invalid;
             Operands = gcnew array<IOperand^>{ Operand::None, Operand::None, Operand::None, Operand::None, Operand::None };
+        }
+
+        Instruction(Attributes attribs, Mnemonic id)
+        {
+            Id = id;
+            Attribs = attribs;
+            Operands = gcnew array<IOperand^>{ Operand::None, Operand::None, Operand::None, Operand::None, Operand::None };
+        }
+
+        Instruction(Attributes attribs, Mnemonic id, IOperand^ op0)
+        {
+            Id = id;
+            Attribs = attribs;
+            Operands = gcnew array<IOperand^>{ op0, Operand::None, Operand::None, Operand::None, Operand::None };
+        }
+
+        Instruction(Attributes attribs, Mnemonic id, IOperand^ op0, IOperand^ op1)
+        {
+            Id = id;
+            Attribs = attribs;
+            Operands = gcnew array<IOperand^>{ op0, op1, Operand::None, Operand::None, Operand::None };
+        }
+
+        Instruction(Attributes attribs, Mnemonic id, IOperand^ op0, IOperand^ op1, IOperand^ op2)
+        {
+            Id = id;
+            Attribs = attribs;
+            Operands = gcnew array<IOperand^>{ op0, op1, op2, Operand::None, Operand::None };
+        }
+
+        Instruction(Attributes attribs, Mnemonic id, IOperand^ op0, IOperand^ op1, IOperand^ op2, IOperand^ op3)
+        {
+            Id = id;
+            Attribs = attribs;
+            Operands = gcnew array<IOperand^>{ op0, op1, op2, op3, Operand::None };
         }
 
         Instruction(Mnemonic id)
@@ -543,6 +590,7 @@ namespace Dotx64Dbg {
         property Mnemonic Id;
         property EFlags FlagsWrite;
         property EFlags FlagsRead;
+        property Attributes Attribs;
 
         IOperand^ GetOperand(int index)
         {
