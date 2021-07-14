@@ -4,6 +4,10 @@
 #include <zydis/zydis.h>
 #include "Instruction.hpp"
 
+#include "pluginsdk/bridgemain.h"
+#include "pluginsdk/_plugins.h"
+#include "pluginsdk/_scriptapi_memory.h"
+
 namespace Dotx64Dbg {
 
     static constexpr uint32_t Flags[] =
@@ -69,6 +73,23 @@ namespace Dotx64Dbg {
             }
 
             return Convert(instr, address);
+        }
+
+        Instruction^ Decode(uintptr_t va)
+        {
+            duint readSize = 0;
+
+            uint8_t buf[15];
+            if (!Script::Memory::Read(static_cast<duint>(va), buf, sizeof(buf), &readSize))
+                return nullptr;
+
+            ZydisDecodedInstruction instr{};
+            if (auto status = ZydisDecoderDecodeBuffer(_decoder, buf, readSize, &instr); status != ZYAN_STATUS_SUCCESS)
+            {
+                return nullptr;
+            }
+
+            return Convert(instr, va);
         }
 
     private:
@@ -205,11 +226,20 @@ namespace Dotx64Dbg {
                 if (op.actions & ZYDIS_OPERAND_ACTION_MASK_WRITE)
                     newOp->Access |= OperandAccess::Write;
 
-                auto [flagsR, flagsW] = getEFlags(instr);
-                res->FlagsRead = static_cast<EFlags>(flagsR);
-                res->FlagsWrite = static_cast<EFlags>(flagsW);
-
                 res->SetOperand(i, newOp);
+
+#ifdef _DEBUG
+                auto [flagsR, flagsW] = getEFlags(instr);
+                if (res->FlagsRead != (EFlags)flagsR)
+                {
+                    __debugbreak();
+                }
+
+                if (res->FlagsWrite != (EFlags)flagsW)
+                {
+                    __debugbreak();
+                }
+#endif
             }
 
             return res;

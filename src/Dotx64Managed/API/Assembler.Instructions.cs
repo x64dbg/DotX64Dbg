@@ -81,6 +81,7 @@ namespace Dotx64Dbg
         public Assembler Invd() => CreateInstr(Mnemonic.Invd);
         public Assembler Invlpg(Operand.OpMem a) => CreateInstr(Mnemonic.Invlpg, a);
         public Assembler Invpcid(Operand.OpReg a, Operand.OpMem b) => CreateInstr(Mnemonic.Invpcid, a, b);
+        public Assembler Jmp(Label a) => CreateInstr(Mnemonic.Jmp, a);
         public Assembler Jmp(Operand.OpReg a) => CreateInstr(Mnemonic.Jmp, a);
         public Assembler Jmp(Operand.OpMem a) => CreateInstr(Mnemonic.Jmp, a);
         //public Assembler Jmp(Label a) => CreateInstr(Mnemonic.Jmp, a);

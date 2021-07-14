@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
+    internal class LabelData
+    {
+        internal Label Label;
+        internal NodeList.Node Node;
+    }
+
     public partial class Assembler : IDisposable
     {
         private NodeList Nodes = new();
@@ -17,26 +23,8 @@ namespace Dotx64Dbg
 
         internal Instruction.Attributes AttribState;
 
-        public class Label
-        {
-            public int Id { get; internal set; }
-            public int Offset { get; internal set; }
-            internal NodeList.Node Node { get; set; }
+        internal List<LabelData> Labels = new();
 
-            Label()
-            {
-                Id = -1;
-            }
-
-            internal Label(int id)
-            {
-                Id = id;
-            }
-
-
-        }
-
-        internal List<Label> Labels = new();
 
         public class NodeInstr : NodeList.NodeKind<Instruction>
         {
@@ -71,20 +59,27 @@ namespace Dotx64Dbg
 
         public Label CreateLabel()
         {
-            var res = new Label(Labels.Count);
+            var data = new LabelData()
+            {
+                Label = new Label(Labels.Count),
+                Node = null,
+            };
 
-            Labels.Add(res);
+            Labels.Add(data);
 
-            return res;
+            return data.Label;
         }
 
         public Assembler BindLabel(Label label)
         {
-            if (label.Node != null)
+            var labelData = Labels[label.Value];
+            if (labelData.Node != null)
+            {
                 throw new Exception("Label is already bound, can not bind twice.");
+            }
 
             var node = new NodeLabel() { Value = label };
-            label.Node = node;
+            labelData.Node = node;
 
             Cursor = Nodes.InsertAfter(Cursor, node);
 
@@ -127,6 +122,13 @@ namespace Dotx64Dbg
         {
             var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0, op1, op2, op3) };
             AttribState = Instruction.Attributes.None;
+            Cursor = Nodes.InsertAfter(Cursor, node);
+            return this;
+        }
+
+        public Assembler Emit(Instruction instr)
+        {
+            var node = new NodeInstr() { Value = instr };
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
@@ -212,7 +214,10 @@ namespace Dotx64Dbg
                 }
                 else if (node is NodeLabel nodeLabel)
                 {
-
+                    if (!Encoder.BindLabel(nodeLabel.Value))
+                    {
+                        return false;
+                    }
                 }
                 node = node.Next;
             }

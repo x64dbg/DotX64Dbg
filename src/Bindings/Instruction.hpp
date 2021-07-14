@@ -4,6 +4,7 @@
 
 #include "Register.hpp"
 #include "Mnemonic.hpp"
+#include "Instruction.Meta.hpp"
 
 namespace Dotx64Dbg {
 
@@ -15,6 +16,7 @@ namespace Dotx64Dbg {
         Immediate,
         Register,
         Memory,
+        Label,
     };
 
     public enum class OperandVisibility
@@ -35,6 +37,7 @@ namespace Dotx64Dbg {
     [System::Flags]
     public enum class EFlags
     {
+        None = 0,
         Cf = (1 << 0),
         Pf = (1 << 2),
         Af = (1 << 4),
@@ -70,6 +73,46 @@ namespace Dotx64Dbg {
         virtual property int Size
         {
             int get();
+        }
+    };
+
+    public ref class Label : public IOperand
+    {
+        int _id = -1;
+
+    public:
+        property int Value
+        {
+            int get()
+            {
+                return _id;
+            }
+        }
+
+        Label()
+        {
+        }
+
+        Label(int id)
+            : _id(id)
+        {
+        }
+
+        virtual property OperandVisibility Visibility;
+        virtual property OperandAccess Access;
+        virtual property OperandType Type
+        {
+            OperandType get()
+            {
+                return OperandType::Label;
+            }
+        }
+        virtual property int Size
+        {
+            int get()
+            {
+                return 0;
+            }
         }
     };
 
@@ -588,9 +631,80 @@ namespace Dotx64Dbg {
         property int Size;
         property uint64_t Address;
         property Mnemonic Id;
-        property EFlags FlagsWrite;
-        property EFlags FlagsRead;
+
+        property EFlags FlagsWrite
+        {
+            EFlags get()
+            {
+                return (EFlags)Internal::InstrMeta::getInstrEFlags(Id).modified;
+            }
+        }
+
+        property EFlags FlagsRead
+        {
+            EFlags get()
+            {
+                return (EFlags)Internal::InstrMeta::getInstrEFlags(Id).read;
+            }
+        }
+
+        property EFlags FlagsUndefined
+        {
+            EFlags get()
+            {
+                return (EFlags)Internal::InstrMeta::getInstrEFlags(Id).undefined;
+            }
+        }
+
         property Attributes Attribs;
+
+        property bool IsControlFlow
+        {
+            bool get()
+            {
+                return Internal::InstrMeta::isControlFlow(Id);
+            }
+        }
+
+        property bool IsConditionalControlFlow
+        {
+            bool get()
+            {
+                return Internal::InstrMeta::isCondControlFlow(Id);
+            }
+        }
+
+        property bool HasCondition
+        {
+            bool get()
+            {
+                return FlagsRead != EFlags::None;
+            }
+        }
+
+        property bool IsCall
+        {
+            bool get()
+            {
+                return Internal::InstrMeta::IsCall(Id);
+            }
+        }
+
+        property bool IsJmp
+        {
+            bool get()
+            {
+                return Id == Mnemonic::Jmp;
+            }
+        }
+
+        property bool IsRet
+        {
+            bool get()
+            {
+                return Internal::InstrMeta::isRet(Id);
+            }
+        }
 
         IOperand^ GetOperand(int index)
         {

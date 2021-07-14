@@ -184,6 +184,7 @@
   <ItemGroup>
     <ClInclude Include="Encoder.Converter.hpp" />
     <ClInclude Include="Instruction.hpp" />
+    <ClInclude Include="Instruction.Meta.hpp" />
     <ClInclude Include="Mnemonic.hpp" />
     <ClInclude Include="Register.hpp" />
   </ItemGroup>

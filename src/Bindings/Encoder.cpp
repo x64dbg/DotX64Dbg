@@ -1,5 +1,6 @@
 ﻿#include <cstdint>
 #include <utility>
+#include <vector>
 
 #include "Encoder.Converter.hpp"
 
@@ -9,10 +10,12 @@ namespace Dotx64Dbg {
     {
         asmjit::CodeHolder* _code{};
         asmjit::x86::Assembler* _assembler{};
+        System::Collections::Generic::Dictionary<Label^, UInt32>^ _labels;
 
     private:
         Encoder(uintptr_t baseVA)
         {
+            _labels = gcnew System::Collections::Generic::Dictionary<Label^, UInt32>();
             _code = new asmjit::CodeHolder();
             _code->init(asmjit::Environment::host(), baseVA);
             _assembler = new asmjit::x86::Assembler(_code);
@@ -28,6 +31,37 @@ namespace Dotx64Dbg {
         static Encoder^ Create(uintptr_t baseVA)
         {
             return gcnew Encoder(baseVA);
+        }
+
+        void Reset()
+        {
+            _labels->Clear();
+
+            _code->reset(asmjit::ResetPolicy::kSoft);
+            _code->attach(_assembler);
+        }
+
+        bool BindLabel(Label^ label)
+        {
+            asmjit::Label realLabel{};
+
+            UInt32 labelId;
+            if (_labels->TryGetValue(label, labelId))
+            {
+                realLabel = asmjit::Label{ labelId };
+            }
+            else
+            {
+                realLabel = _assembler->newLabel();
+                _labels->Add(label, realLabel.id());
+            }
+
+            if (auto res = _assembler->bind(realLabel); res != asmjit::kErrorOk)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         bool Encode(Instruction^ instr)
@@ -210,6 +244,51 @@ namespace Dotx64Dbg {
             return res;
         }
 
+    private:
+        inline asmjit::Operand convertOp(IOperand^ op)
+        {
+            if (op->Type == OperandType::Register)
+            {
+                auto opReg = (Operand::OpReg^)op;
+                return convertRegister(opReg->Value);
+            }
+            else if (op->Type == OperandType::Immediate)
+            {
+                auto opImm = (Operand::OpImm^)op;
+                return asmjit::Imm(opImm->Value);
+            }
+            else if (op->Type == OperandType::Memory)
+            {
+                auto opMem = (Operand::OpMem^)op;
+                auto mem = asmjit::x86::Mem();
+                mem.setBase(convertRegister(opMem->Base));
+                mem.setIndex(convertRegister(opMem->Index), opMem->Scale);
+                mem.setSegment(convertRegister(opMem->Segment).as<asmjit::x86::SReg>());
+                mem.setSize(opMem->Size);
+                mem.setOffset(opMem->Displacement);
+                return mem;
+            }
+            else if (op->Type == OperandType::Label)
+            {
+                auto opLabel = (Label^)op;
+
+                asmjit::Label realLabel{};
+
+                UInt32 labelId;
+                if (_labels->TryGetValue(opLabel, labelId))
+                {
+                    realLabel = asmjit::Label{ labelId };
+                }
+                else
+                {
+                    realLabel = _assembler->newLabel();
+                    _labels->Add(opLabel, realLabel.id());
+                }
+
+                return realLabel;
+            }
+            return {};
+        }
     };
 
 }

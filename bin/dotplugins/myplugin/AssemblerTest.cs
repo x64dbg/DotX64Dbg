@@ -9,7 +9,7 @@ public class AssemblerTest
     }
 
     [Command("TestAssembler")]
-    public void TestAssembler(string[] args)
+    public void BasicAssembly(string[] args)
     {
         using (var asm = new Assembler((nuint)Thread.Active.Rip))
         {
@@ -21,7 +21,8 @@ public class AssemblerTest
                 .Pop(Rdx)
                 .Lea(Rsp, QwordPtr(Rsp, -8))
                 .Xchg(Rax, Rdx)
-                .Ret();
+                .Ret()
+                ;
 
             // Insert at the beginning.
             asm.Cursor = null;
@@ -42,5 +43,56 @@ public class AssemblerTest
             UI.Disassembly.Update();
 
         }
+    }
+
+    [Command("AssembleFromIP")]
+    public void EncodeIntoAssembler(string[] args)
+    {
+        var decoder = Decoder.Create();
+        var asm = new Assembler((nuint)Thread.Active.Rip);
+
+        var instr = decoder.Decode(Thread.Active.Rip);
+        asm.Emit(instr);
+
+        // Serialize the nodes into x86.
+        asm.Finalize();
+
+        // Write into process.
+        var bytes = asm.GetData();
+
+        var bytesWritten = Memory.Write(Thread.Active.Rip, bytes);
+        Console.WriteLine($"Wrote {bytesWritten} bytes");
+
+        UI.Disassembly.Update();
+    }
+
+    [Command("AssembleWithLabel")]
+    public void AssemblerWithLabels(string[] args)
+    {
+        var decoder = Decoder.Create();
+        var asm = new Assembler((nuint)Thread.Active.Rip);
+
+        var myLabel = asm.CreateLabel();
+
+        asm.Mov(Rax, Imm(12))
+            .Xor(Rdx, Rdx)
+            .Cmp(Rax, Rdx)
+            .Jmp(myLabel)
+            .Nop()
+            .Nop()
+            .BindLabel(myLabel)
+            .Ret()
+            ;
+
+        // Serialize the nodes into x86.
+        asm.Finalize();
+
+        // Write into process.
+        var bytes = asm.GetData();
+
+        var bytesWritten = Memory.Write(Thread.Active.Rip, bytes);
+        Console.WriteLine($"Wrote {bytesWritten} bytes");
+
+        UI.Disassembly.Update();
     }
 }
