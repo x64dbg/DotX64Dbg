@@ -2,49 +2,45 @@ using System;
 using Dotx64Dbg;
 using static Dotx64Dbg.Operands;
 
-public class AssemblerTest : IHotload
+public class AssemblerTest
 {
     public AssemblerTest()
     {
-        TestAssembler();
     }
 
-    public void OnHotload()
+    [Command("TestAssembler")]
+    public void TestAssembler(string[] args)
     {
-        TestAssembler();
-    }
-
-    private void TestAssembler()
-    {
-        var asm = new Assembler();
-        asm
-            .Mov(R9, R10)
-            .Shl(R9, Imm(1))
-            .Push(Rax)
-            .Pop(Rdx)
-            .Lea(Rsp, QwordPtr(Rsp, -8))
-            .Xchg(Rax, Rdx)
-            .Ret()
-            ;
-
-        asm.Cursor = null; // Before head.
-        asm
-            .Push(R9)
-            .Pop(R10)
-            ;
-
-        var popInstr = (asm.Cursor as Assembler.NodeInstr).Value;
-        Console.WriteLine($"Pop Instr: {popInstr}");
-
-        var nodes = asm.GetNodes();
-        var node = nodes.Head;
-        while(node != null)
+        using (var asm = new Assembler((nuint)Thread.Active.Rip))
         {
-            if(node is Assembler.NodeInstr instr)
-            {
-                Console.WriteLine($"{instr.Value}");
-            }
-            node = node.Next;
+            // Create some assembly.
+            asm
+                .Mov(R9, R10)
+                .Shl(R9, Imm(1))
+                .Push(Rax)
+                .Pop(Rdx)
+                .Lea(Rsp, QwordPtr(Rsp, -8))
+                .Xchg(Rax, Rdx)
+                .Ret();
+
+            // Insert at the beginning.
+            asm.Cursor = null;
+            asm
+                .Push(R9)
+                .Pop(R10)
+                ;
+
+            // Serialize the nodes into x86.
+            asm.Finalize();
+
+            // Write into process.
+            var bytes = asm.GetData();
+
+            var bytesWritten = Memory.Write(Thread.Active.Rip, bytes);
+            Console.WriteLine($"Wrote {bytesWritten} bytes");
+
+            UI.Disassembly.Update();
+
         }
     }
 }

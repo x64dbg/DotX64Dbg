@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Dotx64DbgManagedTests\Tests.csproj", "{DA258F05-6D8A-4A10-B9AC-E01F8249B060}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asmjit", "asmjit\asmjit.vcxproj", "{401E7506-9879-4C5C-8638-6664852FBFFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -56,6 +58,14 @@ Global
 		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Release|x64.Build.0 = Release|x64
 		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Release|x86.ActiveCfg = Release|x86
 		{DA258F05-6D8A-4A10-B9AC-E01F8249B060}.Release|x86.Build.0 = Release|x86
+		{401E7506-9879-4C5C-8638-6664852FBFFF}.Debug|x64.ActiveCfg = Debug|x64
+		{401E7506-9879-4C5C-8638-6664852FBFFF}.Debug|x64.Build.0 = Debug|x64
+		{401E7506-9879-4C5C-8638-6664852FBFFF}.Debug|x86.ActiveCfg = Debug|Win32
+		{401E7506-9879-4C5C-8638-6664852FBFFF}.Debug|x86.Build.0 = Debug|Win32
+		{401E7506-9879-4C5C-8638-6664852FBFFF}.Release|x64.ActiveCfg = Release|x64
+		{401E7506-9879-4C5C-8638-6664852FBFFF}.Release|x64.Build.0 = Release|x64
+		{401E7506-9879-4C5C-8638-6664852FBFFF}.Release|x86.ActiveCfg = Release|Win32
+		{401E7506-9879-4C5C-8638-6664852FBFFF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

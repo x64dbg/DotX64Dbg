@@ -47,12 +47,12 @@ namespace Dotx64Dbg
         /// <param name="data">The bytes to be written</param>
         /// <param name="length">The maximum amount of bytes to write, can not be bigger than `data`</param>
         /// <returns>The amount of bytes written</returns>
-        static int Write(nuint address, byte[] data, int length)
+        public static int Write(nuint address, byte[] data, int length)
         {
             return Native.Memory.Write(address, data, length);
         }
 
-        static int Write(ulong address, byte[] data, int length)
+        public static int Write(ulong address, byte[] data, int length)
         {
             return Native.Memory.Write((nuint)address, data, length);
         }
@@ -63,12 +63,12 @@ namespace Dotx64Dbg
         /// <param name="address">Virtual address in the debugged process space</param>
         /// <param name="data">The bytes to be written</param>
         /// <returns>The amount of bytes written</returns>
-        static int Write(nuint address, byte[] data)
+        public static int Write(nuint address, byte[] data)
         {
             return Write(address, data, data.Length);
         }
 
-        static int Write(ulong address, byte[] data)
+        public static int Write(ulong address, byte[] data)
         {
             return Write((nuint)address, data, data.Length);
         }

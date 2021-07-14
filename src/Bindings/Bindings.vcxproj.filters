@@ -13,10 +13,12 @@
     <ClCompile Include="Expressions.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Module.cpp" />
+    <ClCompile Include="Encoder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Instruction.hpp" />
     <ClInclude Include="Register.hpp" />
     <ClInclude Include="Mnemonic.hpp" />
+    <ClInclude Include="Encoder.Converter.hpp" />
   </ItemGroup>
 </Project>

@@ -24,7 +24,7 @@ namespace Dotx64Dbg
 
         public ulong Count { get; internal set; }
 
-        public Node prepend(Node node)
+        public Node Prepend(Node node)
         {
             node.Next = Head;
             node.Prev = null;
@@ -39,7 +39,7 @@ namespace Dotx64Dbg
             return Head;
         }
 
-        public Node append(Node node)
+        public Node Apend(Node node)
         {
             node.Next = null;
             if (Tail == null)
@@ -58,7 +58,7 @@ namespace Dotx64Dbg
             return node;
         }
 
-        public Node detach(Node node)
+        public Node Detach(Node node)
         {
             var pre = node.Prev;
             var post = node.Next;
@@ -83,10 +83,10 @@ namespace Dotx64Dbg
             return pre;
         }
 
-        public Node insertBefore(Node pos, Node node)
+        public Node InsertBefore(Node pos, Node node)
         {
             if (pos == Head || pos == null)
-                return prepend(node);
+                return Prepend(node);
 
             var pre = pos.Prev;
 
@@ -100,12 +100,12 @@ namespace Dotx64Dbg
             return node;
         }
 
-        public Node insertAfter(Node pos, Node node)
+        public Node InsertAfter(Node pos, Node node)
         {
             if (pos == null)
-                return prepend(node);
+                return Prepend(node);
             else if (pos == Tail)
-                return append(node);
+                return Apend(node);
 
             var next = pos.Next;
             pos.Next = node;
