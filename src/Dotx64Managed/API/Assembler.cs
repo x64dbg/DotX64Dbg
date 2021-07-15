@@ -41,7 +41,7 @@ namespace Dotx64Dbg
 
         public Assembler()
         {
-            Encoder = Dotx64Dbg.Encoder.Create(0);
+            Encoder = Dotx64Dbg.Encoder.Create((nuint)0);
         }
 
         public Assembler(nuint baseVA = 0)

@@ -16,15 +16,17 @@ namespace Dotx64Dbg::Native
         /// <param name="addr">Virtual address in the debugged process space</param>
         /// <param name="length">Amount of bytes to read</param>
         /// <returns>The bytes read from the process</returns>
-        static array<System::Byte>^ Read(uintptr_t addr, int length)
+        static array<System::Byte>^ Read(System::UIntPtr addr, int length)
         {
+            auto va = static_cast<duint>(addr.ToUInt64());
+
             array<System::Byte>^ res = gcnew array<System::Byte>((int)length);
 
             pin_ptr<uint8_t> ptr = &res[0];
             uint8_t* buf = ptr;
 
             duint readSize = 0;
-            if (!Script::Memory::Read(addr, buf, length, &readSize))
+            if (!Script::Memory::Read(va, buf, length, &readSize))
             {
                 array<System::Byte>::Resize(res, 0);
                 return res;
@@ -41,8 +43,10 @@ namespace Dotx64Dbg::Native
         /// <param name="data">The bytes to be written</param>
         /// <param name="length">The maximum amount of bytes to write, can not be bigger than `data`</param>
         /// <returns>The amount of bytes written</returns>
-        static int Write(uintptr_t addr, array<System::Byte>^ data, int length)
+        static int Write(System::UIntPtr addr, array<System::Byte>^ data, int length)
         {
+            auto va = static_cast<duint>(addr.ToUInt64());
+
             duint maxLength = data->Length < length ? data->Length : length;
             if (maxLength <= 0)
                 return 0;
@@ -51,7 +55,7 @@ namespace Dotx64Dbg::Native
             const uint8_t* buf = ptr;
 
             duint bytesWritten = 0;
-            if (!Script::Memory::Write(addr, buf, maxLength, &bytesWritten))
+            if (!Script::Memory::Write(va, buf, maxLength, &bytesWritten))
             {
                 return 0;
             }

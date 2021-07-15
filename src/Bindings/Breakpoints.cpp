@@ -25,40 +25,41 @@ namespace Dotx64Dbg::Native
             HardwareExecute
         };
 
-        static bool SetBreakpoint(duint address)
+        static bool SetBreakpoint(System::UIntPtr address)
         {
-            return Script::Debug::SetBreakpoint(address);
+            return Script::Debug::SetBreakpoint(static_cast<duint>(address.ToUInt64()));
         }
 
-        static bool DeleteBreakpoint(duint address)
+        static bool DeleteBreakpoint(System::UIntPtr address)
         {
-            return Script::Debug::DeleteBreakpoint(address);
+            return Script::Debug::DeleteBreakpoint(static_cast<duint>(address.ToUInt64()));
         }
 
-        static bool DisableBreakpoint(duint address)
+        static bool DisableBreakpoint(System::UIntPtr address)
         {
-            return Script::Debug::DisableBreakpoint(address);
+            return Script::Debug::DisableBreakpoint(static_cast<duint>(address.ToUInt64()));
         }
 
-        static bool SetHardwareBreakpoint(duint address, HardwareType type)
+        static bool SetHardwareBreakpoint(System::UIntPtr address, HardwareType type)
         {
+            auto va = static_cast<duint>(address.ToUInt64());
             switch (type)
             {
             case HardwareType::HardwareAccess:
-                return Script::Debug::SetHardwareBreakpoint(address, Script::Debug::HardwareType::HardwareAccess);
+                return Script::Debug::SetHardwareBreakpoint(va, Script::Debug::HardwareType::HardwareAccess);
             case HardwareType::HardwareWrite:
-                return Script::Debug::SetHardwareBreakpoint(address, Script::Debug::HardwareType::HardwareWrite);
+                return Script::Debug::SetHardwareBreakpoint(va, Script::Debug::HardwareType::HardwareWrite);
             case HardwareType::HardwareExecute:
-                return Script::Debug::SetHardwareBreakpoint(address, Script::Debug::HardwareType::HardwareExecute);
+                return Script::Debug::SetHardwareBreakpoint(va, Script::Debug::HardwareType::HardwareExecute);
             default:
                 break;
             }
             return false;
         }
 
-        static bool DeleteHardwareBreakpoint(duint address)
+        static bool DeleteHardwareBreakpoint(System::UIntPtr address)
         {
-            return Script::Debug::DeleteHardwareBreakpoint(address);
+            return Script::Debug::DeleteHardwareBreakpoint(static_cast<duint>(address.ToUInt64()));
         }
     };
 }

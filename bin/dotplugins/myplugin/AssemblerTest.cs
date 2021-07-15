@@ -11,8 +11,15 @@ public class AssemblerTest
     [Command("TestAssembler")]
     public void BasicAssembly(string[] args)
     {
-        using (var asm = new Assembler((nuint)Thread.Active.Rip))
+#if _X64_
+        nuint ip = Thread.Active.Rip;
+#else
+        nuint ip = Thread.Active.Eip;
+#endif
+
+        using (var asm = new Assembler(ip))
         {
+#if _X64_
             // Create some assembly.
             asm
                 .Mov(R9, R10)
@@ -31,13 +38,24 @@ public class AssemblerTest
                 .Pop(R10)
                 ;
 
+#else
+            asm
+                .Mov(Eax, Edx)
+                .Shl(Edx, Imm(1))
+                .Push(Eax)
+                .Pop(Edx)
+                .Lea(Esp, Ptr(Esp, -4))
+                .Xchg(Eax, Edx)
+                .Ret()
+                ;
+#endif
             // Serialize the nodes into x86.
             asm.Finalize();
 
             // Write into process.
             var bytes = asm.GetData();
 
-            var bytesWritten = Memory.Write(Thread.Active.Rip, bytes);
+            var bytesWritten = Memory.Write(ip, bytes);
             Console.WriteLine($"Wrote {bytesWritten} bytes");
 
             UI.Disassembly.Update();
@@ -49,9 +67,14 @@ public class AssemblerTest
     public void EncodeIntoAssembler(string[] args)
     {
         var decoder = Decoder.Create();
-        var asm = new Assembler((nuint)Thread.Active.Rip);
+#if _X64_
+        nuint ip = Thread.Active.Rip;
+#else
+        nuint ip = Thread.Active.Eip;
+#endif
+        var asm = new Assembler(ip);
 
-        var instr = decoder.Decode(Thread.Active.Rip);
+        var instr = decoder.Decode(ip);
         asm.Emit(instr);
 
         // Serialize the nodes into x86.
@@ -60,7 +83,7 @@ public class AssemblerTest
         // Write into process.
         var bytes = asm.GetData();
 
-        var bytesWritten = Memory.Write(Thread.Active.Rip, bytes);
+        var bytesWritten = Memory.Write(ip, bytes);
         Console.WriteLine($"Wrote {bytesWritten} bytes");
 
         UI.Disassembly.Update();
@@ -69,13 +92,19 @@ public class AssemblerTest
     [Command("AssembleWithLabel")]
     public void AssemblerWithLabels(string[] args)
     {
-        var asm = new Assembler((nuint)Thread.Active.Rip);
+#if _X64_
+        nuint ip = Thread.Active.Rip;
+#else
+        nuint ip = Thread.Active.Eip;
+#endif
+
+        var asm = new Assembler(ip);
 
         var myLabel = asm.CreateLabel();
 
-        asm.Mov(Rax, Imm(12))
-            .Xor(Rdx, Rdx)
-            .Cmp(Rax, Rdx)
+        asm.Mov(Eax, Imm(12))
+            .Xor(Edx, Edx)
+            .Cmp(Eax, Edx)
             .Jmp(myLabel)
             .Nop()
             .Nop()
@@ -89,7 +118,7 @@ public class AssemblerTest
         // Write into process.
         var bytes = asm.GetData();
 
-        var bytesWritten = Memory.Write(Thread.Active.Rip, bytes);
+        var bytesWritten = Memory.Write(ip, bytes);
         Console.WriteLine($"Wrote {bytesWritten} bytes");
 
         UI.Disassembly.Update();

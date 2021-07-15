@@ -80,12 +80,19 @@ public partial class MyPlugin : IPlugin, IHotload
 
             Thread.SetActive(Thread.GetMain());
 
+#if _X64_
             mainThread.Rax = 0xFFFFFFFFFFFFFFFF;
             Console.WriteLine($"Rax = {mainThread.Rax:X}");
-
+            
             Console.WriteLine($"Eax = {mainThread.Eax:X}");
             mainThread.Eax++;
             Console.WriteLine($"Eax = {mainThread.Eax:X}");
+
+#else
+            mainThread.Eax = 0xFFFFFFF;
+            Console.WriteLine($"Rax = {mainThread.Eax:X}");
+#endif
+
 
             Console.WriteLine($"Ax = {mainThread.Ax:X}");
             mainThread.Ax++;
@@ -99,11 +106,18 @@ public partial class MyPlugin : IPlugin, IHotload
             mainThread.Al++;
             Console.WriteLine($"Al = {mainThread.Al:X}");
 
+#if _X64_
             Console.WriteLine($"Rax = {mainThread.Rax:X}");
-			
-			
-        var res = Memory.Read(mainThread.Rip, 22);
-        Console.WriteLine("Data: {0}", res);
+#else
+            Console.WriteLine($"Rax = {mainThread.Eax:X}");
+#endif
+
+#if _X64_
+            var res = Memory.Read(mainThread.Rip, 22);
+#else
+            var res = Memory.Read(mainThread.Eip, 22);
+#endif
+            Console.WriteLine("Data: {0}", res);
         }
 
         // Value X and Y have will be 100, 300

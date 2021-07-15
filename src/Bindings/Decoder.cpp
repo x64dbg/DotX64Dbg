@@ -83,8 +83,9 @@ namespace Dotx64Dbg {
             return Convert(instr, address);
         }
 
-        Instruction^ Decode(uintptr_t va)
+        Instruction^ Decode(System::UIntPtr address)
         {
+            auto va = static_cast<duint>(address.ToUInt64());
             duint readSize = 0;
 
             uint8_t buf[15];

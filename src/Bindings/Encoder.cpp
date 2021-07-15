@@ -28,9 +28,9 @@ namespace Dotx64Dbg {
             delete _code;
         }
 
-        static Encoder^ Create(uintptr_t baseVA)
+        static Encoder^ Create(System::UIntPtr baseVA)
         {
-            return gcnew Encoder(baseVA);
+            return gcnew Encoder(static_cast<uintptr_t>(baseVA.ToUInt64()));
         }
 
         void Reset()
@@ -221,9 +221,11 @@ namespace Dotx64Dbg {
             return true;
         }
 
-        bool RelocateTo(uintptr_t newBaseVA)
+        bool RelocateTo(System::UIntPtr newBaseVA)
         {
-            if (auto res = _code->relocateToBase(newBaseVA); res != asmjit::kErrorOk)
+            auto va = static_cast<uintptr_t>(newBaseVA.ToUInt64());
+
+            if (auto res = _code->relocateToBase(va); res != asmjit::kErrorOk)
             {
                 return false;
             }
