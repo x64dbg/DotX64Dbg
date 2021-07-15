@@ -221,28 +221,28 @@ namespace Dotx64Dbg {
             return true;
         }
 
-        int GetLabelBaseOffset(Label^ label)
+        System::UIntPtr GetLabelBaseOffset(Label^ label)
         {
             if (label == nullptr)
-                return -1;
+                return System::UIntPtr((void*)((intptr_t)-1));
 
             UInt32 labelId;
             if (!_labels->TryGetValue(label, labelId))
-                return -1;
+                return System::UIntPtr((void*)((intptr_t)-1));
 
-            return _code->labelOffsetFromBase(labelId);
+            return System::UIntPtr(_code->labelOffsetFromBase(labelId));
         }
 
-        int GetLabelOffset(Label^ label)
+        System::UIntPtr GetLabelOffset(Label^ label)
         {
             if (label == nullptr)
-                return -1;
+                return System::UIntPtr((void*)((intptr_t)-1));
 
             UInt32 labelId;
             if (!_labels->TryGetValue(label, labelId))
-                return -1;
+                return System::UIntPtr((void*)((intptr_t)-1));
 
-            return _code->labelOffset(labelId);
+            return System::UIntPtr(_code->labelOffset(labelId));
         }
 
         bool RelocateTo(System::UIntPtr newBaseVA)

@@ -261,12 +261,12 @@ namespace Dotx64Dbg
             return Encoder.GetData();
         }
 
-        public int GetLabelBaseOffset(Label label)
+        public nuint GetLabelBaseOffset(Label label)
         {
             return Encoder.GetLabelBaseOffset(label);
         }
 
-        public int GetLabelOffset(Label label)
+        public nuint GetLabelOffset(Label label)
         {
             return Encoder.GetLabelOffset(label);
         }
