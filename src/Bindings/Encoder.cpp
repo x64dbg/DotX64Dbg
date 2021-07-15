@@ -221,6 +221,30 @@ namespace Dotx64Dbg {
             return true;
         }
 
+        int GetLabelBaseOffset(Label^ label)
+        {
+            if (label == nullptr)
+                return -1;
+
+            UInt32 labelId;
+            if (!_labels->TryGetValue(label, labelId))
+                return -1;
+
+            return _code->labelOffsetFromBase(labelId);
+        }
+
+        int GetLabelOffset(Label^ label)
+        {
+            if (label == nullptr)
+                return -1;
+
+            UInt32 labelId;
+            if (!_labels->TryGetValue(label, labelId))
+                return -1;
+
+            return _code->labelOffset(labelId);
+        }
+
         bool RelocateTo(System::UIntPtr newBaseVA)
         {
             auto va = static_cast<uintptr_t>(newBaseVA.ToUInt64());

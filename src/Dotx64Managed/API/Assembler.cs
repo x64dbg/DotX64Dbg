@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
@@ -17,7 +14,7 @@ namespace Dotx64Dbg
         private NodeList Nodes = new();
         public NodeList.Node Cursor { get; set; }
 
-        internal Dotx64Dbg.Encoder Encoder;
+        internal Encoder Encoder;
 
         internal bool disposed = false;
 
@@ -226,14 +223,19 @@ namespace Dotx64Dbg
 
         }
 
-        // Public implementation of Dispose pattern callable by consumers.
+        public void Reset()
+        {
+            Encoder.Reset();
+            Nodes = new();
+            Cursor = null;
+        }
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        // Protected implementation of Dispose pattern.
         protected virtual void Dispose(bool disposing)
         {
             if (disposed)
@@ -257,6 +259,16 @@ namespace Dotx64Dbg
         public byte[] GetData()
         {
             return Encoder.GetData();
+        }
+
+        public int GetLabelBaseOffset(Label label)
+        {
+            return Encoder.GetLabelBaseOffset(label);
+        }
+
+        public int GetLabelOffset(Label label)
+        {
+            return Encoder.GetLabelOffset(label);
         }
     }
 }

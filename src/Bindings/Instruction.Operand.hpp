@@ -79,6 +79,7 @@ namespace Dotx64Dbg {
                 return OperandType::Label;
             }
         }
+
         virtual property int Size
         {
             int get()
