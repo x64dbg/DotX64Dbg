@@ -10,7 +10,7 @@ public partial class MyPlugin : IPlugin, IHotload
 {
     private NestedClass Obj = new();
     private List<int> TestList = new();
-
+	
     private int X = 0;
     private int Y = 2;
     private NestedClass Obj2;
@@ -54,7 +54,7 @@ public partial class MyPlugin : IPlugin, IHotload
         {
             Console.WriteLine($"List {x}");
         }
-
+ 
 #if _X64_
         Console.WriteLine("Is X64");
 #elif _X86_
@@ -81,10 +81,10 @@ public partial class MyPlugin : IPlugin, IHotload
             Thread.SetActive(Thread.GetMain());
 
 #if _X64_
-            mainThread.Rax = 0xFFFFFFFFFFFFFFFF;
+            mainThread.Rax = (nuint)0xFFFFFFFFFFFFFFFF;
             Console.WriteLine($"Rax = {mainThread.Rax:X}");
 #else
-            mainThread.Eax = 0xFFFFFFF;
+            mainThread.Eax = 0xFFFFFFFF;
             Console.WriteLine($"Rax = {mainThread.Eax:X}");
 #endif
 
@@ -124,6 +124,8 @@ public partial class MyPlugin : IPlugin, IHotload
         MyPrivateStatic++;
         X = X + 11;
         Z = Z + 1;
+		
+		UI.Disassembly.Update();
     }
 
     // Called before the plugin is about to be unloaded.
