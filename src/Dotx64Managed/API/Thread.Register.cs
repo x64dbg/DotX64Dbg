@@ -49,7 +49,13 @@ namespace Dotx64Dbg
             return BitConverter.ToUInt64(bytes);
         }
 
+
+#if _X64_
+        private void SetRegisterU64(Register reg, nuint val)
+#else
+
         private void SetRegisterU64(Register reg, ulong val)
+#endif
         {
             Native.Thread.SetRegisterData(Handle, reg, BitConverter.GetBytes(val));
         }
@@ -381,7 +387,7 @@ namespace Dotx64Dbg
         public nuint Nbp { get => (nuint)GetRegisterU64(Register.Rbp); set => SetRegisterU64(Register.Rbp, value); }
         public nuint Nsi { get => (nuint)GetRegisterU64(Register.Rsi); set => SetRegisterU64(Register.Rsi, value); }
         public nuint Ndi { get => (nuint)GetRegisterU64(Register.Rdi); set => SetRegisterU64(Register.Rdi, value); }
-        public nuint Nip { get => (nuint)GetRegisterU64(Register.Eip); set => SetRegisterU64(Register.Eip, value); }
+        public nuint Nip { get => (nuint)GetRegisterU64(Register.Rip); set => SetRegisterU64(Register.Rip, value); }
 #else
         public nuint Nax { get => (nuint)GetRegisterU32(Register.Eax); set => SetRegisterU32(Register.Eax, value); }
         public nuint Ncx { get => (nuint)GetRegisterU32(Register.Ecx); set => SetRegisterU32(Register.Ecx, value); }
