@@ -361,7 +361,7 @@ namespace Dotx64Dbg {
         Pkru,
         Xcr0,
 
-        // Aliases
+        // Host Aliases
 #ifdef _M_AMD64
         Hax = Rax,
         Hcx = Rcx,
@@ -379,6 +379,8 @@ namespace Dotx64Dbg {
         H13 = R13,
         H14 = R14,
         H15 = R15,
+        Hip = Rip,
+        HFlags = RFlags,
 #else
         Hax = Eax,
         Hcx = Ecx,
@@ -396,6 +398,8 @@ namespace Dotx64Dbg {
         H13 = R13d,
         H14 = R14d,
         H15 = R15d,
+        Hip = Eip,
+        HFlags = EFlags,
 #endif
     };
 

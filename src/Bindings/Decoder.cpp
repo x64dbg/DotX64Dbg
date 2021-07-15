@@ -1,5 +1,6 @@
 ﻿#include <cstdint>
 #include <utility>
+#include <cctype>
 
 #include <zydis/zydis.h>
 #include "Instruction.hpp"
@@ -33,6 +34,13 @@ namespace Dotx64Dbg {
         (1 << 23), // ZYDIS_CPUFLAG_C1,
         (1 << 24), // ZYDIS_CPUFLAG_C2,
         (1 << 25), // ZYDIS_CPUFLAG_C3,
+    };
+
+    struct EFlagsData
+    {
+        uint32_t read;
+        uint32_t write;
+        uint32_t undefined;
     };
 
     public ref class Decoder
@@ -153,10 +161,9 @@ namespace Dotx64Dbg {
             return Operand::None;
         }
 
-        static std::pair<uint32_t, uint32_t> getEFlags(const ZydisDecodedInstruction& ins)
+        static EFlagsData getEFlags(const ZydisDecodedInstruction& ins)
         {
-            uint32_t flagsR = 0;
-            uint32_t flagsW = 0;
+            EFlagsData res{};
 
             size_t idx = 0;
             for (auto& fl : ins.accessed_flags)
@@ -170,16 +177,20 @@ namespace Dotx64Dbg {
                     || fl.action == ZYDIS_CPUFLAG_ACTION_UNDEFINED || fl.action == ZYDIS_CPUFLAG_ACTION_TESTED_MODIFIED
                     || fl.action == ZYDIS_CPUFLAG_ACTION_MODIFIED)
                 {
-                    flagsW |= Flags[idx];
+                    res.write |= Flags[idx];
                 }
                 if (fl.action == ZYDIS_CPUFLAG_ACTION_TESTED || fl.action == ZYDIS_CPUFLAG_ACTION_TESTED_MODIFIED)
                 {
-                    flagsR |= Flags[idx];
+                    res.read |= Flags[idx];
+                }
+                if (fl.action == ZYDIS_CPUFLAG_ACTION_UNDEFINED)
+                {
+                    res.undefined |= Flags[idx];
                 }
                 idx++;
             }
 
-            return { flagsR, flagsW };
+            return res;
         }
 
         Instruction^ Convert(ZydisDecodedInstruction& instr, uint64_t addr)
@@ -205,6 +216,17 @@ namespace Dotx64Dbg {
             if (instr.attributes & ZYDIS_ATTRIB_HAS_REPNZ)
                 res->Attribs |= Instruction::Attributes::RepNz;
 
+            bool invalidMeta = false;
+            auto instrMeta = res->Meta;
+
+            auto instrFlags = getEFlags(instr);
+            if (instrMeta->FlagsModified != (EFlags)instrFlags.write ||
+                instrMeta->FlagsRead != (EFlags)instrFlags.read ||
+                instrMeta->FlagsUndefined != (EFlags)instrFlags.undefined)
+            {
+                invalidMeta = true;
+            }
+
             int opIndex = 0;
             for (int i = 0; i < instr.operand_count; i++)
             {
@@ -228,24 +250,185 @@ namespace Dotx64Dbg {
                 if (op.actions & ZYDIS_OPERAND_ACTION_MASK_WRITE)
                     access = static_cast<OperandAccess>(static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Write));
 
-                if (vis == OperandVisibility::Hidden)
-                    continue;
+                if (instrMeta->Access[i] != access ||
+                    instrMeta->Visibility[i] != vis)
+                {
+                    invalidMeta = true;
+                }
 
                 res->SetOperand(opIndex, newOp, access, vis);
                 opIndex++;
-#ifdef _DEBUG
+            }
 
-                auto [flagsR, flagsW] = getEFlags(instr);
-                if (res->FlagsRead != (EFlags)flagsR)
-                {
-                    __debugbreak();
-                }
+            if (invalidMeta)
+            {
+                std::string infoDump;
 
-                if (res->FlagsWrite != (EFlags)flagsW)
+                infoDump += "gcnew InstructionMeta(\n";
+
+                std::string mnemonicName = MnemonicStrings[static_cast<int>(res->Id)];
+                mnemonicName[0] = std::toupper(mnemonicName[0]);
+
+                infoDump += "    Mnemonic::" + mnemonicName + ", \n";
+
+                char temp[256];
+                sprintf_s(temp, "    0x%04X, 0x%04X, 0x%04X,\n", instrFlags.read, instrFlags.write, instrFlags.undefined);
+                infoDump += temp;
+
+                std::string opAccess;
+                std::string opVisibility;
+                std::string ops;
+
+                for (int i = 0; i < 5; i++)
                 {
-                    __debugbreak();
-                }
+                    auto op = res->GetOperand(i);
+
+                    auto access = i >= instr.operand_count ? OperandAccess::None : res->GetOperandAccess(i);
+                    if (access == OperandAccess::None)
+                    {
+                        if (i > 0)
+                            opAccess += ", ";
+                        opAccess += "OperandAccess::None";
+                    }
+                    else if (access == OperandAccess::Read)
+                    {
+                        if (i > 0)
+                            opAccess += ", ";
+                        opAccess += "OperandAccess::Read";
+                    }
+                    else if (access == OperandAccess::Write)
+                    {
+                        if (i > 0)
+                            opAccess += ", ";
+                        opAccess += "OperandAccess::Write";
+                    }
+                    else if (access == OperandAccess::ReadWrite)
+                    {
+                        if (i > 0)
+                            opAccess += ", ";
+                        opAccess += "OperandAccess::ReadWrite";
+                    }
+
+                    auto vis = i >= instr.operand_count ? OperandVisibility::Invalid : res->GetOperandVisibility(i);
+                    if (vis == OperandVisibility::Invalid)
+                    {
+                        if (i > 0)
+                            opVisibility += ", ";
+                        opVisibility += "OperandVisibility::Invalid";
+                    }
+                    else if (vis == OperandVisibility::Explicit)
+                    {
+                        if (i > 0)
+                            opVisibility += ", ";
+                        opVisibility += "OperandVisibility::Explicit";
+                    }
+                    else if (vis == OperandVisibility::Implicit)
+                    {
+                        if (i > 0)
+                            opVisibility += ", ";
+                        opVisibility += "OperandVisibility::Implicit";
+                    }
+                    else if (vis == OperandVisibility::Hidden)
+                    {
+                        if (i > 0)
+                            opVisibility += ", ";
+                        opVisibility += "OperandVisibility::Hidden";
+                    }
+
+                    if (i >= instr.operand_count || vis == OperandVisibility::Explicit || vis == OperandVisibility::Implicit)
+                    {
+                        if (i > 0)
+                            ops += ", ";
+                        ops += "Operand::None";
+                    }
+                    else if (vis == OperandVisibility::Hidden)
+                    {
+                        if (i > 0)
+                            ops += ", ";
+
+                        if (op->Type == OperandType::Register)
+                        {
+                            Operand::OpReg^ reg = (Operand::OpReg^)op;
+                            auto regId = reg->Value;
+
+                            std::string regName = RegisterNames[static_cast<int>(regId)];
+                            regName[0] = std::toupper(regName[0]);
+
+#if _M_X64
+                            if (regId == Register::RFlags)
+                            {
+                                regName = "HFlags";
+                            }
+#else
+                            if (regId == Register::EFlags)
+                            {
+                                regName = "HFlags";
+                            }
 #endif
+
+                            ops += "Operands::Reg(Register::" + regName + ")";
+                        }
+                        else if (op->Type == OperandType::Memory)
+                        {
+                            Operand::OpMem^ mem = (Operand::OpMem^)op;
+
+                            if (mem->Size == 8)
+                            {
+                                ops += "Operands::BytePtr(";
+                            }
+                            else if (mem->Size == 16)
+                            {
+                                ops += "Operands::WordPtr(";
+                            }
+                            else if (mem->Size == 32)
+                            {
+#ifdef _M_X64
+                                ops += "Operands::DwordPtr(";
+#else
+                                ops += "Operands::Ptr(";
+#endif
+                            }
+                            else if (mem->Size == 64)
+                            {
+#ifdef _M_X64
+                                ops += "Operands::Ptr(";
+#else
+                                ops += "Operands::QwordPtr(";
+#endif
+                            }
+
+                            if (mem->Base != Register::None)
+                            {
+                                std::string regName = RegisterNames[static_cast<int>(mem->Base)];
+                                regName[0] = std::toupper(regName[0]);
+
+                                ops += "Register::" + regName;
+                            }
+
+                            if (mem->Index != Register::None)
+                            {
+                                std::string regName = RegisterNames[static_cast<int>(mem->Base)];
+                                regName[0] = std::toupper(regName[0]);
+
+                                if (mem->Base != Register::None)
+                                    ops += ", ";
+
+                                ops += "Register::" + regName;
+                            }
+
+                            ops += ")";
+                        }
+                    }
+                }
+
+                infoDump += "    gcnew array<OperandAccess> { " + opAccess + " },\n";
+                infoDump += "    gcnew array<OperandVisibility> { " + opVisibility + " },\n";
+                infoDump += "    gcnew array<IOperand^> { " + ops + " }\n";
+
+                infoDump += "),\n";
+
+                _plugin_logprint("Mismatch detected!\n");
+                _plugin_logprint(infoDump.c_str());
             }
 
             return res;

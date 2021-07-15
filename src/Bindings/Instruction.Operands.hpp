@@ -12,6 +12,15 @@ namespace Dotx64Dbg {
 
     public ref class Operands
     {
+    private:
+        static int AddressSize()
+        {
+#ifdef _M_X64
+            return 64;
+#else
+            return 32;
+#endif
+        }
 
     public:
         // Byte
@@ -201,6 +210,53 @@ namespace Dotx64Dbg {
         static Operand::OpMem^ QwordPtr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int32 scale, Int64 disp)
         {
             return gcnew Operand::OpMem(64, baseReg->Value, index->Value, scale, disp);
+        }
+
+        // Host
+        //////////////////////////////////////////////////////////////////////////
+        static Operand::OpMem^ Ptr(Register baseReg)
+        {
+            return gcnew Operand::OpMem(AddressSize(), baseReg, Register::None, 0, 0);
+        }
+        static Operand::OpMem^ Ptr(Operand::OpReg^ baseReg)
+        {
+            return gcnew Operand::OpMem(AddressSize(), baseReg->Value, Register::None, 0, 0);
+        }
+
+        static Operand::OpMem^ Ptr(Register baseReg, Int64 disp)
+        {
+            return gcnew Operand::OpMem(AddressSize(), baseReg, Register::None, 0, disp);
+        }
+        static Operand::OpMem^ Ptr(Operand::OpReg^ baseReg, Int64 disp)
+        {
+            return gcnew Operand::OpMem(AddressSize(), baseReg->Value, Register::None, 0, disp);
+        }
+
+        static Operand::OpMem^ Ptr(Register baseReg, Register index)
+        {
+            return gcnew Operand::OpMem(AddressSize(), baseReg, index, 0, 0);
+        }
+        static Operand::OpMem^ Ptr(Operand::OpReg^ baseReg, Operand::OpReg^ index)
+        {
+            return gcnew Operand::OpMem(AddressSize(), baseReg->Value, index->Value, 0, 0);
+        }
+
+        static Operand::OpMem^ Ptr(Register baseReg, Register index, Int64 disp)
+        {
+            return gcnew Operand::OpMem(AddressSize(), baseReg, index, 0, disp);
+        }
+        static Operand::OpMem^ Ptr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int64 disp)
+        {
+            return gcnew Operand::OpMem(AddressSize(), baseReg->Value, index->Value, 0, disp);
+        }
+
+        static Operand::OpMem^ Ptr(Register baseReg, Register index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::OpMem(AddressSize(), baseReg, index, scale, disp);
+        }
+        static Operand::OpMem^ Ptr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::OpMem(AddressSize(), baseReg->Value, index->Value, scale, disp);
         }
 
     public:
