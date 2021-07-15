@@ -9,11 +9,7 @@ public partial class MyPlugin
         var th = Thread.Active;
         if (th != null)
         {
-#if _X64_
-            return (nuint)th.Rip;
-#else
-            return (nuint)th.Eip;
-#endif
+            return th.Nip;
         }
         else
             Console.WriteLine("No active thread");

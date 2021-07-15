@@ -83,16 +83,14 @@ public partial class MyPlugin : IPlugin, IHotload
 #if _X64_
             mainThread.Rax = 0xFFFFFFFFFFFFFFFF;
             Console.WriteLine($"Rax = {mainThread.Rax:X}");
-            
-            Console.WriteLine($"Eax = {mainThread.Eax:X}");
-            mainThread.Eax++;
-            Console.WriteLine($"Eax = {mainThread.Eax:X}");
-
 #else
             mainThread.Eax = 0xFFFFFFF;
             Console.WriteLine($"Rax = {mainThread.Eax:X}");
 #endif
 
+            Console.WriteLine($"Eax = {mainThread.Eax:X}");
+            mainThread.Eax++;
+            Console.WriteLine($"Eax = {mainThread.Eax:X}");
 
             Console.WriteLine($"Ax = {mainThread.Ax:X}");
             mainThread.Ax++;
@@ -106,17 +104,9 @@ public partial class MyPlugin : IPlugin, IHotload
             mainThread.Al++;
             Console.WriteLine($"Al = {mainThread.Al:X}");
 
-#if _X64_
-            Console.WriteLine($"Rax = {mainThread.Rax:X}");
-#else
-            Console.WriteLine($"Rax = {mainThread.Eax:X}");
-#endif
+            Console.WriteLine($"Rax = {mainThread.Nax:X}");
 
-#if _X64_
-            var res = Memory.Read(mainThread.Rip, 22);
-#else
-            var res = Memory.Read(mainThread.Eip, 22);
-#endif
+            var res = Memory.Read(mainThread.Nip, 22);
             Console.WriteLine("Data: {0}", res);
         }
 

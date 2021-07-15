@@ -11,12 +11,7 @@ public class AssemblerTest
     [Command("TestAssembler")]
     public void BasicAssembly(string[] args)
     {
-#if _X64_
-        nuint ip = Thread.Active.Rip;
-#else
-        nuint ip = Thread.Active.Eip;
-#endif
-
+        nuint ip = Thread.Active.Nip;
         using (var asm = new Assembler(ip))
         {
 #if _X64_
@@ -67,11 +62,7 @@ public class AssemblerTest
     public void EncodeIntoAssembler(string[] args)
     {
         var decoder = Decoder.Create();
-#if _X64_
-        nuint ip = Thread.Active.Rip;
-#else
-        nuint ip = Thread.Active.Eip;
-#endif
+        nuint ip = Thread.Active.Nip;
         var asm = new Assembler(ip);
 
         var instr = decoder.Decode(ip);
@@ -92,11 +83,7 @@ public class AssemblerTest
     [Command("AssembleWithLabel")]
     public void AssemblerWithLabels(string[] args)
     {
-#if _X64_
-        nuint ip = Thread.Active.Rip;
-#else
-        nuint ip = Thread.Active.Eip;
-#endif
+        nuint ip = Thread.Active.Nip;
 
         var asm = new Assembler(ip);
 

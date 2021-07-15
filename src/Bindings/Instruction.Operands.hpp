@@ -319,6 +319,7 @@ namespace Dotx64Dbg {
         static initonly Operand::OpReg^ R13d = gcnew Operand::OpReg(Register::R13d);
         static initonly Operand::OpReg^ R14d = gcnew Operand::OpReg(Register::R14d);
         static initonly Operand::OpReg^ R15d = gcnew Operand::OpReg(Register::R15d);
+
 #if _M_X64
         // General purpose registers 64-bit
         static initonly Operand::OpReg^ Rax = gcnew Operand::OpReg(Register::Rax);
@@ -541,6 +542,17 @@ namespace Dotx64Dbg {
         static initonly Operand::OpReg^ Mxcsr = gcnew Operand::OpReg(Register::Mxcsr);
         static initonly Operand::OpReg^ Pkru = gcnew Operand::OpReg(Register::Pkru);
         static initonly Operand::OpReg^ Xcr0 = gcnew Operand::OpReg(Register::Xcr0);
+        // Host specific
+        static initonly Operand::OpReg^ Nax = gcnew Operand::OpReg(Register::Nax);
+        static initonly Operand::OpReg^ Ncx = gcnew Operand::OpReg(Register::Ncx);
+        static initonly Operand::OpReg^ Ndx = gcnew Operand::OpReg(Register::Ndx);
+        static initonly Operand::OpReg^ Nbx = gcnew Operand::OpReg(Register::Nbx);
+        static initonly Operand::OpReg^ Nsp = gcnew Operand::OpReg(Register::Nsp);
+        static initonly Operand::OpReg^ Nbp = gcnew Operand::OpReg(Register::Nbp);
+        static initonly Operand::OpReg^ Nsi = gcnew Operand::OpReg(Register::Nsi);
+        static initonly Operand::OpReg^ Ndi = gcnew Operand::OpReg(Register::Ndi);
+        static initonly Operand::OpReg^ Nip = gcnew Operand::OpReg(Register::Nip);
+        static initonly Operand::OpReg^ NFlags = gcnew Operand::OpReg(Register::NFlags);
 
         static Operand::OpReg^ Reg(Register reg)
         {

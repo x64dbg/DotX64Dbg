@@ -358,12 +358,12 @@ namespace Dotx64Dbg {
 #if _M_X64
                             if (regId == Register::RFlags)
                             {
-                                regName = "HFlags";
+                                regName = "NFlags";
                             }
 #else
                             if (regId == Register::EFlags)
                             {
-                                regName = "HFlags";
+                                regName = "NFlags";
                             }
 #endif
 
