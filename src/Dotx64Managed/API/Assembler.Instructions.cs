@@ -48,10 +48,6 @@ namespace Dotx64Dbg
         public Assembler Bts(Operand.OpReg a, Operand.OpImm b) => CreateInstr(Mnemonic.Bts, a, b);
         public Assembler Bts(Operand.OpMem a, Operand.OpReg b) => CreateInstr(Mnemonic.Bts, a, b);
         public Assembler Bts(Operand.OpMem a, Operand.OpImm b) => CreateInstr(Mnemonic.Bts, a, b);
-        public Assembler Call(Operand.OpReg a) => CreateInstr(Mnemonic.Call, a);
-        public Assembler Call(Operand.OpMem a) => CreateInstr(Mnemonic.Call, a);
-        //public Assembler Call(Label a) => CreateInstr(Mnemonic.Call, a);
-        public Assembler Call(Operand.OpImm a) => CreateInstr(Mnemonic.Call, a);
         public Assembler Clc() => CreateInstr(Mnemonic.Clc);
         public Assembler Cld() => CreateInstr(Mnemonic.Cld);
         public Assembler Cli() => CreateInstr(Mnemonic.Cli);
@@ -81,10 +77,7 @@ namespace Dotx64Dbg
         public Assembler Invd() => CreateInstr(Mnemonic.Invd);
         public Assembler Invlpg(Operand.OpMem a) => CreateInstr(Mnemonic.Invlpg, a);
         public Assembler Invpcid(Operand.OpReg a, Operand.OpMem b) => CreateInstr(Mnemonic.Invpcid, a, b);
-        public Assembler Jmp(Label a) => CreateInstr(Mnemonic.Jmp, a);
-        public Assembler Jmp(Operand.OpReg a) => CreateInstr(Mnemonic.Jmp, a);
-        public Assembler Jmp(Operand.OpMem a) => CreateInstr(Mnemonic.Jmp, a);
-        public Assembler Jmp(Operand.OpImm a) => CreateInstr(Mnemonic.Jmp, a);
+
         public Assembler Lar(Operand.OpReg a, Operand.OpReg b) => CreateInstr(Mnemonic.Lar, a, b);
         public Assembler Lar(Operand.OpReg a, Operand.OpMem b) => CreateInstr(Mnemonic.Lar, a, b);
         public Assembler Ldmxcsr(Operand.OpMem a) => CreateInstr(Mnemonic.Ldmxcsr, a);
@@ -2577,5 +2570,45 @@ namespace Dotx64Dbg
         public Assembler Vpcmpistri(Operand.OpReg a, Operand.OpMem b, Operand.OpImm c) => CreateInstr(Mnemonic.Vpcmpistri, a, b, c);
         public Assembler Vpcmpistrm(Operand.OpReg a, Operand.OpReg b, Operand.OpImm c) => CreateInstr(Mnemonic.Vpcmpistrm, a, b, c);
         public Assembler Vpcmpistrm(Operand.OpReg a, Operand.OpMem b, Operand.OpImm c) => CreateInstr(Mnemonic.Vpcmpistrm, a, b, c);
+
+        public Assembler Jmp(Label a) => CreateInstr(Mnemonic.Jmp, a);
+        public Assembler Jmp(Operand.OpReg a) => CreateInstr(Mnemonic.Jmp, a);
+        public Assembler Jmp(Operand.OpMem a) => CreateInstr(Mnemonic.Jmp, a);
+        public Assembler Jmp(Operand.OpImm a) => CreateInstr(Mnemonic.Jmp, a);
+
+        public Assembler Jnz(Label a) => CreateInstr(Mnemonic.Jnz, a);
+        public Assembler Jnz(Operand.OpReg a) => CreateInstr(Mnemonic.Jnz, a);
+        public Assembler Jnz(Operand.OpMem a) => CreateInstr(Mnemonic.Jnz, a);
+        public Assembler Jnz(Operand.OpImm a) => CreateInstr(Mnemonic.Jnz, a);
+
+        public Assembler Jz(Label a) => CreateInstr(Mnemonic.Jz, a);
+        public Assembler Jz(Operand.OpReg a) => CreateInstr(Mnemonic.Jz, a);
+        public Assembler Jz(Operand.OpMem a) => CreateInstr(Mnemonic.Jz, a);
+        public Assembler Jz(Operand.OpImm a) => CreateInstr(Mnemonic.Jz, a);
+
+        public Assembler Jnb(Label a) => CreateInstr(Mnemonic.Jnb, a);
+        public Assembler Jnb(Operand.OpReg a) => CreateInstr(Mnemonic.Jnb, a);
+        public Assembler Jnb(Operand.OpMem a) => CreateInstr(Mnemonic.Jnb, a);
+        public Assembler Jnb(Operand.OpImm a) => CreateInstr(Mnemonic.Jnb, a);
+
+        public Assembler Jno(Label a) => CreateInstr(Mnemonic.Jno, a);
+        public Assembler Jno(Operand.OpReg a) => CreateInstr(Mnemonic.Jno, a);
+        public Assembler Jno(Operand.OpMem a) => CreateInstr(Mnemonic.Jno, a);
+        public Assembler Jno(Operand.OpImm a) => CreateInstr(Mnemonic.Jno, a);
+
+        public Assembler Js(Label a) => CreateInstr(Mnemonic.Js, a);
+        public Assembler Js(Operand.OpReg a) => CreateInstr(Mnemonic.Js, a);
+        public Assembler Js(Operand.OpMem a) => CreateInstr(Mnemonic.Js, a);
+        public Assembler Js(Operand.OpImm a) => CreateInstr(Mnemonic.Js, a);
+
+        public Assembler Jp(Label a) => CreateInstr(Mnemonic.Jp, a);
+        public Assembler Jp(Operand.OpReg a) => CreateInstr(Mnemonic.Jp, a);
+        public Assembler Jp(Operand.OpMem a) => CreateInstr(Mnemonic.Jp, a);
+        public Assembler Jp(Operand.OpImm a) => CreateInstr(Mnemonic.Jp, a);
+
+        public Assembler Call(Operand.OpReg a) => CreateInstr(Mnemonic.Call, a);
+        public Assembler Call(Operand.OpMem a) => CreateInstr(Mnemonic.Call, a);
+        public Assembler Call(Label a) => CreateInstr(Mnemonic.Call, a);
+        public Assembler Call(Operand.OpImm a) => CreateInstr(Mnemonic.Call, a);
     }
 }
