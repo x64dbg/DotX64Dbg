@@ -184,11 +184,11 @@ namespace Dotx64Dbg {
 
         Instruction^ Convert(ZydisDecodedInstruction& instr, uint64_t addr)
         {
-            auto res = gcnew Instruction();
+            auto id = static_cast<Mnemonic>(instr.mnemonic);
+            auto res = gcnew Instruction(id);
 
             res->Size = instr.length;
             res->Address = addr;
-            res->Id = static_cast<Mnemonic>(instr.mnemonic);
 
             if (instr.attributes & ZYDIS_ATTRIB_HAS_LOCK)
                 res->Attribs |= Instruction::Attributes::Lock;
@@ -205,30 +205,36 @@ namespace Dotx64Dbg {
             if (instr.attributes & ZYDIS_ATTRIB_HAS_REPNZ)
                 res->Attribs |= Instruction::Attributes::RepNz;
 
+            int opIndex = 0;
             for (int i = 0; i < instr.operand_count; i++)
             {
                 auto& op = instr.operands[i];
 
                 IOperand^ newOp = ConvertOperand(instr, op, addr);
-
+                OperandVisibility vis = OperandVisibility::Invalid;
                 if (op.visibility == ZYDIS_OPERAND_VISIBILITY_EXPLICIT)
-                    newOp->Visibility = OperandVisibility::Explicit;
+                    vis = OperandVisibility::Explicit;
                 else if (op.visibility == ZYDIS_OPERAND_VISIBILITY_HIDDEN)
-                    newOp->Visibility = OperandVisibility::Hidden;
+                    vis = OperandVisibility::Hidden;
                 else if (op.visibility == ZYDIS_OPERAND_VISIBILITY_IMPLICIT)
-                    newOp->Visibility = OperandVisibility::Implicit;
+                    vis = OperandVisibility::Implicit;
                 else
-                    newOp->Visibility = OperandVisibility::Invalid;
+                    vis = OperandVisibility::Invalid;
 
+                OperandAccess access = OperandAccess::None;
                 if (op.actions & ZYDIS_OPERAND_ACTION_MASK_READ)
-                    newOp->Access |= OperandAccess::Read;
+                    access = static_cast<OperandAccess>(static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Read));
 
                 if (op.actions & ZYDIS_OPERAND_ACTION_MASK_WRITE)
-                    newOp->Access |= OperandAccess::Write;
+                    access = static_cast<OperandAccess>(static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Write));
 
-                res->SetOperand(i, newOp);
+                if (vis == OperandVisibility::Hidden)
+                    continue;
 
+                res->SetOperand(opIndex, newOp, access, vis);
+                opIndex++;
 #ifdef _DEBUG
+
                 auto [flagsR, flagsW] = getEFlags(instr);
                 if (res->FlagsRead != (EFlags)flagsR)
                 {

@@ -69,7 +69,6 @@ public class AssemblerTest
     [Command("AssembleWithLabel")]
     public void AssemblerWithLabels(string[] args)
     {
-        var decoder = Decoder.Create();
         var asm = new Assembler((nuint)Thread.Active.Rip);
 
         var myLabel = asm.CreateLabel();

@@ -234,7 +234,7 @@ namespace Dotx64Dbg {
         {
             const size_t codeSize = _code->codeSize();
 
-            array<System::Byte>^ res = gcnew array<System::Byte>(codeSize);
+            array<System::Byte>^ res = gcnew array<System::Byte>((int)codeSize);
 
             pin_ptr<uint8_t> ptr = &res[0];
             uint8_t* buf = ptr;

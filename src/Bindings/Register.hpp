@@ -1,4 +1,5 @@
-﻿
+﻿#pragma once
+
 namespace Dotx64Dbg {
 
     public enum class RegisterClass
@@ -359,6 +360,43 @@ namespace Dotx64Dbg {
         Mxcsr,
         Pkru,
         Xcr0,
+
+        // Aliases
+#ifdef _M_AMD64
+        Hax = Rax,
+        Hcx = Rcx,
+        Hdx = Rdx,
+        Hbx = Rbx,
+        Hsp = Rsp,
+        Hbp = Rbp,
+        Hsi = Rsi,
+        Hdi = Rdi,
+        H8 = R8,
+        H9 = R9,
+        H10 = R10,
+        H11 = R11,
+        H12 = R12,
+        H13 = R13,
+        H14 = R14,
+        H15 = R15,
+#else
+        Hax = Eax,
+        Hcx = Ecx,
+        Hdx = Edx,
+        Hbx = Ebx,
+        Hsp = Esp,
+        Hbp = Ebp,
+        Hsi = Esi,
+        Hdi = Edi,
+        H8 = R8d,
+        H9 = R9d,
+        H10 = R10d,
+        H11 = R11d,
+        H12 = R12d,
+        H13 = R13d,
+        H14 = R14d,
+        H15 = R15d,
+#endif
     };
 
     static constexpr const char* RegisterNames[] =
