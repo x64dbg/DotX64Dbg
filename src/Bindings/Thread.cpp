@@ -1224,7 +1224,6 @@ namespace Dotx64Dbg::Native
                 return WriteRegister(hThread, data, UE_RIP, 4);
             case Register::Rip:
                 return WriteRegister(hThread, data, UE_RIP, 8);
-            case Register::Es:
 #else
             case Register::Flags:
                 return WriteRegister(hThread, data, UE_EFLAGS, 2);
