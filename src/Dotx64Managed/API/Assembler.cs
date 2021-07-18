@@ -1,40 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
+    internal class LabelData
+    {
+        internal Label Label;
+        internal NodeList.Node Node;
+    }
+
     public partial class Assembler : IDisposable
     {
         private NodeList Nodes = new();
         public NodeList.Node Cursor { get; set; }
 
-        internal Dotx64Dbg.Encoder Encoder;
+        internal Encoder Encoder;
 
-        bool disposed = false;
+        internal bool disposed = false;
 
-        public class Label
-        {
-            public int Id { get; internal set; }
-            public int Offset { get; internal set; }
-            internal NodeList.Node Node { get; set; }
+        internal Instruction.Attributes AttribState;
 
-            Label()
-            {
-                Id = -1;
-            }
+        internal List<LabelData> Labels = new();
 
-            internal Label(int id)
-            {
-                Id = id;
-            }
-
-
-        }
-
-        internal List<Label> Labels = new();
 
         public class NodeInstr : NodeList.NodeKind<Instruction>
         {
@@ -51,7 +38,7 @@ namespace Dotx64Dbg
 
         public Assembler()
         {
-            Encoder = Dotx64Dbg.Encoder.Create(0);
+            Encoder = Dotx64Dbg.Encoder.Create((nuint)0);
         }
 
         public Assembler(nuint baseVA = 0)
@@ -69,65 +56,76 @@ namespace Dotx64Dbg
 
         public Label CreateLabel()
         {
-            var res = new Label(Labels.Count);
+            var data = new LabelData()
+            {
+                Label = new Label(Labels.Count),
+                Node = null,
+            };
 
-            Labels.Add(res);
+            Labels.Add(data);
 
-            return res;
+            return data.Label;
         }
 
         public Assembler BindLabel(Label label)
         {
-            if (label.Node != null)
+            var labelData = Labels[label.Value];
+            if (labelData.Node != null)
+            {
                 throw new Exception("Label is already bound, can not bind twice.");
+            }
 
             var node = new NodeLabel() { Value = label };
-            label.Node = node;
+            labelData.Node = node;
 
             Cursor = Nodes.InsertAfter(Cursor, node);
 
-            return this;
-        }
-
-
-        internal Assembler CreateInstr()
-        {
-            var node = new NodeInstr() { Value = new Instruction() };
-            Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
 
         internal Assembler CreateInstr(Mnemonic id)
         {
-            var node = new NodeInstr() { Value = new Instruction(id) };
+            var node = new NodeInstr() { Value = new Instruction(AttribState, id) };
+            AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0)
         {
-            var node = new NodeInstr() { Value = new Instruction(id, op0) };
+            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0) };
+            AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0, IOperand op1)
         {
-            var node = new NodeInstr() { Value = new Instruction(id, op0, op1) };
+            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0, op1) };
+            AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0, IOperand op1, IOperand op2)
         {
-            var node = new NodeInstr() { Value = new Instruction(id, op0, op1, op2) };
+            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0, op1, op2) };
+            AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0, IOperand op1, IOperand op2, IOperand op3)
         {
-            var node = new NodeInstr() { Value = new Instruction(id, op0, op1, op2, op3) };
+            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0, op1, op2, op3) };
+            AttribState = Instruction.Attributes.None;
+            Cursor = Nodes.InsertAfter(Cursor, node);
+            return this;
+        }
+
+        public Assembler Emit(Instruction instr)
+        {
+            var node = new NodeInstr() { Value = instr };
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
@@ -181,6 +179,23 @@ namespace Dotx64Dbg
             return this;
         }
 
+        public Assembler Lock()
+        {
+            AttribState |= Instruction.Attributes.Lock;
+            return this;
+        }
+
+        public Assembler Rep()
+        {
+            AttribState |= Instruction.Attributes.Rep;
+            return this;
+        }
+        public Assembler RepNe()
+        {
+            AttribState |= Instruction.Attributes.RepNe;
+            return this;
+        }
+
         public bool Finalize()
         {
             // Encode everything.
@@ -196,7 +211,10 @@ namespace Dotx64Dbg
                 }
                 else if (node is NodeLabel nodeLabel)
                 {
-
+                    if (!Encoder.BindLabel(nodeLabel.Value))
+                    {
+                        return false;
+                    }
                 }
                 node = node.Next;
             }
@@ -205,14 +223,19 @@ namespace Dotx64Dbg
 
         }
 
-        // Public implementation of Dispose pattern callable by consumers.
+        public void Reset()
+        {
+            Encoder.Reset();
+            Nodes = new();
+            Cursor = null;
+        }
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        // Protected implementation of Dispose pattern.
         protected virtual void Dispose(bool disposing)
         {
             if (disposed)
@@ -236,6 +259,16 @@ namespace Dotx64Dbg
         public byte[] GetData()
         {
             return Encoder.GetData();
+        }
+
+        public nuint GetLabelBaseOffset(Label label)
+        {
+            return Encoder.GetLabelBaseOffset(label);
+        }
+
+        public nuint GetLabelOffset(Label label)
+        {
+            return Encoder.GetLabelOffset(label);
         }
     }
 }

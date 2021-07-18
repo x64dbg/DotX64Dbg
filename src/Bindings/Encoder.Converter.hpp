@@ -3245,30 +3245,4 @@ namespace Dotx64Dbg {
         return asmjit::x86::Reg();
     }
 
-    inline asmjit::Operand convertOp(IOperand^ op)
-    {
-        if (op->Type == OperandType::Register)
-        {
-            auto opReg = (Operand::OpReg^)op;
-            return convertRegister(opReg->Value);
-        }
-        else if (op->Type == OperandType::Immediate)
-        {
-            auto opImm = (Operand::OpImm^)op;
-            return asmjit::Imm(opImm->Value);
-        }
-        else if (op->Type == OperandType::Memory)
-        {
-            auto opMem = (Operand::OpMem^)op;
-            auto mem = asmjit::x86::Mem();
-            mem.setBase(convertRegister(opMem->Base));
-            mem.setIndex(convertRegister(opMem->Index), opMem->Scale);
-            mem.setSegment(convertRegister(opMem->Segment).as<asmjit::x86::SReg>());
-            mem.setSize(opMem->Size);
-            mem.setOffset(opMem->Displacement);
-            return mem;
-        }
-        return {};
-    }
-
 }

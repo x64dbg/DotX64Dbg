@@ -20,5 +20,9 @@
     <ClInclude Include="Register.hpp" />
     <ClInclude Include="Mnemonic.hpp" />
     <ClInclude Include="Encoder.Converter.hpp" />
+    <ClInclude Include="Instruction.Meta.hpp" />
+    <ClInclude Include="Instruction.Operand.hpp" />
+    <ClInclude Include="Instruction.Operands.hpp" />
+    <ClInclude Include="Instruction.EFlags.hpp" />
   </ItemGroup>
 </Project>

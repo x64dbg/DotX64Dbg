@@ -10,7 +10,7 @@ public partial class MyPlugin : IPlugin, IHotload
 {
     private NestedClass Obj = new();
     private List<int> TestList = new();
-
+	
     private int X = 0;
     private int Y = 2;
     private NestedClass Obj2;
@@ -54,7 +54,7 @@ public partial class MyPlugin : IPlugin, IHotload
         {
             Console.WriteLine($"List {x}");
         }
-
+ 
 #if _X64_
         Console.WriteLine("Is X64");
 #elif _X86_
@@ -80,8 +80,13 @@ public partial class MyPlugin : IPlugin, IHotload
 
             Thread.SetActive(Thread.GetMain());
 
-            mainThread.Rax = 0xFFFFFFFFFFFFFFFF;
+#if _X64_
+            mainThread.Rax = (nuint)0xFFFFFFFFFFFFFFFF;
             Console.WriteLine($"Rax = {mainThread.Rax:X}");
+#else
+            mainThread.Eax = 0xFFFFFFFF;
+            Console.WriteLine($"Rax = {mainThread.Eax:X}");
+#endif
 
             Console.WriteLine($"Eax = {mainThread.Eax:X}");
             mainThread.Eax++;
@@ -99,11 +104,10 @@ public partial class MyPlugin : IPlugin, IHotload
             mainThread.Al++;
             Console.WriteLine($"Al = {mainThread.Al:X}");
 
-            Console.WriteLine($"Rax = {mainThread.Rax:X}");
-			
-			
-        var res = Memory.Read(mainThread.Rip, 22);
-        Console.WriteLine("Data: {0}", res);
+            Console.WriteLine($"Rax = {mainThread.Nax:X}");
+
+            var res = Memory.Read(mainThread.Nip, 22);
+            Console.WriteLine("Data: {0}", res);
         }
 
         // Value X and Y have will be 100, 300
@@ -120,6 +124,8 @@ public partial class MyPlugin : IPlugin, IHotload
         MyPrivateStatic++;
         X = X + 11;
         Z = Z + 1;
+		
+		UI.Disassembly.Update();
     }
 
     // Called before the plugin is about to be unloaded.

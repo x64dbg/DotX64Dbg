@@ -66,8 +66,9 @@ namespace Dotx64Dbg
         public static ushort R13w { get => GetThread().R13w; set => GetThread().R13w = value; }
         public static ushort R14w { get => GetThread().R14w; set => GetThread().R14w = value; }
         public static ushort R15w { get => GetThread().R15w; set => GetThread().R15w = value; }
-#endif 
+#endif
 
+#if _X64_
         public static uint Eax { get => GetThread().Eax; set => GetThread().Eax = value; }
         public static uint Ecx { get => GetThread().Ecx; set => GetThread().Ecx = value; }
         public static uint Edx { get => GetThread().Edx; set => GetThread().Edx = value; }
@@ -77,7 +78,6 @@ namespace Dotx64Dbg
         public static uint Esi { get => GetThread().Esi; set => GetThread().Esi = value; }
         public static uint Edi { get => GetThread().Edi; set => GetThread().Edi = value; }
 
-#if _X64_
         public static uint R8d { get => GetThread().R8d; set => GetThread().R8d = value; }
         public static uint R9d { get => GetThread().R9d; set => GetThread().R9d = value; }
         public static uint R10d { get => GetThread().R10d; set => GetThread().R10d = value; }
@@ -86,22 +86,31 @@ namespace Dotx64Dbg
         public static uint R13d { get => GetThread().R13d; set => GetThread().R13d = value; }
         public static uint R14d { get => GetThread().R14d; set => GetThread().R14d = value; }
         public static uint R15d { get => GetThread().R15d; set => GetThread().R15d = value; }
-        public static ulong Rax { get => GetThread().Rax; set => GetThread().Rax = value; }
-        public static ulong Rcx { get => GetThread().Rcx; set => GetThread().Rcx = value; }
-        public static ulong Rdx { get => GetThread().Rdx; set => GetThread().Rdx = value; }
-        public static ulong Rbx { get => GetThread().Rbx; set => GetThread().Rbx = value; }
-        public static ulong Rsp { get => GetThread().Rsp; set => GetThread().Rsp = value; }
-        public static ulong Rbp { get => GetThread().Rbp; set => GetThread().Rbp = value; }
-        public static ulong Rsi { get => GetThread().Rsi; set => GetThread().Rsi = value; }
-        public static ulong Rdi { get => GetThread().Rdi; set => GetThread().Rdi = value; }
-        public static ulong R8 { get => GetThread().R8; set => GetThread().R8 = value; }
-        public static ulong R9 { get => GetThread().R9; set => GetThread().R9 = value; }
-        public static ulong R10 { get => GetThread().R10; set => GetThread().R10 = value; }
-        public static ulong R11 { get => GetThread().R11; set => GetThread().R11 = value; }
-        public static ulong R12 { get => GetThread().R12; set => GetThread().R12 = value; }
-        public static ulong R13 { get => GetThread().R13; set => GetThread().R13 = value; }
-        public static ulong R14 { get => GetThread().R14; set => GetThread().R14 = value; }
-        public static ulong R15 { get => GetThread().R15; set => GetThread().R15 = value; }
+        public static nuint Rax { get => GetThread().Rax; set => GetThread().Rax = value; }
+        public static nuint Rcx { get => GetThread().Rcx; set => GetThread().Rcx = value; }
+        public static nuint Rdx { get => GetThread().Rdx; set => GetThread().Rdx = value; }
+        public static nuint Rbx { get => GetThread().Rbx; set => GetThread().Rbx = value; }
+        public static nuint Rsp { get => GetThread().Rsp; set => GetThread().Rsp = value; }
+        public static nuint Rbp { get => GetThread().Rbp; set => GetThread().Rbp = value; }
+        public static nuint Rsi { get => GetThread().Rsi; set => GetThread().Rsi = value; }
+        public static nuint Rdi { get => GetThread().Rdi; set => GetThread().Rdi = value; }
+        public static nuint R8 { get => GetThread().R8; set => GetThread().R8 = value; }
+        public static nuint R9 { get => GetThread().R9; set => GetThread().R9 = value; }
+        public static nuint R10 { get => GetThread().R10; set => GetThread().R10 = value; }
+        public static nuint R11 { get => GetThread().R11; set => GetThread().R11 = value; }
+        public static nuint R12 { get => GetThread().R12; set => GetThread().R12 = value; }
+        public static nuint R13 { get => GetThread().R13; set => GetThread().R13 = value; }
+        public static nuint R14 { get => GetThread().R14; set => GetThread().R14 = value; }
+        public static nuint R15 { get => GetThread().R15; set => GetThread().R15 = value; }
+#else
+        public static nuint Eax { get => GetThread().Eax; set => GetThread().Eax = value; }
+        public static nuint Ecx { get => GetThread().Ecx; set => GetThread().Ecx = value; }
+        public static nuint Edx { get => GetThread().Edx; set => GetThread().Edx = value; }
+        public static nuint Ebx { get => GetThread().Ebx; set => GetThread().Ebx = value; }
+        public static nuint Esp { get => GetThread().Esp; set => GetThread().Esp = value; }
+        public static nuint Ebp { get => GetThread().Ebp; set => GetThread().Ebp = value; }
+        public static nuint Esi { get => GetThread().Esi; set => GetThread().Esi = value; }
+        public static nuint Edi { get => GetThread().Edi; set => GetThread().Edi = value; }
 #endif
         public static BigInteger St0 { get => GetThread().St0; set => GetThread().St0 = value; }
         public static BigInteger St1 { get => GetThread().St1; set => GetThread().St1 = value; }
@@ -219,15 +228,19 @@ namespace Dotx64Dbg
         public static BigInteger Zmm30 { get => GetThread().Zmm30; set => GetThread().Zmm30 = value; }
         public static BigInteger Zmm31 { get => GetThread().Zmm31; set => GetThread().Zmm31 = value; }
         public static BigInteger Flags { get => GetThread().Flags; set => GetThread().Flags = value; }
-        public static uint EFlags { get => GetThread().EFlags; set => GetThread().EFlags = value; }
 #if _X64_
-        public static ulong RFlags { get => GetThread().RFlags; set => GetThread().RFlags = value; }
+        public static uint EFlags { get => GetThread().EFlags; set => GetThread().EFlags = value; }
+        public static nuint RFlags { get => GetThread().RFlags; set => GetThread().RFlags = value; }
+#else
+        public static nuint EFlags { get => GetThread().EFlags; set => GetThread().EFlags = value; }
 #endif
         public static ushort Ip { get => GetThread().Ip; set => GetThread().Ip = value; }
-        public static uint Eip { get => GetThread().Eip; set => GetThread().Eip = value; }
 
 #if _X64_
-        public static ulong Rip { get => GetThread().Rip; set => GetThread().Rip = value; }
+        public static uint Eip { get => GetThread().Eip; set => GetThread().Eip = value; }
+        public static nuint Rip { get => GetThread().Rip; set => GetThread().Rip = value; }
+#else
+        public static nuint Eip { get => GetThread().Eip; set => GetThread().Eip = value; }
 #endif
 
         public static ushort Es { get => GetThread().Es; set => GetThread().Es = value; }
@@ -264,41 +277,24 @@ namespace Dotx64Dbg
         public static BigInteger Cr13 { get => GetThread().Cr13; set => GetThread().Cr13 = value; }
         public static BigInteger Cr14 { get => GetThread().Cr14; set => GetThread().Cr14 = value; }
         public static BigInteger Cr15 { get => GetThread().Cr15; set => GetThread().Cr15 = value; }
-#if _X64_
-        public static ulong Dr0 { get => GetThread().Dr0; set => GetThread().Dr0 = value; }
-        public static ulong Dr1 { get => GetThread().Dr1; set => GetThread().Dr1 = value; }
-        public static ulong Dr2 { get => GetThread().Dr2; set => GetThread().Dr2 = value; }
-        public static ulong Dr3 { get => GetThread().Dr3; set => GetThread().Dr3 = value; }
-        public static ulong Dr4 { get => GetThread().Dr4; set => GetThread().Dr4 = value; }
-        public static ulong Dr5 { get => GetThread().Dr5; set => GetThread().Dr5 = value; }
-        public static ulong Dr6 { get => GetThread().Dr6; set => GetThread().Dr6 = value; }
-        public static ulong Dr7 { get => GetThread().Dr7; set => GetThread().Dr7 = value; }
-        public static ulong Dr8 { get => GetThread().Dr8; set => GetThread().Dr8 = value; }
-        public static ulong Dr9 { get => GetThread().Dr9; set => GetThread().Dr9 = value; }
-        public static ulong Dr10 { get => GetThread().Dr10; set => GetThread().Dr10 = value; }
-        public static ulong Dr11 { get => GetThread().Dr11; set => GetThread().Dr11 = value; }
-        public static ulong Dr12 { get => GetThread().Dr12; set => GetThread().Dr12 = value; }
-        public static ulong Dr13 { get => GetThread().Dr13; set => GetThread().Dr13 = value; }
-        public static ulong Dr14 { get => GetThread().Dr14; set => GetThread().Dr14 = value; }
-        public static ulong Dr15 { get => GetThread().Dr15; set => GetThread().Dr15 = value; }
-#else
-        public static uint Dr0 { get => GetThread().Dr0; set => GetThread().Dr0 = value; }
-        public static uint Dr1 { get => GetThread().Dr1; set => GetThread().Dr1 = value; }
-        public static uint Dr2 { get => GetThread().Dr2; set => GetThread().Dr2 = value; }
-        public static uint Dr3 { get => GetThread().Dr3; set => GetThread().Dr3 = value; }
-        public static uint Dr4 { get => GetThread().Dr4; set => GetThread().Dr4 = value; }
-        public static uint Dr5 { get => GetThread().Dr5; set => GetThread().Dr5 = value; }
-        public static uint Dr6 { get => GetThread().Dr6; set => GetThread().Dr6 = value; }
-        public static uint Dr7 { get => GetThread().Dr7; set => GetThread().Dr7 = value; }
-        public static uint Dr8 { get => GetThread().Dr8; set => GetThread().Dr8 = value; }
-        public static uint Dr9 { get => GetThread().Dr9; set => GetThread().Dr9 = value; }
-        public static uint Dr10 { get => GetThread().Dr10; set => GetThread().Dr10 = value; }
-        public static uint Dr11 { get => GetThread().Dr11; set => GetThread().Dr11 = value; }
-        public static uint Dr12 { get => GetThread().Dr12; set => GetThread().Dr12 = value; }
-        public static uint Dr13 { get => GetThread().Dr13; set => GetThread().Dr13 = value; }
-        public static uint Dr14 { get => GetThread().Dr14; set => GetThread().Dr14 = value; }
-        public static uint Dr15 { get => GetThread().Dr15; set => GetThread().Dr15 = value; }
-#endif
+
+        public static nuint Dr0 { get => GetThread().Dr0; set => GetThread().Dr0 = value; }
+        public static nuint Dr1 { get => GetThread().Dr1; set => GetThread().Dr1 = value; }
+        public static nuint Dr2 { get => GetThread().Dr2; set => GetThread().Dr2 = value; }
+        public static nuint Dr3 { get => GetThread().Dr3; set => GetThread().Dr3 = value; }
+        public static nuint Dr4 { get => GetThread().Dr4; set => GetThread().Dr4 = value; }
+        public static nuint Dr5 { get => GetThread().Dr5; set => GetThread().Dr5 = value; }
+        public static nuint Dr6 { get => GetThread().Dr6; set => GetThread().Dr6 = value; }
+        public static nuint Dr7 { get => GetThread().Dr7; set => GetThread().Dr7 = value; }
+        public static nuint Dr8 { get => GetThread().Dr8; set => GetThread().Dr8 = value; }
+        public static nuint Dr9 { get => GetThread().Dr9; set => GetThread().Dr9 = value; }
+        public static nuint Dr10 { get => GetThread().Dr10; set => GetThread().Dr10 = value; }
+        public static nuint Dr11 { get => GetThread().Dr11; set => GetThread().Dr11 = value; }
+        public static nuint Dr12 { get => GetThread().Dr12; set => GetThread().Dr12 = value; }
+        public static nuint Dr13 { get => GetThread().Dr13; set => GetThread().Dr13 = value; }
+        public static nuint Dr14 { get => GetThread().Dr14; set => GetThread().Dr14 = value; }
+        public static nuint Dr15 { get => GetThread().Dr15; set => GetThread().Dr15 = value; }
+
         public static BigInteger K0 { get => GetThread().K0; set => GetThread().K0 = value; }
         public static BigInteger K1 { get => GetThread().K1; set => GetThread().K1 = value; }
         public static BigInteger K2 { get => GetThread().K2; set => GetThread().K2 = value; }
@@ -316,5 +312,28 @@ namespace Dotx64Dbg
         public static BigInteger Mxcsr { get => GetThread().Mxcsr; set => GetThread().Mxcsr = value; }
         public static BigInteger Pkru { get => GetThread().Pkru; set => GetThread().Pkru = value; }
         public static BigInteger Xcr0 { get => GetThread().Xcr0; set => GetThread().Xcr0 = value; }
+
+        // Host Specific
+#if _X64_
+        public static nuint Nax { get => GetThread().Rax; set => GetThread().Rax = value; }
+        public static nuint Ncx { get => GetThread().Rcx; set => GetThread().Rcx = value; }
+        public static nuint Ndx { get => GetThread().Rdx; set => GetThread().Rdx = value; }
+        public static nuint Nbx { get => GetThread().Rbx; set => GetThread().Rbx = value; }
+        public static nuint Nsp { get => GetThread().Rsp; set => GetThread().Rsp = value; }
+        public static nuint Nbp { get => GetThread().Rbp; set => GetThread().Rbp = value; }
+        public static nuint Nsi { get => GetThread().Rsi; set => GetThread().Rsi = value; }
+        public static nuint Ndi { get => GetThread().Rdi; set => GetThread().Rdi = value; }
+        public static nuint Nip { get => GetThread().Rip; set => GetThread().Rip = value; }
+#else 
+        public static nuint Nax { get => GetThread().Eax; set => GetThread().Eax = value; }
+        public static nuint Ncx { get => GetThread().Ecx; set => GetThread().Ecx = value; }
+        public static nuint Ndx { get => GetThread().Edx; set => GetThread().Edx = value; }
+        public static nuint Nbx { get => GetThread().Ebx; set => GetThread().Ebx = value; }
+        public static nuint Nsp { get => GetThread().Esp; set => GetThread().Esp = value; }
+        public static nuint Nbp { get => GetThread().Ebp; set => GetThread().Ebp = value; }
+        public static nuint Nsi { get => GetThread().Esi; set => GetThread().Esi = value; }
+        public static nuint Ndi { get => GetThread().Edi; set => GetThread().Edi = value; }
+        public static nuint Nip { get => GetThread().Eip; set => GetThread().Eip = value; }
+#endif
     }
 }

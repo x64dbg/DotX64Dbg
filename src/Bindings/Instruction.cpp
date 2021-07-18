@@ -17,7 +17,7 @@ namespace Dotx64Dbg {
             IOperand^ op = GetOperand(i);
             if (op == nullptr || op->Type == OperandType::None)
                 break;
-            if (op->Visibility == OperandVisibility::Hidden)
+            if (GetOperandVisibility(i) == OperandVisibility::Hidden)
                 continue;
             if (i > 0)
                 ins = ins->Concat(ins, gcnew System::String(", "));

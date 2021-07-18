@@ -12,7 +12,7 @@ namespace Dotx64Dbg::Native
     public ref struct ThreadInfo
     {
         uint32_t Id;
-        uint64_t Handle;
+        System::UIntPtr Handle;
         uintptr_t IP;
         uint32_t SuspendCount;
         uint32_t LastError;
@@ -118,7 +118,7 @@ namespace Dotx64Dbg::Native
 
                 res = gcnew ThreadInfo();
                 res->Id = id;
-                res->Handle = reinterpret_cast<uint64_t>(th.BasicInfo.Handle);
+                res->Handle = System::UIntPtr(th.BasicInfo.Handle);
                 res->IP = th.ThreadCip;
                 res->SuspendCount = th.SuspendCount;
                 res->LastError = th.LastError;
@@ -135,30 +135,31 @@ namespace Dotx64Dbg::Native
             return res;
         }
 
-        static array<System::Byte>^ ReadRegister(uint64_t hThread, int reg, int size, int offset)
+        static array<System::Byte>^ ReadRegister(System::UIntPtr hThread, int reg, int size, int offset)
         {
             array<System::Byte>^ res = gcnew array<System::Byte>(size);
 
             pin_ptr<uint8_t> p = &res[0];
             uint8_t* data = p;
 
-            ULONG_PTR val = GetContextDataEx(reinterpret_cast<HANDLE>(hThread), reg);
+            ULONG_PTR val = GetContextDataEx(hThread.ToPointer(), reg);
             std::memcpy(data, reinterpret_cast<const uint8_t*>(&val) + offset, size);
 
             return res;
         }
 
-        static array<System::Byte>^ ReadRegister(uint64_t hThread, int reg, int size)
+        static array<System::Byte>^ ReadRegister(System::UIntPtr hThread, int reg, int size)
         {
             return ReadRegister(hThread, reg, size, 0);
         }
 
-        static array<System::Byte>^ GetRegisterData(uint64_t hThread, Register reg)
+        static array<System::Byte>^ GetRegisterData(System::UIntPtr hThread, Register reg)
         {
             switch (reg)
             {
             case Register::None:
                 return gcnew array<System::Byte>(0);
+#ifdef _M_X64
             case Register::Al:
                 return ReadRegister(hThread, UE_RAX, 1);
             case Register::Cl:
@@ -295,6 +296,66 @@ namespace Dotx64Dbg::Native
                 return ReadRegister(hThread, UE_R14, 8);
             case Register::R15:
                 return ReadRegister(hThread, UE_R15, 8);
+#else
+            case Register::Al:
+                return ReadRegister(hThread, UE_EAX, 1);
+            case Register::Cl:
+                return ReadRegister(hThread, UE_ECX, 1);
+            case Register::Dl:
+                return ReadRegister(hThread, UE_EDX, 1);
+            case Register::Bl:
+                return ReadRegister(hThread, UE_EBX, 1);
+            case Register::Ah:
+                return ReadRegister(hThread, UE_EAX, 1, 1);
+            case Register::Ch:
+                return ReadRegister(hThread, UE_ECX, 1, 1);
+            case Register::Dh:
+                return ReadRegister(hThread, UE_EDX, 1, 1);
+            case Register::Bh:
+                return ReadRegister(hThread, UE_EBX, 1, 1);
+            case Register::Spl:
+                return ReadRegister(hThread, UE_ESP, 1);
+            case Register::Bpl:
+                return ReadRegister(hThread, UE_EBP, 1);
+            case Register::Sil:
+                return ReadRegister(hThread, UE_ESI, 1);
+            case Register::Dil:
+                return ReadRegister(hThread, UE_EDI, 1);
+            case Register::Ax:
+                return ReadRegister(hThread, UE_EAX, 2);
+            case Register::Cx:
+                return ReadRegister(hThread, UE_ECX, 2);
+            case Register::Dx:
+                return ReadRegister(hThread, UE_EDX, 2);
+            case Register::Bx:
+                return ReadRegister(hThread, UE_EBX, 2);
+            case Register::Sp:
+                return ReadRegister(hThread, UE_ESP, 2);
+            case Register::Bp:
+                return ReadRegister(hThread, UE_EBP, 2);
+            case Register::Si:
+                return ReadRegister(hThread, UE_ESI, 2);
+            case Register::Di:
+                return ReadRegister(hThread, UE_EDI, 2);
+            case Register::Eax:
+                return ReadRegister(hThread, UE_EAX, 4);
+            case Register::Ecx:
+                return ReadRegister(hThread, UE_ECX, 4);
+            case Register::Edx:
+                return ReadRegister(hThread, UE_EDX, 4);
+            case Register::Ebx:
+                return ReadRegister(hThread, UE_EBX, 4);
+            case Register::Esp:
+                return ReadRegister(hThread, UE_ESP, 4);
+            case Register::Ebp:
+                return ReadRegister(hThread, UE_EBP, 4);
+            case Register::Esi:
+                return ReadRegister(hThread, UE_ESI, 4);
+            case Register::Edi:
+                return ReadRegister(hThread, UE_EDI, 4);
+            case Register::Rax:
+                return ReadRegister(hThread, UE_EAX, 8);
+#endif
             case Register::St0:
                 break;
             case Register::St1:
@@ -525,18 +586,33 @@ namespace Dotx64Dbg::Native
                 break;
             case Register::Zmm31:
                 break;
+#ifdef _M_X64
             case Register::Flags:
                 return ReadRegister(hThread, UE_RFLAGS, 2);
             case Register::EFlags:
                 return ReadRegister(hThread, UE_RFLAGS, 4);
             case Register::RFlags:
                 return ReadRegister(hThread, UE_RFLAGS, 8);
+#else
+            case Register::Flags:
+                return ReadRegister(hThread, UE_EFLAGS, 2);
+            case Register::EFlags:
+                return ReadRegister(hThread, UE_EFLAGS, 4);
+#endif
+
+#ifdef _M_X64
             case Register::Ip:
                 return ReadRegister(hThread, UE_RIP, 2);
             case Register::Eip:
                 return ReadRegister(hThread, UE_RIP, 4);
             case Register::Rip:
                 return ReadRegister(hThread, UE_RIP, 8);
+#else
+            case Register::Ip:
+                return ReadRegister(hThread, UE_EIP, 2);
+            case Register::Eip:
+                return ReadRegister(hThread, UE_EIP, 4);
+#endif
             case Register::Es:
                 return ReadRegister(hThread, UE_SEG_ES, 2);
             case Register::Cs:
@@ -679,32 +755,38 @@ namespace Dotx64Dbg::Native
             return gcnew array<System::Byte>(0);
         }
 
-        static void WriteRegister(uint64_t hThread, array<System::Byte>^ data, int reg, int size, int offset)
+        static void WriteRegister(System::UIntPtr hThread, array<System::Byte>^ data, int reg, int size, int offset)
         {
+            HANDLE handle = hThread.ToPointer();
+
             pin_ptr<uint8_t> p = &data[0];
             const uint8_t* ptr = p;
 
             // This is terrible, but to preserve the data when the write happens on smaller regs we need the
             // value not to be zero.
-            ULONG_PTR val = size < sizeof(ULONG_PTR) ? GetContextDataEx(reinterpret_cast<HANDLE>(hThread), reg) : 0;
+            ULONG_PTR val = size < sizeof(ULONG_PTR) ? GetContextDataEx(handle, reg) : 0;
 
             std::memcpy(reinterpret_cast<uint8_t*>(&val) + offset, ptr, std::min<size_t>(data->Length, size));
 
-            SetContextDataEx(reinterpret_cast<HANDLE>(hThread), reg, val);
+            if (!SetContextDataEx(handle, reg, val))
+            {
+                throw gcnew System::Exception("Unable to set context data");
+            }
         }
 
-        static void WriteRegister(uint64_t hThread, array<System::Byte>^ data, int reg, int size)
+        static void WriteRegister(System::UIntPtr hThread, array<System::Byte>^ data, int reg, int size)
         {
             WriteRegister(hThread, data, reg, size, 0);
             GuiUpdateRegisterView();
         }
 
-        static void SetRegisterData(uint64_t hThread, Register reg, array<System::Byte>^ data)
+        static void SetRegisterData(System::UIntPtr hThread, Register reg, array<System::Byte>^ data)
         {
             switch (reg)
             {
             case Register::None:
                 return;
+#ifdef _M_X64
             case Register::Al:
                 return WriteRegister(hThread, data, UE_RAX, 1);
             case Register::Cl:
@@ -841,6 +923,64 @@ namespace Dotx64Dbg::Native
                 return WriteRegister(hThread, data, UE_R14, 8);
             case Register::R15:
                 return WriteRegister(hThread, data, UE_R15, 8);
+#else
+            case Register::Al:
+                return WriteRegister(hThread, data, UE_EAX, 1);
+            case Register::Cl:
+                return WriteRegister(hThread, data, UE_ECX, 1);
+            case Register::Dl:
+                return WriteRegister(hThread, data, UE_EDX, 1);
+            case Register::Bl:
+                return WriteRegister(hThread, data, UE_EBX, 1);
+            case Register::Ah:
+                return WriteRegister(hThread, data, UE_EAX, 1, 1);
+            case Register::Ch:
+                return WriteRegister(hThread, data, UE_ECX, 1, 1);
+            case Register::Dh:
+                return WriteRegister(hThread, data, UE_EDX, 1, 1);
+            case Register::Bh:
+                return WriteRegister(hThread, data, UE_EBX, 1, 1);
+            case Register::Spl:
+                return WriteRegister(hThread, data, UE_ESP, 1);
+            case Register::Bpl:
+                return WriteRegister(hThread, data, UE_EBP, 1);
+            case Register::Sil:
+                return WriteRegister(hThread, data, UE_ESI, 1);
+            case Register::Dil:
+                return WriteRegister(hThread, data, UE_EDI, 1);
+            case Register::Ax:
+                return WriteRegister(hThread, data, UE_EAX, 2);
+            case Register::Cx:
+                return WriteRegister(hThread, data, UE_ECX, 2);
+            case Register::Dx:
+                return WriteRegister(hThread, data, UE_EDX, 2);
+            case Register::Bx:
+                return WriteRegister(hThread, data, UE_EBX, 2);
+            case Register::Sp:
+                return WriteRegister(hThread, data, UE_ESP, 2);
+            case Register::Bp:
+                return WriteRegister(hThread, data, UE_EBP, 2);
+            case Register::Si:
+                return WriteRegister(hThread, data, UE_ESI, 2);
+            case Register::Di:
+                return WriteRegister(hThread, data, UE_EDI, 2);
+            case Register::Eax:
+                return WriteRegister(hThread, data, UE_EAX, 4);
+            case Register::Ecx:
+                return WriteRegister(hThread, data, UE_ECX, 4);
+            case Register::Edx:
+                return WriteRegister(hThread, data, UE_EDX, 4);
+            case Register::Ebx:
+                return WriteRegister(hThread, data, UE_EBX, 4);
+            case Register::Esp:
+                return WriteRegister(hThread, data, UE_ESP, 4);
+            case Register::Ebp:
+                return WriteRegister(hThread, data, UE_EBP, 4);
+            case Register::Esi:
+                return WriteRegister(hThread, data, UE_ESI, 4);
+            case Register::Edi:
+                return WriteRegister(hThread, data, UE_EDI, 4);
+#endif
             case Register::St0:
                 break;
             case Register::St1:
@@ -1071,6 +1211,7 @@ namespace Dotx64Dbg::Native
                 break;
             case Register::Zmm31:
                 break;
+#ifdef _M_X64
             case Register::Flags:
                 return WriteRegister(hThread, data, UE_RFLAGS, 2);
             case Register::EFlags:
@@ -1083,6 +1224,16 @@ namespace Dotx64Dbg::Native
                 return WriteRegister(hThread, data, UE_RIP, 4);
             case Register::Rip:
                 return WriteRegister(hThread, data, UE_RIP, 8);
+#else
+            case Register::Flags:
+                return WriteRegister(hThread, data, UE_EFLAGS, 2);
+            case Register::EFlags:
+                return WriteRegister(hThread, data, UE_EFLAGS, 4);
+            case Register::Ip:
+                return WriteRegister(hThread, data, UE_EIP, 2);
+            case Register::Eip:
+                return WriteRegister(hThread, data, UE_EIP, 4);
+#endif
             case Register::Es:
                 return WriteRegister(hThread, data, UE_SEG_ES, 2);
             case Register::Cs:

@@ -54,43 +54,54 @@ namespace Dotx64Dbg::Native
             return Script::Module::BaseFromName(cstr);
         }
 
-        static duint GetSize(duint base)
+        static duint GetSize(System::UIntPtr base)
         {
-            return Script::Module::SizeFromAddr(base);
+            auto va = static_cast<duint>(base.ToUInt64());
+            return Script::Module::SizeFromAddr(va);
         }
 
-        static System::String^ GetPath(duint base)
+        static System::String^ GetPath(System::UIntPtr base)
         {
+            auto va = static_cast<duint>(base.ToUInt64());
+
             char modPath[4096]{};
-            if (!Script::Module::PathFromAddr(base, modPath))
+            if (!Script::Module::PathFromAddr(va, modPath))
                 return nullptr;
 
             return gcnew System::String(modPath);
         }
 
-        static System::String^ GetName(duint base)
+        static System::String^ GetName(System::UIntPtr base)
         {
+            auto va = static_cast<duint>(base.ToUInt64());
+
             char modName[4096]{};
-            if (!Script::Module::NameFromAddr(base, modName))
+            if (!Script::Module::NameFromAddr(va, modName))
                 return nullptr;
 
             return gcnew System::String(modName);
         }
 
-        static duint GetEntrypoint(duint base)
+        static duint GetEntrypoint(System::UIntPtr base)
         {
-            return Script::Module::EntryFromAddr(base);
+            auto va = static_cast<duint>(base.ToUInt64());
+
+            return Script::Module::EntryFromAddr(va);
         }
 
-        static int GetSectionCount(duint base)
+        static int GetSectionCount(System::UIntPtr base)
         {
-            return Script::Module::SectionCountFromAddr(base);
+            auto va = static_cast<duint>(base.ToUInt64());
+
+            return Script::Module::SectionCountFromAddr(va);
         }
 
-        static Section^ GetSection(duint base, int index)
+        static Section^ GetSection(System::UIntPtr base, int index)
         {
+            auto va = static_cast<duint>(base.ToUInt64());
+
             Script::Module::ModuleSectionInfo sect{};
-            if (!Script::Module::SectionFromAddr(base, index, &sect))
+            if (!Script::Module::SectionFromAddr(va, index, &sect))
                 return nullptr;
 
             auto res = gcnew Section();

@@ -13,7 +13,7 @@
         /// <summary>
         /// The native thread handle.
         /// </summary>
-        public readonly ulong Handle;
+        public readonly System.UIntPtr Handle;
 
         /// <summary>
         /// If this is the first thread created in the process this will be true.
@@ -28,7 +28,7 @@
         /// <summary>
         /// The thread object is garbage collected, if the native thread does no longer exist this will return false.
         /// </summary>
-        public bool IsValid { get => Handle != ulong.MaxValue && Native.Thread.IsValid(Id); }
+        public bool IsValid { get => Handle != System.UIntPtr.Zero && Native.Thread.IsValid(Id); }
 
         /// <summary>
         /// Quick accessor for GetMain
@@ -51,7 +51,7 @@
             }
             else
             {
-                Handle = ulong.MaxValue;
+                Handle = System.UIntPtr.Zero;
             }
         }
 
