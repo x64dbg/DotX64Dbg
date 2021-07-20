@@ -199,6 +199,17 @@ struct Wrapper
     {
         Dotx64Dbg::Manager::OnSteppedEvent();
     }
+
+    static void OnDebuggerStart(const char* file)
+    {
+        auto str = gcnew System::String(file);
+        Dotx64Dbg::Manager::OnDebuggerStart(str);
+    }
+
+    static void OnDebuggerStop()
+    {
+        Dotx64Dbg::Manager::OnDebuggerStop();
+    }
 };
 
 // Unmanaged section.
@@ -213,10 +224,12 @@ PLUG_EXPORT void CBMENUENTRY(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
 
 PLUG_EXPORT void CBINITDEBUG(CBTYPE cbType, PLUG_CB_INITDEBUG* info)
 {
+    Wrapper::OnDebuggerStart(info->szFileName);
 }
 
 PLUG_EXPORT void CBSTOPDEBUG(CBTYPE cbType, PLUG_CB_STOPDEBUG* info)
 {
+    Wrapper::OnDebuggerStop();
 }
 
 PLUG_EXPORT void CBEXCEPTION(CBTYPE cbType, PLUG_CB_EXCEPTION* info)

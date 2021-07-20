@@ -22,5 +22,7 @@
         public void OnProcessExitEvent(ProcessExitEventInfo ev) { }
         public void OnBreakpointEvent(BreakpointEventInfo ev) { }
         public void OnSteppedEvent() { }
+        public void OnDebuggerStart(string fileName) { }
+        public void OnDebuggerStop() { }
     }
 }
