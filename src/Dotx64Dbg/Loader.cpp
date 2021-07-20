@@ -194,6 +194,11 @@ struct Wrapper
         auto str = gcnew System::String(input);
         return Dotx64Dbg::Manager::EvalScript(str);
     }
+
+    static void OnSteppedEvent()
+    {
+        Dotx64Dbg::Manager::OnSteppedEvent();
+    }
 };
 
 // Unmanaged section.
@@ -243,6 +248,7 @@ PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)
 
 PLUG_EXPORT void CBSTEPPED(CBTYPE cbType, PLUG_CB_STEPPED* info)
 {
+    Wrapper::OnSteppedEvent();
 }
 
 PLUG_EXPORT void CBDEBUGEVENT(CBTYPE cbType, PLUG_CB_DEBUGEVENT* info)

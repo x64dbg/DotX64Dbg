@@ -20,7 +20,7 @@
         public void OnThreadExitEvent(ThreadExitEventInfo ev) { }
         public void OnProcessCreateEvent(ProcessCreateEventInfo ev) { }
         public void OnProcessExitEvent(ProcessExitEventInfo ev) { }
-
         public void OnBreakpointEvent(BreakpointEventInfo ev) { }
+        public void OnSteppedEvent() { }
     }
 }
