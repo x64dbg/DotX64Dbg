@@ -34,12 +34,20 @@ jobs:
       - name: Nuget dependencies
         run: |
           cd src
-          msbuild Dotx64Dbg.sln -t:restore -p:RestorePackagesConfig=true -maxcpucount:2 -m
+          msbuild Dotx64Dbg.sln -t:restore -p:RestorePackagesConfig=true -maxcpucount:2 /m
+          IF %ERRORLEVEL% NEQ 0 (
+            ECHO MSBuild for Debug x64 returned error code %ERRORLEVEL%
+            EXIT /B %ERRORLEVEL%
+          )
           cd ..
       - name: Build
         run: |
           cd src
-          msbuild Dotx64Dbg.sln /p:platform=${{ matrix.platform.arch }}
+          msbuild Dotx64Dbg.sln /p:platform=${{ matrix.platform.arch }} /m
+          IF %ERRORLEVEL% NEQ 0 (
+            ECHO MSBuild for Debug x64 returned error code %ERRORLEVEL%
+            EXIT /B %ERRORLEVEL%
+          )
           cd ..
       - name: Tests
         run: |
