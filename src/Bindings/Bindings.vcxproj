@@ -178,6 +178,7 @@
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="Plugin.cpp" />
+    <ClCompile Include="Symbols.cpp" />
     <ClCompile Include="Thread.cpp" />
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
@@ -190,6 +191,7 @@
     <ClInclude Include="Instruction.Operands.hpp" />
     <ClInclude Include="Mnemonic.hpp" />
     <ClInclude Include="Register.hpp" />
+    <ClInclude Include="Symbols.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\asmjit\asmjit.vcxproj">
