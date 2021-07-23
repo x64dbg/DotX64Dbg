@@ -24,6 +24,7 @@ namespace Dotx64Dbg
     {
         public PluginInfo Info;
         public string Path;
+        public string ConfigPath;
         public string BuildOutputPath;
         public List<string> SourceFiles;
         public bool RequiresRebuild;
@@ -86,8 +87,8 @@ namespace Dotx64Dbg
         {
             SetupDirectories();
 
-            PluginWatch = new FileSystemWatcher(PluginsPath);
-            PluginWatch.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.LastWrite;
+            PluginWatch = new FileSystemWatcher(PluginsPath, "*.*");
+            PluginWatch.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.Attributes;
             PluginWatch.IncludeSubdirectories = false;
             PluginWatch.EnableRaisingEvents = true;
             PluginWatch.Created += OnPluginCreate;
@@ -121,6 +122,9 @@ namespace Dotx64Dbg
         {
             foreach (var plugin in Registered)
             {
+                if (plugin.Info == null)
+                    continue;
+
                 if (plugin.RequiresRebuild == false)
                     continue;
 
@@ -138,6 +142,9 @@ namespace Dotx64Dbg
 
             foreach (var plugin in Registered)
             {
+                if (plugin.Info == null)
+                    continue;
+
                 var projectFilePath = Path.Combine(plugin.Path, plugin.Info.Name + ".csproj");
                 if (File.Exists(projectFilePath))
                     continue;
@@ -155,6 +162,9 @@ namespace Dotx64Dbg
 
         void RebuildPlugin(Plugin plugin)
         {
+            if (plugin.SourceFiles.Count == 0)
+                return;
+
             var stopwatch = new Stopwatch();
 
             Console.WriteLine("Rebuilding plugin '{0}'...", plugin.Info.Name);
@@ -207,25 +217,16 @@ namespace Dotx64Dbg
         void RegisterPlugin(string path)
         {
             var jsonFile = Path.Combine(path, "plugin.json");
-            if (!File.Exists(jsonFile))
-            {
-                Console.WriteLine("[WARN] Plugin directory {0} has no 'plugin.json', skipping.", path);
-                return;
-            }
-
             var pluginInfo = GetPluginInfo(jsonFile);
-            if (pluginInfo == null)
-            {
-                Console.WriteLine("[WARN] Failed to read {0}, skipping.", jsonFile);
-                return;
-            }
+            var pathName = Path.GetFileName(path);
 
             var plugin = new Plugin()
             {
                 Info = pluginInfo,
                 Path = path,
-                RequiresRebuild = true,
-                BuildOutputPath = Path.Combine(PluginOutputPath, pluginInfo.Name),
+                ConfigPath = jsonFile,
+                RequiresRebuild = false,
+                BuildOutputPath = Path.Combine(PluginOutputPath, pathName),
                 SourceFiles = EnumerateSourceFiles(path),
             };
 
@@ -250,27 +251,81 @@ namespace Dotx64Dbg
                 }
             }
 
+            SetupPluginWatch(plugin, path);
+            Registered.Add(plugin);
+
+            if (plugin.Info != null)
+            {
+                plugin.RequiresRebuild = true;
+                BeginRebuild(true);
+            }
+        }
+
+        void RemovePlugin(Plugin plugin)
+        {
+            UnloadPlugin(plugin);
+            RemovePluginWatch(plugin);
+        }
+
+        void RemovePluginWatch(Plugin plugin)
+        {
+            foreach (var kv in Watches)
+            {
+                if (kv.Value == plugin)
+                {
+                    var watch = kv.Key;
+                    watch.EnableRaisingEvents = false;
+                    watch.Dispose();
+
+                    Watches.Remove(watch);
+                    return;
+                }
+            }
+        }
+
+        void SetupPluginWatch(Plugin plugin, string path)
+        {
             var watcher = new FileSystemWatcher(path, "*.*");
             watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.Attributes;
             watcher.IncludeSubdirectories = true;
             watcher.EnableRaisingEvents = true;
-            watcher.Created += OnSourceCreate;
-            watcher.Deleted += OnSourceRemove;
-            watcher.Renamed += OnSourceRename;
-            watcher.Changed += OnSourceChange;
+            watcher.Created += OnPluginFileCreate;
+            watcher.Deleted += OnPluginFileRemove;
+            watcher.Renamed += OnPluginFileRename;
+            watcher.Changed += OnPluginFileChange;
 
             Watches.Add(watcher, plugin);
-            Registered.Add(plugin);
+        }
 
-            Console.WriteLine("Registered C# plugin '{0}'", plugin.Info.Name);
+        void LoadPlugin(Plugin plugin)
+        {
+            var pluginInfo = GetPluginInfo(plugin.ConfigPath);
+            if (pluginInfo == null)
+                return;
+
+            plugin.Info = pluginInfo;
+
+            plugin.RequiresRebuild = true;
+            BeginRebuild(true);
         }
 
         void OnPluginRemove(object sender, FileSystemEventArgs e)
         {
+            foreach (var plugin in Registered)
+            {
+                if (plugin.Path == e.FullPath)
+                {
+                    RemovePlugin(plugin);
+                    break;
+                }
+            }
         }
 
         void OnPluginCreate(object sender, FileSystemEventArgs e)
         {
+            RegisterPlugin(e.FullPath);
+
+            BeginRebuild(true);
         }
 
         void OnPluginRename(object sender, RenamedEventArgs e)
@@ -279,20 +334,15 @@ namespace Dotx64Dbg
             {
                 if (plugin.Path == e.OldFullPath)
                 {
-                    plugin.Path = e.FullPath;
-                    Console.WriteLine("Plugin {0}, path was renamed.", plugin.Info.Name);
+                    RemovePlugin(plugin);
+                    RegisterPlugin(e.FullPath);
                     break;
                 }
             }
-
-            BeginRebuild(true);
         }
 
-        void OnSourceCreate(object sender, FileSystemEventArgs e)
+        void OnPluginFileCreate(object sender, FileSystemEventArgs e)
         {
-            if (!e.FullPath.EndsWith(".cs"))
-                return;
-
             var watcher = sender as FileSystemWatcher;
 
             Plugin plugin;
@@ -302,19 +352,26 @@ namespace Dotx64Dbg
                 return;
             }
 
-            //Logging.WriteLine("File create {0}", e.FullPath);
-            if (!plugin.SourceFiles.Contains(e.FullPath))
-                plugin.SourceFiles.Add(e.FullPath);
-            plugin.RequiresRebuild = true;
+            var fileName = Path.GetFileName(e.FullPath);
+            if (fileName == "plugin.json")
+            {
+                LoadPlugin(plugin);
+            }
+            else
+            {
+                if (!e.FullPath.EndsWith(".cs"))
+                    return;
 
-            BeginRebuild(true);
+                if (!plugin.SourceFiles.Contains(e.FullPath))
+                    plugin.SourceFiles.Add(e.FullPath);
+
+                plugin.RequiresRebuild = true;
+                BeginRebuild(true);
+            }
         }
 
-        void OnSourceRemove(object sender, FileSystemEventArgs e)
+        void OnPluginFileRemove(object sender, FileSystemEventArgs e)
         {
-            if (!e.FullPath.EndsWith(".cs"))
-                return;
-
             var watcher = sender as FileSystemWatcher;
 
             Plugin plugin;
@@ -324,18 +381,32 @@ namespace Dotx64Dbg
                 return;
             }
 
-            //Logging.WriteLine("File remove {0}", e.FullPath);
-            plugin.SourceFiles.Remove(e.FullPath);
-            plugin.RequiresRebuild = true;
+            if (plugin.ConfigPath == e.FullPath)
+            {
+                Utils.DebugPrintLine("plugin.json got removed, unloading plugin");
 
-            BeginRebuild(true);
+                plugin.Info = null;
+                UnloadPlugin(plugin);
+            }
+            else
+            {
+                if (plugin.SourceFiles.Remove(e.FullPath))
+                {
+                    if (plugin.SourceFiles.Count == 0)
+                    {
+                        UnloadPlugin(plugin);
+                    }
+                    else
+                    {
+                        plugin.RequiresRebuild = true;
+                        BeginRebuild(true);
+                    }
+                }
+            }
         }
 
-        void OnSourceChange(object sender, FileSystemEventArgs e)
+        void OnPluginFileChange(object sender, FileSystemEventArgs e)
         {
-            if (!e.FullPath.EndsWith(".cs"))
-                return;
-
             var watcher = sender as FileSystemWatcher;
 
             Plugin plugin;
@@ -345,17 +416,32 @@ namespace Dotx64Dbg
                 return;
             }
 
-            //Logging.WriteLine("File change {0}", e.FullPath);
-            plugin.RequiresRebuild = true;
+            if (plugin.ConfigPath == e.FullPath)
+            {
+                var requiresRebuild = plugin.Info == null;
 
-            BeginRebuild(true);
+                var pluginInfo = GetPluginInfo(e.FullPath);
+                plugin.Info = pluginInfo;
+
+                if (requiresRebuild && pluginInfo != null)
+                {
+                    plugin.RequiresRebuild = true;
+                    BeginRebuild(true);
+                }
+            }
+            else
+            {
+                if (plugin.SourceFiles.Contains(e.FullPath))
+                {
+                    plugin.RequiresRebuild = true;
+
+                    BeginRebuild(true);
+                }
+            }
         }
 
-        void OnSourceRename(object sender, RenamedEventArgs e)
+        void OnPluginFileRename(object sender, RenamedEventArgs e)
         {
-            if (!e.FullPath.EndsWith(".cs"))
-                return;
-
             var watcher = sender as FileSystemWatcher;
 
             Plugin plugin;
@@ -365,13 +451,26 @@ namespace Dotx64Dbg
                 return;
             }
 
-            //Logging.WriteLine("File rename {0}, {1}", e.OldFullPath, e.FullPath);
-            plugin.SourceFiles.Remove(e.OldFullPath);
-            if (!plugin.SourceFiles.Contains(e.FullPath))
-                plugin.SourceFiles.Add(e.FullPath);
-            plugin.RequiresRebuild = true;
+            if (plugin.ConfigPath == e.OldFullPath)
+            {
+                plugin.Info = null;
+                UnloadPlugin(plugin);
+            }
+            else if (plugin.ConfigPath == e.FullPath)
+            {
+                LoadPlugin(plugin);
+            }
+            else
+            {
+                //Logging.WriteLine("File rename {0}, {1}", e.OldFullPath, e.FullPath);
+                plugin.SourceFiles.Remove(e.OldFullPath);
 
-            BeginRebuild(true);
+                if (!plugin.SourceFiles.Contains(e.FullPath))
+                    plugin.SourceFiles.Add(e.FullPath);
+
+                plugin.RequiresRebuild = true;
+                BeginRebuild(true);
+            }
         }
 
         private void BeginRebuild(bool delayed)

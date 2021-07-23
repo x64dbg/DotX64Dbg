@@ -278,7 +278,7 @@ namespace Dotx64Dbg
             if (plugin.Instance == null)
                 return;
 
-            if (Canceller.IsCancellationRequested)
+            if (Canceller != null && Canceller.IsCancellationRequested)
                 return;
 
             UnloadPluginInstanceRecursive(plugin, plugin.Instance, new());
@@ -590,6 +590,21 @@ namespace Dotx64Dbg
                 return;
 
             Console.WriteLine($"{(isReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
+        }
+
+        public void UnloadPlugin(Plugin plugin)
+        {
+            if (plugin.Instance != null)
+            {
+                UnloadPluginInstance(plugin);
+                plugin.Instance = null;
+            }
+
+            if (plugin.Loader != null)
+            {
+                plugin.Loader.UnloadCurrent();
+                plugin.Loader = null;
+            }
         }
 
     }

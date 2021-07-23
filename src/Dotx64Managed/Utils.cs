@@ -41,5 +41,17 @@ namespace Dotx64Dbg
             ex = ex.InnerException ?? ex;
             Console.WriteLine($"Exception: {GetExceptionMessage(ex)}");
         }
+
+        [Conditional("DEBUG")]
+        internal static void DebugPrintLine(string fmt, params object[] args)
+        {
+            Console.WriteLine(fmt, args);
+        }
+
+        [Conditional("DEBUG")]
+        internal static void DebugPrintLine(string line)
+        {
+            Console.WriteLine(line);
+        }
     }
 }
