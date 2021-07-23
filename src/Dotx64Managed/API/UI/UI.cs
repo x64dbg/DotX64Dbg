@@ -17,6 +17,7 @@ namespace Dotx64Dbg
             Graph = Native.UI.WindowType.Graph,
             MemoryMap = Native.UI.WindowType.MemoryMap,
             SymbolModule = Native.UI.WindowType.SymbolModule,
+            Types = Native.UI.WindowType.Types,
         };
 
         public class Selection

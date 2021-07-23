@@ -188,5 +188,50 @@ namespace Dotx64Dbg
                 Console.WriteLine($"Exception {ex.ToString()}");
             }
         }
+
+        public static void OnSteppedEvent()
+        {
+            try
+            {
+                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
+                {
+                    instance.OnSteppedEvent();
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception {ex.ToString()}");
+            }
+        }
+
+        public static void OnDebuggerStart(string fileName)
+        {
+            try
+            {
+                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
+                {
+                    instance.OnDebuggerStart(fileName);
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception {ex.ToString()}");
+            }
+        }
+
+        public static void OnDebuggerStop()
+        {
+            try
+            {
+                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
+                {
+                    instance.OnDebuggerStop();
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception {ex.ToString()}");
+            }
+        }
     }
 }

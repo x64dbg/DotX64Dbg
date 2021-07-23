@@ -47,6 +47,7 @@ namespace Dotx64Dbg::Native
             Graph = GUI_GRAPH,
             MemoryMap = GUI_MEMMAP,
             SymbolModule = GUI_SYMMOD,
+            Types, // No native id for this one.
         };
 
     public:
@@ -113,6 +114,9 @@ namespace Dotx64Dbg::Native
                 break;
             case WindowType::SymbolModule:
                 GuiUpdateAllViews();
+                break;
+            case WindowType::Types:
+                GuiUpdateTypeWidget();
                 break;
             default:
                 break;
