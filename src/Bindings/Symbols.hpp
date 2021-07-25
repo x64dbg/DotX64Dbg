@@ -31,6 +31,13 @@ namespace Dotx64Dbg {
             return std::nullopt;
         }
 
+
+        inline bool LabelIsTemporary(System::UIntPtr addr)
+        {
+            auto va = reinterpret_cast<duint>(addr.ToPointer());
+            return Script::Label::IsTemporary(va);
+        }
+
         inline std::optional<Script::Function::FunctionInfo> GetFuncInfo(System::UIntPtr addr)
         {
             auto va = reinterpret_cast<duint>(addr.ToPointer());
@@ -173,6 +180,25 @@ namespace Dotx64Dbg {
                 }
             }
 
+            property Attribs Attributes
+            {
+                Attribs get()
+                {
+                    Attribs res = Attribs::None;
+
+                    if (auto info = Detail::GetLabelInfo(_address))
+                    {
+                        if (info->manual)
+                            res = static_cast<Attribs>(static_cast<uint32_t>(res) | static_cast<uint32_t>(Attribs::Manual));
+
+                        if (Detail::LabelIsTemporary(_address))
+                            res = static_cast<Attribs>(static_cast<uint32_t>(res) | static_cast<uint32_t>(Attribs::Temporary));
+                    }
+
+                    return res;
+                }
+            }
+
             static Symbols::Label^ Get(System::UIntPtr address)
             {
                 auto va = reinterpret_cast<duint>(address.ToPointer());
@@ -199,7 +225,7 @@ namespace Dotx64Dbg {
                 // NOTE: Temporary is not supported until the https://github.com/x64dbg/x64dbg/pull/2695 is merged.
                 bool temporary = (attribs & Label::Attribs::Manual) != Symbols::Label::Attribs::None;
 
-                return Script::Label::Set(va, cstr, manual);
+                return Script::Label::Set(va, cstr, manual, temporary);
             }
 
             static bool Remove(System::UIntPtr address)
