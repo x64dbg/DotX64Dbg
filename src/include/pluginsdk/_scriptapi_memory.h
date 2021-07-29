@@ -1,4 +1,4 @@
-﻿#ifndef _SCRIPTAPI_MEMORY_H
+#ifndef _SCRIPTAPI_MEMORY_H
 #define _SCRIPTAPI_MEMORY_H
 
 #include "_scriptapi.h"
