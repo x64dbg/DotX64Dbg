@@ -1,30 +1,20 @@
 ﻿using Dotx64Dbg;
 using System;
 
-public partial class MyPlugin
+public partial class ExamplePlugin
 {
     // Works at any given time.
-    [Command("TestExpression")]
+    [Command("Test1")]
     void MyCommand(string[] args)
     {
-        string res;
-        if (Expressions.TryFormat("rip = {rip}", out res))
-        {
-            Console.WriteLine($"Working: {res}");
-        }
+		Console.WriteLine("Hello World");
     }
-
-	[Command("SetStatusText")]
-	void SetStatusBarText(string[] args)
-	{
-		UI.StatusBar.Text = args[1] ?? "";
-	}
 
     // Works only when the debugger is active.
     [Command("Test2", DebugOnly = true)]
     void MyCommand2(string[] args)
     {
-        Console.WriteLine("Oh no");
+        Console.WriteLine("Debugger active, lets go!");
     }
 
     // Allows to return a status
@@ -34,6 +24,12 @@ public partial class MyPlugin
         Console.WriteLine("Oh no");
         return false; // Indicates failure.
     }
+	
+	[Command("SetStatusText")]
+	void SetStatusBarText(string[] args)
+	{
+		UI.StatusBar.Text = args[1] ?? "";
+	}
 
     [Command("Selection")]
     void PrintSelection(string[] args)
