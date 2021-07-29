@@ -32,16 +32,16 @@ public partial class MyPlugin
     {
         //Utils.PrintFields(ev);
     }
-	
-	public void OnSteppedEvent()
-	{
-	}
-	
-	public void OnDebuggerStart(string fileName)
-	{
-	}
-	
-	public void OnDebuggerStop()
-	{
-	}
+    
+    public void OnSteppedEvent()
+    {
+    }
+    
+    public void OnDebuggerStart(string fileName)
+    {
+    }
+    
+    public void OnDebuggerStop()
+    {
+    }
 }

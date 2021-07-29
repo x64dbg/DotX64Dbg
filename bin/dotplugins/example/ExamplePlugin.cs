@@ -20,7 +20,7 @@ public partial class ExamplePlugin : IPlugin, IHotload
     // the constructor and only once the for the initial plugin load.
     public void Startup()
     {
-		Console.WriteLine("ExamplePlugin Startup");
+        Console.WriteLine("ExamplePlugin Startup");
     }
 
     // Called whenever code changes are hot-loaded.
@@ -32,6 +32,6 @@ public partial class ExamplePlugin : IPlugin, IHotload
     // Called before the plugin is about to be unloaded.
     public void Shutdown()
     {
-		Console.WriteLine("ExamplePlugin Shutdown");
+        Console.WriteLine("ExamplePlugin Shutdown");
     }
 }

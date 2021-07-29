@@ -7,7 +7,7 @@ public partial class ExamplePlugin
     [Command("Test1")]
     void MyCommand(string[] args)
     {
-		Console.WriteLine("Hello World");
+        Console.WriteLine("Hello World");
     }
 
     // Works only when the debugger is active.
@@ -24,12 +24,12 @@ public partial class ExamplePlugin
         Console.WriteLine("Oh no");
         return false; // Indicates failure.
     }
-	
-	[Command("SetStatusText")]
-	void SetStatusBarText(string[] args)
-	{
-		UI.StatusBar.Text = args[1] ?? "";
-	}
+    
+    [Command("SetStatusText")]
+    void SetStatusBarText(string[] args)
+    {
+        UI.StatusBar.Text = args[1] ?? "";
+    }
 
     [Command("Selection")]
     void PrintSelection(string[] args)
