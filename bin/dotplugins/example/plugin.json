@@ -1,8 +1,8 @@
 ﻿{
-  "Name": "My Plugin",
-  "Description": "My awesome plugin",
+  "Name": "Example Plugin",
+  "Description": "Basic example plugin.",
   "Version": "1.0.0",
-  "Author": "Bob",
+  "Author": "x64Dbg",
   "Website": "http://github.com/x64Dbg",
   "Dependencies": [
     "System.Console.dll"

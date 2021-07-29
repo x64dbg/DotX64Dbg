@@ -20,7 +20,7 @@ namespace Dotx64Dbg
             var typeInfo = obj.GetType();
             var typeName = typeInfo.Name;
 
-            Console.WriteLine($"Event {typeName} = {{");
+            Console.WriteLine($"{typeName} = {{");
 
             var typeData = typeInfo.GetFields();
             foreach (var field in typeData)
