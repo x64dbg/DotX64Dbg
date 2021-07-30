@@ -2,7 +2,7 @@
 
 namespace Dotx64Dbg
 {
-    public class Memory
+    public static partial class Memory
     {
         [Flags]
         public enum Protection
@@ -71,6 +71,24 @@ namespace Dotx64Dbg
         public static int Write(ulong address, byte[] data)
         {
             return Write((nuint)address, data, data.Length);
+        }
+
+        public static nuint GetSize(nuint address)
+        {
+            return (nuint)Native.Memory.GetSize(address);
+        }
+        public static nuint GetSize(ulong address)
+        {
+            return GetSize((nuint)address);
+        }
+
+        public static nuint GetBase(nuint address)
+        {
+            return Native.Memory.GetBase(address);
+        }
+        public static nuint GetBase(ulong address)
+        {
+            return GetBase((nuint)address);
         }
     };
 }

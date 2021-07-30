@@ -63,6 +63,33 @@ namespace Dotx64Dbg::Native
             return (int)bytesWritten;
         }
 
+        /// <summary>
+        /// Attempt to write memory to the debugged process.
+        /// </summary>
+        /// <param name="addr">Virtual address in the debugged process space</param>
+        /// <param name="data">The bytes to be written</param>
+        /// <param name="length">The maximum amount of bytes to write, can not be bigger than `data`</param>
+        /// <returns>The amount of bytes written</returns>
+        static int Write(System::UIntPtr addr, array<System::Byte>^ data, int offset, int length)
+        {
+            auto va = static_cast<duint>(addr.ToUInt64());
+
+            duint maxLength = data->Length < length ? data->Length : length;
+            if (maxLength <= 0)
+                return 0;
+
+            pin_ptr<uint8_t> ptr = &data[0];
+            const uint8_t* buf = ptr;
+
+            duint bytesWritten = 0;
+            if (!Script::Memory::Write(va, buf + offset, maxLength, &bytesWritten))
+            {
+                return 0;
+            }
+
+            return (int)bytesWritten;
+        }
+
         static uint32_t GetProtection(duint addr)
         {
             return 0;
@@ -71,6 +98,21 @@ namespace Dotx64Dbg::Native
         static uint32_t SetProtection(duint addr, uint32_t prot)
         {
             return 0;
+        }
+
+        static System::UIntPtr GetBase(System::UIntPtr addr)
+        {
+            auto va = static_cast<duint>(addr.ToUInt64());
+
+            auto base = Script::Memory::GetBase(va);
+            return System::UIntPtr(reinterpret_cast<void*>(base));
+        }
+
+        static uint64_t GetSize(System::UIntPtr addr)
+        {
+            auto va = static_cast<duint>(addr.ToUInt64());
+
+            return Script::Memory::GetSize(va);
         }
     };
 }
