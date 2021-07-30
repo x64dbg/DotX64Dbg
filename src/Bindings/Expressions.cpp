@@ -10,6 +10,7 @@ using namespace System::Runtime::InteropServices;
 
 namespace Dotx64Dbg::Native
 {
+    [UnmanagedFunctionPointer(CallingConvention::Cdecl)]
     public delegate System::UIntPtr ExpressionHandler(int argc, System::IntPtr, System::IntPtr);
 
     public ref class Expressions
