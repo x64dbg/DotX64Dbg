@@ -8,7 +8,7 @@ public partial class ExamplePlugin : IPlugin, IHotload
     public void DisassembleAtIP(string[] args)
     {
         var decoder = Decoder.Create();
-        var ip = Thread.Main.Rip;
+        var ip = Thread.Main.Nip;
 
         var decodedInstr = decoder.Decode(ip);
 
