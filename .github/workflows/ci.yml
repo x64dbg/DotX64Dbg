@@ -83,6 +83,9 @@ jobs:
           rm -R ./package/x32/tests
           rm -R ./package/x64/tests
           find ./package -type f -name '*.pdb' -delete
+          find ./package -type f -name '*.lib' -delete
+          find ./package -type f -name '*.exp' -delete
+          find ./package -type f -name '*.ilk' -delete
       - name: Upload package (CI)
         uses: actions/upload-artifact@v2
         with:

@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Dotx64DbgManagedTe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asmjit", "asmjit\asmjit.vcxproj", "{401E7506-9879-4C5C-8638-6664852FBFFF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dotx64Dbg.Loader", "Dotx64DbgLoader\Dotx64DbgLoader.vcxproj", "{D92BDD0D-DA10-4539-9BF1-2604EB392322}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -66,6 +68,14 @@ Global
 		{401E7506-9879-4C5C-8638-6664852FBFFF}.Release|x64.Build.0 = Release|x64
 		{401E7506-9879-4C5C-8638-6664852FBFFF}.Release|x86.ActiveCfg = Release|Win32
 		{401E7506-9879-4C5C-8638-6664852FBFFF}.Release|x86.Build.0 = Release|Win32
+		{D92BDD0D-DA10-4539-9BF1-2604EB392322}.Debug|x64.ActiveCfg = Debug|x64
+		{D92BDD0D-DA10-4539-9BF1-2604EB392322}.Debug|x64.Build.0 = Debug|x64
+		{D92BDD0D-DA10-4539-9BF1-2604EB392322}.Debug|x86.ActiveCfg = Debug|Win32
+		{D92BDD0D-DA10-4539-9BF1-2604EB392322}.Debug|x86.Build.0 = Debug|Win32
+		{D92BDD0D-DA10-4539-9BF1-2604EB392322}.Release|x64.ActiveCfg = Release|x64
+		{D92BDD0D-DA10-4539-9BF1-2604EB392322}.Release|x64.Build.0 = Release|x64
+		{D92BDD0D-DA10-4539-9BF1-2604EB392322}.Release|x86.ActiveCfg = Release|Win32
+		{D92BDD0D-DA10-4539-9BF1-2604EB392322}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
