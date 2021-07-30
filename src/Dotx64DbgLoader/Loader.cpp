@@ -160,7 +160,11 @@ void CBSCRIPTAUTOCOMPLETE(const char* text, char** entries, int* entryCount)
 
 PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 {
+#ifdef _M_AMD64
     HMODULE curModule = GetModuleHandleA("Dotx64Dbg.Loader.dp64");
+#else
+    HMODULE curModule = GetModuleHandleA("Dotx64Dbg.Loader.dp32");
+#endif
 
     char curPath[1024]{};
     GetModuleFileNameA(curModule, curPath, sizeof(curPath));
