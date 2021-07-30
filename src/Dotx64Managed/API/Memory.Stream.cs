@@ -79,6 +79,8 @@ namespace Dotx64Dbg
                 numBytes = Math.Min(numBytes, buffer.Length - offset);
 
                 Native.Memory.Write(Base + (nuint)Offset, buffer, offset, numBytes);
+
+                Offset += numBytes;
             }
         }
 
