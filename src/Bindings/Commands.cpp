@@ -12,6 +12,7 @@ namespace Dotx64Dbg::Native
     using namespace System;
     using namespace System::Runtime::InteropServices;
 
+    [UnmanagedFunctionPointer(CallingConvention::Cdecl)]
     public delegate bool CommandCallback(int argc, System::IntPtr);
 
     public ref class Commands
