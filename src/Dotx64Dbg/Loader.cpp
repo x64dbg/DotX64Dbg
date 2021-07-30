@@ -313,7 +313,6 @@ PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 
     GuiRegisterScriptLanguage(&sti);
 
-
     return true;
 }
 
