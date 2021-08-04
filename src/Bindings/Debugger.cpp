@@ -2,7 +2,7 @@
 #include "pluginsdk/_plugins.h"
 #include "pluginsdk/_scriptapi_debug.h"
 
-#include <msclr/marshal.h>
+#include "Marshal.hpp"
 
 namespace Dotx64Dbg::Native
 {

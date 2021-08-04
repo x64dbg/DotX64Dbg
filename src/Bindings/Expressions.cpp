@@ -3,7 +3,7 @@
 #include "pluginsdk/_scriptapi_misc.h"
 #include "pluginsdk/_dbgfunctions.h"
 
-#include <msclr/marshal.h>
+#include "Marshal.hpp"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;

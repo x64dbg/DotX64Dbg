@@ -15,6 +15,7 @@
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="Symbols.cpp" />
+    <ClCompile Include="Settings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Instruction.hpp" />
@@ -26,5 +27,6 @@
     <ClInclude Include="Instruction.Operands.hpp" />
     <ClInclude Include="Instruction.EFlags.hpp" />
     <ClInclude Include="Symbols.hpp" />
+    <ClInclude Include="Marshal.hpp" />
   </ItemGroup>
 </Project>

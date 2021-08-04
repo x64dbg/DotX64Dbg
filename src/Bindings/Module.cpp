@@ -7,7 +7,7 @@
 #include "Register.hpp"
 #include "pluginsdk/TitanEngine/TitanEngine.h"
 
-#include <msclr/marshal.h>
+#include "Marshal.hpp"
 
 using namespace System;
 using namespace System::Runtime::InteropServices;
