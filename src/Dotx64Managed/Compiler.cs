@@ -104,6 +104,11 @@ namespace Dotx64Dbg
             assemblyRefs.Add(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location);
             assemblyRefs.Add(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location);
             assemblyRefs.Add(typeof(Native.Logging).Assembly.Location);
+            assemblyRefs.Add(typeof(System.Windows.Forms.Application).Assembly.Location);
+            assemblyRefs.Add(typeof(System.Drawing.Bitmap).Assembly.Location);
+            assemblyRefs.Add(typeof(System.Drawing.SizeF).Assembly.Location);
+
+            assemblyRefs.Add(typeof(System.Data.AcceptRejectRule).Assembly.Location);
 
             assemblyRefs.Add(Path.Combine(coreAssemblyPath, "mscorlib.dll"));
             assemblyRefs.Add(Path.Combine(coreAssemblyPath, "System.dll"));

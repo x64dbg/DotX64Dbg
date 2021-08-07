@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <SatelliteResourceLanguages>neutral</SatelliteResourceLanguages>
     <Platforms>x86;x64</Platforms>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

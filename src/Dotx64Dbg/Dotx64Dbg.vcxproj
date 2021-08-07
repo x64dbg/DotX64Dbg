@@ -18,6 +18,9 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{5153260B-62B5-41EE-B38C-C611091D4C6C}</ProjectGuid>
