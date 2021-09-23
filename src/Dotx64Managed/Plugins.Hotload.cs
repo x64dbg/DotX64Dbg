@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Runtime.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dotx64Dbg
@@ -273,26 +274,26 @@ namespace Dotx64Dbg
             }
         }
 
-        void UnloadPluginInstance(Plugin plugin)
+        void UnloadPluginInstance(Plugin plugin, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             if (plugin.Instance == null)
                 return;
 
-            if (Canceller != null && Canceller.IsCancellationRequested)
-                return;
+            Utils.DebugPrintLine($"Unloading plugin: {plugin.Path}");
 
             UnloadPluginInstanceRecursive(plugin, plugin.Instance, new());
 
             Commands.RemoveAllFor(plugin);
             Expressions.RemoveAllFor(plugin);
             Menus.RemoveAllFor(plugin);
+
+            Console.WriteLine($"Unloaded plugin: {plugin.Info.Name}");
         }
 
         void RegisterPluginCommand(Plugin plugin, MethodInfo fn, Command cmd, object obj)
         {
-            if (Canceller.IsCancellationRequested)
-                return;
-
             Commands.Handler cb = null;
 
             if (fn.ReturnType == typeof(void))
@@ -309,15 +310,11 @@ namespace Dotx64Dbg
                 cb = fn.CreateDelegate<Commands.Handler>(obj);
             }
 
-            if (!Canceller.IsCancellationRequested)
-                Commands.Register(plugin, cmd.Name, cmd.DebugOnly, cb);
+            Commands.Register(plugin, cmd.Name, cmd.DebugOnly, cb);
         }
 
         void RegisterExpression(Plugin plugin, MethodInfo fn, Expression expr, object obj)
         {
-            if (Canceller.IsCancellationRequested)
-                return;
-
             if (fn.ReturnType != typeof(nuint))
             {
                 throw new Exception($"Expression functions must return 'nuint', Function: {fn.Name}");
@@ -364,10 +361,9 @@ namespace Dotx64Dbg
             Menus.Register(plugin, $"{rootMenu}/{plugin.Info.Name}/{menuPath}", cb);
         }
 
-        void LoadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
+        void LoadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed, CancellationToken token)
         {
-            if (Canceller.IsCancellationRequested)
-                return;
+            token.ThrowIfCancellationRequested();
 
             if (obj == null)
                 return;
@@ -412,7 +408,7 @@ namespace Dotx64Dbg
                     var nextObj = field.GetValue(obj);
                     if (!processed.Contains(nextObj))
                     {
-                        LoadPluginInstanceRecursive(plugin, nextObj, processed);
+                        LoadPluginInstanceRecursive(plugin, nextObj, processed, token);
                     }
                 }
             }
@@ -431,35 +427,33 @@ namespace Dotx64Dbg
                     var nextObj = prop.GetValue(obj);
                     if (!processed.Contains(nextObj))
                     {
-                        LoadPluginInstanceRecursive(plugin, nextObj, processed);
+                        LoadPluginInstanceRecursive(plugin, nextObj, processed, token);
                     }
                 }
             }
 
         }
 
-        void LoadPluginInstance(Plugin plugin)
+        void LoadPluginInstance(Plugin plugin, CancellationToken token)
         {
-            if (Canceller.IsCancellationRequested)
-                return;
+            token.ThrowIfCancellationRequested();
 
             if (plugin.Instance == null)
                 return;
 
-            LoadPluginInstanceRecursive(plugin, plugin.Instance, new());
+            LoadPluginInstanceRecursive(plugin, plugin.Instance, new(), token);
         }
 
-        void ReloadPlugin(Plugin plugin, string newAssemblyPath)
+        void ReloadPlugin(Plugin plugin, string newAssemblyPath, CancellationToken token)
         {
-            if (Canceller.IsCancellationRequested)
-                return;
+            token.ThrowIfCancellationRequested();
 
             var isReload = plugin.Instance != null;
             Console.WriteLine($"{(isReload ? "Reloading" : "Loading")} '{plugin.Info.Name}'");
 
             try
             {
-                UnloadPluginInstance(plugin);
+                UnloadPluginInstance(plugin, token);
 
                 var loader = new AssemblyLoader();
                 var newAssembly = loader.LoadFromFile(newAssemblyPath);
@@ -542,7 +536,7 @@ namespace Dotx64Dbg
                         GC.WaitForPendingFinalizers();
                     }
 
-                    Canceller.Token.ThrowIfCancellationRequested();
+                    token.ThrowIfCancellationRequested();
 
                     Task.Run(async delegate
                     {
@@ -578,7 +572,7 @@ namespace Dotx64Dbg
                 plugin.Loader = loader;
                 plugin.AssemblyPath = newAssemblyPath;
 
-                LoadPluginInstance(plugin);
+                LoadPluginInstance(plugin, token);
             }
             catch (Exception ex)
             {
@@ -586,17 +580,14 @@ namespace Dotx64Dbg
                 return;
             }
 
-            if (Canceller.IsCancellationRequested)
-                return;
-
             Console.WriteLine($"{(isReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
         }
 
-        public void UnloadPlugin(Plugin plugin)
+        public void UnloadPlugin(Plugin plugin, CancellationToken token = default(CancellationToken))
         {
             if (plugin.Instance != null)
             {
-                UnloadPluginInstance(plugin);
+                UnloadPluginInstance(plugin, token);
                 plugin.Instance = null;
             }
 

@@ -43,10 +43,6 @@ namespace Dotx64Dbg
         FileSystemWatcher PluginWatch;
 
         List<Plugin> Registered = new();
-        Dictionary<FileSystemWatcher, Plugin> Watches = new();
-
-        CancellationTokenSource Canceller { get; set; }
-        Task RebuildTask;
 
         private void SetupDirectories()
         {
@@ -89,24 +85,22 @@ namespace Dotx64Dbg
 
             PluginWatch = new FileSystemWatcher(PluginsPath, "*.*");
             PluginWatch.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.Attributes;
-            PluginWatch.IncludeSubdirectories = false;
+            PluginWatch.IncludeSubdirectories = true;
             PluginWatch.EnableRaisingEvents = true;
             PluginWatch.Created += OnPluginCreate;
             PluginWatch.Deleted += OnPluginRemove;
             PluginWatch.Renamed += OnPluginRename;
+            PluginWatch.Changed += OnPluginChange;
 
             RegisterPlugins();
             GenerateProjects();
-            BeginRebuild(false);
+            StartBuildWorker();
+            TriggerRebuild();
         }
 
         public void Shutdown()
         {
-            if (RebuildTask != null)
-            {
-                Canceller.Cancel();
-                RebuildTask.Wait();
-            }
+            StopBuildWorker();
         }
 
         void RegisterPlugins()
@@ -115,20 +109,6 @@ namespace Dotx64Dbg
             foreach (var dir in dirs)
             {
                 RegisterPlugin(dir);
-            }
-        }
-
-        void RebuildPlugins()
-        {
-            foreach (var plugin in Registered)
-            {
-                if (plugin.Info == null)
-                    continue;
-
-                if (plugin.RequiresRebuild == false)
-                    continue;
-
-                RebuildPlugin(plugin);
             }
         }
 
@@ -160,37 +140,6 @@ namespace Dotx64Dbg
             }
         }
 
-        void RebuildPlugin(Plugin plugin)
-        {
-            if (plugin.SourceFiles.Count == 0)
-                return;
-
-            var stopwatch = new Stopwatch();
-
-            Console.WriteLine("Rebuilding plugin '{0}'...", plugin.Info.Name);
-            stopwatch.Start();
-
-            var compiler = new Compiler(plugin.Info.Name, plugin.BuildOutputPath)
-                .WithDependencies(plugin.Info.Dependencies ?? Array.Empty<string>());
-
-            var res = compiler.Compile(plugin.SourceFiles.ToArray());
-            stopwatch.Stop();
-
-            if (!res.Success)
-            {
-                Console.WriteLine("Build failed");
-            }
-            else
-            {
-                Console.WriteLine("Compiled plugin '{0}' in {1} ms", plugin.Info.Name, stopwatch.ElapsedMilliseconds);
-
-                ReloadPlugin(plugin, res.OutputAssemblyPath);
-
-                // Successfully built.
-                plugin.RequiresRebuild = false;
-            }
-        }
-
         List<string> EnumerateSourceFiles(string path)
         {
             return new List<string>(Directory.EnumerateFiles(path, "*.cs", new EnumerationOptions()
@@ -203,7 +152,7 @@ namespace Dotx64Dbg
         {
             try
             {
-                var jsonString = File.ReadAllText(jsonFile);
+                var jsonString = Utils.ReadFileContents(jsonFile);
                 var pluginInfo = JsonSerializer.Deserialize<PluginInfo>(jsonString);
 
                 return JsonSerializer.Deserialize<PluginInfo>(jsonString);
@@ -251,137 +200,176 @@ namespace Dotx64Dbg
                 }
             }
 
-            SetupPluginWatch(plugin, path);
             Registered.Add(plugin);
+            Utils.DebugPrintLine($"Registered new plugin: {plugin.Path}");
 
             if (plugin.Info != null)
             {
                 plugin.RequiresRebuild = true;
-                BeginRebuild(true);
+                TriggerRebuild(50);
             }
         }
 
         void RemovePlugin(Plugin plugin)
         {
+            Utils.DebugPrintLine($"Removing plugin: {plugin.Path}");
+
             UnloadPlugin(plugin);
-            RemovePluginWatch(plugin);
-        }
 
-        void RemovePluginWatch(Plugin plugin)
-        {
-            foreach (var kv in Watches)
+            for (var i = 0; i < Registered.Count; ++i)
             {
-                if (kv.Value == plugin)
+                if (Registered[i].Path == plugin.Path)
                 {
-                    var watch = kv.Key;
-                    watch.EnableRaisingEvents = false;
-                    watch.Dispose();
-
-                    Watches.Remove(watch);
-                    return;
+                    Registered.RemoveAt(i);
+                    break;
                 }
             }
-        }
-
-        void SetupPluginWatch(Plugin plugin, string path)
-        {
-            var watcher = new FileSystemWatcher(path, "*.*");
-            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.Attributes;
-            watcher.IncludeSubdirectories = true;
-            watcher.EnableRaisingEvents = true;
-            watcher.Created += OnPluginFileCreate;
-            watcher.Deleted += OnPluginFileRemove;
-            watcher.Renamed += OnPluginFileRename;
-            watcher.Changed += OnPluginFileChange;
-
-            Watches.Add(watcher, plugin);
         }
 
         void LoadPlugin(Plugin plugin)
         {
             var pluginInfo = GetPluginInfo(plugin.ConfigPath);
             if (pluginInfo == null)
+            {
+                Utils.DebugPrintLine("Unable to load plugin info.");
                 return;
+            }
 
+            Utils.DebugPrintLine("Plugin meta loaded, activating plugin.");
             plugin.Info = pluginInfo;
 
             plugin.RequiresRebuild = true;
-            BeginRebuild(true);
+            TriggerRebuild(50);
         }
 
-        void OnPluginRemove(object sender, FileSystemEventArgs e)
+        Plugin FindPlugin(string path)
         {
             foreach (var plugin in Registered)
             {
-                if (plugin.Path == e.FullPath)
+                if (plugin.Path == path)
                 {
-                    RemovePlugin(plugin);
-                    break;
+                    return plugin;
                 }
+            }
+            return null;
+        }
+
+        class PluginFileInfo
+        {
+            public bool PluginRootFolder { get; set; }
+            public string PluginName { get; set; }
+            public string FilePath { get; set; }
+        }
+
+        PluginFileInfo ParseInfo(string path)
+        {
+            var relativePath = Path.GetRelativePath(PluginsPath, path);
+            if (relativePath.Length == 0)
+                return null;
+
+            if (relativePath.Contains(Path.DirectorySeparatorChar))
+            {
+                var pos = relativePath.IndexOf(Path.DirectorySeparatorChar);
+                var pluginName = relativePath.Substring(0, pos);
+
+                return new PluginFileInfo()
+                {
+                    PluginRootFolder = false,
+                    PluginName = pluginName,
+                    FilePath = relativePath.Substring(pos + 1)
+                };
+            }
+            else
+            {
+                return new PluginFileInfo()
+                {
+                    PluginRootFolder = true,
+                    PluginName = relativePath,
+                    FilePath = null
+                };
             }
         }
 
         void OnPluginCreate(object sender, FileSystemEventArgs e)
         {
-            RegisterPlugin(e.FullPath);
+            Utils.DebugPrintLine($"[PluginWatch] Plugin File Create: {e.FullPath}");
 
-            BeginRebuild(true);
-        }
-
-        void OnPluginRename(object sender, RenamedEventArgs e)
-        {
-            foreach (var plugin in Registered)
-            {
-                if (plugin.Path == e.OldFullPath)
-                {
-                    RemovePlugin(plugin);
-                    RegisterPlugin(e.FullPath);
-                    break;
-                }
-            }
-        }
-
-        void OnPluginFileCreate(object sender, FileSystemEventArgs e)
-        {
-            var watcher = sender as FileSystemWatcher;
-
-            Plugin plugin;
-            if (!Watches.TryGetValue(watcher, out plugin))
-            {
-                Console.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
+            var info = ParseInfo(e.FullPath);
+            if (info == null)
                 return;
+
+            if (info.PluginRootFolder)
+            {
+                RegisterPlugin(e.FullPath);
+            }
+            else
+            {
+                var pluginPath = Path.Combine(PluginsPath, info.PluginName);
+                var plugin = FindPlugin(pluginPath);
+                if (plugin == null)
+                {
+                    Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
+                    return;
+                }
+
+                // File was created.
+                OnPluginFileCreate(plugin, info);
             }
 
-            var fileName = Path.GetFileName(e.FullPath);
-            if (fileName == "plugin.json")
+            TriggerRebuild(50);
+        }
+
+        void OnPluginFileCreate(Plugin plugin, PluginFileInfo info)
+        {
+            if (info.FilePath == "plugin.json")
             {
                 LoadPlugin(plugin);
             }
             else
             {
-                if (!e.FullPath.EndsWith(".cs"))
+                var fullPath = Path.Combine(PluginsPath, info.PluginName, info.FilePath);
+                if (!fullPath.EndsWith(".cs"))
                     return;
 
-                if (!plugin.SourceFiles.Contains(e.FullPath))
-                    plugin.SourceFiles.Add(e.FullPath);
+                if (!plugin.SourceFiles.Contains(fullPath))
+                    plugin.SourceFiles.Add(fullPath);
 
                 plugin.RequiresRebuild = true;
-                BeginRebuild(true);
+                TriggerRebuild(50);
             }
         }
 
-        void OnPluginFileRemove(object sender, FileSystemEventArgs e)
+        void OnPluginRemove(object sender, FileSystemEventArgs e)
         {
-            var watcher = sender as FileSystemWatcher;
+            Utils.DebugPrintLine($"[PluginWatch] Plugin File Remove: {e.FullPath}");
 
-            Plugin plugin;
-            if (!Watches.TryGetValue(watcher, out plugin))
+            var info = ParseInfo(e.FullPath);
+            if (info == null)
+                return;
+
+            var pluginPath = Path.Combine(PluginsPath, info.PluginName);
+            var plugin = FindPlugin(pluginPath);
+            if (plugin == null)
             {
-                Console.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
+                Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
                 return;
             }
 
-            if (plugin.ConfigPath == e.FullPath)
+            if (info.PluginRootFolder)
+            {
+                RemovePlugin(plugin);
+            }
+            else
+            {
+                OnPluginFileRemove(plugin, info);
+            }
+        }
+
+        void OnPluginFileRemove(Plugin plugin, PluginFileInfo info)
+        {
+            var fullPath = Path.Combine(PluginsPath, info.PluginName, info.FilePath);
+
+            if (plugin.ConfigPath == fullPath)
             {
                 Utils.DebugPrintLine("plugin.json got removed, unloading plugin");
 
@@ -390,7 +378,7 @@ namespace Dotx64Dbg
             }
             else
             {
-                if (plugin.SourceFiles.Remove(e.FullPath))
+                if (plugin.SourceFiles.Remove(fullPath))
                 {
                     if (plugin.SourceFiles.Count == 0)
                     {
@@ -399,111 +387,123 @@ namespace Dotx64Dbg
                     else
                     {
                         plugin.RequiresRebuild = true;
-                        BeginRebuild(true);
+                        TriggerRebuild(50);
                     }
                 }
             }
         }
 
-        void OnPluginFileChange(object sender, FileSystemEventArgs e)
+        void OnPluginRename(object sender, RenamedEventArgs e)
         {
-            var watcher = sender as FileSystemWatcher;
+            Utils.DebugPrintLine($"[PluginWatch] Plugin File Rename: {e.OldFullPath} -> {e.FullPath}");
 
-            Plugin plugin;
-            if (!Watches.TryGetValue(watcher, out plugin))
+            var info = ParseInfo(e.FullPath);
+            if (info == null)
+                return;
+
+            var pluginPath = Path.Combine(PluginsPath, info.PluginName);
+            var plugin = FindPlugin(pluginPath);
+            if (plugin == null)
             {
-                Console.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
+                Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
                 return;
             }
 
-            if (plugin.ConfigPath == e.FullPath)
+            if (info.PluginRootFolder)
             {
-                var requiresRebuild = plugin.Info == null;
-
-                var pluginInfo = GetPluginInfo(e.FullPath);
-                plugin.Info = pluginInfo;
-
-                if (requiresRebuild && pluginInfo != null)
-                {
-                    plugin.RequiresRebuild = true;
-                    BeginRebuild(true);
-                }
+                RemovePlugin(plugin);
+                RegisterPlugin(e.FullPath);
             }
             else
             {
-                if (plugin.SourceFiles.Contains(e.FullPath))
-                {
-                    plugin.RequiresRebuild = true;
-
-                    BeginRebuild(true);
-                }
+                OnPluginFileRename(plugin, info, e.OldFullPath);
             }
         }
 
-        void OnPluginFileRename(object sender, RenamedEventArgs e)
+        void OnPluginFileRename(Plugin plugin, PluginFileInfo info, string oldFullPath)
         {
-            var watcher = sender as FileSystemWatcher;
+            var fullPath = Path.Combine(PluginsPath, info.PluginName, info.FilePath);
 
-            Plugin plugin;
-            if (!Watches.TryGetValue(watcher, out plugin))
-            {
-                Console.WriteLine("[ERR] Unable to find plugin for path {0}", e.FullPath);
-                return;
-            }
-
-            if (plugin.ConfigPath == e.OldFullPath)
+            if (plugin.ConfigPath == oldFullPath)
             {
                 plugin.Info = null;
                 UnloadPlugin(plugin);
             }
-            else if (plugin.ConfigPath == e.FullPath)
+            else if (plugin.ConfigPath == fullPath)
             {
                 LoadPlugin(plugin);
             }
             else
             {
                 //Logging.WriteLine("File rename {0}, {1}", e.OldFullPath, e.FullPath);
-                plugin.SourceFiles.Remove(e.OldFullPath);
+                plugin.SourceFiles.Remove(oldFullPath);
 
-                if (!plugin.SourceFiles.Contains(e.FullPath))
-                    plugin.SourceFiles.Add(e.FullPath);
+                if (!plugin.SourceFiles.Contains(fullPath))
+                    plugin.SourceFiles.Add(fullPath);
 
                 plugin.RequiresRebuild = true;
-                BeginRebuild(true);
+                TriggerRebuild(50);
             }
         }
 
-        private void BeginRebuild(bool delayed)
+        void OnPluginChange(object sender, FileSystemEventArgs e)
         {
-            if (RebuildTask != null)
+            Utils.DebugPrintLine($"[PluginWatch] Plugin Change: {e.FullPath}");
+
+            var info = ParseInfo(e.FullPath);
+            if (info == null)
                 return;
 
-            // We delay the rebuilding a bit in case a lot of files are being saved at once.
-            Canceller = new();
-            RebuildTask = Task.Run(async delegate
+            if (!info.PluginRootFolder)
             {
-                try
+                var pluginPath = Path.Combine(PluginsPath, info.PluginName);
+                var plugin = FindPlugin(pluginPath);
+                if (plugin == null)
                 {
-                    if (delayed)
-                        await Task.Delay(500, Canceller.Token);
+                    Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
+                    return;
+                }
 
-                    RebuildPlugins();
-                }
-                catch (OperationCanceledException)
+                OnPluginFileChange(plugin, info);
+            }
+        }
+
+        void OnPluginFileChange(Plugin plugin, PluginFileInfo info)
+        {
+            var fullPath = Path.Combine(PluginsPath, info.PluginName, info.FilePath);
+
+            if (plugin.ConfigPath == fullPath)
+            {
+                Utils.DebugPrintLine("Plugin info modified, reloading meta...");
+                var requiresRebuild = plugin.Info == null;
+
+                var pluginInfo = GetPluginInfo(fullPath);
+                if (pluginInfo == null)
                 {
-                    Console.WriteLine("Rebuild task aborted.");
+                    Utils.DebugPrintLine("Unable to read plugin meta");
                 }
-                RebuildTask = null;
-                Canceller = null;
-            });
+
+                plugin.Info = pluginInfo;
+                if (requiresRebuild && pluginInfo != null)
+                {
+                    plugin.RequiresRebuild = true;
+                    TriggerRebuild(50);
+                }
+            }
+            else
+            {
+                if (plugin.SourceFiles.Contains(fullPath))
+                {
+                    plugin.RequiresRebuild = true;
+                    TriggerRebuild(50);
+                }
+            }
         }
 
         public List<IPlugin> GetPluginInstances()
         {
             // If we are currently rebuilding we have to wait.
-            var rebuildTask = RebuildTask;
-            if (rebuildTask != null)
-                rebuildTask.Wait();
+            WaitForRebuild();
 
             return Registered
                 .Select(x => x.Instance as IPlugin)

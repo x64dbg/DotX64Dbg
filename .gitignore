@@ -14,3 +14,4 @@ src/Libs
 /bin/dotplugins/myplugin/obj
 /src/Dotx64DbgManagedTests/obj
 /src/Dotx64Managed/Properties/launchSettings.json
+/src/Dotx64Managed/*.user
