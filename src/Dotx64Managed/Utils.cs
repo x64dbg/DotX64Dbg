@@ -42,16 +42,39 @@ namespace Dotx64Dbg
             Console.WriteLine($"Exception: {GetExceptionMessage(ex)}");
         }
 
+        internal static string ReadFileContents(string path, int retryAttempts = 5, int retryTime = 100)
+        {
+            string res = null;
+            for (int i = 0; i < retryAttempts; i++)
+            {
+                try
+                {
+                    using (var fs = File.OpenText(path))
+                    {
+                        res = fs.ReadToEnd();
+                        break;
+                    }
+                }
+                catch (Exception)
+                {
+                    System.Threading.Thread.Sleep(retryTime);
+                    continue;
+                }
+            }
+            return res;
+        }
+
         [Conditional("DEBUG")]
         internal static void DebugPrintLine(string fmt, params object[] args)
         {
-            Console.WriteLine(fmt, args);
+            string strOut = string.Format(fmt, args);
+            Console.WriteLine($"[DEBUG] {strOut}");
         }
 
         [Conditional("DEBUG")]
         internal static void DebugPrintLine(string line)
         {
-            Console.WriteLine(line);
+            Console.WriteLine($"[DEBUG] {line}");
         }
     }
 }

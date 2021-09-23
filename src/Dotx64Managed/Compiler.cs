@@ -107,6 +107,7 @@ namespace Dotx64Dbg
             assemblyRefs.Add(typeof(System.Windows.Forms.Application).Assembly.Location);
             assemblyRefs.Add(typeof(System.Drawing.Bitmap).Assembly.Location);
             assemblyRefs.Add(typeof(System.Drawing.SizeF).Assembly.Location);
+            assemblyRefs.Add(typeof(System.ComponentModel.Component).Assembly.Location);
 
             assemblyRefs.Add(typeof(System.Data.AcceptRejectRule).Assembly.Location);
 
