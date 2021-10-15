@@ -22,17 +22,20 @@ namespace Dotx64Dbg {
         InstructionMeta^ _Meta;
         Mnemonic _Id;
 
+        static initonly int32_t MaxOperands = 5;
+
     private:
+
         void Init(Mnemonic mnemonic)
         {
             _Id = mnemonic;
             _Meta = InstructionMetaData::get(Id);
 
-            Operands = gcnew array<IOperand^>(5);
-            Visibility = gcnew array<OperandVisibility>(5);
-            Access = gcnew array<OperandAccess>(5);
+            Operands = gcnew array<IOperand^>(MaxOperands);
+            Visibility = gcnew array<OperandVisibility>(MaxOperands);
+            Access = gcnew array<OperandAccess>(MaxOperands);
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < MaxOperands; i++)
             {
                 Operands[i] = _Meta->Operands[i];
                 Visibility[i] = _Meta->Visibility[i];
@@ -227,7 +230,7 @@ namespace Dotx64Dbg {
 
         IOperand^ GetOperand(int index)
         {
-            if (index >= Operands->Length)
+            if (index < 0 || index >= MaxOperands)
                 return nullptr;
 
             return Operands[index];
@@ -235,7 +238,7 @@ namespace Dotx64Dbg {
 
         OperandAccess GetOperandAccess(int index)
         {
-            if (index >= Operands->Length)
+            if (index < 0 || index >= MaxOperands)
                 return OperandAccess::None;
 
             return Access[index];
@@ -244,7 +247,7 @@ namespace Dotx64Dbg {
 
         OperandVisibility GetOperandVisibility(int index)
         {
-            if (index >= Visibility->Length)
+            if (index < 0 || index >= MaxOperands)
                 return OperandVisibility::Invalid;
 
             return Visibility[index];
@@ -252,21 +255,33 @@ namespace Dotx64Dbg {
 
         void SetOperandAccess(int index, OperandAccess access)
         {
+            if (index < 0 || index >= MaxOperands)
+                return;
+
             Access[index] = access;
         }
 
         void SetOperandVisibility(int index, OperandVisibility vis)
         {
+            if (index < 0 || index >= MaxOperands)
+                return;
+
             Visibility[index] = vis;
         }
 
         void SetOperand(int index, IOperand^ op)
         {
+            if (index < 0 || index >= MaxOperands)
+                return;
+
             Operands[index] = op;
         }
 
         void SetOperand(int index, IOperand^ op, OperandAccess access, OperandVisibility vis)
         {
+            if (index < 0 || index >= MaxOperands)
+                return;
+
             Operands[index] = op;
             Visibility[index] = vis;
             Access[index] = access;
