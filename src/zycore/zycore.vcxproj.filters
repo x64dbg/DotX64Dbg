@@ -21,5 +21,13 @@
     <ClCompile Include="src\API\Thread.c">
       <Filter>API</Filter>
     </ClCompile>
+    <ClCompile Include="src\Allocator.c" />
+    <ClCompile Include="src\ArgParse.c" />
+    <ClCompile Include="src\Bitset.c" />
+    <ClCompile Include="src\Format.c" />
+    <ClCompile Include="src\List.c" />
+    <ClCompile Include="src\String.c" />
+    <ClCompile Include="src\Vector.c" />
+    <ClCompile Include="src\Zycore.c" />
   </ItemGroup>
 </Project>

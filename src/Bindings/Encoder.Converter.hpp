@@ -1,12 +1,13 @@
 #pragma once
 
-#include <asmjit/asmjit.h>
-
 #include "Instruction.hpp"
 
-namespace Dotx64Dbg {
+#include <asmjit/asmjit.h>
 
-    inline uint32_t convertMnemonic(Mnemonic mnemonic)
+namespace Dotx64Dbg
+{
+
+    inline uint32_t convertAsmJitMnemonic(Mnemonic mnemonic)
     {
         switch (mnemonic)
         {
@@ -2800,7 +2801,7 @@ namespace Dotx64Dbg {
         return 0;
     }
 
-    inline asmjit::x86::Reg convertRegister(const Register reg)
+    inline asmjit::x86::Reg convertAsmJitRegister(const Register reg)
     {
         switch (reg)
         {
@@ -3245,4 +3246,4 @@ namespace Dotx64Dbg {
         return asmjit::x86::Reg();
     }
 
-}
+} // namespace Dotx64Dbg

@@ -185,6 +185,7 @@
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Decoder.Converter.hpp" />
     <ClInclude Include="Encoder.Converter.hpp" />
     <ClInclude Include="Instruction.EFlags.hpp" />
     <ClInclude Include="Instruction.hpp" />

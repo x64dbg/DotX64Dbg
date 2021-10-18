@@ -13,7 +13,6 @@ namespace Dotx64Dbg {
         Mnemonic _Mnemonic;
         EFlags FlagsRead;
         EFlags FlagsModified;
-        EFlags FlagsUndefined;
         array<OperandAccess>^ Access;
         array<OperandVisibility>^ Visibility;
         array<IOperand^>^ Operands;
@@ -21,7 +20,7 @@ namespace Dotx64Dbg {
         InstructionMeta(Mnemonic mnemonic,
             uint32_t flagsRead,
             uint32_t flagsModified,
-            uint32_t flagsUndefined,
+            uint32_t removeMe,
             array<OperandAccess>^ access,
             array<OperandVisibility>^ vis,
             array<IOperand^>^ operands)
@@ -29,7 +28,6 @@ namespace Dotx64Dbg {
             _Mnemonic = mnemonic;
             FlagsRead = (EFlags)flagsRead;
             FlagsModified = (EFlags)flagsModified;
-            FlagsUndefined = (EFlags)flagsUndefined;
             Access = access;
             Visibility = vis;
             Operands = operands;
@@ -46,8 +44,8 @@ namespace Dotx64Dbg {
             line = String::Format(fmt, _Mnemonic);
             res = String::Concat(res, line);
 
-            fmt = gcnew System::String("    Flags = {{ Read = {{{0}}}, Write = {{{1}}}, Undefined = {{{2}}} }},\n");
-            line = String::Format(fmt, FlagsRead, FlagsModified, FlagsUndefined);
+            fmt = gcnew System::String("    Flags = {{ Read = {{{0}}}, Write = {{{1}}} }},\n");
+            line = String::Format(fmt, FlagsRead, FlagsModified);
             res = String::Concat(res, line);
 
             fmt = gcnew System::String("    Operands = {{\n");
@@ -248,7 +246,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x00c0, 0x0014,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::EFlags, Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Andnpd,
@@ -752,7 +750,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x011F, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::EFlags, Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Cmppd,
@@ -5281,7 +5279,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D5, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::EFlags, Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Subpd,
@@ -11338,12 +11336,12 @@ namespace Dotx64Dbg {
 
         static InstructionMeta^ get(Mnemonic mnemonic)
         {
-            auto idx = static_cast<int>(mnemonic);
-            if (idx >= InstrMetaTable->Length)
-                return nullptr;
-
-            auto entry = InstrMetaTable[idx];
-            return entry;
+            for (int i = 0; i < InstrMetaTable->Length; i++)
+            {
+                if (InstrMetaTable[i]->_Mnemonic == mnemonic)
+                    return InstrMetaTable[i];
+            }
+            return nullptr;
         }
 
         static inline bool isControlFlow(Mnemonic mnemonic)
