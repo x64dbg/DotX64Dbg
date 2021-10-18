@@ -55,10 +55,10 @@ namespace Dotx64Dbg
             auto mode = ZYDIS_MACHINE_MODE_LONG_64;
             auto addrSize = ZYDIS_ADDRESS_WIDTH_64;
 #else
-            auto mode = ZYDIS_MACHINE_MODE_LONG_COMPAT_32;
+            auto mode = ZYDIS_MACHINE_MODE_LEGACY_32;
             auto addrSize = ZYDIS_ADDRESS_WIDTH_32;
 #endif
-            if (auto status = ZydisDecoderInit(_decoder, ZYDIS_MACHINE_MODE_LONG_64, ZYDIS_ADDRESS_WIDTH_64);
+            if (auto status = ZydisDecoderInit(_decoder, mode, addrSize);
                 status != ZYAN_STATUS_SUCCESS)
             {
                 char msg[64]{};
@@ -409,9 +409,9 @@ namespace Dotx64Dbg
                             }
 
                             ops += ")";
-                            }
-                            }
                         }
+                    }
+                }
 
                 infoDump += "    gcnew array<OperandAccess> { " + opAccess + " },\n";
                 infoDump += "    gcnew array<OperandVisibility> { " + opVisibility + " },\n";
@@ -421,9 +421,9 @@ namespace Dotx64Dbg
 
                 _plugin_logprint("Mismatch detected!\n");
                 _plugin_logprint(infoDump.c_str());
-                    }
+            }
 
             return res;
-                }
-            };
-        } // namespace Dotx64Dbg
+        }
+    };
+} // namespace Dotx64Dbg
