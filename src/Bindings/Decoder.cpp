@@ -4,15 +4,16 @@
 
 #include <zydis/zydis.h>
 #include "Instruction.hpp"
+#include "Decoder.Converter.hpp"
 
 #include "pluginsdk/bridgemain.h"
 #include "pluginsdk/_plugins.h"
 #include "pluginsdk/_scriptapi_memory.h"
 
-namespace Dotx64Dbg {
+namespace Dotx64Dbg
+{
 
-    static constexpr uint32_t Flags[] =
-    {
+    static constexpr uint32_t Flags[] = {
         (1 << 0),  // ZYDIS_CPUFLAG_CF
         (1 << 2),  // ZYDIS_CPUFLAG_PF,
         (1 << 4),  // ZYDIS_CPUFLAG_AF,
@@ -40,7 +41,6 @@ namespace Dotx64Dbg {
     {
         uint32_t read;
         uint32_t write;
-        uint32_t undefined;
     };
 
     public ref class Decoder
@@ -52,10 +52,23 @@ namespace Dotx64Dbg {
         {
             _decoder = new ZydisDecoder();
 #ifdef _M_AMD64
-            ZydisDecoderInit(_decoder, ZYDIS_MACHINE_MODE_LONG_64, ZYDIS_ADDRESS_WIDTH_64);
+            auto mode = ZYDIS_MACHINE_MODE_LONG_64;
+            auto addrSize = ZYDIS_ADDRESS_WIDTH_64;
 #else
-            ZydisDecoderInit(_decoder, ZYDIS_MACHINE_MODE_LONG_COMPAT_32, ZYDIS_ADDRESS_WIDTH_32);
+            auto mode = ZYDIS_MACHINE_MODE_LEGACY_32;
+            auto addrSize = ZYDIS_ADDRESS_WIDTH_32;
 #endif
+            if (auto status = ZydisDecoderInit(_decoder, mode, addrSize);
+                status != ZYAN_STATUS_SUCCESS)
+            {
+                char msg[64]{};
+                sprintf_s(msg, "ZydisDecoderInit failed: %u\n", status);
+                _plugin_logprint(msg);
+            }
+            else
+            {
+                _plugin_logprint("Decoder startup good\n");
+            }
         }
 
     public:
@@ -115,7 +128,8 @@ namespace Dotx64Dbg {
 
         IOperand^ ConvertOperandReg(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
         {
-            return gcnew Operand::OpReg(static_cast<Register>(op.reg.value));
+            const auto reg = convertZydisRegister(op.reg.value);
+            return gcnew Operand::OpReg(reg);
         }
 
         IOperand^ ConvertOperandMem(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
@@ -166,37 +180,15 @@ namespace Dotx64Dbg {
         {
             EFlagsData res{};
 
-            size_t idx = 0;
-            for (auto& fl : ins.accessed_flags)
-            {
-                if (fl.action == ZYDIS_CPUFLAG_ACTION_NONE)
-                {
-                    idx++;
-                    continue;
-                }
-                if (fl.action == ZYDIS_CPUFLAG_ACTION_SET_0 || fl.action == ZYDIS_CPUFLAG_ACTION_SET_1
-                    || fl.action == ZYDIS_CPUFLAG_ACTION_UNDEFINED || fl.action == ZYDIS_CPUFLAG_ACTION_TESTED_MODIFIED
-                    || fl.action == ZYDIS_CPUFLAG_ACTION_MODIFIED)
-                {
-                    res.write |= Flags[idx];
-                }
-                if (fl.action == ZYDIS_CPUFLAG_ACTION_TESTED || fl.action == ZYDIS_CPUFLAG_ACTION_TESTED_MODIFIED)
-                {
-                    res.read |= Flags[idx];
-                }
-                if (fl.action == ZYDIS_CPUFLAG_ACTION_UNDEFINED)
-                {
-                    res.undefined |= Flags[idx];
-                }
-                idx++;
-            }
+            res.read = ins.cpu_flags_read;
+            res.write = ins.cpu_flags_written;
 
             return res;
         }
 
         Instruction^ Convert(ZydisDecodedInstruction& instr, uint64_t addr)
         {
-            auto id = static_cast<Mnemonic>(instr.mnemonic);
+            const auto id = convertZydisMnemonic(instr.mnemonic);
             auto res = gcnew Instruction(id);
 
             res->Size = instr.length;
@@ -221,9 +213,7 @@ namespace Dotx64Dbg {
             auto instrMeta = res->Meta;
 
             auto instrFlags = getEFlags(instr);
-            if (instrMeta->FlagsModified != (EFlags)instrFlags.write ||
-                instrMeta->FlagsRead != (EFlags)instrFlags.read ||
-                instrMeta->FlagsUndefined != (EFlags)instrFlags.undefined)
+            if (instrMeta->FlagsModified != (EFlags)instrFlags.write || instrMeta->FlagsRead != (EFlags)instrFlags.read)
             {
                 invalidMeta = true;
             }
@@ -246,13 +236,14 @@ namespace Dotx64Dbg {
 
                 OperandAccess access = OperandAccess::None;
                 if (op.actions & ZYDIS_OPERAND_ACTION_MASK_READ)
-                    access = static_cast<OperandAccess>(static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Read));
+                    access = static_cast<OperandAccess>(
+                        static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Read));
 
                 if (op.actions & ZYDIS_OPERAND_ACTION_MASK_WRITE)
-                    access = static_cast<OperandAccess>(static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Write));
+                    access = static_cast<OperandAccess>(
+                        static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Write));
 
-                if (instrMeta->Access[i] != access ||
-                    instrMeta->Visibility[i] != vis)
+                if (instrMeta->Access[i] != access || instrMeta->Visibility[i] != vis)
                 {
                     invalidMeta = true;
                 }
@@ -267,13 +258,13 @@ namespace Dotx64Dbg {
 
                 infoDump += "gcnew InstructionMeta(\n";
 
-                std::string mnemonicName = MnemonicStrings[static_cast<int>(res->Id)];
+                std::string mnemonicName = MnemonicGetString(res->Id);
                 mnemonicName[0] = std::toupper(mnemonicName[0]);
 
                 infoDump += "    Mnemonic::" + mnemonicName + ", \n";
 
                 char temp[256];
-                sprintf_s(temp, "    0x%04X, 0x%04X, 0x%04X,\n", instrFlags.read, instrFlags.write, instrFlags.undefined);
+                sprintf_s(temp, "    0x%04X, 0x%04X,\n", instrFlags.read, instrFlags.write);
                 infoDump += temp;
 
                 std::string opAccess;
@@ -352,7 +343,7 @@ namespace Dotx64Dbg {
                             Operand::OpReg^ reg = (Operand::OpReg^)op;
                             auto regId = reg->Value;
 
-                            std::string regName = RegisterNames[static_cast<int>(regId)];
+                            std::string regName = RegisterGetName(regId);
                             regName[0] = std::toupper(regName[0]);
 
 #if _M_X64
@@ -400,7 +391,7 @@ namespace Dotx64Dbg {
 
                             if (mem->Base != Register::None)
                             {
-                                std::string regName = RegisterNames[static_cast<int>(mem->Base)];
+                                std::string regName = RegisterGetName(mem->Base);
                                 regName[0] = std::toupper(regName[0]);
 
                                 ops += "Register::" + regName;
@@ -408,7 +399,7 @@ namespace Dotx64Dbg {
 
                             if (mem->Index != Register::None)
                             {
-                                std::string regName = RegisterNames[static_cast<int>(mem->Base)];
+                                std::string regName = RegisterGetName(mem->Base);
                                 regName[0] = std::toupper(regName[0]);
 
                                 if (mem->Base != Register::None)
@@ -435,4 +426,4 @@ namespace Dotx64Dbg {
             return res;
         }
     };
-}
+} // namespace Dotx64Dbg

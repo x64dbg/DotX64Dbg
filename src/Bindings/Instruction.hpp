@@ -170,14 +170,6 @@ namespace Dotx64Dbg {
             }
         }
 
-        property EFlags FlagsUndefined
-        {
-            EFlags get()
-            {
-                return (EFlags)_Meta->FlagsUndefined;
-            }
-        }
-
         property Attributes Attribs;
 
         property bool IsControlFlow

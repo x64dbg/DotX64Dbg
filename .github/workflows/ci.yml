@@ -22,15 +22,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
-      - name: Setup Vcpkg
-        uses: lukka/run-vcpkg@v6
-        with:
-          vcpkgGitCommitId: a151bfd9892d096cb7ce54afdb70530c09b12e7b
-          setupOnly: true
-      # Too lazy to do this the right way.
-      - name: Vcpkg integration
-        run: |
-          %VCPKG_ROOT%/vcpkg integrate install
       - name: Nuget dependencies
         run: |
           cd src

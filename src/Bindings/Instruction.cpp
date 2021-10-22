@@ -8,7 +8,7 @@ namespace Dotx64Dbg {
         char temp[128]{};
 
         int p = 0;
-        p += snprintf(temp + p, sizeof(temp) - p, "%s", MnemonicStrings[static_cast<int>(Id)]);
+        p += snprintf(temp + p, sizeof(temp) - p, "%s", MnemonicGetString(Id));
 
         System::String^ ins = gcnew System::String(temp);
 

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="API">
+      <UniqueIdentifier>{a66e8101-0d66-430e-89a1-7d89b4a858e6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\API\Memory.c">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="src\API\Process.c">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="src\API\Synchronization.c">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="src\API\Terminal.c">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="src\API\Thread.c">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Allocator.c" />
+    <ClCompile Include="src\ArgParse.c" />
+    <ClCompile Include="src\Bitset.c" />
+    <ClCompile Include="src\Format.c" />
+    <ClCompile Include="src\List.c" />
+    <ClCompile Include="src\String.c" />
+    <ClCompile Include="src\Vector.c" />
+    <ClCompile Include="src\Zycore.c" />
+  </ItemGroup>
+</Project>

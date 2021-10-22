@@ -28,5 +28,6 @@
     <ClInclude Include="Instruction.EFlags.hpp" />
     <ClInclude Include="Symbols.hpp" />
     <ClInclude Include="Marshal.hpp" />
+    <ClInclude Include="Decoder.Converter.hpp" />
   </ItemGroup>
 </Project>

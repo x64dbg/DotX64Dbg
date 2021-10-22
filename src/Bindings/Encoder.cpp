@@ -71,7 +71,7 @@ namespace Dotx64Dbg {
             auto op2 = convertOp(instr->GetOperand(2));
             auto op3 = convertOp(instr->GetOperand(3));
 
-            auto mnemonic = convertMnemonic(instr->Id);
+            auto mnemonic = convertAsmJitMnemonic(instr->Id);
 
             if ((instr->Attribs & Instruction::Attributes::Lock) != Instruction::Attributes::None)
                 _assembler->lock();
@@ -276,7 +276,7 @@ namespace Dotx64Dbg {
             if (op->Type == OperandType::Register)
             {
                 auto opReg = (Operand::OpReg^)op;
-                return convertRegister(opReg->Value);
+                return convertAsmJitRegister(opReg->Value);
             }
             else if (op->Type == OperandType::Immediate)
             {
@@ -287,9 +287,9 @@ namespace Dotx64Dbg {
             {
                 auto opMem = (Operand::OpMem^)op;
                 auto mem = asmjit::x86::Mem();
-                mem.setBase(convertRegister(opMem->Base));
-                mem.setIndex(convertRegister(opMem->Index), opMem->Scale);
-                mem.setSegment(convertRegister(opMem->Segment).as<asmjit::x86::SReg>());
+                mem.setBase(convertAsmJitRegister(opMem->Base));
+                mem.setIndex(convertAsmJitRegister(opMem->Index), opMem->Scale);
+                mem.setSegment(convertAsmJitRegister(opMem->Segment).as<asmjit::x86::SReg>());
                 mem.setSize(opMem->Size);
                 mem.setOffset(opMem->Displacement);
                 return mem;

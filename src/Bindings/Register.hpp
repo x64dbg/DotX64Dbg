@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-namespace Dotx64Dbg {
+namespace Dotx64Dbg
+{
 
     public enum class RegisterClass
     {
@@ -277,6 +278,15 @@ namespace Dotx64Dbg {
         Zmm29,
         Zmm30,
         Zmm31,
+        // Matrix registers
+        Tmm0,
+        Tmm1,
+        Tmm2,
+        Tmm3,
+        Tmm4,
+        Tmm5,
+        Tmm6,
+        Tmm7,
         // Flags registers
         Flags,
         EFlags,
@@ -401,291 +411,551 @@ namespace Dotx64Dbg {
         Nip = Eip,
         NFlags = EFlags,
 #endif
-    };
-
-    static constexpr const char* RegisterNames[] =
-    {
-        "none",
-        // general purpose registers  8-bit
-        "al",
-        "cl",
-        "dl",
-        "bl",
-        "ah",
-        "ch",
-        "dh",
-        "bh",
-        "spl",
-        "bpl",
-        "sil",
-        "dil",
-        "r8b",
-        "r9b",
-        "r10b",
-        "r11b",
-        "r12b",
-        "r13b",
-        "r14b",
-        "r15b",
-        // general purpose registers 16-bit
-        "ax",
-        "cx",
-        "dx",
-        "bx",
-        "sp",
-        "bp",
-        "si",
-        "di",
-        "r8w",
-        "r9w",
-        "r10w",
-        "r11w",
-        "r12w",
-        "r13w",
-        "r14w",
-        "r15w",
-        // general purpose registers 32-bit
-        "eax",
-        "ecx",
-        "edx",
-        "ebx",
-        "esp",
-        "ebp",
-        "esi",
-        "edi",
-        "r8d",
-        "r9d",
-        "r10d",
-        "r11d",
-        "r12d",
-        "r13d",
-        "r14d",
-        "r15d",
-        // general purpose registers 64-bit
-        "rax",
-        "rcx",
-        "rdx",
-        "rbx",
-        "rsp",
-        "rbp",
-        "rsi",
-        "rdi",
-        "r8",
-        "r9",
-        "r10",
-        "r11",
-        "r12",
-        "r13",
-        "r14",
-        "r15",
-        // floating point legacy registers
-        "st0",
-        "st1",
-        "st2",
-        "st3",
-        "st4",
-        "st5",
-        "st6",
-        "st7",
-        "x87control",
-        "x87status",
-        "x87tag",
-        // floating point multimedia registers
-        "mm0",
-        "mm1",
-        "mm2",
-        "mm3",
-        "mm4",
-        "mm5",
-        "mm6",
-        "mm7",
-        // floating point vector registers 128-bit
-        "xmm0",
-        "xmm1",
-        "xmm2",
-        "xmm3",
-        "xmm4",
-        "xmm5",
-        "xmm6",
-        "xmm7",
-        "xmm8",
-        "xmm9",
-        "xmm10",
-        "xmm11",
-        "xmm12",
-        "xmm13",
-        "xmm14",
-        "xmm15",
-        "xmm16",
-        "xmm17",
-        "xmm18",
-        "xmm19",
-        "xmm20",
-        "xmm21",
-        "xmm22",
-        "xmm23",
-        "xmm24",
-        "xmm25",
-        "xmm26",
-        "xmm27",
-        "xmm28",
-        "xmm29",
-        "xmm30",
-        "xmm31",
-        // floating point vector registers 256-bit
-        "ymm0",
-        "ymm1",
-        "ymm2",
-        "ymm3",
-        "ymm4",
-        "ymm5",
-        "ymm6",
-        "ymm7",
-        "ymm8",
-        "ymm9",
-        "ymm10",
-        "ymm11",
-        "ymm12",
-        "ymm13",
-        "ymm14",
-        "ymm15",
-        "ymm16",
-        "ymm17",
-        "ymm18",
-        "ymm19",
-        "ymm20",
-        "ymm21",
-        "ymm22",
-        "ymm23",
-        "ymm24",
-        "ymm25",
-        "ymm26",
-        "ymm27",
-        "ymm28",
-        "ymm29",
-        "ymm30",
-        "ymm31",
-        // floating point vector registers 512-bit
-        "zmm0",
-        "zmm1",
-        "zmm2",
-        "zmm3",
-        "zmm4",
-        "zmm5",
-        "zmm6",
-        "zmm7",
-        "zmm8",
-        "zmm9",
-        "zmm10",
-        "zmm11",
-        "zmm12",
-        "zmm13",
-        "zmm14",
-        "zmm15",
-        "zmm16",
-        "zmm17",
-        "zmm18",
-        "zmm19",
-        "zmm20",
-        "zmm21",
-        "zmm22",
-        "zmm23",
-        "zmm24",
-        "zmm25",
-        "zmm26",
-        "zmm27",
-        "zmm28",
-        "zmm29",
-        "zmm30",
-        "zmm31",
-        // flags registers
-        "flags",
-        "eflags",
-        "rflags",
-        // instruction-pointer registers
-        "ip",
-        "eip",
-        "rip",
-        // segment registers
-        "es",
-        "cs",
-        "ss",
-        "ds",
-        "fs",
-        "gs",
-        // table registers
-        "gdtr",
-        "ldtr",
-        "idtr",
-        "tr",
-        // test registers
-        "tr0",
-        "tr1",
-        "tr2",
-        "tr3",
-        "tr4",
-        "tr5",
-        "tr6",
-        "tr7",
-        // control registers
-        "cr0",
-        "cr1",
-        "cr2",
-        "cr3",
-        "cr4",
-        "cr5",
-        "cr6",
-        "cr7",
-        "cr8",
-        "cr9",
-        "cr10",
-        "cr11",
-        "cr12",
-        "cr13",
-        "cr14",
-        "cr15",
-        // debug registers
-        "dr0",
-        "dr1",
-        "dr2",
-        "dr3",
-        "dr4",
-        "dr5",
-        "dr6",
-        "dr7",
-        "dr8",
-        "dr9",
-        "dr10",
-        "dr11",
-        "dr12",
-        "dr13",
-        "dr14",
-        "dr15",
-        // mask registers
-        "k0",
-        "k1",
-        "k2",
-        "k3",
-        "k4",
-        "k5",
-        "k6",
-        "k7",
-        // bound registers
-        "bnd0",
-        "bnd1",
-        "bnd2",
-        "bnd3",
-        "bndcfg",
-        "bndstatus",
-        // uncategorized
-        "mxcsr",
-        "pkru",
-        "xcr0",
+        Invalid = 0xFFFF,
     };
 
     inline const char* RegisterGetName(Register id)
     {
-        return RegisterNames[static_cast<int>(id)];
+        switch (id)
+        {
+        case Register::None:
+            return "none";
+        case Register::Al:
+            return "al";
+        case Register::Cl:
+            return "cl";
+        case Register::Dl:
+            return "dl";
+        case Register::Bl:
+            return "bl";
+        case Register::Ah:
+            return "ah";
+        case Register::Ch:
+            return "ch";
+        case Register::Dh:
+            return "dh";
+        case Register::Bh:
+            return "bh";
+        case Register::Spl:
+            return "spl";
+        case Register::Bpl:
+            return "bpl";
+        case Register::Sil:
+            return "sil";
+        case Register::Dil:
+            return "dil";
+        case Register::R8b:
+            return "r8b";
+        case Register::R9b:
+            return "r9b";
+        case Register::R10b:
+            return "r10b";
+        case Register::R11b:
+            return "r11b";
+        case Register::R12b:
+            return "r12b";
+        case Register::R13b:
+            return "r13b";
+        case Register::R14b:
+            return "r14b";
+        case Register::R15b:
+            return "r15b";
+        case Register::Ax:
+            return "ax";
+        case Register::Cx:
+            return "cx";
+        case Register::Dx:
+            return "dx";
+        case Register::Bx:
+            return "bx";
+        case Register::Sp:
+            return "sp";
+        case Register::Bp:
+            return "bp";
+        case Register::Si:
+            return "si";
+        case Register::Di:
+            return "di";
+        case Register::R8w:
+            return "r8w";
+        case Register::R9w:
+            return "r9w";
+        case Register::R10w:
+            return "r10w";
+        case Register::R11w:
+            return "r11w";
+        case Register::R12w:
+            return "r12w";
+        case Register::R13w:
+            return "r13w";
+        case Register::R14w:
+            return "r14w";
+        case Register::R15w:
+            return "r15w";
+        case Register::Eax:
+            return "eax";
+        case Register::Ecx:
+            return "ecx";
+        case Register::Edx:
+            return "edx";
+        case Register::Ebx:
+            return "ebx";
+        case Register::Esp:
+            return "esp";
+        case Register::Ebp:
+            return "ebp";
+        case Register::Esi:
+            return "esi";
+        case Register::Edi:
+            return "edi";
+        case Register::R8d:
+            return "r8d";
+        case Register::R9d:
+            return "r9d";
+        case Register::R10d:
+            return "r10d";
+        case Register::R11d:
+            return "r11d";
+        case Register::R12d:
+            return "r12d";
+        case Register::R13d:
+            return "r13d";
+        case Register::R14d:
+            return "r14d";
+        case Register::R15d:
+            return "r15d";
+        case Register::Rax:
+            return "rax";
+        case Register::Rcx:
+            return "rcx";
+        case Register::Rdx:
+            return "rdx";
+        case Register::Rbx:
+            return "rbx";
+        case Register::Rsp:
+            return "rsp";
+        case Register::Rbp:
+            return "rbp";
+        case Register::Rsi:
+            return "rsi";
+        case Register::Rdi:
+            return "rdi";
+        case Register::R8:
+            return "r8";
+        case Register::R9:
+            return "r9";
+        case Register::R10:
+            return "r10";
+        case Register::R11:
+            return "r11";
+        case Register::R12:
+            return "r12";
+        case Register::R13:
+            return "r13";
+        case Register::R14:
+            return "r14";
+        case Register::R15:
+            return "r15";
+        case Register::St0:
+            return "st0";
+        case Register::St1:
+            return "st1";
+        case Register::St2:
+            return "st2";
+        case Register::St3:
+            return "st3";
+        case Register::St4:
+            return "st4";
+        case Register::St5:
+            return "st5";
+        case Register::St6:
+            return "st6";
+        case Register::St7:
+            return "st7";
+        case Register::X87Control:
+            return "x87control";
+        case Register::X87Status:
+            return "x87status";
+        case Register::X87Tag:
+            return "x87tag";
+        case Register::Mm0:
+            return "mm0";
+        case Register::Mm1:
+            return "mm1";
+        case Register::Mm2:
+            return "mm2";
+        case Register::Mm3:
+            return "mm3";
+        case Register::Mm4:
+            return "mm4";
+        case Register::Mm5:
+            return "mm5";
+        case Register::Mm6:
+            return "mm6";
+        case Register::Mm7:
+            return "mm7";
+            // Floating point vector registers 128-bit
+        case Register::Xmm0:
+            return "xmm0";
+        case Register::Xmm1:
+            return "xmm1";
+        case Register::Xmm2:
+            return "xmm2";
+        case Register::Xmm3:
+            return "xmm3";
+        case Register::Xmm4:
+            return "xmm4";
+        case Register::Xmm5:
+            return "xmm5";
+        case Register::Xmm6:
+            return "xmm6";
+        case Register::Xmm7:
+            return "xmm7";
+        case Register::Xmm8:
+            return "xmm8";
+        case Register::Xmm9:
+            return "xmm9";
+        case Register::Xmm10:
+            return "xmm10";
+        case Register::Xmm11:
+            return "xmm11";
+        case Register::Xmm12:
+            return "xmm12";
+        case Register::Xmm13:
+            return "xmm13";
+        case Register::Xmm14:
+            return "xmm14";
+        case Register::Xmm15:
+            return "xmm15";
+        case Register::Xmm16:
+            return "xmm16";
+        case Register::Xmm17:
+            return "xmm17";
+        case Register::Xmm18:
+            return "xmm18";
+        case Register::Xmm19:
+            return "xmm19";
+        case Register::Xmm20:
+            return "xmm20";
+        case Register::Xmm21:
+            return "xmm21";
+        case Register::Xmm22:
+            return "xmm22";
+        case Register::Xmm23:
+            return "xmm23";
+        case Register::Xmm24:
+            return "xmm24";
+        case Register::Xmm25:
+            return "xmm25";
+        case Register::Xmm26:
+            return "xmm26";
+        case Register::Xmm27:
+            return "xmm27";
+        case Register::Xmm28:
+            return "xmm28";
+        case Register::Xmm29:
+            return "xmm29";
+        case Register::Xmm30:
+            return "xmm30";
+        case Register::Xmm31:
+            return "xmm31";
+            // Floating point vector registers 256-bit
+        case Register::Ymm0:
+            return "ymm0";
+        case Register::Ymm1:
+            return "ymm1";
+        case Register::Ymm2:
+            return "ymm2";
+        case Register::Ymm3:
+            return "ymm3";
+        case Register::Ymm4:
+            return "ymm4";
+        case Register::Ymm5:
+            return "ymm5";
+        case Register::Ymm6:
+            return "ymm6";
+        case Register::Ymm7:
+            return "ymm7";
+        case Register::Ymm8:
+            return "ymm8";
+        case Register::Ymm9:
+            return "ymm9";
+        case Register::Ymm10:
+            return "ymm10";
+        case Register::Ymm11:
+            return "ymm11";
+        case Register::Ymm12:
+            return "ymm12";
+        case Register::Ymm13:
+            return "ymm13";
+        case Register::Ymm14:
+            return "ymm14";
+        case Register::Ymm15:
+            return "ymm15";
+        case Register::Ymm16:
+            return "ymm16";
+        case Register::Ymm17:
+            return "ymm17";
+        case Register::Ymm18:
+            return "ymm18";
+        case Register::Ymm19:
+            return "ymm19";
+        case Register::Ymm20:
+            return "ymm20";
+        case Register::Ymm21:
+            return "ymm21";
+        case Register::Ymm22:
+            return "ymm22";
+        case Register::Ymm23:
+            return "ymm23";
+        case Register::Ymm24:
+            return "ymm24";
+        case Register::Ymm25:
+            return "ymm25";
+        case Register::Ymm26:
+            return "ymm26";
+        case Register::Ymm27:
+            return "ymm27";
+        case Register::Ymm28:
+            return "ymm28";
+        case Register::Ymm29:
+            return "ymm29";
+        case Register::Ymm30:
+            return "ymm30";
+        case Register::Ymm31:
+            return "ymm31";
+            // Floating point vector registers 512-bit
+        case Register::Zmm0:
+            return "zmm0";
+        case Register::Zmm1:
+            return "zmm1";
+        case Register::Zmm2:
+            return "zmm2";
+        case Register::Zmm3:
+            return "zmm3";
+        case Register::Zmm4:
+            return "zmm4";
+        case Register::Zmm5:
+            return "zmm5";
+        case Register::Zmm6:
+            return "zmm6";
+        case Register::Zmm7:
+            return "zmm7";
+        case Register::Zmm8:
+            return "zmm8";
+        case Register::Zmm9:
+            return "zmm9";
+        case Register::Zmm10:
+            return "zmm10";
+        case Register::Zmm11:
+            return "zmm11";
+        case Register::Zmm12:
+            return "zmm12";
+        case Register::Zmm13:
+            return "zmm13";
+        case Register::Zmm14:
+            return "zmm14";
+        case Register::Zmm15:
+            return "zmm15";
+        case Register::Zmm16:
+            return "zmm16";
+        case Register::Zmm17:
+            return "zmm17";
+        case Register::Zmm18:
+            return "zmm18";
+        case Register::Zmm19:
+            return "zmm19";
+        case Register::Zmm20:
+            return "zmm20";
+        case Register::Zmm21:
+            return "zmm21";
+        case Register::Zmm22:
+            return "zmm22";
+        case Register::Zmm23:
+            return "zmm23";
+        case Register::Zmm24:
+            return "zmm24";
+        case Register::Zmm25:
+            return "zmm25";
+        case Register::Zmm26:
+            return "zmm26";
+        case Register::Zmm27:
+            return "zmm27";
+        case Register::Zmm28:
+            return "zmm28";
+        case Register::Zmm29:
+            return "zmm29";
+        case Register::Zmm30:
+            return "zmm30";
+        case Register::Zmm31:
+            return "zmm31";
+            // Matrix registers
+        case Register::Tmm0:
+            return "tmm0";
+        case Register::Tmm1:
+            return "tmm1";
+        case Register::Tmm2:
+            return "tmm2";
+        case Register::Tmm3:
+            return "tmm3";
+        case Register::Tmm4:
+            return "tmm4";
+        case Register::Tmm5:
+            return "tmm5";
+        case Register::Tmm6:
+            return "tmm6";
+        case Register::Tmm7:
+            return "tmm7";
+        case Register::Flags:
+            return "flags";
+        case Register::EFlags:
+            return "eflags";
+        case Register::RFlags:
+            return "rflags";
+        case Register::Ip:
+            return "ip";
+        case Register::Eip:
+            return "eip";
+        case Register::Rip:
+            return "rip";
+        case Register::Es:
+            return "es";
+        case Register::Cs:
+            return "cs";
+        case Register::Ss:
+            return "ss";
+        case Register::Ds:
+            return "ds";
+        case Register::Fs:
+            return "fs";
+        case Register::Gs:
+            return "gs";
+        case Register::Gdtr:
+            return "gdtr";
+        case Register::Ldtr:
+            return "ldtr";
+        case Register::Idtr:
+            return "idtr";
+        case Register::Tr:
+            return "tr";
+        case Register::Tr0:
+            return "tr0";
+        case Register::Tr1:
+            return "tr1";
+        case Register::Tr2:
+            return "tr2";
+        case Register::Tr3:
+            return "tr3";
+        case Register::Tr4:
+            return "tr4";
+        case Register::Tr5:
+            return "tr5";
+        case Register::Tr6:
+            return "tr6";
+        case Register::Tr7:
+            return "tr7";
+            // Control registers
+        case Register::Cr0:
+            return "cr0";
+        case Register::Cr1:
+            return "cr1";
+        case Register::Cr2:
+            return "cr2";
+        case Register::Cr3:
+            return "cr3";
+        case Register::Cr4:
+            return "cr4";
+        case Register::Cr5:
+            return "cr5";
+        case Register::Cr6:
+            return "cr6";
+        case Register::Cr7:
+            return "cr7";
+        case Register::Cr8:
+            return "cr8";
+        case Register::Cr9:
+            return "cr9";
+        case Register::Cr10:
+            return "cr10";
+        case Register::Cr11:
+            return "cr11";
+        case Register::Cr12:
+            return "cr12";
+        case Register::Cr13:
+            return "cr13";
+        case Register::Cr14:
+            return "cr14";
+        case Register::Cr15:
+            return "cr15";
+            // Debug registers
+        case Register::Dr0:
+            return "dr0";
+        case Register::Dr1:
+            return "dr1";
+        case Register::Dr2:
+            return "dr2";
+        case Register::Dr3:
+            return "dr3";
+        case Register::Dr4:
+            return "dr4";
+        case Register::Dr5:
+            return "dr5";
+        case Register::Dr6:
+            return "dr6";
+        case Register::Dr7:
+            return "dr7";
+        case Register::Dr8:
+            return "dr8";
+        case Register::Dr9:
+            return "dr9";
+        case Register::Dr10:
+            return "dr10";
+        case Register::Dr11:
+            return "dr11";
+        case Register::Dr12:
+            return "dr12";
+        case Register::Dr13:
+            return "dr13";
+        case Register::Dr14:
+            return "dr14";
+        case Register::Dr15:
+            return "dr15";
+        case Register::K0:
+            return "k0";
+        case Register::K1:
+            return "k1";
+        case Register::K2:
+            return "k2";
+        case Register::K3:
+            return "k3";
+        case Register::K4:
+            return "k4";
+        case Register::K5:
+            return "k5";
+        case Register::K6:
+            return "k6";
+        case Register::K7:
+            return "k7";
+        case Register::Bnd0:
+            return "bnd0";
+        case Register::Bnd1:
+            return "bnd1";
+        case Register::Bnd2:
+            return "bnd2";
+        case Register::Bnd3:
+            return "bnd3";
+        case Register::BndCfg:
+            return "bndcfg";
+        case Register::BndStatus:
+            return "bndstatus";
+        case Register::Mxcsr:
+            return "mxcsr";
+        case Register::Pkru:
+            return "pkru";
+        case Register::Xcr0:
+            return "xcr0";
+        }
+        return "invalid";
     }
 
     inline int RegisterGetSize(Register id)
@@ -887,6 +1157,15 @@ namespace Dotx64Dbg {
         case Register::Zmm30:
         case Register::Zmm31:
             return 512;
+        case Register::Tmm0:
+        case Register::Tmm1:
+        case Register::Tmm2:
+        case Register::Tmm3:
+        case Register::Tmm4:
+        case Register::Tmm5:
+        case Register::Tmm6:
+        case Register::Tmm7:
+            return 8192;
         case Register::Flags:
             return 16;
         case Register::EFlags:
@@ -1109,37 +1388,37 @@ namespace Dotx64Dbg {
             break;
 #ifdef _M_AMD64
         case Register::R8d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R8;
-#endif
+#    endif
         case Register::R9d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R9;
-#endif
+#    endif
         case Register::R10d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R10;
-#endif
+#    endif
         case Register::R11d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R11;
-#endif
+#    endif
         case Register::R12d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R12;
-#endif
+#    endif
         case Register::R13d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R13;
-#endif
+#    endif
         case Register::R14d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R14;
-#endif
+#    endif
         case Register::R15d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R15;
-#endif
+#    endif
             break;
 #endif
         case Register::Flags:
@@ -1296,53 +1575,53 @@ namespace Dotx64Dbg {
 
 #ifdef _M_AMD64
         case Register::R8d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R8;
-#else
+#    else
             return Register::None;
-#endif
+#    endif
         case Register::R9d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R9;
-#else
+#    else
             return Register::None;
-#endif
+#    endif
         case Register::R10d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R10;
-#else
+#    else
             return Register::None;
-#endif
+#    endif
         case Register::R11d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R11;
-#else
+#    else
             return Register::None;
-#endif
+#    endif
         case Register::R12d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R12;
-#else
+#    else
             return Register::None;
-#endif
+#    endif
         case Register::R13d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R13;
-#else
+#    else
             return Register::None;
-#endif
+#    endif
         case Register::R14d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R14;
-#else
+#    else
             return Register::None;
-#endif
+#    endif
         case Register::R15d:
-#ifdef _M_AMD64
+#    ifdef _M_AMD64
             return Register::R15;
-#else
+#    else
             return Register::None;
-#endif
+#    endif
 
 #endif
         case Register::Flags:
@@ -1669,5 +1948,4 @@ namespace Dotx64Dbg {
         return RegisterClass::Invalid;
     }
 
-
-}
+} // namespace Dotx64Dbg
