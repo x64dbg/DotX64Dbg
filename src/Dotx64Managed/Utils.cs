@@ -8,7 +8,7 @@ namespace Dotx64Dbg
     {
         public static string GetRootPath()
         {
-            var process = Process.GetCurrentProcess();
+            var process = System.Diagnostics.Process.GetCurrentProcess();
             string fullPath = process.MainModule.FileName;
             string processPath = Path.GetDirectoryName(fullPath);
             string x64DbgPath = Path.GetFullPath(Path.Combine(processPath, ".."));

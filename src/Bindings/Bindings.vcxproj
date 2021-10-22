@@ -179,6 +179,7 @@
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="Plugin.cpp" />
+    <ClCompile Include="Process.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Symbols.cpp" />
     <ClCompile Include="Thread.cpp" />
