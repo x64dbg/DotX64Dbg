@@ -98,12 +98,6 @@ You can find an example script [here](bin/dotscripts/TestScript.cs)
 ## Requirements
 - Net 5.0 SDK.
 - Visual Studio 2019 Community or greater.
-- Vcpkg
-- Zydis
-
-## Vcpkg
-Vcpkg is currently required with the integration setup. This is planned
-to change in the future.
 
 ## Building
 After everything is setup you should be open Dotx64Dbg.sln and be able
