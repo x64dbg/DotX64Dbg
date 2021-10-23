@@ -7,6 +7,7 @@ namespace Dotx64Dbg
         [Flags]
         public enum Protection
         {
+            Invalid = 0,
             NoAccess = 0x01,
             ReadOnly = 0x02,
             ReadWrite = 0x04,
@@ -91,6 +92,14 @@ namespace Dotx64Dbg
             return GetBase((nuint)address);
         }
 
+        /// <summary>
+        /// Gets the protection of the memory, if the cache is used this is the last queried page info.
+        /// It is normally safe to use the cache for performance, when the cache is used the internal
+        /// API will not use a syscall to determine the protection.
+        /// </summary>
+        /// <param name="address">Address of the page to query</param>
+        /// <param name="useCache">If this is true it will use the last queried page information</param>
+        /// <returns>In case of failure the result is Protection.Invalid otherwise actual protection</returns>
         public static Protection GetProtection(nuint address, bool useCache)
         {
             return (Protection)Native.Memory.GetProtection(address, useCache);
@@ -100,6 +109,18 @@ namespace Dotx64Dbg
             return GetProtection((nuint)address, useCache);
         }
 
+        /// <summary>
+        /// Sets a new protection on the specified address, the address will be aligned to page
+        /// boundaries and sets the entire page which is by 4 KiB. This may split up
+        /// an existing range from the memory map.
+        /// Internally the size will be always aligned to a minimum of a single page, if the size
+        /// spans more than two pages then both pages will be modified.
+        /// <note>This will also update the cached protection info</note>
+        /// </summary>
+        /// <param name="address">Address of the page</param>
+        /// <param name="protect">New protection</param>
+        /// <param name="size">The size of the range</param>
+        /// <returns>True on success</returns>
         public static bool SetProtection(nuint address, Protection protect, int size)
         {
             return Native.Memory.SetProtection(address, (UInt32)protect, size);
