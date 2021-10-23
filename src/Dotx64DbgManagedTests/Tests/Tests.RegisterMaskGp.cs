@@ -28,8 +28,8 @@ namespace Dotx64Dbg.Managed.Tests
 
             AssertEq(mask.Count, 2);
 
-            Register[] regs;
-            mask.GetRegisters(out regs);
+            var regs = mask.GetRegisters();
+            AssertEq(regs.Length, 2);
 
 #if _X64_
             AssertEq(regs[0], Register.Rax);
@@ -60,8 +60,8 @@ namespace Dotx64Dbg.Managed.Tests
 
             AssertEq(mask.Count, 2);
 
-            Register[] regs;
-            mask.GetRegisters(out regs);
+            var regs = mask.GetRegisters();
+            AssertEq(regs.Length, 2);
 
 #if _X64_
             AssertEq(regs[0], Register.Rax);
