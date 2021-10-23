@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dotx64Dbg.Analysis
 {
+    using RegisterMaskType = UInt32;
+
     public struct RegisterMaskGp
     {
-        private UInt16 Mask;
+        private RegisterMaskType Mask;
+
+        public const uint MaxRegisters = sizeof(RegisterMaskType) * 8u;
 
         public static readonly RegisterMaskGp None = new RegisterMaskGp();
-        public static readonly RegisterMaskGp All = new RegisterMaskGp { Mask = 0b1111111111111111 };
+        public static readonly RegisterMaskGp All = new RegisterMaskGp { Mask = ~0u };
 
         public RegisterMaskGp Add(Dotx64Dbg.Operand.OpReg reg)
         {
@@ -30,22 +30,22 @@ namespace Dotx64Dbg.Analysis
                 {
                     index -= 4;
                 }
-                Mask |= (UInt16)(1u << index);
+                Mask |= (RegisterMaskType)(1u << index);
             }
             else if (reg >= Register.Ax && reg <= Register.R15w)
             {
                 var index = (int)reg - (int)Register.Ax;
-                Mask |= (UInt16)(1u << index);
+                Mask |= (RegisterMaskType)(1u << index);
             }
             else if (reg >= Register.Eax && reg <= Register.R15d)
             {
                 var index = (int)reg - (int)Register.Eax;
-                Mask |= (UInt16)(1u << index);
+                Mask |= (RegisterMaskType)(1u << index);
             }
             else if (reg >= Register.Rax && reg <= Register.R15)
             {
                 var index = (int)reg - (int)Register.Rax;
-                Mask |= (UInt16)(1u << index);
+                Mask |= (RegisterMaskType)(1u << index);
             }
             else
             {
@@ -58,24 +58,7 @@ namespace Dotx64Dbg.Analysis
         {
             get
             {
-                var res = 0;
-                var val = Mask;
-                var maxCount = 0;
-                if ((Mask & 0x000000FFu) != 0)
-                    maxCount = 8;
-                if ((Mask & 0x0000FF00u) != 0)
-                    maxCount = 16;
-                if ((Mask & 0x00FF0000u) != 0)
-                    maxCount = 24;
-                if ((Mask & 0xFF000000u) != 0)
-                    maxCount = 32;
-                for (int i = 0; i < maxCount; i++)
-                {
-                    if ((val & 1u) != 0)
-                        res++;
-                    val >>= 1;
-                }
-                return res;
+                return (int)System.Runtime.Intrinsics.X86.Popcnt.PopCount(Mask);
             }
         }
 
@@ -84,7 +67,7 @@ namespace Dotx64Dbg.Analysis
             res = new Operand.OpReg[Count];
 
             var idx = 0;
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < MaxRegisters; i++)
             {
                 if ((Mask & (1u << i)) != 0)
                 {
@@ -98,10 +81,9 @@ namespace Dotx64Dbg.Analysis
                 }
             }
         }
-        public void GetRegisters(out Register[] res)
+        public Register[] GetRegisters()
         {
-            res = new Register[Count];
-
+            var res = new Register[Count];
             var idx = 0;
             for (int i = 0; i < 32; i++)
             {
@@ -116,26 +98,32 @@ namespace Dotx64Dbg.Analysis
                     idx++;
                 }
             }
+            return res;
+        }
+
+        public RegisterMaskType Value()
+        {
+            return Mask;
         }
 
         public static RegisterMaskGp operator &(RegisterMaskGp left, RegisterMaskGp right)
         {
-            return new() { Mask = (UInt16)(left.Mask & right.Mask) };
+            return new() { Mask = (RegisterMaskType)(left.Mask & right.Mask) };
         }
 
         public static RegisterMaskGp operator |(RegisterMaskGp left, RegisterMaskGp right)
         {
-            return new() { Mask = (UInt16)(left.Mask | right.Mask) };
+            return new() { Mask = (RegisterMaskType)(left.Mask | right.Mask) };
         }
 
         public static RegisterMaskGp operator ^(RegisterMaskGp left, RegisterMaskGp right)
         {
-            return new() { Mask = (UInt16)(left.Mask ^ right.Mask) };
+            return new() { Mask = (RegisterMaskType)(left.Mask ^ right.Mask) };
         }
 
         public static RegisterMaskGp operator ~(RegisterMaskGp left)
         {
-            return new() { Mask = (UInt16)~left.Mask };
+            return new() { Mask = (RegisterMaskType)~left.Mask };
         }
     }
 }
