@@ -90,14 +90,18 @@ namespace Dotx64Dbg::Native
             return (int)bytesWritten;
         }
 
-        static uint32_t GetProtection(duint addr)
+        static uint32_t GetProtection(System::UIntPtr addr, bool useCache)
         {
-            return 0;
+            auto va = static_cast<duint>(addr.ToUInt64());
+
+            return Script::Memory::GetProtect(va, false, useCache);
         }
 
-        static uint32_t SetProtection(duint addr, uint32_t prot)
+        static bool SetProtection(System::UIntPtr addr, uint32_t prot, int size)
         {
-            return 0;
+            auto va = static_cast<duint>(addr.ToUInt64());
+
+            return Script::Memory::SetProtect(va, prot, (duint)size);
         }
 
         static System::UIntPtr GetBase(System::UIntPtr addr)

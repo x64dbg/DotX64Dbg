@@ -90,5 +90,23 @@ namespace Dotx64Dbg
         {
             return GetBase((nuint)address);
         }
+
+        public static Protection GetProtection(nuint address, bool useCache)
+        {
+            return (Protection)Native.Memory.GetProtection(address, useCache);
+        }
+        public static Protection GetProtection(ulong address, bool useCache)
+        {
+            return GetProtection((nuint)address, useCache);
+        }
+
+        public static bool SetProtection(nuint address, Protection protect, int size)
+        {
+            return Native.Memory.SetProtection(address, (UInt32)protect, size);
+        }
+        public static bool SetProtection(ulong address, Protection protect, int size)
+        {
+            return SetProtection((nuint)address, protect, size);
+        }
     };
 }
