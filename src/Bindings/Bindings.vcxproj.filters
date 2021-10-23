@@ -16,6 +16,7 @@
     <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="Symbols.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Process.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Instruction.hpp" />

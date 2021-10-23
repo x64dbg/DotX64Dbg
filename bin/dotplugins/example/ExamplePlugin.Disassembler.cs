@@ -17,7 +17,6 @@ public partial class ExamplePlugin : IPlugin, IHotload
             + $"  Info = {{\n"
             + $"    Flags Read = {decodedInstr.FlagsRead}\n"
             + $"    Flags Write = {decodedInstr.FlagsWrite}\n"
-            + $"    Flags Read = {decodedInstr.FlagsUndefined}\n"
             + $"  }},\n"
             + $"  Operands = {{\n";
 
