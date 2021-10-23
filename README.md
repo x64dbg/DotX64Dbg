@@ -20,7 +20,9 @@ code which means its a lot harder to hide malicious code in there.
 
 # Installing
 There is currently no official release. You can grab the latest artifacts
-from the CI to try it out or build it yourself.
+from the CI to try it out or build it yourself. Also older versions of
+x64dbg are not supported by this plugin, we recommend to use the latest
+builds.
 
 # Your first Plugin
 Creating new plugins is as easy as creating a new folder with two new files.
