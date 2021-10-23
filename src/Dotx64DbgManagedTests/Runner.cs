@@ -116,9 +116,23 @@ namespace Dotx64Dbg.Managed.Tests
             }
         }
 
+        private static void DryRunTest(TestingState state, object instance, TestGroup group, TestEntry test)
+        {
+            try
+            {
+                test.Function.Invoke(instance, Array.Empty<object>());
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
         private static bool RunTest(TestingState state, object instance, TestGroup group, TestEntry test)
         {
             bool passed = true;
+
+            // Do not account for assembly loading, make a quiet run first.
+            DryRunTest(state, instance, group, test);
 
             var sw = new Stopwatch();
             state.Ran++;
