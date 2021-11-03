@@ -1,10 +1,23 @@
 ﻿#include <cstdint>
 #include <utility>
 #include <vector>
+#include <string>
 
 #include "Encoder.Converter.hpp"
 
 namespace Dotx64Dbg {
+
+	struct EncoderErrorHandler : asmjit::ErrorHandler
+	{
+		void handleError(asmjit::Error err, const char* message, asmjit::BaseEmitter* origin) override
+		{
+            auto errMsg = "Encode Error: " + std::string(message);
+            auto strMessage = gcnew System::String(errMsg.c_str());
+            Console::WriteLine(strMessage);
+		}
+	};
+
+    static EncoderErrorHandler _errHandler{};
 
     public ref class Encoder
     {
@@ -19,6 +32,7 @@ namespace Dotx64Dbg {
             _code = new asmjit::CodeHolder();
             _code->init(asmjit::Environment::host(), baseVA);
             _assembler = new asmjit::x86::Assembler(_code);
+            _assembler->setErrorHandler(&_errHandler);
         }
 
     public:
@@ -66,6 +80,9 @@ namespace Dotx64Dbg {
 
         bool Encode(Instruction^ instr)
         {
+            EncoderErrorHandler handler;
+            _assembler->setErrorHandler(&handler);
+
             auto op0 = instr->GetOperandVisibility(0) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(0));
             auto op1 = instr->GetOperandVisibility(1) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(1));
             auto op2 = instr->GetOperandVisibility(2) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(2));
@@ -261,6 +278,8 @@ namespace Dotx64Dbg {
             const size_t codeSize = _code->codeSize();
 
             array<System::Byte>^ res = gcnew array<System::Byte>((int)codeSize);
+			if (codeSize == 0)
+				return res;
 
             pin_ptr<uint8_t> ptr = &res[0];
             uint8_t* buf = ptr;

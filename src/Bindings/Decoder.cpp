@@ -65,10 +65,6 @@ namespace Dotx64Dbg
                 sprintf_s(msg, "ZydisDecoderInit failed: %u\n", status);
                 _plugin_logprint(msg);
             }
-            else
-            {
-                _plugin_logprint("Decoder startup good\n");
-            }
         }
 
     public:

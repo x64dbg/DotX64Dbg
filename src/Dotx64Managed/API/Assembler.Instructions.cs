@@ -152,20 +152,12 @@ namespace Dotx64Dbg
         public Assembler Pushf() => CreateInstr(Mnemonic.Pushf);
         public Assembler Pushfd() => CreateInstr(Mnemonic.Pushfd);
         public Assembler Pushfq() => CreateInstr(Mnemonic.Pushfq);
-        public Assembler Rcl(Operand.Register a) => CreateInstr(Mnemonic.Rcl, a);
-        public Assembler Rcl(Operand.Memory a) => CreateInstr(Mnemonic.Rcl, a);
         public Assembler Rcl(Operand.Register a, Operand.Immediate b) => CreateInstr(Mnemonic.Rcl, a, b);
         public Assembler Rcl(Operand.Memory a, Operand.Immediate b) => CreateInstr(Mnemonic.Rcl, a, b);
-        public Assembler Rcr(Operand.Register a) => CreateInstr(Mnemonic.Rcr, a);
-        public Assembler Rcr(Operand.Memory a) => CreateInstr(Mnemonic.Rcr, a);
         public Assembler Rcr(Operand.Register a, Operand.Immediate b) => CreateInstr(Mnemonic.Rcr, a, b);
         public Assembler Rcr(Operand.Memory a, Operand.Immediate b) => CreateInstr(Mnemonic.Rcr, a, b);
-        public Assembler Rol(Operand.Register a) => CreateInstr(Mnemonic.Rol, a);
-        public Assembler Rol(Operand.Memory a) => CreateInstr(Mnemonic.Rol, a);
         public Assembler Rol(Operand.Register a, Operand.Immediate b) => CreateInstr(Mnemonic.Rol, a, b);
         public Assembler Rol(Operand.Memory a, Operand.Immediate b) => CreateInstr(Mnemonic.Rol, a, b);
-        public Assembler Ror(Operand.Register a) => CreateInstr(Mnemonic.Ror, a);
-        public Assembler Ror(Operand.Memory a) => CreateInstr(Mnemonic.Ror, a);
         public Assembler Ror(Operand.Register a, Operand.Immediate b) => CreateInstr(Mnemonic.Ror, a, b);
         public Assembler Ror(Operand.Memory a, Operand.Immediate b) => CreateInstr(Mnemonic.Ror, a, b);
         public Assembler Rsm() => CreateInstr(Mnemonic.Rsm);
@@ -184,12 +176,8 @@ namespace Dotx64Dbg
         public Assembler Sar(Operand.Memory a, Operand.Immediate b) => CreateInstr(Mnemonic.Sar, a, b);
         public Assembler Sfence() => CreateInstr(Mnemonic.Sfence);
         public Assembler Sgdt(Operand.Memory a) => CreateInstr(Mnemonic.Sgdt, a);
-        public Assembler Shl(Operand.Register a) => CreateInstr(Mnemonic.Shl, a);
-        public Assembler Shl(Operand.Memory a) => CreateInstr(Mnemonic.Shl, a);
         public Assembler Shl(Operand.Register a, Operand.Immediate b) => CreateInstr(Mnemonic.Shl, a, b);
         public Assembler Shl(Operand.Memory a, Operand.Immediate b) => CreateInstr(Mnemonic.Shl, a, b);
-        public Assembler Shr(Operand.Register a) => CreateInstr(Mnemonic.Shr, a);
-        public Assembler Shr(Operand.Memory a) => CreateInstr(Mnemonic.Shr, a);
         public Assembler Shr(Operand.Register a, Operand.Immediate b) => CreateInstr(Mnemonic.Shr, a, b);
         public Assembler Shr(Operand.Memory a, Operand.Immediate b) => CreateInstr(Mnemonic.Shr, a, b);
         public Assembler Shld(Operand.Register a, Operand.Register b) => CreateInstr(Mnemonic.Shld, a, b);
@@ -2577,33 +2565,21 @@ namespace Dotx64Dbg
         public Assembler Jmp(Operand.Immediate a) => CreateInstr(Mnemonic.Jmp, a);
 
         public Assembler Jnz(Label a) => CreateInstr(Mnemonic.Jnz, a);
-        public Assembler Jnz(Operand.Register a) => CreateInstr(Mnemonic.Jnz, a);
-        public Assembler Jnz(Operand.Memory a) => CreateInstr(Mnemonic.Jnz, a);
         public Assembler Jnz(Operand.Immediate a) => CreateInstr(Mnemonic.Jnz, a);
 
         public Assembler Jz(Label a) => CreateInstr(Mnemonic.Jz, a);
-        public Assembler Jz(Operand.Register a) => CreateInstr(Mnemonic.Jz, a);
-        public Assembler Jz(Operand.Memory a) => CreateInstr(Mnemonic.Jz, a);
         public Assembler Jz(Operand.Immediate a) => CreateInstr(Mnemonic.Jz, a);
 
         public Assembler Jnb(Label a) => CreateInstr(Mnemonic.Jnb, a);
-        public Assembler Jnb(Operand.Register a) => CreateInstr(Mnemonic.Jnb, a);
-        public Assembler Jnb(Operand.Memory a) => CreateInstr(Mnemonic.Jnb, a);
         public Assembler Jnb(Operand.Immediate a) => CreateInstr(Mnemonic.Jnb, a);
 
         public Assembler Jno(Label a) => CreateInstr(Mnemonic.Jno, a);
-        public Assembler Jno(Operand.Register a) => CreateInstr(Mnemonic.Jno, a);
-        public Assembler Jno(Operand.Memory a) => CreateInstr(Mnemonic.Jno, a);
         public Assembler Jno(Operand.Immediate a) => CreateInstr(Mnemonic.Jno, a);
 
         public Assembler Js(Label a) => CreateInstr(Mnemonic.Js, a);
-        public Assembler Js(Operand.Register a) => CreateInstr(Mnemonic.Js, a);
-        public Assembler Js(Operand.Memory a) => CreateInstr(Mnemonic.Js, a);
         public Assembler Js(Operand.Immediate a) => CreateInstr(Mnemonic.Js, a);
 
         public Assembler Jp(Label a) => CreateInstr(Mnemonic.Jp, a);
-        public Assembler Jp(Operand.Register a) => CreateInstr(Mnemonic.Jp, a);
-        public Assembler Jp(Operand.Memory a) => CreateInstr(Mnemonic.Jp, a);
         public Assembler Jp(Operand.Immediate a) => CreateInstr(Mnemonic.Jp, a);
 
         public Assembler Call(Operand.Register a) => CreateInstr(Mnemonic.Call, a);
