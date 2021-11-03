@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace Dotx64Dbg
 {
@@ -17,6 +18,9 @@ namespace Dotx64Dbg
         public static void Init(int pluginHandle)
         {
             PluginHandle = pluginHandle;
+
+            if(string.IsNullOrEmpty(AppDomain.CurrentDomain.BaseDirectory))
+                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             Logging.Initialize();
             Commands.Initialize();
@@ -38,6 +42,21 @@ namespace Dotx64Dbg
 
             PluginManager = new();
             PluginManager.Initialize();
+        }
+
+        private static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var libs = new DirectoryInfo(Utils.GetPluginsPath()).GetFiles("*.dll");
+            var assemblyName = new System.Reflection.AssemblyName(args.Name);
+
+            var dll = libs.FirstOrDefault(file => Path.GetFileNameWithoutExtension(file.Name)
+                .Equals(assemblyName.Name, StringComparison.InvariantCultureIgnoreCase));
+
+            if(dll is not null)
+            {
+                return System.Reflection.Assembly.LoadFrom(dll.FullName);
+            }
+            return null;
         }
 
         public static void Setup()

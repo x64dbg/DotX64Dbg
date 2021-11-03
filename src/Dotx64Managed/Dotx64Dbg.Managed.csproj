@@ -53,6 +53,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Compilers" Version="3.10.0" />
+    <PackageReference Include="NuGet.Configuration" Version="5.11.0" />
+    <PackageReference Include="NuGet.Frameworks" Version="5.11.0" />
+    <PackageReference Include="NuGet.Protocol" Version="5.11.0" />
+    <PackageReference Include="NuGet.Versioning" Version="5.11.0" />
   </ItemGroup>
 
   <ItemGroup>

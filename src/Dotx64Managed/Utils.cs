@@ -15,6 +15,15 @@ namespace Dotx64Dbg
             return x64DbgPath;
         }
 
+        public static string GetPluginsPath()
+        {
+            var process = System.Diagnostics.Process.GetCurrentProcess();
+            string fullPath = process.MainModule.FileName;
+            string processPath = Path.GetDirectoryName(fullPath);
+            
+            return Path.GetFullPath(Path.Combine(processPath, "plugins"));
+        }
+
         public static void PrintFields(object obj)
         {
             var typeInfo = obj.GetType();

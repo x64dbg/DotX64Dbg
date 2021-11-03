@@ -111,6 +111,7 @@ namespace Dotx64Dbg
 
             assemblyRefs.Add(typeof(System.Data.AcceptRejectRule).Assembly.Location);
 
+            assemblyRefs.Add(Path.Combine(coreAssemblyPath, "netstandard.dll")); // Some libraries require .NETStandard
             assemblyRefs.Add(Path.Combine(coreAssemblyPath, "mscorlib.dll"));
             assemblyRefs.Add(Path.Combine(coreAssemblyPath, "System.dll"));
             assemblyRefs.Add(Path.Combine(coreAssemblyPath, "System.Core.dll"));
@@ -186,8 +187,8 @@ namespace Dotx64Dbg
                         Console.WriteLine(info.ToString());
                     }
 
-                    res.AssemblyStream.Dispose();
-                    res.DebugStream.Dispose();
+                    res.AssemblyStream?.Dispose();
+                    res.DebugStream?.Dispose();
                     res.AssemblyStream = null;
                     res.DebugStream = null;
                 }
