@@ -66,10 +66,10 @@ namespace Dotx64Dbg {
 
         bool Encode(Instruction^ instr)
         {
-            auto op0 = convertOp(instr->GetOperand(0));
-            auto op1 = convertOp(instr->GetOperand(1));
-            auto op2 = convertOp(instr->GetOperand(2));
-            auto op3 = convertOp(instr->GetOperand(3));
+            auto op0 = instr->GetOperandVisibility(0) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(0));
+            auto op1 = instr->GetOperandVisibility(1) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(1));
+            auto op2 = instr->GetOperandVisibility(2) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(2));
+            auto op3 = instr->GetOperandVisibility(3) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(3));
 
             auto mnemonic = convertAsmJitMnemonic(instr->Id);
 
@@ -273,6 +273,7 @@ namespace Dotx64Dbg {
     private:
         inline asmjit::Operand convertOp(IOperand^ op)
         {
+
             if (op->Type == OperandType::Register)
             {
                 auto opReg = (Operand::OpReg^)op;

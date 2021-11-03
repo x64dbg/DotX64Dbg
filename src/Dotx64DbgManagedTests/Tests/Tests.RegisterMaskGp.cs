@@ -10,14 +10,6 @@ namespace Dotx64Dbg.Managed.Tests
 
     class TestRegisterMaskGp
     {
-        public TestRegisterMaskGp()
-        {
-            // Warm-up
-            _ = Analysis.RegisterMaskGp.None;
-            _ = Register.Al;
-            _ = Operands.Reg(Register.Al);
-        }
-
         [Test]
         public void TestMask()
         {

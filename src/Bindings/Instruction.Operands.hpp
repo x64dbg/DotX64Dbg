@@ -25,6 +25,11 @@ namespace Dotx64Dbg {
     public:
         // Byte
         //////////////////////////////////////////////////////////////////////////
+        static Operand::OpMem^ BytePtr(Int64 disp)
+        {
+            return gcnew Operand::OpMem(8, Register::None, Register::None, 0, disp);
+        }
+
         static Operand::OpMem^ BytePtr(Register baseReg)
         {
             return gcnew Operand::OpMem(8, baseReg, Register::None, 0, 0);
@@ -72,6 +77,11 @@ namespace Dotx64Dbg {
 
         // Word
         //////////////////////////////////////////////////////////////////////////
+        static Operand::OpMem^ WordPtr(Int64 disp)
+        {
+            return gcnew Operand::OpMem(16, Register::None, Register::None, 0, disp);
+        }
+
         static Operand::OpMem^ WordPtr(Register baseReg)
         {
             return gcnew Operand::OpMem(16, baseReg, Register::None, 0, 0);
@@ -119,6 +129,11 @@ namespace Dotx64Dbg {
 
         // Dword
         //////////////////////////////////////////////////////////////////////////
+        static Operand::OpMem^ DwordPtr(Int64 disp)
+        {
+            return gcnew Operand::OpMem(32, Register::None, Register::None, 0, disp);
+        }
+
         static Operand::OpMem^ DwordPtr(Register baseReg)
         {
             return gcnew Operand::OpMem(32, baseReg, Register::None, 0, 0);
@@ -166,6 +181,10 @@ namespace Dotx64Dbg {
 
         // Qword
         //////////////////////////////////////////////////////////////////////////
+        static Operand::OpMem^ QwordPtr(Int64 disp)
+        {
+            return gcnew Operand::OpMem(64, Register::None, Register::None, 0, disp);
+        }
         static Operand::OpMem^ QwordPtr(Register baseReg)
         {
             return gcnew Operand::OpMem(64, baseReg, Register::None, 0, 0);
@@ -174,7 +193,6 @@ namespace Dotx64Dbg {
         {
             return gcnew Operand::OpMem(64, baseReg->Value, Register::None, 0, 0);
         }
-
 
         static Operand::OpMem^ QwordPtr(Register baseReg, Int64 disp)
         {
@@ -214,6 +232,10 @@ namespace Dotx64Dbg {
 
         // Host
         //////////////////////////////////////////////////////////////////////////
+        static Operand::OpMem^ Ptr(Int64 disp)
+        {
+            return gcnew Operand::OpMem(AddressSize(), Register::None, Register::None, 0, disp);
+        }
         static Operand::OpMem^ Ptr(Register baseReg)
         {
             return gcnew Operand::OpMem(AddressSize(), baseReg, Register::None, 0, 0);
