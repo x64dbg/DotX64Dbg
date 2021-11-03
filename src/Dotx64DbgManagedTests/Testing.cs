@@ -29,34 +29,26 @@ namespace Dotx64Dbg.Managed.Tests
 
     public static class Testing
     {
-        public static void AssertEq(object? a, object? b,
+        public static void AssertEq<T>(T? a, T? b,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string sourceFilePath = "",
             [CallerLineNumber] int sourceLineNumber = 0)
         {
-            if (a == null && b == null)
-                return;
-            if (a == null && b != null)
+            if (!EqualityComparer<T>.Default.Equals(a, b))
+            {
                 throw new AssertException($"Assertion: {a} == {b}", memberName, sourceFilePath, sourceLineNumber);
-            if (a != null && b == null)
-                throw new AssertException($"Assertion: {a} == {b}", memberName, sourceFilePath, sourceLineNumber);
-            if (a != null && !a.Equals(b))
-                throw new AssertException($"Assertion: {a} == {b}", memberName, sourceFilePath, sourceLineNumber);
+            }
         }
 
-        public static void AssertNeq(object? a, object? b,
+        public static void AssertNeq<T>(T? a, T? b,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string sourceFilePath = "",
             [CallerLineNumber] int sourceLineNumber = 0)
         {
-            if (a == null && b != null)
-                return;
-            if (a != null && b == null)
-                return;
-            if (a == null && b == null)
-                throw new AssertException($"Assertion: {a} != {b}", memberName, sourceFilePath, sourceLineNumber);
-            if (a != null && a.Equals(b))
-                throw new AssertException($"Assertion: {a} != {b}", memberName, sourceFilePath, sourceLineNumber);
+            if (EqualityComparer<T>.Default.Equals(a, b))
+            {
+                throw new AssertException($"Assertion: {a} == {b}", memberName, sourceFilePath, sourceLineNumber);
+            }
         }
     }
 }

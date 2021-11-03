@@ -13,7 +13,7 @@ namespace Dotx64Dbg.Managed.Tests
     {
 #if _X64_
         [Test]
-        public void TestEncodeX64()
+        public void TestEncodeXorRaxRax()
         {
             var assembler = new Dotx64Dbg.Assembler();
             assembler.Xor(Rax, Rax);
@@ -22,12 +22,13 @@ namespace Dotx64Dbg.Managed.Tests
             var data = assembler.GetData();
             AssertEq(3, data.Length);
             AssertEq(0x48, data[0]);
-            AssertEq(0x33, data[1]);
+            AssertEq(0x31, data[1]);
             AssertEq(0xC0, data[2]);
         }
-#else
+#endif
+
         [Test]
-        public void TestEncodeX86()
+        public void TestEncodeXorEaxEax()
         {
             var assembler = new Dotx64Dbg.Assembler();
             assembler.Xor(Eax, Eax);
@@ -35,9 +36,8 @@ namespace Dotx64Dbg.Managed.Tests
 
             var data = assembler.GetData();
             AssertEq(2, data.Length);
-            AssertEq(0x33, data[0]);
+            AssertEq(0x31, data[0]);
             AssertEq(0xC0, data[1]);
         }
-#endif
     }
 }
