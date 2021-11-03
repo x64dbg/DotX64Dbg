@@ -437,6 +437,52 @@ namespace Dotx64Dbg {
             property int32_t Scale;
             property int64_t Displacement;
 
+            OpMem^ WithSegment(Register reg)
+            {
+                Segment = reg;
+                return this;
+            }
+
+            OpMem^ WithSegment(OpReg^ reg)
+            {
+                Segment = reg->Value;
+                return this;
+            }
+
+            OpMem^ WithBase(Register reg)
+            {
+                Base = reg;
+                return this;
+            }
+            OpMem^ WithBase(OpReg^ reg)
+            {
+                Base = reg->Value;
+                return this;
+            }
+
+            OpMem^ WithIndex(Register reg)
+            {
+                Index = reg;
+                return this;
+            }
+            OpMem^ WithIndex(OpReg^ reg)
+            {
+                Index = reg->Value;
+                return this;
+            }
+
+            OpMem^ WithScale(int32_t scale)
+            {
+                Scale = scale;
+                return this;
+            }
+
+            OpMem^ WithDisplacement(int64_t disp)
+            {
+                Displacement = disp;
+                return this;
+            }
+
             System::String^ ToString() override
             {
                 char temp[128];
