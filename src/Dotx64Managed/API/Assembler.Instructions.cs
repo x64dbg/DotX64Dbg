@@ -184,12 +184,8 @@ namespace Dotx64Dbg
         public Assembler Sar(Operand.Memory a, Operand.Immediate b) => CreateInstr(Mnemonic.Sar, a, b);
         public Assembler Sfence() => CreateInstr(Mnemonic.Sfence);
         public Assembler Sgdt(Operand.Memory a) => CreateInstr(Mnemonic.Sgdt, a);
-        public Assembler Shl(Operand.Register a) => CreateInstr(Mnemonic.Shl, a);
-        public Assembler Shl(Operand.Memory a) => CreateInstr(Mnemonic.Shl, a);
         public Assembler Shl(Operand.Register a, Operand.Immediate b) => CreateInstr(Mnemonic.Shl, a, b);
         public Assembler Shl(Operand.Memory a, Operand.Immediate b) => CreateInstr(Mnemonic.Shl, a, b);
-        public Assembler Shr(Operand.Register a) => CreateInstr(Mnemonic.Shr, a);
-        public Assembler Shr(Operand.Memory a) => CreateInstr(Mnemonic.Shr, a);
         public Assembler Shr(Operand.Register a, Operand.Immediate b) => CreateInstr(Mnemonic.Shr, a, b);
         public Assembler Shr(Operand.Memory a, Operand.Immediate b) => CreateInstr(Mnemonic.Shr, a, b);
         public Assembler Shld(Operand.Register a, Operand.Register b) => CreateInstr(Mnemonic.Shld, a, b);
