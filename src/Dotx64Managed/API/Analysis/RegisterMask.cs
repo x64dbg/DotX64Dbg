@@ -13,39 +13,39 @@ namespace Dotx64Dbg.Analysis
         public static readonly RegisterMaskGp None = new RegisterMaskGp();
         public static readonly RegisterMaskGp All = new RegisterMaskGp { Mask = ~0u };
 
-        public RegisterMaskGp Add(Dotx64Dbg.Operand.OpReg reg)
+        public RegisterMaskGp Add(Dotx64Dbg.Operand.Register reg)
         {
             return Add(reg.Value);
         }
 
-        public RegisterMaskGp Add(Register reg)
+        public RegisterMaskGp Add(RegisterId reg)
         {
-            if (reg == Register.None)
+            if (reg == RegisterId.None)
                 return this;
 
-            if (reg >= Register.Al && reg <= Register.R15b)
+            if (reg >= RegisterId.Al && reg <= RegisterId.R15b)
             {
-                var index = (int)reg - (int)Register.Al;
-                if (reg >= Register.Ah && reg <= Register.Bh)
+                var index = (int)reg - (int)RegisterId.Al;
+                if (reg >= RegisterId.Ah && reg <= RegisterId.Bh)
                 {
                     index -= 4;
                 }
                 Mask |= (RegisterMaskType)(1u << index);
             }
-            else if (reg >= Register.Ax && reg <= Register.R15w)
+            else if (reg >= RegisterId.Ax && reg <= RegisterId.R15w)
             {
-                var index = (int)reg - (int)Register.Ax;
-                Mask |= (RegisterMaskType)(1u << index);
+                var index = (int)reg - (int)RegisterId.Ax;
+                Mask |= (UInt16)(1u << index);
             }
-            else if (reg >= Register.Eax && reg <= Register.R15d)
+            else if (reg >= RegisterId.Eax && reg <= RegisterId.R15d)
             {
-                var index = (int)reg - (int)Register.Eax;
-                Mask |= (RegisterMaskType)(1u << index);
+                var index = (int)reg - (int)RegisterId.Eax;
+                Mask |= (UInt16)(1u << index);
             }
-            else if (reg >= Register.Rax && reg <= Register.R15)
+            else if (reg >= RegisterId.Rax && reg <= RegisterId.R15)
             {
-                var index = (int)reg - (int)Register.Rax;
-                Mask |= (RegisterMaskType)(1u << index);
+                var index = (int)reg - (int)RegisterId.Rax;
+                Mask |= (UInt16)(1u << index);
             }
             else
             {
@@ -62,9 +62,9 @@ namespace Dotx64Dbg.Analysis
             }
         }
 
-        public void GetRegisters(out Operand.OpReg[] res)
+        public void GetRegisters(out Operand.Register[] res)
         {
-            res = new Operand.OpReg[Count];
+            res = new Operand.Register[Count];
 
             var idx = 0;
             for (int i = 0; i < MaxRegisters; i++)
@@ -72,27 +72,29 @@ namespace Dotx64Dbg.Analysis
                 if ((Mask & (1u << i)) != 0)
                 {
 #if _X64_
-                    var regId = Register.Rax + i;
+                    var regId = RegisterId.Rax + i;
 #else
-                    var regId = Register.Eax + i;
+                    var regId = RegisterId.Eax + i;
 #endif
                     res[idx] = Operands.Reg(regId);
                     idx++;
                 }
             }
         }
-        public Register[] GetRegisters()
+
+        public RegisterId[] GetRegisters()
         {
-            var res = new Register[Count];
+            var res = new RegisterId[Count];
+
             var idx = 0;
             for (int i = 0; i < 32; i++)
             {
                 if ((Mask & (1u << i)) != 0)
                 {
 #if _X64_
-                    var regId = Register.Rax + i;
+                    var regId = RegisterId.Rax + i;
 #else
-                    var regId = Register.Eax + i;
+                    var regId = RegisterId.Eax + i;
 #endif
                     res[idx] = regId;
                     idx++;

@@ -276,7 +276,7 @@ namespace Dotx64Dbg {
 
             if (op->Type == OperandType::Register)
             {
-                auto opReg = (Operand::OpReg^)op;
+                auto opReg = (Operand::Register^)op;
                 return convertAsmJitRegister(opReg->Value);
             }
             else if (op->Type == OperandType::Immediate)
@@ -286,7 +286,7 @@ namespace Dotx64Dbg {
             }
             else if (op->Type == OperandType::Memory)
             {
-                auto opMem = (Operand::OpMem^)op;
+                auto opMem = (Operand::Memory^)op;
                 auto mem = asmjit::x86::Mem();
                 mem.setBase(convertAsmJitRegister(opMem->Base));
                 mem.setIndex(convertAsmJitRegister(opMem->Index), opMem->Scale);

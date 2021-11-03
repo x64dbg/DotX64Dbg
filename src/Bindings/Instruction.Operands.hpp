@@ -25,560 +25,560 @@ namespace Dotx64Dbg {
     public:
         // Byte
         //////////////////////////////////////////////////////////////////////////
-        static Operand::OpMem^ BytePtr(Int64 disp)
+        static Operand::Memory^ BytePtr(Int64 disp)
         {
-            return gcnew Operand::OpMem(8, Register::None, Register::None, 0, disp);
+            return gcnew Operand::Memory(8, RegisterId::None, RegisterId::None, 0, disp);
         }
 
-        static Operand::OpMem^ BytePtr(Register baseReg)
+        static Operand::Memory^ BytePtr(RegisterId baseReg)
         {
-            return gcnew Operand::OpMem(8, baseReg, Register::None, 0, 0);
+            return gcnew Operand::Memory(8, baseReg, RegisterId::None, 0, 0);
         }
-        static Operand::OpMem^ BytePtr(Operand::OpReg^ baseReg)
+        static Operand::Memory^ BytePtr(Operand::Register^ baseReg)
         {
-            return gcnew Operand::OpMem(8, baseReg->Value, Register::None, 0, 0);
-        }
-
-        static Operand::OpMem^ BytePtr(Register baseReg, Int64 disp)
-        {
-            return gcnew Operand::OpMem(8, baseReg, Register::None, 0, disp);
-        }
-        static Operand::OpMem^ BytePtr(Operand::OpReg^ baseReg, Int64 disp)
-        {
-            return gcnew Operand::OpMem(8, baseReg->Value, Register::None, 0, disp);
+            return gcnew Operand::Memory(8, baseReg->Value, RegisterId::None, 0, 0);
         }
 
-        static Operand::OpMem^ BytePtr(Register baseReg, Register index)
+        static Operand::Memory^ BytePtr(RegisterId baseReg, Int64 disp)
         {
-            return gcnew Operand::OpMem(8, baseReg, index, 0, 0);
+            return gcnew Operand::Memory(8, baseReg, RegisterId::None, 0, disp);
         }
-        static Operand::OpMem^ BytePtr(Operand::OpReg^ baseReg, Operand::OpReg^ index)
+        static Operand::Memory^ BytePtr(Operand::Register^ baseReg, Int64 disp)
         {
-            return gcnew Operand::OpMem(8, baseReg->Value, index->Value, 0, 0);
-        }
-
-        static Operand::OpMem^ BytePtr(Register baseReg, Register index, Int64 disp)
-        {
-            return gcnew Operand::OpMem(8, baseReg, index, 0, disp);
-        }
-        static Operand::OpMem^ BytePtr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int64 disp)
-        {
-            return gcnew Operand::OpMem(8, baseReg->Value, index->Value, 0, disp);
+            return gcnew Operand::Memory(8, baseReg->Value, RegisterId::None, 0, disp);
         }
 
-        static Operand::OpMem^ BytePtr(Register baseReg, Register index, Int32 scale, Int64 disp)
+        static Operand::Memory^ BytePtr(RegisterId baseReg, RegisterId index)
         {
-            return gcnew Operand::OpMem(8, baseReg, index, scale, disp);
+            return gcnew Operand::Memory(8, baseReg, index, 0, 0);
         }
-        static Operand::OpMem^ BytePtr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int32 scale, Int64 disp)
+        static Operand::Memory^ BytePtr(Operand::Register^ baseReg, Operand::Register^ index)
         {
-            return gcnew Operand::OpMem(8, baseReg->Value, index->Value, scale, disp);
+            return gcnew Operand::Memory(8, baseReg->Value, index->Value, 0, 0);
+        }
+
+        static Operand::Memory^ BytePtr(RegisterId baseReg, RegisterId index, Int64 disp)
+        {
+            return gcnew Operand::Memory(8, baseReg, index, 0, disp);
+        }
+        static Operand::Memory^ BytePtr(Operand::Register^ baseReg, Operand::Register^ index, Int64 disp)
+        {
+            return gcnew Operand::Memory(8, baseReg->Value, index->Value, 0, disp);
+        }
+
+        static Operand::Memory^ BytePtr(RegisterId baseReg, RegisterId index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(8, baseReg, index, scale, disp);
+        }
+        static Operand::Memory^ BytePtr(Operand::Register^ baseReg, Operand::Register^ index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(8, baseReg->Value, index->Value, scale, disp);
         }
 
         // Word
         //////////////////////////////////////////////////////////////////////////
-        static Operand::OpMem^ WordPtr(Int64 disp)
+        static Operand::Memory^ WordPtr(Int64 disp)
         {
-            return gcnew Operand::OpMem(16, Register::None, Register::None, 0, disp);
+            return gcnew Operand::Memory(16, RegisterId::None, RegisterId::None, 0, disp);
         }
 
-        static Operand::OpMem^ WordPtr(Register baseReg)
+        static Operand::Memory^ WordPtr(RegisterId baseReg)
         {
-            return gcnew Operand::OpMem(16, baseReg, Register::None, 0, 0);
+            return gcnew Operand::Memory(16, baseReg, RegisterId::None, 0, 0);
         }
-        static Operand::OpMem^ WordPtr(Operand::OpReg^ baseReg)
+        static Operand::Memory^ WordPtr(Operand::Register^ baseReg)
         {
-            return gcnew Operand::OpMem(16, baseReg->Value, Register::None, 0, 0);
-        }
-
-        static Operand::OpMem^ WordPtr(Register baseReg, Int64 disp)
-        {
-            return gcnew Operand::OpMem(16, baseReg, Register::None, 0, disp);
-        }
-        static Operand::OpMem^ WordPtr(Operand::OpReg^ baseReg, Int64 disp)
-        {
-            return gcnew Operand::OpMem(16, baseReg->Value, Register::None, 0, disp);
+            return gcnew Operand::Memory(16, baseReg->Value, RegisterId::None, 0, 0);
         }
 
-        static Operand::OpMem^ WordPtr(Register baseReg, Register index)
+        static Operand::Memory^ WordPtr(RegisterId baseReg, Int64 disp)
         {
-            return gcnew Operand::OpMem(16, baseReg, index, 0, 0);
+            return gcnew Operand::Memory(16, baseReg, RegisterId::None, 0, disp);
         }
-        static Operand::OpMem^ WordPtr(Operand::OpReg^ baseReg, Operand::OpReg^ index)
+        static Operand::Memory^ WordPtr(Operand::Register^ baseReg, Int64 disp)
         {
-            return gcnew Operand::OpMem(16, baseReg->Value, index->Value, 0, 0);
-        }
-
-        static Operand::OpMem^ WordPtr(Register baseReg, Register index, Int64 disp)
-        {
-            return gcnew Operand::OpMem(16, baseReg, index, 0, disp);
-        }
-        static Operand::OpMem^ WordPtr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int64 disp)
-        {
-            return gcnew Operand::OpMem(16, baseReg->Value, index->Value, 0, disp);
+            return gcnew Operand::Memory(16, baseReg->Value, RegisterId::None, 0, disp);
         }
 
-        static Operand::OpMem^ WordPtr(Register baseReg, Register index, Int32 scale, Int64 disp)
+        static Operand::Memory^ WordPtr(RegisterId baseReg, RegisterId index)
         {
-            return gcnew Operand::OpMem(16, baseReg, index, scale, disp);
+            return gcnew Operand::Memory(16, baseReg, index, 0, 0);
         }
-        static Operand::OpMem^ WordPtr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int32 scale, Int64 disp)
+        static Operand::Memory^ WordPtr(Operand::Register^ baseReg, Operand::Register^ index)
         {
-            return gcnew Operand::OpMem(16, baseReg->Value, index->Value, scale, disp);
+            return gcnew Operand::Memory(16, baseReg->Value, index->Value, 0, 0);
+        }
+
+        static Operand::Memory^ WordPtr(RegisterId baseReg, RegisterId index, Int64 disp)
+        {
+            return gcnew Operand::Memory(16, baseReg, index, 0, disp);
+        }
+        static Operand::Memory^ WordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int64 disp)
+        {
+            return gcnew Operand::Memory(16, baseReg->Value, index->Value, 0, disp);
+        }
+
+        static Operand::Memory^ WordPtr(RegisterId baseReg, RegisterId index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(16, baseReg, index, scale, disp);
+        }
+        static Operand::Memory^ WordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(16, baseReg->Value, index->Value, scale, disp);
         }
 
         // Dword
         //////////////////////////////////////////////////////////////////////////
-        static Operand::OpMem^ DwordPtr(Int64 disp)
+        static Operand::Memory^ DwordPtr(Int64 disp)
         {
-            return gcnew Operand::OpMem(32, Register::None, Register::None, 0, disp);
+            return gcnew Operand::Memory(32, RegisterId::None, RegisterId::None, 0, disp);
         }
 
-        static Operand::OpMem^ DwordPtr(Register baseReg)
+        static Operand::Memory^ DwordPtr(RegisterId baseReg)
         {
-            return gcnew Operand::OpMem(32, baseReg, Register::None, 0, 0);
+            return gcnew Operand::Memory(32, baseReg, RegisterId::None, 0, 0);
         }
-        static Operand::OpMem^ DwordPtr(Operand::OpReg^ baseReg)
+        static Operand::Memory^ DwordPtr(Operand::Register^ baseReg)
         {
-            return gcnew Operand::OpMem(32, baseReg->Value, Register::None, 0, 0);
-        }
-
-        static Operand::OpMem^ DwordPtr(Register baseReg, Int64 disp)
-        {
-            return gcnew Operand::OpMem(32, baseReg, Register::None, 0, disp);
-        }
-        static Operand::OpMem^ DwordPtr(Operand::OpReg^ baseReg, Int64 disp)
-        {
-            return gcnew Operand::OpMem(32, baseReg->Value, Register::None, 0, disp);
+            return gcnew Operand::Memory(32, baseReg->Value, RegisterId::None, 0, 0);
         }
 
-        static Operand::OpMem^ DwordPtr(Register baseReg, Register index)
+        static Operand::Memory^ DwordPtr(RegisterId baseReg, Int64 disp)
         {
-            return gcnew Operand::OpMem(32, baseReg, index, 0, 0);
+            return gcnew Operand::Memory(32, baseReg, RegisterId::None, 0, disp);
         }
-        static Operand::OpMem^ DwordPtr(Operand::OpReg^ baseReg, Operand::OpReg^ index)
+        static Operand::Memory^ DwordPtr(Operand::Register^ baseReg, Int64 disp)
         {
-            return gcnew Operand::OpMem(32, baseReg->Value, index->Value, 0, 0);
-        }
-
-        static Operand::OpMem^ DwordPtr(Register baseReg, Register index, Int64 disp)
-        {
-            return gcnew Operand::OpMem(32, baseReg, index, 0, disp);
-        }
-        static Operand::OpMem^ DwordPtr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int64 disp)
-        {
-            return gcnew Operand::OpMem(32, baseReg->Value, index->Value, 0, disp);
+            return gcnew Operand::Memory(32, baseReg->Value, RegisterId::None, 0, disp);
         }
 
-        static Operand::OpMem^ DwordPtr(Register baseReg, Register index, Int32 scale, Int64 disp)
+        static Operand::Memory^ DwordPtr(RegisterId baseReg, RegisterId index)
         {
-            return gcnew Operand::OpMem(32, baseReg, index, scale, disp);
+            return gcnew Operand::Memory(32, baseReg, index, 0, 0);
         }
-        static Operand::OpMem^ DwordPtr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int32 scale, Int64 disp)
+        static Operand::Memory^ DwordPtr(Operand::Register^ baseReg, Operand::Register^ index)
         {
-            return gcnew Operand::OpMem(32, baseReg->Value, index->Value, scale, disp);
+            return gcnew Operand::Memory(32, baseReg->Value, index->Value, 0, 0);
+        }
+
+        static Operand::Memory^ DwordPtr(RegisterId baseReg, RegisterId index, Int64 disp)
+        {
+            return gcnew Operand::Memory(32, baseReg, index, 0, disp);
+        }
+        static Operand::Memory^ DwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int64 disp)
+        {
+            return gcnew Operand::Memory(32, baseReg->Value, index->Value, 0, disp);
+        }
+
+        static Operand::Memory^ DwordPtr(RegisterId baseReg, RegisterId index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(32, baseReg, index, scale, disp);
+        }
+        static Operand::Memory^ DwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(32, baseReg->Value, index->Value, scale, disp);
         }
 
         // Qword
         //////////////////////////////////////////////////////////////////////////
-        static Operand::OpMem^ QwordPtr(Int64 disp)
+        static Operand::Memory^ QwordPtr(Int64 disp)
         {
-            return gcnew Operand::OpMem(64, Register::None, Register::None, 0, disp);
+            return gcnew Operand::Memory(64, RegisterId::None, RegisterId::None, 0, disp);
         }
-        static Operand::OpMem^ QwordPtr(Register baseReg)
+        static Operand::Memory^ QwordPtr(RegisterId baseReg)
         {
-            return gcnew Operand::OpMem(64, baseReg, Register::None, 0, 0);
+            return gcnew Operand::Memory(64, baseReg, RegisterId::None, 0, 0);
         }
-        static Operand::OpMem^ QwordPtr(Operand::OpReg^ baseReg)
+        static Operand::Memory^ QwordPtr(Operand::Register^ baseReg)
         {
-            return gcnew Operand::OpMem(64, baseReg->Value, Register::None, 0, 0);
-        }
-
-        static Operand::OpMem^ QwordPtr(Register baseReg, Int64 disp)
-        {
-            return gcnew Operand::OpMem(64, baseReg, Register::None, 0, disp);
-        }
-        static Operand::OpMem^ QwordPtr(Operand::OpReg^ baseReg, Int64 disp)
-        {
-            return gcnew Operand::OpMem(64, baseReg->Value, Register::None, 0, disp);
+            return gcnew Operand::Memory(64, baseReg->Value, RegisterId::None, 0, 0);
         }
 
-        static Operand::OpMem^ QwordPtr(Register baseReg, Register index)
+        static Operand::Memory^ QwordPtr(RegisterId baseReg, Int64 disp)
         {
-            return gcnew Operand::OpMem(64, baseReg, index, 0, 0);
+            return gcnew Operand::Memory(64, baseReg, RegisterId::None, 0, disp);
         }
-        static Operand::OpMem^ QwordPtr(Operand::OpReg^ baseReg, Operand::OpReg^ index)
+        static Operand::Memory^ QwordPtr(Operand::Register^ baseReg, Int64 disp)
         {
-            return gcnew Operand::OpMem(64, baseReg->Value, index->Value, 0, 0);
-        }
-
-        static Operand::OpMem^ QwordPtr(Register baseReg, Register index, Int64 disp)
-        {
-            return gcnew Operand::OpMem(64, baseReg, index, 0, disp);
-        }
-        static Operand::OpMem^ QwordPtr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int64 disp)
-        {
-            return gcnew Operand::OpMem(64, baseReg->Value, index->Value, 0, disp);
+            return gcnew Operand::Memory(64, baseReg->Value, RegisterId::None, 0, disp);
         }
 
-        static Operand::OpMem^ QwordPtr(Register baseReg, Register index, Int32 scale, Int64 disp)
+        static Operand::Memory^ QwordPtr(RegisterId baseReg, RegisterId index)
         {
-            return gcnew Operand::OpMem(64, baseReg, index, scale, disp);
+            return gcnew Operand::Memory(64, baseReg, index, 0, 0);
         }
-        static Operand::OpMem^ QwordPtr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int32 scale, Int64 disp)
+        static Operand::Memory^ QwordPtr(Operand::Register^ baseReg, Operand::Register^ index)
         {
-            return gcnew Operand::OpMem(64, baseReg->Value, index->Value, scale, disp);
+            return gcnew Operand::Memory(64, baseReg->Value, index->Value, 0, 0);
+        }
+
+        static Operand::Memory^ QwordPtr(RegisterId baseReg, RegisterId index, Int64 disp)
+        {
+            return gcnew Operand::Memory(64, baseReg, index, 0, disp);
+        }
+        static Operand::Memory^ QwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int64 disp)
+        {
+            return gcnew Operand::Memory(64, baseReg->Value, index->Value, 0, disp);
+        }
+
+        static Operand::Memory^ QwordPtr(RegisterId baseReg, RegisterId index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(64, baseReg, index, scale, disp);
+        }
+        static Operand::Memory^ QwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(64, baseReg->Value, index->Value, scale, disp);
         }
 
         // Host
         //////////////////////////////////////////////////////////////////////////
-        static Operand::OpMem^ Ptr(Int64 disp)
+        static Operand::Memory^ Ptr(Int64 disp)
         {
-            return gcnew Operand::OpMem(AddressSize(), Register::None, Register::None, 0, disp);
+            return gcnew Operand::Memory(AddressSize(), RegisterId::None, RegisterId::None, 0, disp);
         }
-        static Operand::OpMem^ Ptr(Register baseReg)
+        static Operand::Memory^ Ptr(RegisterId baseReg)
         {
-            return gcnew Operand::OpMem(AddressSize(), baseReg, Register::None, 0, 0);
+            return gcnew Operand::Memory(AddressSize(), baseReg, RegisterId::None, 0, 0);
         }
-        static Operand::OpMem^ Ptr(Operand::OpReg^ baseReg)
+        static Operand::Memory^ Ptr(Operand::Register^ baseReg)
         {
-            return gcnew Operand::OpMem(AddressSize(), baseReg->Value, Register::None, 0, 0);
-        }
-
-        static Operand::OpMem^ Ptr(Register baseReg, Int64 disp)
-        {
-            return gcnew Operand::OpMem(AddressSize(), baseReg, Register::None, 0, disp);
-        }
-        static Operand::OpMem^ Ptr(Operand::OpReg^ baseReg, Int64 disp)
-        {
-            return gcnew Operand::OpMem(AddressSize(), baseReg->Value, Register::None, 0, disp);
+            return gcnew Operand::Memory(AddressSize(), baseReg->Value, RegisterId::None, 0, 0);
         }
 
-        static Operand::OpMem^ Ptr(Register baseReg, Register index)
+        static Operand::Memory^ Ptr(RegisterId baseReg, Int64 disp)
         {
-            return gcnew Operand::OpMem(AddressSize(), baseReg, index, 0, 0);
+            return gcnew Operand::Memory(AddressSize(), baseReg, RegisterId::None, 0, disp);
         }
-        static Operand::OpMem^ Ptr(Operand::OpReg^ baseReg, Operand::OpReg^ index)
+        static Operand::Memory^ Ptr(Operand::Register^ baseReg, Int64 disp)
         {
-            return gcnew Operand::OpMem(AddressSize(), baseReg->Value, index->Value, 0, 0);
-        }
-
-        static Operand::OpMem^ Ptr(Register baseReg, Register index, Int64 disp)
-        {
-            return gcnew Operand::OpMem(AddressSize(), baseReg, index, 0, disp);
-        }
-        static Operand::OpMem^ Ptr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int64 disp)
-        {
-            return gcnew Operand::OpMem(AddressSize(), baseReg->Value, index->Value, 0, disp);
+            return gcnew Operand::Memory(AddressSize(), baseReg->Value, RegisterId::None, 0, disp);
         }
 
-        static Operand::OpMem^ Ptr(Register baseReg, Register index, Int32 scale, Int64 disp)
+        static Operand::Memory^ Ptr(RegisterId baseReg, RegisterId index)
         {
-            return gcnew Operand::OpMem(AddressSize(), baseReg, index, scale, disp);
+            return gcnew Operand::Memory(AddressSize(), baseReg, index, 0, 0);
         }
-        static Operand::OpMem^ Ptr(Operand::OpReg^ baseReg, Operand::OpReg^ index, Int32 scale, Int64 disp)
+        static Operand::Memory^ Ptr(Operand::Register^ baseReg, Operand::Register^ index)
         {
-            return gcnew Operand::OpMem(AddressSize(), baseReg->Value, index->Value, scale, disp);
+            return gcnew Operand::Memory(AddressSize(), baseReg->Value, index->Value, 0, 0);
+        }
+
+        static Operand::Memory^ Ptr(RegisterId baseReg, RegisterId index, Int64 disp)
+        {
+            return gcnew Operand::Memory(AddressSize(), baseReg, index, 0, disp);
+        }
+        static Operand::Memory^ Ptr(Operand::Register^ baseReg, Operand::Register^ index, Int64 disp)
+        {
+            return gcnew Operand::Memory(AddressSize(), baseReg->Value, index->Value, 0, disp);
+        }
+
+        static Operand::Memory^ Ptr(RegisterId baseReg, RegisterId index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(AddressSize(), baseReg, index, scale, disp);
+        }
+        static Operand::Memory^ Ptr(Operand::Register^ baseReg, Operand::Register^ index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(AddressSize(), baseReg->Value, index->Value, scale, disp);
         }
 
     public:
         // General purpose registers  8-bit
-        static initonly Operand::OpReg^ Al = gcnew Operand::OpReg(Register::Al);
-        static initonly Operand::OpReg^ Cl = gcnew Operand::OpReg(Register::Cl);
-        static initonly Operand::OpReg^ Dl = gcnew Operand::OpReg(Register::Dl);
-        static initonly Operand::OpReg^ Bl = gcnew Operand::OpReg(Register::Bl);
-        static initonly Operand::OpReg^ Ah = gcnew Operand::OpReg(Register::Ah);
-        static initonly Operand::OpReg^ Ch = gcnew Operand::OpReg(Register::Ch);
-        static initonly Operand::OpReg^ Dh = gcnew Operand::OpReg(Register::Dh);
-        static initonly Operand::OpReg^ Bh = gcnew Operand::OpReg(Register::Bh);
-        static initonly Operand::OpReg^ Spl = gcnew Operand::OpReg(Register::Spl);
-        static initonly Operand::OpReg^ Bpl = gcnew Operand::OpReg(Register::Bpl);
-        static initonly Operand::OpReg^ Sil = gcnew Operand::OpReg(Register::Sil);
-        static initonly Operand::OpReg^ Dil = gcnew Operand::OpReg(Register::Dil);
+        static initonly Operand::Register^ Al = gcnew Operand::Register(RegisterId::Al);
+        static initonly Operand::Register^ Cl = gcnew Operand::Register(RegisterId::Cl);
+        static initonly Operand::Register^ Dl = gcnew Operand::Register(RegisterId::Dl);
+        static initonly Operand::Register^ Bl = gcnew Operand::Register(RegisterId::Bl);
+        static initonly Operand::Register^ Ah = gcnew Operand::Register(RegisterId::Ah);
+        static initonly Operand::Register^ Ch = gcnew Operand::Register(RegisterId::Ch);
+        static initonly Operand::Register^ Dh = gcnew Operand::Register(RegisterId::Dh);
+        static initonly Operand::Register^ Bh = gcnew Operand::Register(RegisterId::Bh);
+        static initonly Operand::Register^ Spl = gcnew Operand::Register(RegisterId::Spl);
+        static initonly Operand::Register^ Bpl = gcnew Operand::Register(RegisterId::Bpl);
+        static initonly Operand::Register^ Sil = gcnew Operand::Register(RegisterId::Sil);
+        static initonly Operand::Register^ Dil = gcnew Operand::Register(RegisterId::Dil);
 #if _M_X64
-        static initonly Operand::OpReg^ R8b = gcnew Operand::OpReg(Register::R8b);
-        static initonly Operand::OpReg^ R9b = gcnew Operand::OpReg(Register::R9b);
-        static initonly Operand::OpReg^ R10b = gcnew Operand::OpReg(Register::R10b);
-        static initonly Operand::OpReg^ R11b = gcnew Operand::OpReg(Register::R11b);
-        static initonly Operand::OpReg^ R12b = gcnew Operand::OpReg(Register::R12b);
-        static initonly Operand::OpReg^ R13b = gcnew Operand::OpReg(Register::R13b);
-        static initonly Operand::OpReg^ R14b = gcnew Operand::OpReg(Register::R14b);
-        static initonly Operand::OpReg^ R15b = gcnew Operand::OpReg(Register::R15b);
+        static initonly Operand::Register^ R8b = gcnew Operand::Register(RegisterId::R8b);
+        static initonly Operand::Register^ R9b = gcnew Operand::Register(RegisterId::R9b);
+        static initonly Operand::Register^ R10b = gcnew Operand::Register(RegisterId::R10b);
+        static initonly Operand::Register^ R11b = gcnew Operand::Register(RegisterId::R11b);
+        static initonly Operand::Register^ R12b = gcnew Operand::Register(RegisterId::R12b);
+        static initonly Operand::Register^ R13b = gcnew Operand::Register(RegisterId::R13b);
+        static initonly Operand::Register^ R14b = gcnew Operand::Register(RegisterId::R14b);
+        static initonly Operand::Register^ R15b = gcnew Operand::Register(RegisterId::R15b);
 #endif
         // General purpose registers 16-bit
-        static initonly Operand::OpReg^ Ax = gcnew Operand::OpReg(Register::Ax);
-        static initonly Operand::OpReg^ Cx = gcnew Operand::OpReg(Register::Cx);
-        static initonly Operand::OpReg^ Dx = gcnew Operand::OpReg(Register::Dx);
-        static initonly Operand::OpReg^ Bx = gcnew Operand::OpReg(Register::Bx);
-        static initonly Operand::OpReg^ Sp = gcnew Operand::OpReg(Register::Sp);
-        static initonly Operand::OpReg^ Bp = gcnew Operand::OpReg(Register::Bp);
-        static initonly Operand::OpReg^ Si = gcnew Operand::OpReg(Register::Si);
-        static initonly Operand::OpReg^ Di = gcnew Operand::OpReg(Register::Di);
+        static initonly Operand::Register^ Ax = gcnew Operand::Register(RegisterId::Ax);
+        static initonly Operand::Register^ Cx = gcnew Operand::Register(RegisterId::Cx);
+        static initonly Operand::Register^ Dx = gcnew Operand::Register(RegisterId::Dx);
+        static initonly Operand::Register^ Bx = gcnew Operand::Register(RegisterId::Bx);
+        static initonly Operand::Register^ Sp = gcnew Operand::Register(RegisterId::Sp);
+        static initonly Operand::Register^ Bp = gcnew Operand::Register(RegisterId::Bp);
+        static initonly Operand::Register^ Si = gcnew Operand::Register(RegisterId::Si);
+        static initonly Operand::Register^ Di = gcnew Operand::Register(RegisterId::Di);
 #if _M_X64
-        static initonly Operand::OpReg^ R8w = gcnew Operand::OpReg(Register::R8w);
-        static initonly Operand::OpReg^ R9w = gcnew Operand::OpReg(Register::R9w);
-        static initonly Operand::OpReg^ R10w = gcnew Operand::OpReg(Register::R10w);
-        static initonly Operand::OpReg^ R11w = gcnew Operand::OpReg(Register::R11w);
-        static initonly Operand::OpReg^ R12w = gcnew Operand::OpReg(Register::R12w);
-        static initonly Operand::OpReg^ R13w = gcnew Operand::OpReg(Register::R13w);
-        static initonly Operand::OpReg^ R14w = gcnew Operand::OpReg(Register::R14w);
-        static initonly Operand::OpReg^ R15w = gcnew Operand::OpReg(Register::R15w);
+        static initonly Operand::Register^ R8w = gcnew Operand::Register(RegisterId::R8w);
+        static initonly Operand::Register^ R9w = gcnew Operand::Register(RegisterId::R9w);
+        static initonly Operand::Register^ R10w = gcnew Operand::Register(RegisterId::R10w);
+        static initonly Operand::Register^ R11w = gcnew Operand::Register(RegisterId::R11w);
+        static initonly Operand::Register^ R12w = gcnew Operand::Register(RegisterId::R12w);
+        static initonly Operand::Register^ R13w = gcnew Operand::Register(RegisterId::R13w);
+        static initonly Operand::Register^ R14w = gcnew Operand::Register(RegisterId::R14w);
+        static initonly Operand::Register^ R15w = gcnew Operand::Register(RegisterId::R15w);
 #endif
         // General purpose registers 32-bit
-        static initonly Operand::OpReg^ Eax = gcnew Operand::OpReg(Register::Eax);
-        static initonly Operand::OpReg^ Ecx = gcnew Operand::OpReg(Register::Ecx);
-        static initonly Operand::OpReg^ Edx = gcnew Operand::OpReg(Register::Edx);
-        static initonly Operand::OpReg^ Ebx = gcnew Operand::OpReg(Register::Ebx);
-        static initonly Operand::OpReg^ Esp = gcnew Operand::OpReg(Register::Esp);
-        static initonly Operand::OpReg^ Ebp = gcnew Operand::OpReg(Register::Ebp);
-        static initonly Operand::OpReg^ Esi = gcnew Operand::OpReg(Register::Esi);
-        static initonly Operand::OpReg^ Edi = gcnew Operand::OpReg(Register::Edi);
-        static initonly Operand::OpReg^ R8d = gcnew Operand::OpReg(Register::R8d);
-        static initonly Operand::OpReg^ R9d = gcnew Operand::OpReg(Register::R9d);
-        static initonly Operand::OpReg^ R10d = gcnew Operand::OpReg(Register::R10d);
-        static initonly Operand::OpReg^ R11d = gcnew Operand::OpReg(Register::R11d);
-        static initonly Operand::OpReg^ R12d = gcnew Operand::OpReg(Register::R12d);
-        static initonly Operand::OpReg^ R13d = gcnew Operand::OpReg(Register::R13d);
-        static initonly Operand::OpReg^ R14d = gcnew Operand::OpReg(Register::R14d);
-        static initonly Operand::OpReg^ R15d = gcnew Operand::OpReg(Register::R15d);
+        static initonly Operand::Register^ Eax = gcnew Operand::Register(RegisterId::Eax);
+        static initonly Operand::Register^ Ecx = gcnew Operand::Register(RegisterId::Ecx);
+        static initonly Operand::Register^ Edx = gcnew Operand::Register(RegisterId::Edx);
+        static initonly Operand::Register^ Ebx = gcnew Operand::Register(RegisterId::Ebx);
+        static initonly Operand::Register^ Esp = gcnew Operand::Register(RegisterId::Esp);
+        static initonly Operand::Register^ Ebp = gcnew Operand::Register(RegisterId::Ebp);
+        static initonly Operand::Register^ Esi = gcnew Operand::Register(RegisterId::Esi);
+        static initonly Operand::Register^ Edi = gcnew Operand::Register(RegisterId::Edi);
+        static initonly Operand::Register^ R8d = gcnew Operand::Register(RegisterId::R8d);
+        static initonly Operand::Register^ R9d = gcnew Operand::Register(RegisterId::R9d);
+        static initonly Operand::Register^ R10d = gcnew Operand::Register(RegisterId::R10d);
+        static initonly Operand::Register^ R11d = gcnew Operand::Register(RegisterId::R11d);
+        static initonly Operand::Register^ R12d = gcnew Operand::Register(RegisterId::R12d);
+        static initonly Operand::Register^ R13d = gcnew Operand::Register(RegisterId::R13d);
+        static initonly Operand::Register^ R14d = gcnew Operand::Register(RegisterId::R14d);
+        static initonly Operand::Register^ R15d = gcnew Operand::Register(RegisterId::R15d);
 
 #if _M_X64
         // General purpose registers 64-bit
-        static initonly Operand::OpReg^ Rax = gcnew Operand::OpReg(Register::Rax);
-        static initonly Operand::OpReg^ Rcx = gcnew Operand::OpReg(Register::Rcx);
-        static initonly Operand::OpReg^ Rdx = gcnew Operand::OpReg(Register::Rdx);
-        static initonly Operand::OpReg^ Rbx = gcnew Operand::OpReg(Register::Rbx);
-        static initonly Operand::OpReg^ Rsp = gcnew Operand::OpReg(Register::Rsp);
-        static initonly Operand::OpReg^ Rbp = gcnew Operand::OpReg(Register::Rbp);
-        static initonly Operand::OpReg^ Rsi = gcnew Operand::OpReg(Register::Rsi);
-        static initonly Operand::OpReg^ Rdi = gcnew Operand::OpReg(Register::Rdi);
-        static initonly Operand::OpReg^ R8 = gcnew Operand::OpReg(Register::R8);
-        static initonly Operand::OpReg^ R9 = gcnew Operand::OpReg(Register::R9);
-        static initonly Operand::OpReg^ R10 = gcnew Operand::OpReg(Register::R10);
-        static initonly Operand::OpReg^ R11 = gcnew Operand::OpReg(Register::R11);
-        static initonly Operand::OpReg^ R12 = gcnew Operand::OpReg(Register::R12);
-        static initonly Operand::OpReg^ R13 = gcnew Operand::OpReg(Register::R13);
-        static initonly Operand::OpReg^ R14 = gcnew Operand::OpReg(Register::R14);
-        static initonly Operand::OpReg^ R15 = gcnew Operand::OpReg(Register::R15);
+        static initonly Operand::Register^ Rax = gcnew Operand::Register(RegisterId::Rax);
+        static initonly Operand::Register^ Rcx = gcnew Operand::Register(RegisterId::Rcx);
+        static initonly Operand::Register^ Rdx = gcnew Operand::Register(RegisterId::Rdx);
+        static initonly Operand::Register^ Rbx = gcnew Operand::Register(RegisterId::Rbx);
+        static initonly Operand::Register^ Rsp = gcnew Operand::Register(RegisterId::Rsp);
+        static initonly Operand::Register^ Rbp = gcnew Operand::Register(RegisterId::Rbp);
+        static initonly Operand::Register^ Rsi = gcnew Operand::Register(RegisterId::Rsi);
+        static initonly Operand::Register^ Rdi = gcnew Operand::Register(RegisterId::Rdi);
+        static initonly Operand::Register^ R8 = gcnew Operand::Register(RegisterId::R8);
+        static initonly Operand::Register^ R9 = gcnew Operand::Register(RegisterId::R9);
+        static initonly Operand::Register^ R10 = gcnew Operand::Register(RegisterId::R10);
+        static initonly Operand::Register^ R11 = gcnew Operand::Register(RegisterId::R11);
+        static initonly Operand::Register^ R12 = gcnew Operand::Register(RegisterId::R12);
+        static initonly Operand::Register^ R13 = gcnew Operand::Register(RegisterId::R13);
+        static initonly Operand::Register^ R14 = gcnew Operand::Register(RegisterId::R14);
+        static initonly Operand::Register^ R15 = gcnew Operand::Register(RegisterId::R15);
 #endif
         // Floating point legacy registers
-        static initonly Operand::OpReg^ St0 = gcnew Operand::OpReg(Register::St0);
-        static initonly Operand::OpReg^ St1 = gcnew Operand::OpReg(Register::St1);
-        static initonly Operand::OpReg^ St2 = gcnew Operand::OpReg(Register::St2);
-        static initonly Operand::OpReg^ St3 = gcnew Operand::OpReg(Register::St3);
-        static initonly Operand::OpReg^ St4 = gcnew Operand::OpReg(Register::St4);
-        static initonly Operand::OpReg^ St5 = gcnew Operand::OpReg(Register::St5);
-        static initonly Operand::OpReg^ St6 = gcnew Operand::OpReg(Register::St6);
-        static initonly Operand::OpReg^ St7 = gcnew Operand::OpReg(Register::St7);
-        static initonly Operand::OpReg^ X87Control = gcnew Operand::OpReg(Register::X87Control);
-        static initonly Operand::OpReg^ X87Status = gcnew Operand::OpReg(Register::X87Status);
-        static initonly Operand::OpReg^ X87Tag = gcnew Operand::OpReg(Register::X87Tag);
+        static initonly Operand::Register^ St0 = gcnew Operand::Register(RegisterId::St0);
+        static initonly Operand::Register^ St1 = gcnew Operand::Register(RegisterId::St1);
+        static initonly Operand::Register^ St2 = gcnew Operand::Register(RegisterId::St2);
+        static initonly Operand::Register^ St3 = gcnew Operand::Register(RegisterId::St3);
+        static initonly Operand::Register^ St4 = gcnew Operand::Register(RegisterId::St4);
+        static initonly Operand::Register^ St5 = gcnew Operand::Register(RegisterId::St5);
+        static initonly Operand::Register^ St6 = gcnew Operand::Register(RegisterId::St6);
+        static initonly Operand::Register^ St7 = gcnew Operand::Register(RegisterId::St7);
+        static initonly Operand::Register^ X87Control = gcnew Operand::Register(RegisterId::X87Control);
+        static initonly Operand::Register^ X87Status = gcnew Operand::Register(RegisterId::X87Status);
+        static initonly Operand::Register^ X87Tag = gcnew Operand::Register(RegisterId::X87Tag);
         // Floating point multimedia registers
-        static initonly Operand::OpReg^ Mm0 = gcnew Operand::OpReg(Register::Mm0);
-        static initonly Operand::OpReg^ Mm1 = gcnew Operand::OpReg(Register::Mm1);
-        static initonly Operand::OpReg^ Mm2 = gcnew Operand::OpReg(Register::Mm2);
-        static initonly Operand::OpReg^ Mm3 = gcnew Operand::OpReg(Register::Mm3);
-        static initonly Operand::OpReg^ Mm4 = gcnew Operand::OpReg(Register::Mm4);
-        static initonly Operand::OpReg^ Mm5 = gcnew Operand::OpReg(Register::Mm5);
-        static initonly Operand::OpReg^ Mm6 = gcnew Operand::OpReg(Register::Mm6);
-        static initonly Operand::OpReg^ Mm7 = gcnew Operand::OpReg(Register::Mm7);
+        static initonly Operand::Register^ Mm0 = gcnew Operand::Register(RegisterId::Mm0);
+        static initonly Operand::Register^ Mm1 = gcnew Operand::Register(RegisterId::Mm1);
+        static initonly Operand::Register^ Mm2 = gcnew Operand::Register(RegisterId::Mm2);
+        static initonly Operand::Register^ Mm3 = gcnew Operand::Register(RegisterId::Mm3);
+        static initonly Operand::Register^ Mm4 = gcnew Operand::Register(RegisterId::Mm4);
+        static initonly Operand::Register^ Mm5 = gcnew Operand::Register(RegisterId::Mm5);
+        static initonly Operand::Register^ Mm6 = gcnew Operand::Register(RegisterId::Mm6);
+        static initonly Operand::Register^ Mm7 = gcnew Operand::Register(RegisterId::Mm7);
         // Floating point vector registers 128-bit
-        static initonly Operand::OpReg^ Xmm0 = gcnew Operand::OpReg(Register::Xmm0);
-        static initonly Operand::OpReg^ Xmm1 = gcnew Operand::OpReg(Register::Xmm1);
-        static initonly Operand::OpReg^ Xmm2 = gcnew Operand::OpReg(Register::Xmm2);
-        static initonly Operand::OpReg^ Xmm3 = gcnew Operand::OpReg(Register::Xmm3);
-        static initonly Operand::OpReg^ Xmm4 = gcnew Operand::OpReg(Register::Xmm4);
-        static initonly Operand::OpReg^ Xmm5 = gcnew Operand::OpReg(Register::Xmm5);
-        static initonly Operand::OpReg^ Xmm6 = gcnew Operand::OpReg(Register::Xmm6);
-        static initonly Operand::OpReg^ Xmm7 = gcnew Operand::OpReg(Register::Xmm7);
-        static initonly Operand::OpReg^ Xmm8 = gcnew Operand::OpReg(Register::Xmm8);
-        static initonly Operand::OpReg^ Xmm9 = gcnew Operand::OpReg(Register::Xmm9);
-        static initonly Operand::OpReg^ Xmm10 = gcnew Operand::OpReg(Register::Xmm10);
-        static initonly Operand::OpReg^ Xmm11 = gcnew Operand::OpReg(Register::Xmm11);
-        static initonly Operand::OpReg^ Xmm12 = gcnew Operand::OpReg(Register::Xmm12);
-        static initonly Operand::OpReg^ Xmm13 = gcnew Operand::OpReg(Register::Xmm13);
-        static initonly Operand::OpReg^ Xmm14 = gcnew Operand::OpReg(Register::Xmm14);
-        static initonly Operand::OpReg^ Xmm15 = gcnew Operand::OpReg(Register::Xmm15);
-        static initonly Operand::OpReg^ Xmm16 = gcnew Operand::OpReg(Register::Xmm16);
-        static initonly Operand::OpReg^ Xmm17 = gcnew Operand::OpReg(Register::Xmm17);
-        static initonly Operand::OpReg^ Xmm18 = gcnew Operand::OpReg(Register::Xmm18);
-        static initonly Operand::OpReg^ Xmm19 = gcnew Operand::OpReg(Register::Xmm19);
-        static initonly Operand::OpReg^ Xmm20 = gcnew Operand::OpReg(Register::Xmm20);
-        static initonly Operand::OpReg^ Xmm21 = gcnew Operand::OpReg(Register::Xmm21);
-        static initonly Operand::OpReg^ Xmm22 = gcnew Operand::OpReg(Register::Xmm22);
-        static initonly Operand::OpReg^ Xmm23 = gcnew Operand::OpReg(Register::Xmm23);
-        static initonly Operand::OpReg^ Xmm24 = gcnew Operand::OpReg(Register::Xmm24);
-        static initonly Operand::OpReg^ Xmm25 = gcnew Operand::OpReg(Register::Xmm25);
-        static initonly Operand::OpReg^ Xmm26 = gcnew Operand::OpReg(Register::Xmm26);
-        static initonly Operand::OpReg^ Xmm27 = gcnew Operand::OpReg(Register::Xmm27);
-        static initonly Operand::OpReg^ Xmm28 = gcnew Operand::OpReg(Register::Xmm28);
-        static initonly Operand::OpReg^ Xmm29 = gcnew Operand::OpReg(Register::Xmm29);
-        static initonly Operand::OpReg^ Xmm30 = gcnew Operand::OpReg(Register::Xmm30);
-        static initonly Operand::OpReg^ Xmm31 = gcnew Operand::OpReg(Register::Xmm31);
+        static initonly Operand::Register^ Xmm0 = gcnew Operand::Register(RegisterId::Xmm0);
+        static initonly Operand::Register^ Xmm1 = gcnew Operand::Register(RegisterId::Xmm1);
+        static initonly Operand::Register^ Xmm2 = gcnew Operand::Register(RegisterId::Xmm2);
+        static initonly Operand::Register^ Xmm3 = gcnew Operand::Register(RegisterId::Xmm3);
+        static initonly Operand::Register^ Xmm4 = gcnew Operand::Register(RegisterId::Xmm4);
+        static initonly Operand::Register^ Xmm5 = gcnew Operand::Register(RegisterId::Xmm5);
+        static initonly Operand::Register^ Xmm6 = gcnew Operand::Register(RegisterId::Xmm6);
+        static initonly Operand::Register^ Xmm7 = gcnew Operand::Register(RegisterId::Xmm7);
+        static initonly Operand::Register^ Xmm8 = gcnew Operand::Register(RegisterId::Xmm8);
+        static initonly Operand::Register^ Xmm9 = gcnew Operand::Register(RegisterId::Xmm9);
+        static initonly Operand::Register^ Xmm10 = gcnew Operand::Register(RegisterId::Xmm10);
+        static initonly Operand::Register^ Xmm11 = gcnew Operand::Register(RegisterId::Xmm11);
+        static initonly Operand::Register^ Xmm12 = gcnew Operand::Register(RegisterId::Xmm12);
+        static initonly Operand::Register^ Xmm13 = gcnew Operand::Register(RegisterId::Xmm13);
+        static initonly Operand::Register^ Xmm14 = gcnew Operand::Register(RegisterId::Xmm14);
+        static initonly Operand::Register^ Xmm15 = gcnew Operand::Register(RegisterId::Xmm15);
+        static initonly Operand::Register^ Xmm16 = gcnew Operand::Register(RegisterId::Xmm16);
+        static initonly Operand::Register^ Xmm17 = gcnew Operand::Register(RegisterId::Xmm17);
+        static initonly Operand::Register^ Xmm18 = gcnew Operand::Register(RegisterId::Xmm18);
+        static initonly Operand::Register^ Xmm19 = gcnew Operand::Register(RegisterId::Xmm19);
+        static initonly Operand::Register^ Xmm20 = gcnew Operand::Register(RegisterId::Xmm20);
+        static initonly Operand::Register^ Xmm21 = gcnew Operand::Register(RegisterId::Xmm21);
+        static initonly Operand::Register^ Xmm22 = gcnew Operand::Register(RegisterId::Xmm22);
+        static initonly Operand::Register^ Xmm23 = gcnew Operand::Register(RegisterId::Xmm23);
+        static initonly Operand::Register^ Xmm24 = gcnew Operand::Register(RegisterId::Xmm24);
+        static initonly Operand::Register^ Xmm25 = gcnew Operand::Register(RegisterId::Xmm25);
+        static initonly Operand::Register^ Xmm26 = gcnew Operand::Register(RegisterId::Xmm26);
+        static initonly Operand::Register^ Xmm27 = gcnew Operand::Register(RegisterId::Xmm27);
+        static initonly Operand::Register^ Xmm28 = gcnew Operand::Register(RegisterId::Xmm28);
+        static initonly Operand::Register^ Xmm29 = gcnew Operand::Register(RegisterId::Xmm29);
+        static initonly Operand::Register^ Xmm30 = gcnew Operand::Register(RegisterId::Xmm30);
+        static initonly Operand::Register^ Xmm31 = gcnew Operand::Register(RegisterId::Xmm31);
         // Floating point vector registers 256-bit
-        static initonly Operand::OpReg^ Ymm0 = gcnew Operand::OpReg(Register::Ymm0);
-        static initonly Operand::OpReg^ Ymm1 = gcnew Operand::OpReg(Register::Ymm1);
-        static initonly Operand::OpReg^ Ymm2 = gcnew Operand::OpReg(Register::Ymm2);
-        static initonly Operand::OpReg^ Ymm3 = gcnew Operand::OpReg(Register::Ymm3);
-        static initonly Operand::OpReg^ Ymm4 = gcnew Operand::OpReg(Register::Ymm4);
-        static initonly Operand::OpReg^ Ymm5 = gcnew Operand::OpReg(Register::Ymm5);
-        static initonly Operand::OpReg^ Ymm6 = gcnew Operand::OpReg(Register::Ymm6);
-        static initonly Operand::OpReg^ Ymm7 = gcnew Operand::OpReg(Register::Ymm7);
-        static initonly Operand::OpReg^ Ymm8 = gcnew Operand::OpReg(Register::Ymm8);
-        static initonly Operand::OpReg^ Ymm9 = gcnew Operand::OpReg(Register::Ymm9);
-        static initonly Operand::OpReg^ Ymm10 = gcnew Operand::OpReg(Register::Ymm10);
-        static initonly Operand::OpReg^ Ymm11 = gcnew Operand::OpReg(Register::Ymm11);
-        static initonly Operand::OpReg^ Ymm12 = gcnew Operand::OpReg(Register::Ymm12);
-        static initonly Operand::OpReg^ Ymm13 = gcnew Operand::OpReg(Register::Ymm13);
-        static initonly Operand::OpReg^ Ymm14 = gcnew Operand::OpReg(Register::Ymm14);
-        static initonly Operand::OpReg^ Ymm15 = gcnew Operand::OpReg(Register::Ymm15);
-        static initonly Operand::OpReg^ Ymm16 = gcnew Operand::OpReg(Register::Ymm16);
-        static initonly Operand::OpReg^ Ymm17 = gcnew Operand::OpReg(Register::Ymm17);
-        static initonly Operand::OpReg^ Ymm18 = gcnew Operand::OpReg(Register::Ymm18);
-        static initonly Operand::OpReg^ Ymm19 = gcnew Operand::OpReg(Register::Ymm19);
-        static initonly Operand::OpReg^ Ymm20 = gcnew Operand::OpReg(Register::Ymm20);
-        static initonly Operand::OpReg^ Ymm21 = gcnew Operand::OpReg(Register::Ymm21);
-        static initonly Operand::OpReg^ Ymm22 = gcnew Operand::OpReg(Register::Ymm22);
-        static initonly Operand::OpReg^ Ymm23 = gcnew Operand::OpReg(Register::Ymm23);
-        static initonly Operand::OpReg^ Ymm24 = gcnew Operand::OpReg(Register::Ymm24);
-        static initonly Operand::OpReg^ Ymm25 = gcnew Operand::OpReg(Register::Ymm25);
-        static initonly Operand::OpReg^ Ymm26 = gcnew Operand::OpReg(Register::Ymm26);
-        static initonly Operand::OpReg^ Ymm27 = gcnew Operand::OpReg(Register::Ymm27);
-        static initonly Operand::OpReg^ Ymm28 = gcnew Operand::OpReg(Register::Ymm28);
-        static initonly Operand::OpReg^ Ymm29 = gcnew Operand::OpReg(Register::Ymm29);
-        static initonly Operand::OpReg^ Ymm30 = gcnew Operand::OpReg(Register::Ymm30);
-        static initonly Operand::OpReg^ Ymm31 = gcnew Operand::OpReg(Register::Ymm31);
+        static initonly Operand::Register^ Ymm0 = gcnew Operand::Register(RegisterId::Ymm0);
+        static initonly Operand::Register^ Ymm1 = gcnew Operand::Register(RegisterId::Ymm1);
+        static initonly Operand::Register^ Ymm2 = gcnew Operand::Register(RegisterId::Ymm2);
+        static initonly Operand::Register^ Ymm3 = gcnew Operand::Register(RegisterId::Ymm3);
+        static initonly Operand::Register^ Ymm4 = gcnew Operand::Register(RegisterId::Ymm4);
+        static initonly Operand::Register^ Ymm5 = gcnew Operand::Register(RegisterId::Ymm5);
+        static initonly Operand::Register^ Ymm6 = gcnew Operand::Register(RegisterId::Ymm6);
+        static initonly Operand::Register^ Ymm7 = gcnew Operand::Register(RegisterId::Ymm7);
+        static initonly Operand::Register^ Ymm8 = gcnew Operand::Register(RegisterId::Ymm8);
+        static initonly Operand::Register^ Ymm9 = gcnew Operand::Register(RegisterId::Ymm9);
+        static initonly Operand::Register^ Ymm10 = gcnew Operand::Register(RegisterId::Ymm10);
+        static initonly Operand::Register^ Ymm11 = gcnew Operand::Register(RegisterId::Ymm11);
+        static initonly Operand::Register^ Ymm12 = gcnew Operand::Register(RegisterId::Ymm12);
+        static initonly Operand::Register^ Ymm13 = gcnew Operand::Register(RegisterId::Ymm13);
+        static initonly Operand::Register^ Ymm14 = gcnew Operand::Register(RegisterId::Ymm14);
+        static initonly Operand::Register^ Ymm15 = gcnew Operand::Register(RegisterId::Ymm15);
+        static initonly Operand::Register^ Ymm16 = gcnew Operand::Register(RegisterId::Ymm16);
+        static initonly Operand::Register^ Ymm17 = gcnew Operand::Register(RegisterId::Ymm17);
+        static initonly Operand::Register^ Ymm18 = gcnew Operand::Register(RegisterId::Ymm18);
+        static initonly Operand::Register^ Ymm19 = gcnew Operand::Register(RegisterId::Ymm19);
+        static initonly Operand::Register^ Ymm20 = gcnew Operand::Register(RegisterId::Ymm20);
+        static initonly Operand::Register^ Ymm21 = gcnew Operand::Register(RegisterId::Ymm21);
+        static initonly Operand::Register^ Ymm22 = gcnew Operand::Register(RegisterId::Ymm22);
+        static initonly Operand::Register^ Ymm23 = gcnew Operand::Register(RegisterId::Ymm23);
+        static initonly Operand::Register^ Ymm24 = gcnew Operand::Register(RegisterId::Ymm24);
+        static initonly Operand::Register^ Ymm25 = gcnew Operand::Register(RegisterId::Ymm25);
+        static initonly Operand::Register^ Ymm26 = gcnew Operand::Register(RegisterId::Ymm26);
+        static initonly Operand::Register^ Ymm27 = gcnew Operand::Register(RegisterId::Ymm27);
+        static initonly Operand::Register^ Ymm28 = gcnew Operand::Register(RegisterId::Ymm28);
+        static initonly Operand::Register^ Ymm29 = gcnew Operand::Register(RegisterId::Ymm29);
+        static initonly Operand::Register^ Ymm30 = gcnew Operand::Register(RegisterId::Ymm30);
+        static initonly Operand::Register^ Ymm31 = gcnew Operand::Register(RegisterId::Ymm31);
         // Floating point vector registers 512-bit
-        static initonly Operand::OpReg^ Zmm0 = gcnew Operand::OpReg(Register::Zmm0);
-        static initonly Operand::OpReg^ Zmm1 = gcnew Operand::OpReg(Register::Zmm1);
-        static initonly Operand::OpReg^ Zmm2 = gcnew Operand::OpReg(Register::Zmm2);
-        static initonly Operand::OpReg^ Zmm3 = gcnew Operand::OpReg(Register::Zmm3);
-        static initonly Operand::OpReg^ Zmm4 = gcnew Operand::OpReg(Register::Zmm4);
-        static initonly Operand::OpReg^ Zmm5 = gcnew Operand::OpReg(Register::Zmm5);
-        static initonly Operand::OpReg^ Zmm6 = gcnew Operand::OpReg(Register::Zmm6);
-        static initonly Operand::OpReg^ Zmm7 = gcnew Operand::OpReg(Register::Zmm7);
-        static initonly Operand::OpReg^ Zmm8 = gcnew Operand::OpReg(Register::Zmm8);
-        static initonly Operand::OpReg^ Zmm9 = gcnew Operand::OpReg(Register::Zmm9);
-        static initonly Operand::OpReg^ Zmm10 = gcnew Operand::OpReg(Register::Zmm10);
-        static initonly Operand::OpReg^ Zmm11 = gcnew Operand::OpReg(Register::Zmm11);
-        static initonly Operand::OpReg^ Zmm12 = gcnew Operand::OpReg(Register::Zmm12);
-        static initonly Operand::OpReg^ Zmm13 = gcnew Operand::OpReg(Register::Zmm13);
-        static initonly Operand::OpReg^ Zmm14 = gcnew Operand::OpReg(Register::Zmm14);
-        static initonly Operand::OpReg^ Zmm15 = gcnew Operand::OpReg(Register::Zmm15);
-        static initonly Operand::OpReg^ Zmm16 = gcnew Operand::OpReg(Register::Zmm16);
-        static initonly Operand::OpReg^ Zmm17 = gcnew Operand::OpReg(Register::Zmm17);
-        static initonly Operand::OpReg^ Zmm18 = gcnew Operand::OpReg(Register::Zmm18);
-        static initonly Operand::OpReg^ Zmm19 = gcnew Operand::OpReg(Register::Zmm19);
-        static initonly Operand::OpReg^ Zmm20 = gcnew Operand::OpReg(Register::Zmm20);
-        static initonly Operand::OpReg^ Zmm21 = gcnew Operand::OpReg(Register::Zmm21);
-        static initonly Operand::OpReg^ Zmm22 = gcnew Operand::OpReg(Register::Zmm22);
-        static initonly Operand::OpReg^ Zmm23 = gcnew Operand::OpReg(Register::Zmm23);
-        static initonly Operand::OpReg^ Zmm24 = gcnew Operand::OpReg(Register::Zmm24);
-        static initonly Operand::OpReg^ Zmm25 = gcnew Operand::OpReg(Register::Zmm25);
-        static initonly Operand::OpReg^ Zmm26 = gcnew Operand::OpReg(Register::Zmm26);
-        static initonly Operand::OpReg^ Zmm27 = gcnew Operand::OpReg(Register::Zmm27);
-        static initonly Operand::OpReg^ Zmm28 = gcnew Operand::OpReg(Register::Zmm28);
-        static initonly Operand::OpReg^ Zmm29 = gcnew Operand::OpReg(Register::Zmm29);
-        static initonly Operand::OpReg^ Zmm30 = gcnew Operand::OpReg(Register::Zmm30);
-        static initonly Operand::OpReg^ Zmm31 = gcnew Operand::OpReg(Register::Zmm31);
+        static initonly Operand::Register^ Zmm0 = gcnew Operand::Register(RegisterId::Zmm0);
+        static initonly Operand::Register^ Zmm1 = gcnew Operand::Register(RegisterId::Zmm1);
+        static initonly Operand::Register^ Zmm2 = gcnew Operand::Register(RegisterId::Zmm2);
+        static initonly Operand::Register^ Zmm3 = gcnew Operand::Register(RegisterId::Zmm3);
+        static initonly Operand::Register^ Zmm4 = gcnew Operand::Register(RegisterId::Zmm4);
+        static initonly Operand::Register^ Zmm5 = gcnew Operand::Register(RegisterId::Zmm5);
+        static initonly Operand::Register^ Zmm6 = gcnew Operand::Register(RegisterId::Zmm6);
+        static initonly Operand::Register^ Zmm7 = gcnew Operand::Register(RegisterId::Zmm7);
+        static initonly Operand::Register^ Zmm8 = gcnew Operand::Register(RegisterId::Zmm8);
+        static initonly Operand::Register^ Zmm9 = gcnew Operand::Register(RegisterId::Zmm9);
+        static initonly Operand::Register^ Zmm10 = gcnew Operand::Register(RegisterId::Zmm10);
+        static initonly Operand::Register^ Zmm11 = gcnew Operand::Register(RegisterId::Zmm11);
+        static initonly Operand::Register^ Zmm12 = gcnew Operand::Register(RegisterId::Zmm12);
+        static initonly Operand::Register^ Zmm13 = gcnew Operand::Register(RegisterId::Zmm13);
+        static initonly Operand::Register^ Zmm14 = gcnew Operand::Register(RegisterId::Zmm14);
+        static initonly Operand::Register^ Zmm15 = gcnew Operand::Register(RegisterId::Zmm15);
+        static initonly Operand::Register^ Zmm16 = gcnew Operand::Register(RegisterId::Zmm16);
+        static initonly Operand::Register^ Zmm17 = gcnew Operand::Register(RegisterId::Zmm17);
+        static initonly Operand::Register^ Zmm18 = gcnew Operand::Register(RegisterId::Zmm18);
+        static initonly Operand::Register^ Zmm19 = gcnew Operand::Register(RegisterId::Zmm19);
+        static initonly Operand::Register^ Zmm20 = gcnew Operand::Register(RegisterId::Zmm20);
+        static initonly Operand::Register^ Zmm21 = gcnew Operand::Register(RegisterId::Zmm21);
+        static initonly Operand::Register^ Zmm22 = gcnew Operand::Register(RegisterId::Zmm22);
+        static initonly Operand::Register^ Zmm23 = gcnew Operand::Register(RegisterId::Zmm23);
+        static initonly Operand::Register^ Zmm24 = gcnew Operand::Register(RegisterId::Zmm24);
+        static initonly Operand::Register^ Zmm25 = gcnew Operand::Register(RegisterId::Zmm25);
+        static initonly Operand::Register^ Zmm26 = gcnew Operand::Register(RegisterId::Zmm26);
+        static initonly Operand::Register^ Zmm27 = gcnew Operand::Register(RegisterId::Zmm27);
+        static initonly Operand::Register^ Zmm28 = gcnew Operand::Register(RegisterId::Zmm28);
+        static initonly Operand::Register^ Zmm29 = gcnew Operand::Register(RegisterId::Zmm29);
+        static initonly Operand::Register^ Zmm30 = gcnew Operand::Register(RegisterId::Zmm30);
+        static initonly Operand::Register^ Zmm31 = gcnew Operand::Register(RegisterId::Zmm31);
         // Flags registers
-        static initonly Operand::OpReg^ Flags = gcnew Operand::OpReg(Register::Flags);
-        static initonly Operand::OpReg^ EFlags = gcnew Operand::OpReg(Register::EFlags);
-        static initonly Operand::OpReg^ RFlags = gcnew Operand::OpReg(Register::RFlags);
+        static initonly Operand::Register^ Flags = gcnew Operand::Register(RegisterId::Flags);
+        static initonly Operand::Register^ EFlags = gcnew Operand::Register(RegisterId::EFlags);
+        static initonly Operand::Register^ RFlags = gcnew Operand::Register(RegisterId::RFlags);
         // Instruction-pointer registers
-        static initonly Operand::OpReg^ Ip = gcnew Operand::OpReg(Register::Ip);
-        static initonly Operand::OpReg^ Eip = gcnew Operand::OpReg(Register::Eip);
-        static initonly Operand::OpReg^ Rip = gcnew Operand::OpReg(Register::Rip);
+        static initonly Operand::Register^ Ip = gcnew Operand::Register(RegisterId::Ip);
+        static initonly Operand::Register^ Eip = gcnew Operand::Register(RegisterId::Eip);
+        static initonly Operand::Register^ Rip = gcnew Operand::Register(RegisterId::Rip);
         // Segment registers
-        static initonly Operand::OpReg^ Es = gcnew Operand::OpReg(Register::Es);
-        static initonly Operand::OpReg^ Cs = gcnew Operand::OpReg(Register::Cs);
-        static initonly Operand::OpReg^ Ss = gcnew Operand::OpReg(Register::Ss);
-        static initonly Operand::OpReg^ Ds = gcnew Operand::OpReg(Register::Ds);
-        static initonly Operand::OpReg^ Fs = gcnew Operand::OpReg(Register::Fs);
-        static initonly Operand::OpReg^ Gs = gcnew Operand::OpReg(Register::Gs);
+        static initonly Operand::Register^ Es = gcnew Operand::Register(RegisterId::Es);
+        static initonly Operand::Register^ Cs = gcnew Operand::Register(RegisterId::Cs);
+        static initonly Operand::Register^ Ss = gcnew Operand::Register(RegisterId::Ss);
+        static initonly Operand::Register^ Ds = gcnew Operand::Register(RegisterId::Ds);
+        static initonly Operand::Register^ Fs = gcnew Operand::Register(RegisterId::Fs);
+        static initonly Operand::Register^ Gs = gcnew Operand::Register(RegisterId::Gs);
         // Table registers
-        static initonly Operand::OpReg^ Gdtr = gcnew Operand::OpReg(Register::Gdtr);
-        static initonly Operand::OpReg^ Ldtr = gcnew Operand::OpReg(Register::Ldtr);
-        static initonly Operand::OpReg^ Idtr = gcnew Operand::OpReg(Register::Idtr);
-        static initonly Operand::OpReg^ Tr = gcnew Operand::OpReg(Register::Tr);
+        static initonly Operand::Register^ Gdtr = gcnew Operand::Register(RegisterId::Gdtr);
+        static initonly Operand::Register^ Ldtr = gcnew Operand::Register(RegisterId::Ldtr);
+        static initonly Operand::Register^ Idtr = gcnew Operand::Register(RegisterId::Idtr);
+        static initonly Operand::Register^ Tr = gcnew Operand::Register(RegisterId::Tr);
         // Test registers
-        static initonly Operand::OpReg^ Tr0 = gcnew Operand::OpReg(Register::Tr0);
-        static initonly Operand::OpReg^ Tr1 = gcnew Operand::OpReg(Register::Tr1);
-        static initonly Operand::OpReg^ Tr2 = gcnew Operand::OpReg(Register::Tr2);
-        static initonly Operand::OpReg^ Tr3 = gcnew Operand::OpReg(Register::Tr3);
-        static initonly Operand::OpReg^ Tr4 = gcnew Operand::OpReg(Register::Tr4);
-        static initonly Operand::OpReg^ Tr5 = gcnew Operand::OpReg(Register::Tr5);
-        static initonly Operand::OpReg^ Tr6 = gcnew Operand::OpReg(Register::Tr6);
-        static initonly Operand::OpReg^ Tr7 = gcnew Operand::OpReg(Register::Tr7);
+        static initonly Operand::Register^ Tr0 = gcnew Operand::Register(RegisterId::Tr0);
+        static initonly Operand::Register^ Tr1 = gcnew Operand::Register(RegisterId::Tr1);
+        static initonly Operand::Register^ Tr2 = gcnew Operand::Register(RegisterId::Tr2);
+        static initonly Operand::Register^ Tr3 = gcnew Operand::Register(RegisterId::Tr3);
+        static initonly Operand::Register^ Tr4 = gcnew Operand::Register(RegisterId::Tr4);
+        static initonly Operand::Register^ Tr5 = gcnew Operand::Register(RegisterId::Tr5);
+        static initonly Operand::Register^ Tr6 = gcnew Operand::Register(RegisterId::Tr6);
+        static initonly Operand::Register^ Tr7 = gcnew Operand::Register(RegisterId::Tr7);
         // Control registers
-        static initonly Operand::OpReg^ Cr0 = gcnew Operand::OpReg(Register::Cr0);
-        static initonly Operand::OpReg^ Cr1 = gcnew Operand::OpReg(Register::Cr1);
-        static initonly Operand::OpReg^ Cr2 = gcnew Operand::OpReg(Register::Cr2);
-        static initonly Operand::OpReg^ Cr3 = gcnew Operand::OpReg(Register::Cr3);
-        static initonly Operand::OpReg^ Cr4 = gcnew Operand::OpReg(Register::Cr4);
-        static initonly Operand::OpReg^ Cr5 = gcnew Operand::OpReg(Register::Cr5);
-        static initonly Operand::OpReg^ Cr6 = gcnew Operand::OpReg(Register::Cr6);
-        static initonly Operand::OpReg^ Cr7 = gcnew Operand::OpReg(Register::Cr7);
-        static initonly Operand::OpReg^ Cr8 = gcnew Operand::OpReg(Register::Cr8);
-        static initonly Operand::OpReg^ Cr9 = gcnew Operand::OpReg(Register::Cr9);
-        static initonly Operand::OpReg^ Cr10 = gcnew Operand::OpReg(Register::Cr10);
-        static initonly Operand::OpReg^ Cr11 = gcnew Operand::OpReg(Register::Cr11);
-        static initonly Operand::OpReg^ Cr12 = gcnew Operand::OpReg(Register::Cr12);
-        static initonly Operand::OpReg^ Cr13 = gcnew Operand::OpReg(Register::Cr13);
-        static initonly Operand::OpReg^ Cr14 = gcnew Operand::OpReg(Register::Cr14);
-        static initonly Operand::OpReg^ Cr15 = gcnew Operand::OpReg(Register::Cr15);
+        static initonly Operand::Register^ Cr0 = gcnew Operand::Register(RegisterId::Cr0);
+        static initonly Operand::Register^ Cr1 = gcnew Operand::Register(RegisterId::Cr1);
+        static initonly Operand::Register^ Cr2 = gcnew Operand::Register(RegisterId::Cr2);
+        static initonly Operand::Register^ Cr3 = gcnew Operand::Register(RegisterId::Cr3);
+        static initonly Operand::Register^ Cr4 = gcnew Operand::Register(RegisterId::Cr4);
+        static initonly Operand::Register^ Cr5 = gcnew Operand::Register(RegisterId::Cr5);
+        static initonly Operand::Register^ Cr6 = gcnew Operand::Register(RegisterId::Cr6);
+        static initonly Operand::Register^ Cr7 = gcnew Operand::Register(RegisterId::Cr7);
+        static initonly Operand::Register^ Cr8 = gcnew Operand::Register(RegisterId::Cr8);
+        static initonly Operand::Register^ Cr9 = gcnew Operand::Register(RegisterId::Cr9);
+        static initonly Operand::Register^ Cr10 = gcnew Operand::Register(RegisterId::Cr10);
+        static initonly Operand::Register^ Cr11 = gcnew Operand::Register(RegisterId::Cr11);
+        static initonly Operand::Register^ Cr12 = gcnew Operand::Register(RegisterId::Cr12);
+        static initonly Operand::Register^ Cr13 = gcnew Operand::Register(RegisterId::Cr13);
+        static initonly Operand::Register^ Cr14 = gcnew Operand::Register(RegisterId::Cr14);
+        static initonly Operand::Register^ Cr15 = gcnew Operand::Register(RegisterId::Cr15);
         // Debug registers
-        static initonly Operand::OpReg^ Dr0 = gcnew Operand::OpReg(Register::Dr0);
-        static initonly Operand::OpReg^ Dr1 = gcnew Operand::OpReg(Register::Dr1);
-        static initonly Operand::OpReg^ Dr2 = gcnew Operand::OpReg(Register::Dr2);
-        static initonly Operand::OpReg^ Dr3 = gcnew Operand::OpReg(Register::Dr3);
-        static initonly Operand::OpReg^ Dr4 = gcnew Operand::OpReg(Register::Dr4);
-        static initonly Operand::OpReg^ Dr5 = gcnew Operand::OpReg(Register::Dr5);
-        static initonly Operand::OpReg^ Dr6 = gcnew Operand::OpReg(Register::Dr6);
-        static initonly Operand::OpReg^ Dr7 = gcnew Operand::OpReg(Register::Dr7);
-        static initonly Operand::OpReg^ Dr8 = gcnew Operand::OpReg(Register::Dr8);
-        static initonly Operand::OpReg^ Dr9 = gcnew Operand::OpReg(Register::Dr9);
-        static initonly Operand::OpReg^ Dr10 = gcnew Operand::OpReg(Register::Dr10);
-        static initonly Operand::OpReg^ Dr11 = gcnew Operand::OpReg(Register::Dr11);
-        static initonly Operand::OpReg^ Dr12 = gcnew Operand::OpReg(Register::Dr12);
-        static initonly Operand::OpReg^ Dr13 = gcnew Operand::OpReg(Register::Dr13);
-        static initonly Operand::OpReg^ Dr14 = gcnew Operand::OpReg(Register::Dr14);
-        static initonly Operand::OpReg^ Dr15 = gcnew Operand::OpReg(Register::Dr15);
+        static initonly Operand::Register^ Dr0 = gcnew Operand::Register(RegisterId::Dr0);
+        static initonly Operand::Register^ Dr1 = gcnew Operand::Register(RegisterId::Dr1);
+        static initonly Operand::Register^ Dr2 = gcnew Operand::Register(RegisterId::Dr2);
+        static initonly Operand::Register^ Dr3 = gcnew Operand::Register(RegisterId::Dr3);
+        static initonly Operand::Register^ Dr4 = gcnew Operand::Register(RegisterId::Dr4);
+        static initonly Operand::Register^ Dr5 = gcnew Operand::Register(RegisterId::Dr5);
+        static initonly Operand::Register^ Dr6 = gcnew Operand::Register(RegisterId::Dr6);
+        static initonly Operand::Register^ Dr7 = gcnew Operand::Register(RegisterId::Dr7);
+        static initonly Operand::Register^ Dr8 = gcnew Operand::Register(RegisterId::Dr8);
+        static initonly Operand::Register^ Dr9 = gcnew Operand::Register(RegisterId::Dr9);
+        static initonly Operand::Register^ Dr10 = gcnew Operand::Register(RegisterId::Dr10);
+        static initonly Operand::Register^ Dr11 = gcnew Operand::Register(RegisterId::Dr11);
+        static initonly Operand::Register^ Dr12 = gcnew Operand::Register(RegisterId::Dr12);
+        static initonly Operand::Register^ Dr13 = gcnew Operand::Register(RegisterId::Dr13);
+        static initonly Operand::Register^ Dr14 = gcnew Operand::Register(RegisterId::Dr14);
+        static initonly Operand::Register^ Dr15 = gcnew Operand::Register(RegisterId::Dr15);
         // Mask registers
-        static initonly Operand::OpReg^ K0 = gcnew Operand::OpReg(Register::K0);
-        static initonly Operand::OpReg^ K1 = gcnew Operand::OpReg(Register::K1);
-        static initonly Operand::OpReg^ K2 = gcnew Operand::OpReg(Register::K2);
-        static initonly Operand::OpReg^ K3 = gcnew Operand::OpReg(Register::K3);
-        static initonly Operand::OpReg^ K4 = gcnew Operand::OpReg(Register::K4);
-        static initonly Operand::OpReg^ K5 = gcnew Operand::OpReg(Register::K5);
-        static initonly Operand::OpReg^ K6 = gcnew Operand::OpReg(Register::K6);
-        static initonly Operand::OpReg^ K7 = gcnew Operand::OpReg(Register::K7);
+        static initonly Operand::Register^ K0 = gcnew Operand::Register(RegisterId::K0);
+        static initonly Operand::Register^ K1 = gcnew Operand::Register(RegisterId::K1);
+        static initonly Operand::Register^ K2 = gcnew Operand::Register(RegisterId::K2);
+        static initonly Operand::Register^ K3 = gcnew Operand::Register(RegisterId::K3);
+        static initonly Operand::Register^ K4 = gcnew Operand::Register(RegisterId::K4);
+        static initonly Operand::Register^ K5 = gcnew Operand::Register(RegisterId::K5);
+        static initonly Operand::Register^ K6 = gcnew Operand::Register(RegisterId::K6);
+        static initonly Operand::Register^ K7 = gcnew Operand::Register(RegisterId::K7);
         // Bound registers
-        static initonly Operand::OpReg^ Bnd0 = gcnew Operand::OpReg(Register::Bnd0);
-        static initonly Operand::OpReg^ Bnd1 = gcnew Operand::OpReg(Register::Bnd1);
-        static initonly Operand::OpReg^ Bnd2 = gcnew Operand::OpReg(Register::Bnd2);
-        static initonly Operand::OpReg^ Bnd3 = gcnew Operand::OpReg(Register::Bnd3);
-        static initonly Operand::OpReg^ BndCfg = gcnew Operand::OpReg(Register::BndCfg);
-        static initonly Operand::OpReg^ BndStatus = gcnew Operand::OpReg(Register::BndStatus);
+        static initonly Operand::Register^ Bnd0 = gcnew Operand::Register(RegisterId::Bnd0);
+        static initonly Operand::Register^ Bnd1 = gcnew Operand::Register(RegisterId::Bnd1);
+        static initonly Operand::Register^ Bnd2 = gcnew Operand::Register(RegisterId::Bnd2);
+        static initonly Operand::Register^ Bnd3 = gcnew Operand::Register(RegisterId::Bnd3);
+        static initonly Operand::Register^ BndCfg = gcnew Operand::Register(RegisterId::BndCfg);
+        static initonly Operand::Register^ BndStatus = gcnew Operand::Register(RegisterId::BndStatus);
         // Uncategorized
-        static initonly Operand::OpReg^ Mxcsr = gcnew Operand::OpReg(Register::Mxcsr);
-        static initonly Operand::OpReg^ Pkru = gcnew Operand::OpReg(Register::Pkru);
-        static initonly Operand::OpReg^ Xcr0 = gcnew Operand::OpReg(Register::Xcr0);
+        static initonly Operand::Register^ Mxcsr = gcnew Operand::Register(RegisterId::Mxcsr);
+        static initonly Operand::Register^ Pkru = gcnew Operand::Register(RegisterId::Pkru);
+        static initonly Operand::Register^ Xcr0 = gcnew Operand::Register(RegisterId::Xcr0);
         // Host specific
-        static initonly Operand::OpReg^ Nax = gcnew Operand::OpReg(Register::Nax);
-        static initonly Operand::OpReg^ Ncx = gcnew Operand::OpReg(Register::Ncx);
-        static initonly Operand::OpReg^ Ndx = gcnew Operand::OpReg(Register::Ndx);
-        static initonly Operand::OpReg^ Nbx = gcnew Operand::OpReg(Register::Nbx);
-        static initonly Operand::OpReg^ Nsp = gcnew Operand::OpReg(Register::Nsp);
-        static initonly Operand::OpReg^ Nbp = gcnew Operand::OpReg(Register::Nbp);
-        static initonly Operand::OpReg^ Nsi = gcnew Operand::OpReg(Register::Nsi);
-        static initonly Operand::OpReg^ Ndi = gcnew Operand::OpReg(Register::Ndi);
-        static initonly Operand::OpReg^ Nip = gcnew Operand::OpReg(Register::Nip);
-        static initonly Operand::OpReg^ NFlags = gcnew Operand::OpReg(Register::NFlags);
+        static initonly Operand::Register^ Nax = gcnew Operand::Register(RegisterId::Nax);
+        static initonly Operand::Register^ Ncx = gcnew Operand::Register(RegisterId::Ncx);
+        static initonly Operand::Register^ Ndx = gcnew Operand::Register(RegisterId::Ndx);
+        static initonly Operand::Register^ Nbx = gcnew Operand::Register(RegisterId::Nbx);
+        static initonly Operand::Register^ Nsp = gcnew Operand::Register(RegisterId::Nsp);
+        static initonly Operand::Register^ Nbp = gcnew Operand::Register(RegisterId::Nbp);
+        static initonly Operand::Register^ Nsi = gcnew Operand::Register(RegisterId::Nsi);
+        static initonly Operand::Register^ Ndi = gcnew Operand::Register(RegisterId::Ndi);
+        static initonly Operand::Register^ Nip = gcnew Operand::Register(RegisterId::Nip);
+        static initonly Operand::Register^ NFlags = gcnew Operand::Register(RegisterId::NFlags);
 
-        static Operand::OpReg^ Reg(Register reg)
+        static Operand::Register^ Reg(RegisterId reg)
         {
-            return gcnew Operand::OpReg(reg);
+            return gcnew Operand::Register(reg);
         }
 
     public:

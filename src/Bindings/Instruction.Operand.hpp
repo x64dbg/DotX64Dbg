@@ -173,17 +173,17 @@ namespace Dotx64Dbg {
         };
 
         // Register
-        ref class OpReg : public IOperand
+        ref class Register : public IOperand
         {
-            Register _Value;
+            RegisterId _Value;
 
         public:
-            OpReg()
+            Register()
             {
-                _Value = Register::None;
+                _Value = RegisterId::None;
             }
 
-            OpReg(Register reg)
+            Register(RegisterId reg)
             {
                 _Value = reg;
             }
@@ -214,16 +214,16 @@ namespace Dotx64Dbg {
             {
                 bool get()
                 {
-                    return _Value != Register::None;
+                    return _Value != RegisterId::None;
                 }
             }
 
             /// <summary>
             /// The register id.
             /// </summary>
-            property Register Value
+            property RegisterId Value
             {
-                Register get()
+                RegisterId get()
                 {
                     return _Value;
                 }
@@ -260,9 +260,9 @@ namespace Dotx64Dbg {
             /// Retrieves the root register id, will be Register.None if none.
             /// If the register is ax it would result eax on 32 bit and rax on 64 bit.
             /// </summary>
-            property Register RootId
+            property RegisterId RootId
             {
-                Register get()
+                RegisterId get()
                 {
                     return RegisterGetRoot(_Value);
                 }
@@ -275,14 +275,14 @@ namespace Dotx64Dbg {
             {
                 bool get()
                 {
-                    return RegisterGetRoot(_Value) != Register::None;
+                    return RegisterGetRoot(_Value) != RegisterId::None;
                 }
             }
 
             /// <see cref="GetRoot" />
-            property OpReg^ Root
+            property Register^ Root
             {
-                OpReg^ get()
+                Register^ get()
                 {
                     return GetRoot();
                 }
@@ -292,17 +292,17 @@ namespace Dotx64Dbg {
             /// Retrieves the root register.
             /// If the register is ax it would result eax on 32 bit and rax on 64 bit.
             /// </summary>
-            OpReg^ GetRoot()
+            Register^ GetRoot()
             {
-                return gcnew OpReg(RegisterGetRoot(_Value));
+                return gcnew Register(RegisterGetRoot(_Value));
             }
 
             /// <summary>
             /// Retrieves the parent register id, will be Register.None if none.
             /// </summary>
-            property Register ParentId
+            property RegisterId ParentId
             {
-                Register get()
+                RegisterId get()
                 {
                     return RegisterGetParent(_Value);
                 }
@@ -315,14 +315,14 @@ namespace Dotx64Dbg {
             {
                 bool get()
                 {
-                    return RegisterGetParent(_Value) != Register::None;
+                    return RegisterGetParent(_Value) != RegisterId::None;
                 }
             }
 
             /// <see cref="GetParent" />
-            property OpReg^ Parent
+            property Register^ Parent
             {
-                OpReg^ get()
+                Register^ get()
                 {
                     return GetParent();
                 }
@@ -333,9 +333,9 @@ namespace Dotx64Dbg {
             /// So in case the register is ax the parent would be eax and for eax it would be rax on 64 bit.
             /// <returns>New OpReg, this will never result null.</returns>
             /// </summary>
-            OpReg^ GetParent()
+            Register^ GetParent()
             {
-                return gcnew OpReg(RegisterGetParent(_Value));
+                return gcnew Register(RegisterGetParent(_Value));
             }
 
             /// <see cref="GetPosition" />
@@ -382,16 +382,16 @@ namespace Dotx64Dbg {
         };
 
         // Memory
-        ref class OpMem : public IOperand
+        ref class Memory : public IOperand
         {
             int MemSize = 0;
 
         public:
-            OpMem()
+            Memory()
             {
             }
 
-            OpMem(int size, Register seg, Register base, Register index, int32_t scale, int64_t disp)
+            Memory(int size, RegisterId seg, RegisterId base, RegisterId index, int32_t scale, int64_t disp)
             {
                 Size = size;
                 Segment = seg;
@@ -401,10 +401,10 @@ namespace Dotx64Dbg {
                 Displacement = disp;
             }
 
-            OpMem(int size, Register base, Register index, int32_t scale, int64_t disp)
+            Memory(int size, RegisterId base, RegisterId index, int32_t scale, int64_t disp)
             {
                 Size = size;
-                Segment = Register::Ds;
+                Segment = RegisterId::Ds;
                 Base = base;
                 Index = index;
                 Scale = scale;
@@ -431,53 +431,53 @@ namespace Dotx64Dbg {
                 }
             }
 
-            property Register Segment;
-            property Register Base;
-            property Register Index;
+            property RegisterId Segment;
+            property RegisterId Base;
+            property RegisterId Index;
             property int32_t Scale;
             property int64_t Displacement;
 
-            OpMem^ WithSegment(Register reg)
+            Memory^ WithSegment(RegisterId reg)
             {
                 Segment = reg;
                 return this;
             }
 
-            OpMem^ WithSegment(OpReg^ reg)
+            Memory^ WithSegment(Register^ reg)
             {
                 Segment = reg->Value;
                 return this;
             }
 
-            OpMem^ WithBase(Register reg)
+            Memory^ WithBase(RegisterId reg)
             {
                 Base = reg;
                 return this;
             }
-            OpMem^ WithBase(OpReg^ reg)
+            Memory^ WithBase(Register^ reg)
             {
                 Base = reg->Value;
                 return this;
             }
 
-            OpMem^ WithIndex(Register reg)
+            Memory^ WithIndex(RegisterId reg)
             {
                 Index = reg;
                 return this;
             }
-            OpMem^ WithIndex(OpReg^ reg)
+            Memory^ WithIndex(Register^ reg)
             {
                 Index = reg->Value;
                 return this;
             }
 
-            OpMem^ WithScale(int32_t scale)
+            Memory^ WithScale(int32_t scale)
             {
                 Scale = scale;
                 return this;
             }
 
-            OpMem^ WithDisplacement(int64_t disp)
+            Memory^ WithDisplacement(int64_t disp)
             {
                 Displacement = disp;
                 return this;
@@ -504,19 +504,19 @@ namespace Dotx64Dbg {
                     break;
                 }
 
-                if (Segment != Register::Ds && Segment != Register::Cs)
+                if (Segment != RegisterId::Ds && Segment != RegisterId::Cs)
                 {
                     p += snprintf(temp + p, sizeof(temp) - p, "%s:", RegisterGetName(Segment));
                 }
 
-                if (Base != Register::None)
+                if (Base != RegisterId::None)
                 {
                     p += snprintf(temp + p, sizeof(temp) - p, "%s", RegisterGetName(Base));
                 }
 
-                if (Index != Register::None)
+                if (Index != RegisterId::None)
                 {
-                    if (Base != Register::None)
+                    if (Base != RegisterId::None)
                         p += snprintf(temp + p, sizeof(temp) - p, "+");
 
                     p += snprintf(temp + p, sizeof(temp) - p, "%s", RegisterGetName(Index));
@@ -524,7 +524,7 @@ namespace Dotx64Dbg {
 
                 if (Scale > 0)
                 {
-                    if (Index != Register::None)
+                    if (Index != RegisterId::None)
                         p += snprintf(temp + p, sizeof(temp) - p, "*");
 
                     p += snprintf(temp + p, sizeof(temp) - p, "%d", Scale);
@@ -532,7 +532,7 @@ namespace Dotx64Dbg {
 
                 if (Displacement > 0)
                 {
-                    if (Base != Register::None || Index != Register::None)
+                    if (Base != RegisterId::None || Index != RegisterId::None)
                     {
                         if (Displacement < 0)
                             p += snprintf(temp + p, sizeof(temp) - p, "-");
