@@ -117,7 +117,7 @@ namespace Dotx64Dbg
     private:
         IOperand^ ConvertOperandImm(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
         {
-            Operand::OpImm^ res = gcnew Operand::OpImm();
+            Operand::Immediate^ res = gcnew Operand::Immediate();
             res->Value = op.imm.value.s;
             if (op.imm.is_relative)
             {

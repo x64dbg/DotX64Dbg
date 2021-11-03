@@ -281,7 +281,7 @@ namespace Dotx64Dbg {
             }
             else if (op->Type == OperandType::Immediate)
             {
-                auto opImm = (Operand::OpImm^)op;
+                auto opImm = (Operand::Immediate^)op;
                 return asmjit::Imm(opImm->Value);
             }
             else if (op->Type == OperandType::Memory)

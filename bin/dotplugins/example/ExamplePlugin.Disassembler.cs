@@ -32,15 +32,15 @@ public partial class ExamplePlugin : IPlugin, IHotload
             switch (op.Type)
             {
                 case OperandType.Immediate:
-                    var imm = op as Operand.OpImm;
+                    var imm = op as Operand.Immediate;
                     instrText += $"{{ {visibility}, Imm({imm.Value:X}) }},\n";
                     break;
                 case OperandType.Register:
-                    var reg = op as Operand.OpReg;
+                    var reg = op as Operand.Register;
                     instrText += $"{{ {visibility}, Reg({reg}) }},\n";
                     break;
                 case OperandType.Memory:
-                    var mem = op as Operand.OpMem;
+                    var mem = op as Operand.Memory;
                     instrText += $"{{ {visibility}, Memory {{\n";
                     instrText += $"      Base = {mem.Base},\n";
                     instrText += $"      Index = {mem.Index},\n";

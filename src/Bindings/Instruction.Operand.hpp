@@ -124,15 +124,15 @@ namespace Dotx64Dbg {
         }
 
         // Immediate
-        ref class OpImm : public IOperand
+        ref class Immediate : public IOperand
         {
         public:
-            OpImm()
+            Immediate()
             {
                 Value = 0;
             }
 
-            OpImm(int64_t value)
+            Immediate(int64_t value)
             {
                 Value = value;
             }
