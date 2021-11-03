@@ -98,49 +98,49 @@ namespace Dotx64Dbg {
                     0x0010, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::ReadWrite, OperandAccess::ReadWrite, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::Reg(Register::Al), Operands::Reg(Register::Ah), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operands::Reg(RegisterId::Al), Operands::Reg(RegisterId::Ah), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Aad,
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::ReadWrite, OperandAccess::Write, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Al), Operands::Reg(Register::Ah), Operands::Reg(Register::NFlags), Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Al), Operands::Reg(RegisterId::Ah), Operands::Reg(RegisterId::NFlags), Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Aam,
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Write, OperandAccess::Write, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Al), Operands::Reg(Register::Ah), Operands::Reg(Register::NFlags), Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Al), Operands::Reg(RegisterId::Ah), Operands::Reg(RegisterId::NFlags), Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Aas,
                     0x0010, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::ReadWrite, OperandAccess::ReadWrite, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::Reg(Register::Al), Operands::Reg(Register::Ah), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operands::Reg(RegisterId::Al), Operands::Reg(RegisterId::Ah), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Adc,
                     0x0001, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Adcx,
                     0x0001, 0x0001,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Add,
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Addpd,
@@ -238,14 +238,14 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Andn,
                     0x0000, 0x00c0,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Andnpd,
@@ -504,7 +504,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::ReadWrite, OperandAccess::Write, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::Nsp), Operands::Ptr(Register::Nsp), Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::Nsp), Operands::Ptr(RegisterId::Nsp), Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Cbw,
@@ -539,7 +539,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x0001,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::None, OperandAccess::None, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::Reg(Register::NFlags), Operand::None, Operand::None, Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None, Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Cld,
@@ -637,7 +637,7 @@ namespace Dotx64Dbg {
                     0x0001, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::Read, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Cmovbe,
@@ -707,7 +707,7 @@ namespace Dotx64Dbg {
                     0x0080, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::Read, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Cmovnz,
@@ -742,14 +742,14 @@ namespace Dotx64Dbg {
                     0x0040, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::Read, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Cmp,
                     0x0000, 0x011F,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Cmppd,
@@ -840,7 +840,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Write, OperandAccess::ReadWrite, OperandAccess::Write, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::Reg(Register::Eax), Operands::Reg(Register::Ebx), Operands::Reg(Register::Ecx), Operands::Reg(Register::Edx), Operand::None }
+                    gcnew array<IOperand^> { Operands::Reg(RegisterId::Eax), Operands::Reg(RegisterId::Ebx), Operands::Reg(RegisterId::Ecx), Operands::Reg(RegisterId::Edx), Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Cqo,
@@ -1043,7 +1043,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D4,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Write, OperandAccess::None, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Delay,
@@ -1932,7 +1932,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::Read, OperandAccess::Read, OperandAccess::Write, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::In,
@@ -1946,7 +1946,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D4,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Write, OperandAccess::None, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Incsspd,
@@ -2093,154 +2093,154 @@ namespace Dotx64Dbg {
                     0x0001, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jbe,
                     0x0041, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jcxz,
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jecxz,
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jknzd,
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jkzd,
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jl,
                     0x0880, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jle,
                     0x08c0, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jmp,
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::None, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Rip), Operand::None, Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Rip), Operand::None, Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jnb,
                     0x0001, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jnbe,
                     0x0041, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jnl,
                     0x0880, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jnle,
                     0x08c0, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jno,
                     0x0800, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jnp,
                     0x0004, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jns,
                     0x0080, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jnz,
                     0x0040, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jo,
                     0x0800, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jp,
                     0x0004, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jrcxz,
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Js,
                     0x0080, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Jz,
                     0x0040, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nip), Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Kaddb,
@@ -3353,7 +3353,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Write, OperandAccess::None, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Nop,
@@ -3374,7 +3374,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Orpd,
@@ -4200,7 +4200,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nsp), Operands::Ptr(Register::Nsp), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nsp), Operands::Ptr(RegisterId::Nsp), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Popa,
@@ -4242,7 +4242,7 @@ namespace Dotx64Dbg {
                     0x121000, 0x2D5FD5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::Reg(Register::Rsp), Operands::Ptr(Register::Rsp), Operands::Reg(Register::RFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operands::Reg(RegisterId::Rsp), Operands::Ptr(RegisterId::Rsp), Operands::Reg(RegisterId::RFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Por,
@@ -4571,7 +4571,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::Nsp), Operands::Ptr(Register::Nsp), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::Nsp), Operands::Ptr(RegisterId::Nsp), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Pusha,
@@ -4606,7 +4606,7 @@ namespace Dotx64Dbg {
                     0x3F5FD5, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Write, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::Reg(Register::Rsp), Operands::Ptr(Register::Rsp), Operands::Reg(Register::RFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operands::Reg(RegisterId::Rsp), Operands::Ptr(RegisterId::Rsp), Operands::Reg(RegisterId::RFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Pxor,
@@ -4739,7 +4739,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::Reg(Register::Nip), Operands::Reg(Register::Nsp), Operands::Ptr(Register::Nsp), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operands::Reg(RegisterId::Nip), Operands::Reg(RegisterId::Nsp), Operands::Ptr(RegisterId::Nsp), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Rol,
@@ -4753,7 +4753,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x0801,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Implicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Rorx,
@@ -4858,7 +4858,7 @@ namespace Dotx64Dbg {
                     0x0001, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Scasb,
@@ -4970,7 +4970,7 @@ namespace Dotx64Dbg {
                     0x0040, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::Read, OperandAccess::None, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Seto,
@@ -5005,7 +5005,7 @@ namespace Dotx64Dbg {
                     0x0040, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::Read, OperandAccess::None, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Sfence,
@@ -5075,7 +5075,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Implicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Shld,
@@ -5096,7 +5096,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08d5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::None, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, gcnew Operand::OpReg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, gcnew Operand::Register(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Shrd,
@@ -5243,28 +5243,28 @@ namespace Dotx64Dbg {
                     0x0400, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::WordPtr(Register::Ndi), Operands::Al, Operands::Reg(Register::Ndi), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operands::WordPtr(RegisterId::Ndi), Operands::Al, Operands::Reg(RegisterId::Ndi), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Stosd,
                     0x0400, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::WordPtr(Register::Ndi), Operands::Ax, Operands::Reg(Register::Ndi), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operands::WordPtr(RegisterId::Ndi), Operands::Ax, Operands::Reg(RegisterId::Ndi), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Stosq,
                     0x0400, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::WordPtr(Register::Ndi), Operands::Ax, Operands::Reg(Register::Ndi), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operands::WordPtr(RegisterId::Ndi), Operands::Ax, Operands::Reg(RegisterId::Ndi), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Stosw,
                     0x0400, 0x0000,
                     gcnew array<OperandAccess> { OperandAccess::Write, OperandAccess::Read, OperandAccess::ReadWrite, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Hidden, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operands::WordPtr(Register::Ndi), Operands::Ax, Operands::Reg(Register::Ndi), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operands::WordPtr(RegisterId::Ndi), Operands::Ax, Operands::Reg(RegisterId::Ndi), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Str,
@@ -5278,7 +5278,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Subpd,
@@ -5355,7 +5355,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::Read, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Tpause,
@@ -11193,7 +11193,7 @@ namespace Dotx64Dbg {
                     0x0000, 0x08D5,
                     gcnew array<OperandAccess> { OperandAccess::ReadWrite, OperandAccess::Read, OperandAccess::Write, OperandAccess::None, OperandAccess::None },
                     gcnew array<OperandVisibility> { OperandVisibility::Explicit, OperandVisibility::Explicit, OperandVisibility::Hidden, OperandVisibility::Invalid, OperandVisibility::Invalid },
-                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(Register::NFlags), Operand::None, Operand::None }
+                    gcnew array<IOperand^> { Operand::None, Operand::None, Operands::Reg(RegisterId::NFlags), Operand::None, Operand::None }
             ),
                 gcnew InstructionMeta(
                     Mnemonic::Xorpd,

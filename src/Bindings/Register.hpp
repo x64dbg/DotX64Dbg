@@ -83,7 +83,7 @@ namespace Dotx64Dbg
         Simd,
     };
 
-    public enum class Register
+    public enum class RegisterId
     {
         None,
         // General purpose registers  8-bit
@@ -414,1535 +414,1535 @@ namespace Dotx64Dbg
         Invalid = 0xFFFF,
     };
 
-    inline const char* RegisterGetName(Register id)
+    inline const char* RegisterGetName(RegisterId id)
     {
         switch (id)
         {
-        case Register::None:
+        case RegisterId::None:
             return "none";
-        case Register::Al:
+        case RegisterId::Al:
             return "al";
-        case Register::Cl:
+        case RegisterId::Cl:
             return "cl";
-        case Register::Dl:
+        case RegisterId::Dl:
             return "dl";
-        case Register::Bl:
+        case RegisterId::Bl:
             return "bl";
-        case Register::Ah:
+        case RegisterId::Ah:
             return "ah";
-        case Register::Ch:
+        case RegisterId::Ch:
             return "ch";
-        case Register::Dh:
+        case RegisterId::Dh:
             return "dh";
-        case Register::Bh:
+        case RegisterId::Bh:
             return "bh";
-        case Register::Spl:
+        case RegisterId::Spl:
             return "spl";
-        case Register::Bpl:
+        case RegisterId::Bpl:
             return "bpl";
-        case Register::Sil:
+        case RegisterId::Sil:
             return "sil";
-        case Register::Dil:
+        case RegisterId::Dil:
             return "dil";
-        case Register::R8b:
+        case RegisterId::R8b:
             return "r8b";
-        case Register::R9b:
+        case RegisterId::R9b:
             return "r9b";
-        case Register::R10b:
+        case RegisterId::R10b:
             return "r10b";
-        case Register::R11b:
+        case RegisterId::R11b:
             return "r11b";
-        case Register::R12b:
+        case RegisterId::R12b:
             return "r12b";
-        case Register::R13b:
+        case RegisterId::R13b:
             return "r13b";
-        case Register::R14b:
+        case RegisterId::R14b:
             return "r14b";
-        case Register::R15b:
+        case RegisterId::R15b:
             return "r15b";
-        case Register::Ax:
+        case RegisterId::Ax:
             return "ax";
-        case Register::Cx:
+        case RegisterId::Cx:
             return "cx";
-        case Register::Dx:
+        case RegisterId::Dx:
             return "dx";
-        case Register::Bx:
+        case RegisterId::Bx:
             return "bx";
-        case Register::Sp:
+        case RegisterId::Sp:
             return "sp";
-        case Register::Bp:
+        case RegisterId::Bp:
             return "bp";
-        case Register::Si:
+        case RegisterId::Si:
             return "si";
-        case Register::Di:
+        case RegisterId::Di:
             return "di";
-        case Register::R8w:
+        case RegisterId::R8w:
             return "r8w";
-        case Register::R9w:
+        case RegisterId::R9w:
             return "r9w";
-        case Register::R10w:
+        case RegisterId::R10w:
             return "r10w";
-        case Register::R11w:
+        case RegisterId::R11w:
             return "r11w";
-        case Register::R12w:
+        case RegisterId::R12w:
             return "r12w";
-        case Register::R13w:
+        case RegisterId::R13w:
             return "r13w";
-        case Register::R14w:
+        case RegisterId::R14w:
             return "r14w";
-        case Register::R15w:
+        case RegisterId::R15w:
             return "r15w";
-        case Register::Eax:
+        case RegisterId::Eax:
             return "eax";
-        case Register::Ecx:
+        case RegisterId::Ecx:
             return "ecx";
-        case Register::Edx:
+        case RegisterId::Edx:
             return "edx";
-        case Register::Ebx:
+        case RegisterId::Ebx:
             return "ebx";
-        case Register::Esp:
+        case RegisterId::Esp:
             return "esp";
-        case Register::Ebp:
+        case RegisterId::Ebp:
             return "ebp";
-        case Register::Esi:
+        case RegisterId::Esi:
             return "esi";
-        case Register::Edi:
+        case RegisterId::Edi:
             return "edi";
-        case Register::R8d:
+        case RegisterId::R8d:
             return "r8d";
-        case Register::R9d:
+        case RegisterId::R9d:
             return "r9d";
-        case Register::R10d:
+        case RegisterId::R10d:
             return "r10d";
-        case Register::R11d:
+        case RegisterId::R11d:
             return "r11d";
-        case Register::R12d:
+        case RegisterId::R12d:
             return "r12d";
-        case Register::R13d:
+        case RegisterId::R13d:
             return "r13d";
-        case Register::R14d:
+        case RegisterId::R14d:
             return "r14d";
-        case Register::R15d:
+        case RegisterId::R15d:
             return "r15d";
-        case Register::Rax:
+        case RegisterId::Rax:
             return "rax";
-        case Register::Rcx:
+        case RegisterId::Rcx:
             return "rcx";
-        case Register::Rdx:
+        case RegisterId::Rdx:
             return "rdx";
-        case Register::Rbx:
+        case RegisterId::Rbx:
             return "rbx";
-        case Register::Rsp:
+        case RegisterId::Rsp:
             return "rsp";
-        case Register::Rbp:
+        case RegisterId::Rbp:
             return "rbp";
-        case Register::Rsi:
+        case RegisterId::Rsi:
             return "rsi";
-        case Register::Rdi:
+        case RegisterId::Rdi:
             return "rdi";
-        case Register::R8:
+        case RegisterId::R8:
             return "r8";
-        case Register::R9:
+        case RegisterId::R9:
             return "r9";
-        case Register::R10:
+        case RegisterId::R10:
             return "r10";
-        case Register::R11:
+        case RegisterId::R11:
             return "r11";
-        case Register::R12:
+        case RegisterId::R12:
             return "r12";
-        case Register::R13:
+        case RegisterId::R13:
             return "r13";
-        case Register::R14:
+        case RegisterId::R14:
             return "r14";
-        case Register::R15:
+        case RegisterId::R15:
             return "r15";
-        case Register::St0:
+        case RegisterId::St0:
             return "st0";
-        case Register::St1:
+        case RegisterId::St1:
             return "st1";
-        case Register::St2:
+        case RegisterId::St2:
             return "st2";
-        case Register::St3:
+        case RegisterId::St3:
             return "st3";
-        case Register::St4:
+        case RegisterId::St4:
             return "st4";
-        case Register::St5:
+        case RegisterId::St5:
             return "st5";
-        case Register::St6:
+        case RegisterId::St6:
             return "st6";
-        case Register::St7:
+        case RegisterId::St7:
             return "st7";
-        case Register::X87Control:
+        case RegisterId::X87Control:
             return "x87control";
-        case Register::X87Status:
+        case RegisterId::X87Status:
             return "x87status";
-        case Register::X87Tag:
+        case RegisterId::X87Tag:
             return "x87tag";
-        case Register::Mm0:
+        case RegisterId::Mm0:
             return "mm0";
-        case Register::Mm1:
+        case RegisterId::Mm1:
             return "mm1";
-        case Register::Mm2:
+        case RegisterId::Mm2:
             return "mm2";
-        case Register::Mm3:
+        case RegisterId::Mm3:
             return "mm3";
-        case Register::Mm4:
+        case RegisterId::Mm4:
             return "mm4";
-        case Register::Mm5:
+        case RegisterId::Mm5:
             return "mm5";
-        case Register::Mm6:
+        case RegisterId::Mm6:
             return "mm6";
-        case Register::Mm7:
+        case RegisterId::Mm7:
             return "mm7";
             // Floating point vector registers 128-bit
-        case Register::Xmm0:
+        case RegisterId::Xmm0:
             return "xmm0";
-        case Register::Xmm1:
+        case RegisterId::Xmm1:
             return "xmm1";
-        case Register::Xmm2:
+        case RegisterId::Xmm2:
             return "xmm2";
-        case Register::Xmm3:
+        case RegisterId::Xmm3:
             return "xmm3";
-        case Register::Xmm4:
+        case RegisterId::Xmm4:
             return "xmm4";
-        case Register::Xmm5:
+        case RegisterId::Xmm5:
             return "xmm5";
-        case Register::Xmm6:
+        case RegisterId::Xmm6:
             return "xmm6";
-        case Register::Xmm7:
+        case RegisterId::Xmm7:
             return "xmm7";
-        case Register::Xmm8:
+        case RegisterId::Xmm8:
             return "xmm8";
-        case Register::Xmm9:
+        case RegisterId::Xmm9:
             return "xmm9";
-        case Register::Xmm10:
+        case RegisterId::Xmm10:
             return "xmm10";
-        case Register::Xmm11:
+        case RegisterId::Xmm11:
             return "xmm11";
-        case Register::Xmm12:
+        case RegisterId::Xmm12:
             return "xmm12";
-        case Register::Xmm13:
+        case RegisterId::Xmm13:
             return "xmm13";
-        case Register::Xmm14:
+        case RegisterId::Xmm14:
             return "xmm14";
-        case Register::Xmm15:
+        case RegisterId::Xmm15:
             return "xmm15";
-        case Register::Xmm16:
+        case RegisterId::Xmm16:
             return "xmm16";
-        case Register::Xmm17:
+        case RegisterId::Xmm17:
             return "xmm17";
-        case Register::Xmm18:
+        case RegisterId::Xmm18:
             return "xmm18";
-        case Register::Xmm19:
+        case RegisterId::Xmm19:
             return "xmm19";
-        case Register::Xmm20:
+        case RegisterId::Xmm20:
             return "xmm20";
-        case Register::Xmm21:
+        case RegisterId::Xmm21:
             return "xmm21";
-        case Register::Xmm22:
+        case RegisterId::Xmm22:
             return "xmm22";
-        case Register::Xmm23:
+        case RegisterId::Xmm23:
             return "xmm23";
-        case Register::Xmm24:
+        case RegisterId::Xmm24:
             return "xmm24";
-        case Register::Xmm25:
+        case RegisterId::Xmm25:
             return "xmm25";
-        case Register::Xmm26:
+        case RegisterId::Xmm26:
             return "xmm26";
-        case Register::Xmm27:
+        case RegisterId::Xmm27:
             return "xmm27";
-        case Register::Xmm28:
+        case RegisterId::Xmm28:
             return "xmm28";
-        case Register::Xmm29:
+        case RegisterId::Xmm29:
             return "xmm29";
-        case Register::Xmm30:
+        case RegisterId::Xmm30:
             return "xmm30";
-        case Register::Xmm31:
+        case RegisterId::Xmm31:
             return "xmm31";
             // Floating point vector registers 256-bit
-        case Register::Ymm0:
+        case RegisterId::Ymm0:
             return "ymm0";
-        case Register::Ymm1:
+        case RegisterId::Ymm1:
             return "ymm1";
-        case Register::Ymm2:
+        case RegisterId::Ymm2:
             return "ymm2";
-        case Register::Ymm3:
+        case RegisterId::Ymm3:
             return "ymm3";
-        case Register::Ymm4:
+        case RegisterId::Ymm4:
             return "ymm4";
-        case Register::Ymm5:
+        case RegisterId::Ymm5:
             return "ymm5";
-        case Register::Ymm6:
+        case RegisterId::Ymm6:
             return "ymm6";
-        case Register::Ymm7:
+        case RegisterId::Ymm7:
             return "ymm7";
-        case Register::Ymm8:
+        case RegisterId::Ymm8:
             return "ymm8";
-        case Register::Ymm9:
+        case RegisterId::Ymm9:
             return "ymm9";
-        case Register::Ymm10:
+        case RegisterId::Ymm10:
             return "ymm10";
-        case Register::Ymm11:
+        case RegisterId::Ymm11:
             return "ymm11";
-        case Register::Ymm12:
+        case RegisterId::Ymm12:
             return "ymm12";
-        case Register::Ymm13:
+        case RegisterId::Ymm13:
             return "ymm13";
-        case Register::Ymm14:
+        case RegisterId::Ymm14:
             return "ymm14";
-        case Register::Ymm15:
+        case RegisterId::Ymm15:
             return "ymm15";
-        case Register::Ymm16:
+        case RegisterId::Ymm16:
             return "ymm16";
-        case Register::Ymm17:
+        case RegisterId::Ymm17:
             return "ymm17";
-        case Register::Ymm18:
+        case RegisterId::Ymm18:
             return "ymm18";
-        case Register::Ymm19:
+        case RegisterId::Ymm19:
             return "ymm19";
-        case Register::Ymm20:
+        case RegisterId::Ymm20:
             return "ymm20";
-        case Register::Ymm21:
+        case RegisterId::Ymm21:
             return "ymm21";
-        case Register::Ymm22:
+        case RegisterId::Ymm22:
             return "ymm22";
-        case Register::Ymm23:
+        case RegisterId::Ymm23:
             return "ymm23";
-        case Register::Ymm24:
+        case RegisterId::Ymm24:
             return "ymm24";
-        case Register::Ymm25:
+        case RegisterId::Ymm25:
             return "ymm25";
-        case Register::Ymm26:
+        case RegisterId::Ymm26:
             return "ymm26";
-        case Register::Ymm27:
+        case RegisterId::Ymm27:
             return "ymm27";
-        case Register::Ymm28:
+        case RegisterId::Ymm28:
             return "ymm28";
-        case Register::Ymm29:
+        case RegisterId::Ymm29:
             return "ymm29";
-        case Register::Ymm30:
+        case RegisterId::Ymm30:
             return "ymm30";
-        case Register::Ymm31:
+        case RegisterId::Ymm31:
             return "ymm31";
             // Floating point vector registers 512-bit
-        case Register::Zmm0:
+        case RegisterId::Zmm0:
             return "zmm0";
-        case Register::Zmm1:
+        case RegisterId::Zmm1:
             return "zmm1";
-        case Register::Zmm2:
+        case RegisterId::Zmm2:
             return "zmm2";
-        case Register::Zmm3:
+        case RegisterId::Zmm3:
             return "zmm3";
-        case Register::Zmm4:
+        case RegisterId::Zmm4:
             return "zmm4";
-        case Register::Zmm5:
+        case RegisterId::Zmm5:
             return "zmm5";
-        case Register::Zmm6:
+        case RegisterId::Zmm6:
             return "zmm6";
-        case Register::Zmm7:
+        case RegisterId::Zmm7:
             return "zmm7";
-        case Register::Zmm8:
+        case RegisterId::Zmm8:
             return "zmm8";
-        case Register::Zmm9:
+        case RegisterId::Zmm9:
             return "zmm9";
-        case Register::Zmm10:
+        case RegisterId::Zmm10:
             return "zmm10";
-        case Register::Zmm11:
+        case RegisterId::Zmm11:
             return "zmm11";
-        case Register::Zmm12:
+        case RegisterId::Zmm12:
             return "zmm12";
-        case Register::Zmm13:
+        case RegisterId::Zmm13:
             return "zmm13";
-        case Register::Zmm14:
+        case RegisterId::Zmm14:
             return "zmm14";
-        case Register::Zmm15:
+        case RegisterId::Zmm15:
             return "zmm15";
-        case Register::Zmm16:
+        case RegisterId::Zmm16:
             return "zmm16";
-        case Register::Zmm17:
+        case RegisterId::Zmm17:
             return "zmm17";
-        case Register::Zmm18:
+        case RegisterId::Zmm18:
             return "zmm18";
-        case Register::Zmm19:
+        case RegisterId::Zmm19:
             return "zmm19";
-        case Register::Zmm20:
+        case RegisterId::Zmm20:
             return "zmm20";
-        case Register::Zmm21:
+        case RegisterId::Zmm21:
             return "zmm21";
-        case Register::Zmm22:
+        case RegisterId::Zmm22:
             return "zmm22";
-        case Register::Zmm23:
+        case RegisterId::Zmm23:
             return "zmm23";
-        case Register::Zmm24:
+        case RegisterId::Zmm24:
             return "zmm24";
-        case Register::Zmm25:
+        case RegisterId::Zmm25:
             return "zmm25";
-        case Register::Zmm26:
+        case RegisterId::Zmm26:
             return "zmm26";
-        case Register::Zmm27:
+        case RegisterId::Zmm27:
             return "zmm27";
-        case Register::Zmm28:
+        case RegisterId::Zmm28:
             return "zmm28";
-        case Register::Zmm29:
+        case RegisterId::Zmm29:
             return "zmm29";
-        case Register::Zmm30:
+        case RegisterId::Zmm30:
             return "zmm30";
-        case Register::Zmm31:
+        case RegisterId::Zmm31:
             return "zmm31";
             // Matrix registers
-        case Register::Tmm0:
+        case RegisterId::Tmm0:
             return "tmm0";
-        case Register::Tmm1:
+        case RegisterId::Tmm1:
             return "tmm1";
-        case Register::Tmm2:
+        case RegisterId::Tmm2:
             return "tmm2";
-        case Register::Tmm3:
+        case RegisterId::Tmm3:
             return "tmm3";
-        case Register::Tmm4:
+        case RegisterId::Tmm4:
             return "tmm4";
-        case Register::Tmm5:
+        case RegisterId::Tmm5:
             return "tmm5";
-        case Register::Tmm6:
+        case RegisterId::Tmm6:
             return "tmm6";
-        case Register::Tmm7:
+        case RegisterId::Tmm7:
             return "tmm7";
-        case Register::Flags:
+        case RegisterId::Flags:
             return "flags";
-        case Register::EFlags:
+        case RegisterId::EFlags:
             return "eflags";
-        case Register::RFlags:
+        case RegisterId::RFlags:
             return "rflags";
-        case Register::Ip:
+        case RegisterId::Ip:
             return "ip";
-        case Register::Eip:
+        case RegisterId::Eip:
             return "eip";
-        case Register::Rip:
+        case RegisterId::Rip:
             return "rip";
-        case Register::Es:
+        case RegisterId::Es:
             return "es";
-        case Register::Cs:
+        case RegisterId::Cs:
             return "cs";
-        case Register::Ss:
+        case RegisterId::Ss:
             return "ss";
-        case Register::Ds:
+        case RegisterId::Ds:
             return "ds";
-        case Register::Fs:
+        case RegisterId::Fs:
             return "fs";
-        case Register::Gs:
+        case RegisterId::Gs:
             return "gs";
-        case Register::Gdtr:
+        case RegisterId::Gdtr:
             return "gdtr";
-        case Register::Ldtr:
+        case RegisterId::Ldtr:
             return "ldtr";
-        case Register::Idtr:
+        case RegisterId::Idtr:
             return "idtr";
-        case Register::Tr:
+        case RegisterId::Tr:
             return "tr";
-        case Register::Tr0:
+        case RegisterId::Tr0:
             return "tr0";
-        case Register::Tr1:
+        case RegisterId::Tr1:
             return "tr1";
-        case Register::Tr2:
+        case RegisterId::Tr2:
             return "tr2";
-        case Register::Tr3:
+        case RegisterId::Tr3:
             return "tr3";
-        case Register::Tr4:
+        case RegisterId::Tr4:
             return "tr4";
-        case Register::Tr5:
+        case RegisterId::Tr5:
             return "tr5";
-        case Register::Tr6:
+        case RegisterId::Tr6:
             return "tr6";
-        case Register::Tr7:
+        case RegisterId::Tr7:
             return "tr7";
             // Control registers
-        case Register::Cr0:
+        case RegisterId::Cr0:
             return "cr0";
-        case Register::Cr1:
+        case RegisterId::Cr1:
             return "cr1";
-        case Register::Cr2:
+        case RegisterId::Cr2:
             return "cr2";
-        case Register::Cr3:
+        case RegisterId::Cr3:
             return "cr3";
-        case Register::Cr4:
+        case RegisterId::Cr4:
             return "cr4";
-        case Register::Cr5:
+        case RegisterId::Cr5:
             return "cr5";
-        case Register::Cr6:
+        case RegisterId::Cr6:
             return "cr6";
-        case Register::Cr7:
+        case RegisterId::Cr7:
             return "cr7";
-        case Register::Cr8:
+        case RegisterId::Cr8:
             return "cr8";
-        case Register::Cr9:
+        case RegisterId::Cr9:
             return "cr9";
-        case Register::Cr10:
+        case RegisterId::Cr10:
             return "cr10";
-        case Register::Cr11:
+        case RegisterId::Cr11:
             return "cr11";
-        case Register::Cr12:
+        case RegisterId::Cr12:
             return "cr12";
-        case Register::Cr13:
+        case RegisterId::Cr13:
             return "cr13";
-        case Register::Cr14:
+        case RegisterId::Cr14:
             return "cr14";
-        case Register::Cr15:
+        case RegisterId::Cr15:
             return "cr15";
             // Debug registers
-        case Register::Dr0:
+        case RegisterId::Dr0:
             return "dr0";
-        case Register::Dr1:
+        case RegisterId::Dr1:
             return "dr1";
-        case Register::Dr2:
+        case RegisterId::Dr2:
             return "dr2";
-        case Register::Dr3:
+        case RegisterId::Dr3:
             return "dr3";
-        case Register::Dr4:
+        case RegisterId::Dr4:
             return "dr4";
-        case Register::Dr5:
+        case RegisterId::Dr5:
             return "dr5";
-        case Register::Dr6:
+        case RegisterId::Dr6:
             return "dr6";
-        case Register::Dr7:
+        case RegisterId::Dr7:
             return "dr7";
-        case Register::Dr8:
+        case RegisterId::Dr8:
             return "dr8";
-        case Register::Dr9:
+        case RegisterId::Dr9:
             return "dr9";
-        case Register::Dr10:
+        case RegisterId::Dr10:
             return "dr10";
-        case Register::Dr11:
+        case RegisterId::Dr11:
             return "dr11";
-        case Register::Dr12:
+        case RegisterId::Dr12:
             return "dr12";
-        case Register::Dr13:
+        case RegisterId::Dr13:
             return "dr13";
-        case Register::Dr14:
+        case RegisterId::Dr14:
             return "dr14";
-        case Register::Dr15:
+        case RegisterId::Dr15:
             return "dr15";
-        case Register::K0:
+        case RegisterId::K0:
             return "k0";
-        case Register::K1:
+        case RegisterId::K1:
             return "k1";
-        case Register::K2:
+        case RegisterId::K2:
             return "k2";
-        case Register::K3:
+        case RegisterId::K3:
             return "k3";
-        case Register::K4:
+        case RegisterId::K4:
             return "k4";
-        case Register::K5:
+        case RegisterId::K5:
             return "k5";
-        case Register::K6:
+        case RegisterId::K6:
             return "k6";
-        case Register::K7:
+        case RegisterId::K7:
             return "k7";
-        case Register::Bnd0:
+        case RegisterId::Bnd0:
             return "bnd0";
-        case Register::Bnd1:
+        case RegisterId::Bnd1:
             return "bnd1";
-        case Register::Bnd2:
+        case RegisterId::Bnd2:
             return "bnd2";
-        case Register::Bnd3:
+        case RegisterId::Bnd3:
             return "bnd3";
-        case Register::BndCfg:
+        case RegisterId::BndCfg:
             return "bndcfg";
-        case Register::BndStatus:
+        case RegisterId::BndStatus:
             return "bndstatus";
-        case Register::Mxcsr:
+        case RegisterId::Mxcsr:
             return "mxcsr";
-        case Register::Pkru:
+        case RegisterId::Pkru:
             return "pkru";
-        case Register::Xcr0:
+        case RegisterId::Xcr0:
             return "xcr0";
         }
         return "invalid";
     }
 
-    inline int RegisterGetSize(Register id)
+    inline int RegisterGetSize(RegisterId id)
     {
         switch (id)
         {
-        case Register::None:
+        case RegisterId::None:
             return 0;
-        case Register::Al:
-        case Register::Cl:
-        case Register::Dl:
-        case Register::Bl:
-        case Register::Ah:
-        case Register::Ch:
-        case Register::Dh:
-        case Register::Bh:
-        case Register::Spl:
-        case Register::Bpl:
-        case Register::Sil:
-        case Register::Dil:
-        case Register::R8b:
-        case Register::R9b:
-        case Register::R10b:
-        case Register::R11b:
-        case Register::R12b:
-        case Register::R13b:
-        case Register::R14b:
-        case Register::R15b:
+        case RegisterId::Al:
+        case RegisterId::Cl:
+        case RegisterId::Dl:
+        case RegisterId::Bl:
+        case RegisterId::Ah:
+        case RegisterId::Ch:
+        case RegisterId::Dh:
+        case RegisterId::Bh:
+        case RegisterId::Spl:
+        case RegisterId::Bpl:
+        case RegisterId::Sil:
+        case RegisterId::Dil:
+        case RegisterId::R8b:
+        case RegisterId::R9b:
+        case RegisterId::R10b:
+        case RegisterId::R11b:
+        case RegisterId::R12b:
+        case RegisterId::R13b:
+        case RegisterId::R14b:
+        case RegisterId::R15b:
             return 8;
-        case Register::Ax:
-        case Register::Cx:
-        case Register::Dx:
-        case Register::Bx:
-        case Register::Sp:
-        case Register::Bp:
-        case Register::Si:
-        case Register::Di:
-        case Register::R8w:
-        case Register::R9w:
-        case Register::R10w:
-        case Register::R11w:
-        case Register::R12w:
-        case Register::R13w:
-        case Register::R14w:
-        case Register::R15w:
+        case RegisterId::Ax:
+        case RegisterId::Cx:
+        case RegisterId::Dx:
+        case RegisterId::Bx:
+        case RegisterId::Sp:
+        case RegisterId::Bp:
+        case RegisterId::Si:
+        case RegisterId::Di:
+        case RegisterId::R8w:
+        case RegisterId::R9w:
+        case RegisterId::R10w:
+        case RegisterId::R11w:
+        case RegisterId::R12w:
+        case RegisterId::R13w:
+        case RegisterId::R14w:
+        case RegisterId::R15w:
             return 16;
-        case Register::Eax:
-        case Register::Ecx:
-        case Register::Edx:
-        case Register::Ebx:
-        case Register::Esp:
-        case Register::Ebp:
-        case Register::Esi:
-        case Register::Edi:
-        case Register::R8d:
-        case Register::R9d:
-        case Register::R10d:
-        case Register::R11d:
-        case Register::R12d:
-        case Register::R13d:
-        case Register::R14d:
-        case Register::R15d:
+        case RegisterId::Eax:
+        case RegisterId::Ecx:
+        case RegisterId::Edx:
+        case RegisterId::Ebx:
+        case RegisterId::Esp:
+        case RegisterId::Ebp:
+        case RegisterId::Esi:
+        case RegisterId::Edi:
+        case RegisterId::R8d:
+        case RegisterId::R9d:
+        case RegisterId::R10d:
+        case RegisterId::R11d:
+        case RegisterId::R12d:
+        case RegisterId::R13d:
+        case RegisterId::R14d:
+        case RegisterId::R15d:
             return 32;
-        case Register::Rax:
-        case Register::Rcx:
-        case Register::Rdx:
-        case Register::Rbx:
-        case Register::Rsp:
-        case Register::Rbp:
-        case Register::Rsi:
-        case Register::Rdi:
-        case Register::R8:
-        case Register::R9:
-        case Register::R10:
-        case Register::R11:
-        case Register::R12:
-        case Register::R13:
-        case Register::R14:
-        case Register::R15:
+        case RegisterId::Rax:
+        case RegisterId::Rcx:
+        case RegisterId::Rdx:
+        case RegisterId::Rbx:
+        case RegisterId::Rsp:
+        case RegisterId::Rbp:
+        case RegisterId::Rsi:
+        case RegisterId::Rdi:
+        case RegisterId::R8:
+        case RegisterId::R9:
+        case RegisterId::R10:
+        case RegisterId::R11:
+        case RegisterId::R12:
+        case RegisterId::R13:
+        case RegisterId::R14:
+        case RegisterId::R15:
             return 64;
-        case Register::St0:
-        case Register::St1:
-        case Register::St2:
-        case Register::St3:
-        case Register::St4:
-        case Register::St5:
-        case Register::St6:
-        case Register::St7:
+        case RegisterId::St0:
+        case RegisterId::St1:
+        case RegisterId::St2:
+        case RegisterId::St3:
+        case RegisterId::St4:
+        case RegisterId::St5:
+        case RegisterId::St6:
+        case RegisterId::St7:
             return 80;
-        case Register::X87Control:
-        case Register::X87Status:
-        case Register::X87Tag:
+        case RegisterId::X87Control:
+        case RegisterId::X87Status:
+        case RegisterId::X87Tag:
             return 16;
-        case Register::Mm0:
-        case Register::Mm1:
-        case Register::Mm2:
-        case Register::Mm3:
-        case Register::Mm4:
-        case Register::Mm5:
-        case Register::Mm6:
-        case Register::Mm7:
+        case RegisterId::Mm0:
+        case RegisterId::Mm1:
+        case RegisterId::Mm2:
+        case RegisterId::Mm3:
+        case RegisterId::Mm4:
+        case RegisterId::Mm5:
+        case RegisterId::Mm6:
+        case RegisterId::Mm7:
             return 64;
-        case Register::Xmm0:
-        case Register::Xmm1:
-        case Register::Xmm2:
-        case Register::Xmm3:
-        case Register::Xmm4:
-        case Register::Xmm5:
-        case Register::Xmm6:
-        case Register::Xmm7:
-        case Register::Xmm8:
-        case Register::Xmm9:
-        case Register::Xmm10:
-        case Register::Xmm11:
-        case Register::Xmm12:
-        case Register::Xmm13:
-        case Register::Xmm14:
-        case Register::Xmm15:
-        case Register::Xmm16:
-        case Register::Xmm17:
-        case Register::Xmm18:
-        case Register::Xmm19:
-        case Register::Xmm20:
-        case Register::Xmm21:
-        case Register::Xmm22:
-        case Register::Xmm23:
-        case Register::Xmm24:
-        case Register::Xmm25:
-        case Register::Xmm26:
-        case Register::Xmm27:
-        case Register::Xmm28:
-        case Register::Xmm29:
-        case Register::Xmm30:
-        case Register::Xmm31:
+        case RegisterId::Xmm0:
+        case RegisterId::Xmm1:
+        case RegisterId::Xmm2:
+        case RegisterId::Xmm3:
+        case RegisterId::Xmm4:
+        case RegisterId::Xmm5:
+        case RegisterId::Xmm6:
+        case RegisterId::Xmm7:
+        case RegisterId::Xmm8:
+        case RegisterId::Xmm9:
+        case RegisterId::Xmm10:
+        case RegisterId::Xmm11:
+        case RegisterId::Xmm12:
+        case RegisterId::Xmm13:
+        case RegisterId::Xmm14:
+        case RegisterId::Xmm15:
+        case RegisterId::Xmm16:
+        case RegisterId::Xmm17:
+        case RegisterId::Xmm18:
+        case RegisterId::Xmm19:
+        case RegisterId::Xmm20:
+        case RegisterId::Xmm21:
+        case RegisterId::Xmm22:
+        case RegisterId::Xmm23:
+        case RegisterId::Xmm24:
+        case RegisterId::Xmm25:
+        case RegisterId::Xmm26:
+        case RegisterId::Xmm27:
+        case RegisterId::Xmm28:
+        case RegisterId::Xmm29:
+        case RegisterId::Xmm30:
+        case RegisterId::Xmm31:
             return 128;
-        case Register::Ymm0:
-        case Register::Ymm1:
-        case Register::Ymm2:
-        case Register::Ymm3:
-        case Register::Ymm4:
-        case Register::Ymm5:
-        case Register::Ymm6:
-        case Register::Ymm7:
-        case Register::Ymm8:
-        case Register::Ymm9:
-        case Register::Ymm10:
-        case Register::Ymm11:
-        case Register::Ymm12:
-        case Register::Ymm13:
-        case Register::Ymm14:
-        case Register::Ymm15:
-        case Register::Ymm16:
-        case Register::Ymm17:
-        case Register::Ymm18:
-        case Register::Ymm19:
-        case Register::Ymm20:
-        case Register::Ymm21:
-        case Register::Ymm22:
-        case Register::Ymm23:
-        case Register::Ymm24:
-        case Register::Ymm25:
-        case Register::Ymm26:
-        case Register::Ymm27:
-        case Register::Ymm28:
-        case Register::Ymm29:
-        case Register::Ymm30:
-        case Register::Ymm31:
+        case RegisterId::Ymm0:
+        case RegisterId::Ymm1:
+        case RegisterId::Ymm2:
+        case RegisterId::Ymm3:
+        case RegisterId::Ymm4:
+        case RegisterId::Ymm5:
+        case RegisterId::Ymm6:
+        case RegisterId::Ymm7:
+        case RegisterId::Ymm8:
+        case RegisterId::Ymm9:
+        case RegisterId::Ymm10:
+        case RegisterId::Ymm11:
+        case RegisterId::Ymm12:
+        case RegisterId::Ymm13:
+        case RegisterId::Ymm14:
+        case RegisterId::Ymm15:
+        case RegisterId::Ymm16:
+        case RegisterId::Ymm17:
+        case RegisterId::Ymm18:
+        case RegisterId::Ymm19:
+        case RegisterId::Ymm20:
+        case RegisterId::Ymm21:
+        case RegisterId::Ymm22:
+        case RegisterId::Ymm23:
+        case RegisterId::Ymm24:
+        case RegisterId::Ymm25:
+        case RegisterId::Ymm26:
+        case RegisterId::Ymm27:
+        case RegisterId::Ymm28:
+        case RegisterId::Ymm29:
+        case RegisterId::Ymm30:
+        case RegisterId::Ymm31:
             return 256;
-        case Register::Zmm0:
-        case Register::Zmm1:
-        case Register::Zmm2:
-        case Register::Zmm3:
-        case Register::Zmm4:
-        case Register::Zmm5:
-        case Register::Zmm6:
-        case Register::Zmm7:
-        case Register::Zmm8:
-        case Register::Zmm9:
-        case Register::Zmm10:
-        case Register::Zmm11:
-        case Register::Zmm12:
-        case Register::Zmm13:
-        case Register::Zmm14:
-        case Register::Zmm15:
-        case Register::Zmm16:
-        case Register::Zmm17:
-        case Register::Zmm18:
-        case Register::Zmm19:
-        case Register::Zmm20:
-        case Register::Zmm21:
-        case Register::Zmm22:
-        case Register::Zmm23:
-        case Register::Zmm24:
-        case Register::Zmm25:
-        case Register::Zmm26:
-        case Register::Zmm27:
-        case Register::Zmm28:
-        case Register::Zmm29:
-        case Register::Zmm30:
-        case Register::Zmm31:
+        case RegisterId::Zmm0:
+        case RegisterId::Zmm1:
+        case RegisterId::Zmm2:
+        case RegisterId::Zmm3:
+        case RegisterId::Zmm4:
+        case RegisterId::Zmm5:
+        case RegisterId::Zmm6:
+        case RegisterId::Zmm7:
+        case RegisterId::Zmm8:
+        case RegisterId::Zmm9:
+        case RegisterId::Zmm10:
+        case RegisterId::Zmm11:
+        case RegisterId::Zmm12:
+        case RegisterId::Zmm13:
+        case RegisterId::Zmm14:
+        case RegisterId::Zmm15:
+        case RegisterId::Zmm16:
+        case RegisterId::Zmm17:
+        case RegisterId::Zmm18:
+        case RegisterId::Zmm19:
+        case RegisterId::Zmm20:
+        case RegisterId::Zmm21:
+        case RegisterId::Zmm22:
+        case RegisterId::Zmm23:
+        case RegisterId::Zmm24:
+        case RegisterId::Zmm25:
+        case RegisterId::Zmm26:
+        case RegisterId::Zmm27:
+        case RegisterId::Zmm28:
+        case RegisterId::Zmm29:
+        case RegisterId::Zmm30:
+        case RegisterId::Zmm31:
             return 512;
-        case Register::Tmm0:
-        case Register::Tmm1:
-        case Register::Tmm2:
-        case Register::Tmm3:
-        case Register::Tmm4:
-        case Register::Tmm5:
-        case Register::Tmm6:
-        case Register::Tmm7:
+        case RegisterId::Tmm0:
+        case RegisterId::Tmm1:
+        case RegisterId::Tmm2:
+        case RegisterId::Tmm3:
+        case RegisterId::Tmm4:
+        case RegisterId::Tmm5:
+        case RegisterId::Tmm6:
+        case RegisterId::Tmm7:
             return 8192;
-        case Register::Flags:
+        case RegisterId::Flags:
             return 16;
-        case Register::EFlags:
+        case RegisterId::EFlags:
             return 32;
-        case Register::RFlags:
+        case RegisterId::RFlags:
             return 64;
-        case Register::Ip:
+        case RegisterId::Ip:
             return 16;
-        case Register::Eip:
+        case RegisterId::Eip:
             return 32;
-        case Register::Rip:
+        case RegisterId::Rip:
             return 64;
-        case Register::Es:
-        case Register::Cs:
-        case Register::Ss:
-        case Register::Ds:
-        case Register::Fs:
-        case Register::Gs:
+        case RegisterId::Es:
+        case RegisterId::Cs:
+        case RegisterId::Ss:
+        case RegisterId::Ds:
+        case RegisterId::Fs:
+        case RegisterId::Gs:
             return 16;
-        case Register::Gdtr:
-        case Register::Ldtr:
-        case Register::Idtr:
-        case Register::Tr:
+        case RegisterId::Gdtr:
+        case RegisterId::Ldtr:
+        case RegisterId::Idtr:
+        case RegisterId::Tr:
             return 16;
-        case Register::Tr0:
-        case Register::Tr1:
-        case Register::Tr2:
-        case Register::Tr3:
-        case Register::Tr4:
-        case Register::Tr5:
-        case Register::Tr6:
-        case Register::Tr7:
+        case RegisterId::Tr0:
+        case RegisterId::Tr1:
+        case RegisterId::Tr2:
+        case RegisterId::Tr3:
+        case RegisterId::Tr4:
+        case RegisterId::Tr5:
+        case RegisterId::Tr6:
+        case RegisterId::Tr7:
             return 64;
-        case Register::Cr0:
-        case Register::Cr1:
-        case Register::Cr2:
-        case Register::Cr3:
-        case Register::Cr4:
-        case Register::Cr5:
-        case Register::Cr6:
-        case Register::Cr7:
-        case Register::Cr8:
-        case Register::Cr9:
-        case Register::Cr10:
-        case Register::Cr11:
-        case Register::Cr12:
-        case Register::Cr13:
-        case Register::Cr14:
-        case Register::Cr15:
+        case RegisterId::Cr0:
+        case RegisterId::Cr1:
+        case RegisterId::Cr2:
+        case RegisterId::Cr3:
+        case RegisterId::Cr4:
+        case RegisterId::Cr5:
+        case RegisterId::Cr6:
+        case RegisterId::Cr7:
+        case RegisterId::Cr8:
+        case RegisterId::Cr9:
+        case RegisterId::Cr10:
+        case RegisterId::Cr11:
+        case RegisterId::Cr12:
+        case RegisterId::Cr13:
+        case RegisterId::Cr14:
+        case RegisterId::Cr15:
             return 64;
-        case Register::Dr0:
-        case Register::Dr1:
-        case Register::Dr2:
-        case Register::Dr3:
-        case Register::Dr4:
-        case Register::Dr5:
-        case Register::Dr6:
-        case Register::Dr7:
-        case Register::Dr8:
-        case Register::Dr9:
-        case Register::Dr10:
-        case Register::Dr11:
-        case Register::Dr12:
-        case Register::Dr13:
-        case Register::Dr14:
-        case Register::Dr15:
+        case RegisterId::Dr0:
+        case RegisterId::Dr1:
+        case RegisterId::Dr2:
+        case RegisterId::Dr3:
+        case RegisterId::Dr4:
+        case RegisterId::Dr5:
+        case RegisterId::Dr6:
+        case RegisterId::Dr7:
+        case RegisterId::Dr8:
+        case RegisterId::Dr9:
+        case RegisterId::Dr10:
+        case RegisterId::Dr11:
+        case RegisterId::Dr12:
+        case RegisterId::Dr13:
+        case RegisterId::Dr14:
+        case RegisterId::Dr15:
 #ifdef _M_AMD64
             return 64;
 #else
             return 32;
 #endif
-        case Register::K0:
-        case Register::K1:
-        case Register::K2:
-        case Register::K3:
-        case Register::K4:
-        case Register::K5:
-        case Register::K6:
-        case Register::K7:
+        case RegisterId::K0:
+        case RegisterId::K1:
+        case RegisterId::K2:
+        case RegisterId::K3:
+        case RegisterId::K4:
+        case RegisterId::K5:
+        case RegisterId::K6:
+        case RegisterId::K7:
             return 64;
-        case Register::Bnd0:
-        case Register::Bnd1:
-        case Register::Bnd2:
-        case Register::Bnd3:
+        case RegisterId::Bnd0:
+        case RegisterId::Bnd1:
+        case RegisterId::Bnd2:
+        case RegisterId::Bnd3:
             return 128;
-        case Register::BndCfg:
-        case Register::BndStatus:
+        case RegisterId::BndCfg:
+        case RegisterId::BndStatus:
             return 16;
-        case Register::Mxcsr:
+        case RegisterId::Mxcsr:
             return 32;
-        case Register::Pkru:
-        case Register::Xcr0:
+        case RegisterId::Pkru:
+        case RegisterId::Xcr0:
             return 0;
         }
         return 0;
     }
 
-    inline Register RegisterGetRoot(Register id)
+    inline RegisterId RegisterGetRoot(RegisterId id)
     {
         switch (id)
         {
-        case Register::Al:
-        case Register::Ax:
-        case Register::Ah:
+        case RegisterId::Al:
+        case RegisterId::Ax:
+        case RegisterId::Ah:
 #ifdef _M_AMD64
-            return Register::Rax;
+            return RegisterId::Rax;
 #else
-            return Register::Eax;
+            return RegisterId::Eax;
 #endif
-        case Register::Cl:
-        case Register::Cx:
-        case Register::Ch:
+        case RegisterId::Cl:
+        case RegisterId::Cx:
+        case RegisterId::Ch:
 #ifdef _M_AMD64
-            return Register::Rcx;
+            return RegisterId::Rcx;
 #else
-            return Register::Ecx;
+            return RegisterId::Ecx;
 #endif
-        case Register::Dl:
-        case Register::Dx:
-        case Register::Dh:
+        case RegisterId::Dl:
+        case RegisterId::Dx:
+        case RegisterId::Dh:
 #ifdef _M_AMD64
-            return Register::Rdx;
+            return RegisterId::Rdx;
 #else
-            return Register::Edx;
+            return RegisterId::Edx;
 #endif
-        case Register::Bl:
-        case Register::Bx:
-        case Register::Bh:
+        case RegisterId::Bl:
+        case RegisterId::Bx:
+        case RegisterId::Bh:
 #ifdef _M_AMD64
-            return Register::Rbx;
+            return RegisterId::Rbx;
 #else
-            return Register::Ebx;
+            return RegisterId::Ebx;
 #endif
-        case Register::Sp:
-        case Register::Spl:
+        case RegisterId::Sp:
+        case RegisterId::Spl:
 #ifdef _M_AMD64
-            return Register::Rsp;
+            return RegisterId::Rsp;
 #else
-            return Register::Esp;
+            return RegisterId::Esp;
 #endif
-        case Register::Bpl:
-        case Register::Bp:
+        case RegisterId::Bpl:
+        case RegisterId::Bp:
 #ifdef _M_AMD64
-            return Register::Rbp;
+            return RegisterId::Rbp;
 #else
-            return Register::Ebp;
+            return RegisterId::Ebp;
 #endif
-        case Register::Si:
-        case Register::Sil:
+        case RegisterId::Si:
+        case RegisterId::Sil:
 #ifdef _M_AMD64
-            return Register::Rsi;
+            return RegisterId::Rsi;
 #else
-            return Register::Esi;
+            return RegisterId::Esi;
 #endif
-        case Register::Di:
-        case Register::Dil:
+        case RegisterId::Di:
+        case RegisterId::Dil:
 #ifdef _M_AMD64
-            return Register::Rdi;
+            return RegisterId::Rdi;
 #else
-            return Register::Edi;
+            return RegisterId::Edi;
 #endif
 #ifdef _M_AMD64
-        case Register::R8b:
-        case Register::R8w:
-            return Register::R8;
-        case Register::R9b:
-        case Register::R9w:
-            return Register::R9;
-        case Register::R10b:
-        case Register::R10w:
-            return Register::R10;
-        case Register::R11b:
-        case Register::R11w:
-            return Register::R11;
-        case Register::R12b:
-        case Register::R12w:
-            return Register::R12;
-        case Register::R13b:
-        case Register::R13w:
-            return Register::R13;
-        case Register::R14b:
-        case Register::R14w:
-            return Register::R14;
-        case Register::R15b:
-        case Register::R15w:
-            return Register::R15;
+        case RegisterId::R8b:
+        case RegisterId::R8w:
+            return RegisterId::R8;
+        case RegisterId::R9b:
+        case RegisterId::R9w:
+            return RegisterId::R9;
+        case RegisterId::R10b:
+        case RegisterId::R10w:
+            return RegisterId::R10;
+        case RegisterId::R11b:
+        case RegisterId::R11w:
+            return RegisterId::R11;
+        case RegisterId::R12b:
+        case RegisterId::R12w:
+            return RegisterId::R12;
+        case RegisterId::R13b:
+        case RegisterId::R13w:
+            return RegisterId::R13;
+        case RegisterId::R14b:
+        case RegisterId::R14w:
+            return RegisterId::R14;
+        case RegisterId::R15b:
+        case RegisterId::R15w:
+            return RegisterId::R15;
 #endif
-        case Register::Eax:
+        case RegisterId::Eax:
 #ifdef _M_AMD64
-            return Register::Rax;
+            return RegisterId::Rax;
 #endif
-        case Register::Ecx:
+        case RegisterId::Ecx:
 #ifdef _M_AMD64
-            return Register::Rcx;
+            return RegisterId::Rcx;
 #endif
-        case Register::Edx:
+        case RegisterId::Edx:
 #ifdef _M_AMD64
-            return Register::Rdx;
+            return RegisterId::Rdx;
 #endif
-        case Register::Ebx:
+        case RegisterId::Ebx:
 #ifdef _M_AMD64
-            return Register::Rbx;
+            return RegisterId::Rbx;
 #endif
-        case Register::Esp:
+        case RegisterId::Esp:
 #ifdef _M_AMD64
-            return Register::Rsp;
+            return RegisterId::Rsp;
 #endif
-        case Register::Ebp:
+        case RegisterId::Ebp:
 #ifdef _M_AMD64
-            return Register::Rbp;
+            return RegisterId::Rbp;
 #endif
-        case Register::Esi:
+        case RegisterId::Esi:
 #ifdef _M_AMD64
-            return Register::Rsi;
+            return RegisterId::Rsi;
 #endif
-        case Register::Edi:
+        case RegisterId::Edi:
 #ifdef _M_AMD64
-            return Register::Rdi;
+            return RegisterId::Rdi;
 #endif
             break;
 #ifdef _M_AMD64
-        case Register::R8d:
+        case RegisterId::R8d:
 #    ifdef _M_AMD64
-            return Register::R8;
+            return RegisterId::R8;
 #    endif
-        case Register::R9d:
+        case RegisterId::R9d:
 #    ifdef _M_AMD64
-            return Register::R9;
+            return RegisterId::R9;
 #    endif
-        case Register::R10d:
+        case RegisterId::R10d:
 #    ifdef _M_AMD64
-            return Register::R10;
+            return RegisterId::R10;
 #    endif
-        case Register::R11d:
+        case RegisterId::R11d:
 #    ifdef _M_AMD64
-            return Register::R11;
+            return RegisterId::R11;
 #    endif
-        case Register::R12d:
+        case RegisterId::R12d:
 #    ifdef _M_AMD64
-            return Register::R12;
+            return RegisterId::R12;
 #    endif
-        case Register::R13d:
+        case RegisterId::R13d:
 #    ifdef _M_AMD64
-            return Register::R13;
+            return RegisterId::R13;
 #    endif
-        case Register::R14d:
+        case RegisterId::R14d:
 #    ifdef _M_AMD64
-            return Register::R14;
+            return RegisterId::R14;
 #    endif
-        case Register::R15d:
+        case RegisterId::R15d:
 #    ifdef _M_AMD64
-            return Register::R15;
+            return RegisterId::R15;
 #    endif
             break;
 #endif
-        case Register::Flags:
+        case RegisterId::Flags:
 #ifdef _M_AMD64
-            return Register::RFlags;
+            return RegisterId::RFlags;
 #else
-            return Register::EFlags;
+            return RegisterId::EFlags;
 #endif
-        case Register::EFlags:
+        case RegisterId::EFlags:
 #ifdef _M_AMD64
-            return Register::RFlags;
+            return RegisterId::RFlags;
 #endif
-        case Register::RFlags:
-        case Register::Ip:
+        case RegisterId::RFlags:
+        case RegisterId::Ip:
 #ifdef _M_AMD64
-            return Register::Rip;
+            return RegisterId::Rip;
 #else
-            return Register::Eip;
+            return RegisterId::Eip;
 #endif
-        case Register::Eip:
+        case RegisterId::Eip:
 #ifdef _M_AMD64
-            return Register::Rip;
+            return RegisterId::Rip;
 #endif
-        case Register::Rip:
+        case RegisterId::Rip:
             break;
         }
-        return Register::None;
+        return RegisterId::None;
     }
 
-    inline Register RegisterGetParent(Register id)
+    inline RegisterId RegisterGetParent(RegisterId id)
     {
         switch (id)
         {
-        case Register::Al:
-            return Register::Ax;
-        case Register::Ax:
-            return Register::Eax;
-        case Register::Ah:
-            return Register::Ax;
-        case Register::Cl:
-            return Register::Cx;
-        case Register::Cx:
-            return Register::Ecx;
-        case Register::Ch:
-            return Register::Cx;
-        case Register::Dl:
-            return Register::Dx;
-        case Register::Dx:
-            return Register::Edx;
-        case Register::Dh:
-            return Register::Dx;
-        case Register::Bl:
-            return Register::Bx;
-        case Register::Bx:
-            return Register::Ebx;
-        case Register::Bh:
-            return Register::Bx;
-        case Register::Sp:
-            return Register::Esp;
-        case Register::Spl:
-            return Register::Sp;
-        case Register::Bpl:
-            return Register::Bp;
-        case Register::Bp:
-            return Register::Ebp;
-        case Register::Si:
-            return Register::Esi;
-        case Register::Sil:
-            return Register::Si;
-        case Register::Di:
-            return Register::Edi;
-        case Register::Dil:
-            return Register::Di;
+        case RegisterId::Al:
+            return RegisterId::Ax;
+        case RegisterId::Ax:
+            return RegisterId::Eax;
+        case RegisterId::Ah:
+            return RegisterId::Ax;
+        case RegisterId::Cl:
+            return RegisterId::Cx;
+        case RegisterId::Cx:
+            return RegisterId::Ecx;
+        case RegisterId::Ch:
+            return RegisterId::Cx;
+        case RegisterId::Dl:
+            return RegisterId::Dx;
+        case RegisterId::Dx:
+            return RegisterId::Edx;
+        case RegisterId::Dh:
+            return RegisterId::Dx;
+        case RegisterId::Bl:
+            return RegisterId::Bx;
+        case RegisterId::Bx:
+            return RegisterId::Ebx;
+        case RegisterId::Bh:
+            return RegisterId::Bx;
+        case RegisterId::Sp:
+            return RegisterId::Esp;
+        case RegisterId::Spl:
+            return RegisterId::Sp;
+        case RegisterId::Bpl:
+            return RegisterId::Bp;
+        case RegisterId::Bp:
+            return RegisterId::Ebp;
+        case RegisterId::Si:
+            return RegisterId::Esi;
+        case RegisterId::Sil:
+            return RegisterId::Si;
+        case RegisterId::Di:
+            return RegisterId::Edi;
+        case RegisterId::Dil:
+            return RegisterId::Di;
 #ifdef _M_AMD64
-        case Register::R8b:
-            return Register::R8w;
-        case Register::R8w:
-            return Register::R8d;
-        case Register::R9b:
-            return Register::R9w;
-        case Register::R9w:
-            return Register::R9d;
-        case Register::R10b:
-            return Register::R10w;
-        case Register::R10w:
-            return Register::R10d;
-        case Register::R11b:
-            return Register::R11w;
-        case Register::R11w:
-            return Register::R11d;
-        case Register::R12b:
-            return Register::R12w;
-        case Register::R12w:
-            return Register::R12d;
-        case Register::R13b:
-            return Register::R13w;
-        case Register::R13w:
-            return Register::R13d;
-        case Register::R14b:
-            return Register::R14w;
-        case Register::R14w:
-            return Register::R14d;
-        case Register::R15b:
-            return Register::R15w;
-        case Register::R15w:
-            return Register::R15d;
+        case RegisterId::R8b:
+            return RegisterId::R8w;
+        case RegisterId::R8w:
+            return RegisterId::R8d;
+        case RegisterId::R9b:
+            return RegisterId::R9w;
+        case RegisterId::R9w:
+            return RegisterId::R9d;
+        case RegisterId::R10b:
+            return RegisterId::R10w;
+        case RegisterId::R10w:
+            return RegisterId::R10d;
+        case RegisterId::R11b:
+            return RegisterId::R11w;
+        case RegisterId::R11w:
+            return RegisterId::R11d;
+        case RegisterId::R12b:
+            return RegisterId::R12w;
+        case RegisterId::R12w:
+            return RegisterId::R12d;
+        case RegisterId::R13b:
+            return RegisterId::R13w;
+        case RegisterId::R13w:
+            return RegisterId::R13d;
+        case RegisterId::R14b:
+            return RegisterId::R14w;
+        case RegisterId::R14w:
+            return RegisterId::R14d;
+        case RegisterId::R15b:
+            return RegisterId::R15w;
+        case RegisterId::R15w:
+            return RegisterId::R15d;
 #endif
-        case Register::Eax:
+        case RegisterId::Eax:
 #ifdef _M_AMD64
-            return Register::Rax;
+            return RegisterId::Rax;
 #else
-            return Register::None;
+            return RegisterId::None;
 #endif
-        case Register::Ecx:
+        case RegisterId::Ecx:
 #ifdef _M_AMD64
-            return Register::Rcx;
+            return RegisterId::Rcx;
 #else
-            return Register::None;
+            return RegisterId::None;
 #endif
-        case Register::Edx:
+        case RegisterId::Edx:
 #ifdef _M_AMD64
-            return Register::Rdx;
+            return RegisterId::Rdx;
 #else
-            return Register::None;
+            return RegisterId::None;
 #endif
-        case Register::Ebx:
+        case RegisterId::Ebx:
 #ifdef _M_AMD64
-            return Register::Rbx;
+            return RegisterId::Rbx;
 #endif
-        case Register::Esp:
+        case RegisterId::Esp:
 #ifdef _M_AMD64
-            return Register::Rsp;
+            return RegisterId::Rsp;
 #else
-            return Register::None;
+            return RegisterId::None;
 #endif
-        case Register::Ebp:
+        case RegisterId::Ebp:
 #ifdef _M_AMD64
-            return Register::Rbp;
+            return RegisterId::Rbp;
 #else
-            return Register::None;
+            return RegisterId::None;
 #endif
-        case Register::Esi:
+        case RegisterId::Esi:
 #ifdef _M_AMD64
-            return Register::Rsi;
+            return RegisterId::Rsi;
 #else
-            return Register::None;
+            return RegisterId::None;
 #endif
-        case Register::Edi:
+        case RegisterId::Edi:
 #ifdef _M_AMD64
-            return Register::Rdi;
+            return RegisterId::Rdi;
 #else
-            return Register::None;
+            return RegisterId::None;
 #endif
 
 #ifdef _M_AMD64
-        case Register::R8d:
+        case RegisterId::R8d:
 #    ifdef _M_AMD64
-            return Register::R8;
+            return RegisterId::R8;
 #    else
-            return Register::None;
+            return RegisterId::None;
 #    endif
-        case Register::R9d:
+        case RegisterId::R9d:
 #    ifdef _M_AMD64
-            return Register::R9;
+            return RegisterId::R9;
 #    else
-            return Register::None;
+            return RegisterId::None;
 #    endif
-        case Register::R10d:
+        case RegisterId::R10d:
 #    ifdef _M_AMD64
-            return Register::R10;
+            return RegisterId::R10;
 #    else
-            return Register::None;
+            return RegisterId::None;
 #    endif
-        case Register::R11d:
+        case RegisterId::R11d:
 #    ifdef _M_AMD64
-            return Register::R11;
+            return RegisterId::R11;
 #    else
-            return Register::None;
+            return RegisterId::None;
 #    endif
-        case Register::R12d:
+        case RegisterId::R12d:
 #    ifdef _M_AMD64
-            return Register::R12;
+            return RegisterId::R12;
 #    else
-            return Register::None;
+            return RegisterId::None;
 #    endif
-        case Register::R13d:
+        case RegisterId::R13d:
 #    ifdef _M_AMD64
-            return Register::R13;
+            return RegisterId::R13;
 #    else
-            return Register::None;
+            return RegisterId::None;
 #    endif
-        case Register::R14d:
+        case RegisterId::R14d:
 #    ifdef _M_AMD64
-            return Register::R14;
+            return RegisterId::R14;
 #    else
-            return Register::None;
+            return RegisterId::None;
 #    endif
-        case Register::R15d:
+        case RegisterId::R15d:
 #    ifdef _M_AMD64
-            return Register::R15;
+            return RegisterId::R15;
 #    else
-            return Register::None;
+            return RegisterId::None;
 #    endif
 
 #endif
-        case Register::Flags:
+        case RegisterId::Flags:
 #ifdef _M_AMD64
-            return Register::RFlags;
+            return RegisterId::RFlags;
 #else
-            return Register::EFlags;
+            return RegisterId::EFlags;
 #endif
-        case Register::EFlags:
+        case RegisterId::EFlags:
 #ifdef _M_AMD64
-            return Register::RFlags;
+            return RegisterId::RFlags;
 #endif
-        case Register::RFlags:
-        case Register::Ip:
+        case RegisterId::RFlags:
+        case RegisterId::Ip:
 #ifdef _M_AMD64
-            return Register::Rip;
+            return RegisterId::Rip;
 #else
-            return Register::Eip;
+            return RegisterId::Eip;
 #endif
-        case Register::Eip:
+        case RegisterId::Eip:
 #ifdef _M_AMD64
-            return Register::Rip;
+            return RegisterId::Rip;
 #else
-            return Register::None;
+            return RegisterId::None;
 #endif
-        case Register::Rip:
+        case RegisterId::Rip:
             break;
         }
 
-        return Register::None;
+        return RegisterId::None;
     }
 
-    inline int32_t RegisterGetOffsetForRoot(Register id)
+    inline int32_t RegisterGetOffsetForRoot(RegisterId id)
     {
         switch (id)
         {
-        case Register::Ah:
-        case Register::Bh:
-        case Register::Ch:
-        case Register::Dh:
+        case RegisterId::Ah:
+        case RegisterId::Bh:
+        case RegisterId::Ch:
+        case RegisterId::Dh:
             return 8;
         }
         return 0;
     }
 
-    inline RegisterClass RegisterGetClass(Register id)
+    inline RegisterClass RegisterGetClass(RegisterId id)
     {
         switch (id)
         {
-        case Register::None:
+        case RegisterId::None:
             return RegisterClass::Invalid;
-        case Register::Al:
-        case Register::Cl:
-        case Register::Dl:
-        case Register::Bl:
-        case Register::Ah:
-        case Register::Ch:
-        case Register::Dh:
-        case Register::Bh:
-        case Register::Spl:
-        case Register::Bpl:
-        case Register::Sil:
-        case Register::Dil:
-        case Register::R8b:
-        case Register::R9b:
-        case Register::R10b:
-        case Register::R11b:
-        case Register::R12b:
-        case Register::R13b:
-        case Register::R14b:
-        case Register::R15b:
+        case RegisterId::Al:
+        case RegisterId::Cl:
+        case RegisterId::Dl:
+        case RegisterId::Bl:
+        case RegisterId::Ah:
+        case RegisterId::Ch:
+        case RegisterId::Dh:
+        case RegisterId::Bh:
+        case RegisterId::Spl:
+        case RegisterId::Bpl:
+        case RegisterId::Sil:
+        case RegisterId::Dil:
+        case RegisterId::R8b:
+        case RegisterId::R9b:
+        case RegisterId::R10b:
+        case RegisterId::R11b:
+        case RegisterId::R12b:
+        case RegisterId::R13b:
+        case RegisterId::R14b:
+        case RegisterId::R15b:
             return RegisterClass::Gp8;
-        case Register::Ax:
-        case Register::Cx:
-        case Register::Dx:
-        case Register::Bx:
-        case Register::Sp:
-        case Register::Bp:
-        case Register::Si:
-        case Register::Di:
-        case Register::R8w:
-        case Register::R9w:
-        case Register::R10w:
-        case Register::R11w:
-        case Register::R12w:
-        case Register::R13w:
-        case Register::R14w:
-        case Register::R15w:
+        case RegisterId::Ax:
+        case RegisterId::Cx:
+        case RegisterId::Dx:
+        case RegisterId::Bx:
+        case RegisterId::Sp:
+        case RegisterId::Bp:
+        case RegisterId::Si:
+        case RegisterId::Di:
+        case RegisterId::R8w:
+        case RegisterId::R9w:
+        case RegisterId::R10w:
+        case RegisterId::R11w:
+        case RegisterId::R12w:
+        case RegisterId::R13w:
+        case RegisterId::R14w:
+        case RegisterId::R15w:
             return RegisterClass::Gp16;
-        case Register::Eax:
-        case Register::Ecx:
-        case Register::Edx:
-        case Register::Ebx:
-        case Register::Esp:
-        case Register::Ebp:
-        case Register::Esi:
-        case Register::Edi:
-        case Register::R8d:
-        case Register::R9d:
-        case Register::R10d:
-        case Register::R11d:
-        case Register::R12d:
-        case Register::R13d:
-        case Register::R14d:
-        case Register::R15d:
+        case RegisterId::Eax:
+        case RegisterId::Ecx:
+        case RegisterId::Edx:
+        case RegisterId::Ebx:
+        case RegisterId::Esp:
+        case RegisterId::Ebp:
+        case RegisterId::Esi:
+        case RegisterId::Edi:
+        case RegisterId::R8d:
+        case RegisterId::R9d:
+        case RegisterId::R10d:
+        case RegisterId::R11d:
+        case RegisterId::R12d:
+        case RegisterId::R13d:
+        case RegisterId::R14d:
+        case RegisterId::R15d:
             return RegisterClass::Gp32;
-        case Register::Rax:
-        case Register::Rcx:
-        case Register::Rdx:
-        case Register::Rbx:
-        case Register::Rsp:
-        case Register::Rbp:
-        case Register::Rsi:
-        case Register::Rdi:
-        case Register::R8:
-        case Register::R9:
-        case Register::R10:
-        case Register::R11:
-        case Register::R12:
-        case Register::R13:
-        case Register::R14:
-        case Register::R15:
+        case RegisterId::Rax:
+        case RegisterId::Rcx:
+        case RegisterId::Rdx:
+        case RegisterId::Rbx:
+        case RegisterId::Rsp:
+        case RegisterId::Rbp:
+        case RegisterId::Rsi:
+        case RegisterId::Rdi:
+        case RegisterId::R8:
+        case RegisterId::R9:
+        case RegisterId::R10:
+        case RegisterId::R11:
+        case RegisterId::R12:
+        case RegisterId::R13:
+        case RegisterId::R14:
+        case RegisterId::R15:
             return RegisterClass::Gp64;
-        case Register::St0:
-        case Register::St1:
-        case Register::St2:
-        case Register::St3:
-        case Register::St4:
-        case Register::St5:
-        case Register::St6:
-        case Register::St7:
+        case RegisterId::St0:
+        case RegisterId::St1:
+        case RegisterId::St2:
+        case RegisterId::St3:
+        case RegisterId::St4:
+        case RegisterId::St5:
+        case RegisterId::St6:
+        case RegisterId::St7:
             return RegisterClass::X87;
-        case Register::X87Control:
-        case Register::X87Status:
-        case Register::X87Tag:
+        case RegisterId::X87Control:
+        case RegisterId::X87Status:
+        case RegisterId::X87Tag:
             return RegisterClass::Control;
-        case Register::Mm0:
-        case Register::Mm1:
-        case Register::Mm2:
-        case Register::Mm3:
-        case Register::Mm4:
-        case Register::Mm5:
-        case Register::Mm6:
-        case Register::Mm7:
+        case RegisterId::Mm0:
+        case RegisterId::Mm1:
+        case RegisterId::Mm2:
+        case RegisterId::Mm3:
+        case RegisterId::Mm4:
+        case RegisterId::Mm5:
+        case RegisterId::Mm6:
+        case RegisterId::Mm7:
             return RegisterClass::Mmx;
-        case Register::Xmm0:
-        case Register::Xmm1:
-        case Register::Xmm2:
-        case Register::Xmm3:
-        case Register::Xmm4:
-        case Register::Xmm5:
-        case Register::Xmm6:
-        case Register::Xmm7:
-        case Register::Xmm8:
-        case Register::Xmm9:
-        case Register::Xmm10:
-        case Register::Xmm11:
-        case Register::Xmm12:
-        case Register::Xmm13:
-        case Register::Xmm14:
-        case Register::Xmm15:
-        case Register::Xmm16:
-        case Register::Xmm17:
-        case Register::Xmm18:
-        case Register::Xmm19:
-        case Register::Xmm20:
-        case Register::Xmm21:
-        case Register::Xmm22:
-        case Register::Xmm23:
-        case Register::Xmm24:
-        case Register::Xmm25:
-        case Register::Xmm26:
-        case Register::Xmm27:
-        case Register::Xmm28:
-        case Register::Xmm29:
-        case Register::Xmm30:
-        case Register::Xmm31:
+        case RegisterId::Xmm0:
+        case RegisterId::Xmm1:
+        case RegisterId::Xmm2:
+        case RegisterId::Xmm3:
+        case RegisterId::Xmm4:
+        case RegisterId::Xmm5:
+        case RegisterId::Xmm6:
+        case RegisterId::Xmm7:
+        case RegisterId::Xmm8:
+        case RegisterId::Xmm9:
+        case RegisterId::Xmm10:
+        case RegisterId::Xmm11:
+        case RegisterId::Xmm12:
+        case RegisterId::Xmm13:
+        case RegisterId::Xmm14:
+        case RegisterId::Xmm15:
+        case RegisterId::Xmm16:
+        case RegisterId::Xmm17:
+        case RegisterId::Xmm18:
+        case RegisterId::Xmm19:
+        case RegisterId::Xmm20:
+        case RegisterId::Xmm21:
+        case RegisterId::Xmm22:
+        case RegisterId::Xmm23:
+        case RegisterId::Xmm24:
+        case RegisterId::Xmm25:
+        case RegisterId::Xmm26:
+        case RegisterId::Xmm27:
+        case RegisterId::Xmm28:
+        case RegisterId::Xmm29:
+        case RegisterId::Xmm30:
+        case RegisterId::Xmm31:
             return RegisterClass::Xmm;
-        case Register::Ymm0:
-        case Register::Ymm1:
-        case Register::Ymm2:
-        case Register::Ymm3:
-        case Register::Ymm4:
-        case Register::Ymm5:
-        case Register::Ymm6:
-        case Register::Ymm7:
-        case Register::Ymm8:
-        case Register::Ymm9:
-        case Register::Ymm10:
-        case Register::Ymm11:
-        case Register::Ymm12:
-        case Register::Ymm13:
-        case Register::Ymm14:
-        case Register::Ymm15:
-        case Register::Ymm16:
-        case Register::Ymm17:
-        case Register::Ymm18:
-        case Register::Ymm19:
-        case Register::Ymm20:
-        case Register::Ymm21:
-        case Register::Ymm22:
-        case Register::Ymm23:
-        case Register::Ymm24:
-        case Register::Ymm25:
-        case Register::Ymm26:
-        case Register::Ymm27:
-        case Register::Ymm28:
-        case Register::Ymm29:
-        case Register::Ymm30:
-        case Register::Ymm31:
+        case RegisterId::Ymm0:
+        case RegisterId::Ymm1:
+        case RegisterId::Ymm2:
+        case RegisterId::Ymm3:
+        case RegisterId::Ymm4:
+        case RegisterId::Ymm5:
+        case RegisterId::Ymm6:
+        case RegisterId::Ymm7:
+        case RegisterId::Ymm8:
+        case RegisterId::Ymm9:
+        case RegisterId::Ymm10:
+        case RegisterId::Ymm11:
+        case RegisterId::Ymm12:
+        case RegisterId::Ymm13:
+        case RegisterId::Ymm14:
+        case RegisterId::Ymm15:
+        case RegisterId::Ymm16:
+        case RegisterId::Ymm17:
+        case RegisterId::Ymm18:
+        case RegisterId::Ymm19:
+        case RegisterId::Ymm20:
+        case RegisterId::Ymm21:
+        case RegisterId::Ymm22:
+        case RegisterId::Ymm23:
+        case RegisterId::Ymm24:
+        case RegisterId::Ymm25:
+        case RegisterId::Ymm26:
+        case RegisterId::Ymm27:
+        case RegisterId::Ymm28:
+        case RegisterId::Ymm29:
+        case RegisterId::Ymm30:
+        case RegisterId::Ymm31:
             return RegisterClass::Ymm;
-        case Register::Zmm0:
-        case Register::Zmm1:
-        case Register::Zmm2:
-        case Register::Zmm3:
-        case Register::Zmm4:
-        case Register::Zmm5:
-        case Register::Zmm6:
-        case Register::Zmm7:
-        case Register::Zmm8:
-        case Register::Zmm9:
-        case Register::Zmm10:
-        case Register::Zmm11:
-        case Register::Zmm12:
-        case Register::Zmm13:
-        case Register::Zmm14:
-        case Register::Zmm15:
-        case Register::Zmm16:
-        case Register::Zmm17:
-        case Register::Zmm18:
-        case Register::Zmm19:
-        case Register::Zmm20:
-        case Register::Zmm21:
-        case Register::Zmm22:
-        case Register::Zmm23:
-        case Register::Zmm24:
-        case Register::Zmm25:
-        case Register::Zmm26:
-        case Register::Zmm27:
-        case Register::Zmm28:
-        case Register::Zmm29:
-        case Register::Zmm30:
-        case Register::Zmm31:
+        case RegisterId::Zmm0:
+        case RegisterId::Zmm1:
+        case RegisterId::Zmm2:
+        case RegisterId::Zmm3:
+        case RegisterId::Zmm4:
+        case RegisterId::Zmm5:
+        case RegisterId::Zmm6:
+        case RegisterId::Zmm7:
+        case RegisterId::Zmm8:
+        case RegisterId::Zmm9:
+        case RegisterId::Zmm10:
+        case RegisterId::Zmm11:
+        case RegisterId::Zmm12:
+        case RegisterId::Zmm13:
+        case RegisterId::Zmm14:
+        case RegisterId::Zmm15:
+        case RegisterId::Zmm16:
+        case RegisterId::Zmm17:
+        case RegisterId::Zmm18:
+        case RegisterId::Zmm19:
+        case RegisterId::Zmm20:
+        case RegisterId::Zmm21:
+        case RegisterId::Zmm22:
+        case RegisterId::Zmm23:
+        case RegisterId::Zmm24:
+        case RegisterId::Zmm25:
+        case RegisterId::Zmm26:
+        case RegisterId::Zmm27:
+        case RegisterId::Zmm28:
+        case RegisterId::Zmm29:
+        case RegisterId::Zmm30:
+        case RegisterId::Zmm31:
             return RegisterClass::Zmm;
-        case Register::Flags:
-        case Register::EFlags:
-        case Register::RFlags:
+        case RegisterId::Flags:
+        case RegisterId::EFlags:
+        case RegisterId::RFlags:
             return RegisterClass::Flags;
-        case Register::Ip:
-        case Register::Eip:
-        case Register::Rip:
+        case RegisterId::Ip:
+        case RegisterId::Eip:
+        case RegisterId::Rip:
             return RegisterClass::IP;
-        case Register::Es:
-        case Register::Cs:
-        case Register::Ss:
-        case Register::Ds:
-        case Register::Fs:
-        case Register::Gs:
-        case Register::Gdtr:
-        case Register::Ldtr:
-        case Register::Idtr:
+        case RegisterId::Es:
+        case RegisterId::Cs:
+        case RegisterId::Ss:
+        case RegisterId::Ds:
+        case RegisterId::Fs:
+        case RegisterId::Gs:
+        case RegisterId::Gdtr:
+        case RegisterId::Ldtr:
+        case RegisterId::Idtr:
             return RegisterClass::Segment;
-        case Register::Tr:
-        case Register::Tr0:
-        case Register::Tr1:
-        case Register::Tr2:
-        case Register::Tr3:
-        case Register::Tr4:
-        case Register::Tr5:
-        case Register::Tr6:
-        case Register::Tr7:
+        case RegisterId::Tr:
+        case RegisterId::Tr0:
+        case RegisterId::Tr1:
+        case RegisterId::Tr2:
+        case RegisterId::Tr3:
+        case RegisterId::Tr4:
+        case RegisterId::Tr5:
+        case RegisterId::Tr6:
+        case RegisterId::Tr7:
             return RegisterClass::Test;
-        case Register::Cr0:
-        case Register::Cr1:
-        case Register::Cr2:
-        case Register::Cr3:
-        case Register::Cr4:
-        case Register::Cr5:
-        case Register::Cr6:
-        case Register::Cr7:
-        case Register::Cr8:
-        case Register::Cr9:
-        case Register::Cr10:
-        case Register::Cr11:
-        case Register::Cr12:
-        case Register::Cr13:
-        case Register::Cr14:
-        case Register::Cr15:
+        case RegisterId::Cr0:
+        case RegisterId::Cr1:
+        case RegisterId::Cr2:
+        case RegisterId::Cr3:
+        case RegisterId::Cr4:
+        case RegisterId::Cr5:
+        case RegisterId::Cr6:
+        case RegisterId::Cr7:
+        case RegisterId::Cr8:
+        case RegisterId::Cr9:
+        case RegisterId::Cr10:
+        case RegisterId::Cr11:
+        case RegisterId::Cr12:
+        case RegisterId::Cr13:
+        case RegisterId::Cr14:
+        case RegisterId::Cr15:
             return RegisterClass::Control;
-        case Register::Dr0:
-        case Register::Dr1:
-        case Register::Dr2:
-        case Register::Dr3:
-        case Register::Dr4:
-        case Register::Dr5:
-        case Register::Dr6:
-        case Register::Dr7:
-        case Register::Dr8:
-        case Register::Dr9:
-        case Register::Dr10:
-        case Register::Dr11:
-        case Register::Dr12:
-        case Register::Dr13:
-        case Register::Dr14:
-        case Register::Dr15:
+        case RegisterId::Dr0:
+        case RegisterId::Dr1:
+        case RegisterId::Dr2:
+        case RegisterId::Dr3:
+        case RegisterId::Dr4:
+        case RegisterId::Dr5:
+        case RegisterId::Dr6:
+        case RegisterId::Dr7:
+        case RegisterId::Dr8:
+        case RegisterId::Dr9:
+        case RegisterId::Dr10:
+        case RegisterId::Dr11:
+        case RegisterId::Dr12:
+        case RegisterId::Dr13:
+        case RegisterId::Dr14:
+        case RegisterId::Dr15:
             return RegisterClass::Debug;
-        case Register::K0:
-        case Register::K1:
-        case Register::K2:
-        case Register::K3:
-        case Register::K4:
-        case Register::K5:
-        case Register::K6:
-        case Register::K7:
+        case RegisterId::K0:
+        case RegisterId::K1:
+        case RegisterId::K2:
+        case RegisterId::K3:
+        case RegisterId::K4:
+        case RegisterId::K5:
+        case RegisterId::K6:
+        case RegisterId::K7:
             return RegisterClass::Mask;
-        case Register::Bnd0:
-        case Register::Bnd1:
-        case Register::Bnd2:
-        case Register::Bnd3:
-        case Register::BndCfg:
-        case Register::BndStatus:
+        case RegisterId::Bnd0:
+        case RegisterId::Bnd1:
+        case RegisterId::Bnd2:
+        case RegisterId::Bnd3:
+        case RegisterId::BndCfg:
+        case RegisterId::BndStatus:
             return RegisterClass::Bound;
         }
         return RegisterClass::Invalid;

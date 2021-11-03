@@ -129,26 +129,26 @@ namespace Dotx64Dbg
         IOperand^ ConvertOperandReg(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
         {
             const auto reg = convertZydisRegister(op.reg.value);
-            return gcnew Operand::OpReg(reg);
+            return gcnew Operand::Register(reg);
         }
 
         IOperand^ ConvertOperandMem(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
         {
             const auto& mem = op.mem;
 
-            Operand::OpMem^ res = gcnew Operand::OpMem();
+            Operand::Memory^ res = gcnew Operand::Memory();
 
             res->Size = op.size;
-            res->Segment = static_cast<Register>(mem.segment);
-            res->Base = static_cast<Register>(mem.base);
-            res->Index = static_cast<Register>(mem.index);
+            res->Segment = static_cast<RegisterId>(mem.segment);
+            res->Base = static_cast<RegisterId>(mem.base);
+            res->Index = static_cast<RegisterId>(mem.index);
             res->Scale = mem.scale;
             res->Displacement = mem.disp.value;
 
-            if (res->Base == Register::Rip || res->Base == Register::Eip)
+            if (res->Base == RegisterId::Rip || res->Base == RegisterId::Eip)
             {
                 res->Displacement += instr.length + addr;
-                res->Base = Register::None;
+                res->Base = RegisterId::None;
             }
 
             return res;
@@ -340,19 +340,19 @@ namespace Dotx64Dbg
 
                         if (op->Type == OperandType::Register)
                         {
-                            Operand::OpReg^ reg = (Operand::OpReg^)op;
+                            Operand::Register^ reg = (Operand::Register^)op;
                             auto regId = reg->Value;
 
                             std::string regName = RegisterGetName(regId);
                             regName[0] = std::toupper(regName[0]);
 
 #if _M_X64
-                            if (regId == Register::RFlags)
+                            if (regId == RegisterId::RFlags)
                             {
                                 regName = "NFlags";
                             }
 #else
-                            if (regId == Register::EFlags)
+                            if (regId == RegisterId::EFlags)
                             {
                                 regName = "NFlags";
                             }
@@ -362,7 +362,7 @@ namespace Dotx64Dbg
                         }
                         else if (op->Type == OperandType::Memory)
                         {
-                            Operand::OpMem^ mem = (Operand::OpMem^)op;
+                            Operand::Memory^ mem = (Operand::Memory^)op;
 
                             if (mem->Size == 8)
                             {
@@ -389,7 +389,7 @@ namespace Dotx64Dbg
 #endif
                             }
 
-                            if (mem->Base != Register::None)
+                            if (mem->Base != RegisterId::None)
                             {
                                 std::string regName = RegisterGetName(mem->Base);
                                 regName[0] = std::toupper(regName[0]);
@@ -397,12 +397,12 @@ namespace Dotx64Dbg
                                 ops += "Register::" + regName;
                             }
 
-                            if (mem->Index != Register::None)
+                            if (mem->Index != RegisterId::None)
                             {
                                 std::string regName = RegisterGetName(mem->Base);
                                 regName[0] = std::toupper(regName[0]);
 
-                                if (mem->Base != Register::None)
+                                if (mem->Base != RegisterId::None)
                                     ops += ", ";
 
                                 ops += "Register::" + regName;

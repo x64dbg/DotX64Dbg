@@ -14,9 +14,9 @@ namespace Dotx64Dbg.Managed.Tests
         public void TestMask()
         {
             var mask = Analysis.RegisterMaskGp.None;
-            mask.Add(Register.Ah);
-            mask.Add(Register.Al);
-            mask.Add(Register.Ecx);
+            mask.Add(RegisterId.Ah);
+            mask.Add(RegisterId.Al);
+            mask.Add(RegisterId.Ecx);
 
             AssertEq(mask.Count, 2);
 
@@ -24,14 +24,14 @@ namespace Dotx64Dbg.Managed.Tests
             AssertEq(regs.Length, 2);
 
 #if _X64_
-            AssertEq(regs[0], Register.Rax);
-            AssertEq(regs[1], Register.Rcx);
+            AssertEq(regs[0], RegisterId.Rax);
+            AssertEq(regs[1], RegisterId.Rcx);
 #else
-            AssertEq(regs[0], Register.Eax);
-            AssertEq(regs[1], Register.Ecx);
+            AssertEq(regs[0], RegisterId.Eax);
+            AssertEq(regs[1], RegisterId.Ecx);
 #endif
 
-            Operand.OpReg[] regs2;
+            Operand.Register[] regs2;
             mask.GetRegisters(out regs2);
 
             AssertEq(regs2.Length, 2);
@@ -46,9 +46,9 @@ namespace Dotx64Dbg.Managed.Tests
         public void TestMask2()
         {
             var mask = Analysis.RegisterMaskGp.None;
-            mask.Add(Register.Ah);
-            mask.Add(Register.Al);
-            mask.Add(Register.R15);
+            mask.Add(RegisterId.Ah);
+            mask.Add(RegisterId.Al);
+            mask.Add(RegisterId.R15);
 
             AssertEq(mask.Count, 2);
 
@@ -56,14 +56,14 @@ namespace Dotx64Dbg.Managed.Tests
             AssertEq(regs.Length, 2);
 
 #if _X64_
-            AssertEq(regs[0], Register.Rax);
-            AssertEq(regs[1], Register.R15);
+            AssertEq(regs[0], RegisterId.Rax);
+            AssertEq(regs[1], RegisterId.R15);
 #else
-            AssertEq(regs[0], Register.Eax);
-            AssertEq(regs[1], Register.R15d);
+            AssertEq(regs[0], RegisterId.Eax);
+            AssertEq(regs[1], RegisterId.R15d);
 #endif
 
-            Operand.OpReg[] regs2;
+            Operand.Register[] regs2;
             mask.GetRegisters(out regs2);
 
             AssertEq(regs2.Length, 2);
@@ -77,22 +77,22 @@ namespace Dotx64Dbg.Managed.Tests
         [Test]
         public void TestMaskCountForward()
         {
-            Register[] regs = new[] {
-                Register.Eax,
-                Register.Ebx,
-                Register.Ecx,
-                Register.Edx,
-                Register.Ebp,
-                Register.Esp,
-                Register.Edi,
-                Register.R8d,
-                Register.R9d,
-                Register.R10d,
-                Register.R11d,
-                Register.R12d,
-                Register.R13d,
-                Register.R14d,
-                Register.R15d
+            RegisterId[] regs = new[] {
+                RegisterId.Eax,
+                RegisterId.Ebx,
+                RegisterId.Ecx,
+                RegisterId.Edx,
+                RegisterId.Ebp,
+                RegisterId.Esp,
+                RegisterId.Edi,
+                RegisterId.R8d,
+                RegisterId.R9d,
+                RegisterId.R10d,
+                RegisterId.R11d,
+                RegisterId.R12d,
+                RegisterId.R13d,
+                RegisterId.R14d,
+                RegisterId.R15d
             };
 
             var mask = Analysis.RegisterMaskGp.None;
@@ -110,23 +110,23 @@ namespace Dotx64Dbg.Managed.Tests
         [Test]
         public void TestMaskCountReverse()
         {
-            List<Register> regs = new()
+            List<RegisterId> regs = new()
             {
-                Register.Eax,
-                Register.Ebx,
-                Register.Ecx,
-                Register.Edx,
-                Register.Ebp,
-                Register.Esp,
-                Register.Edi,
-                Register.R8d,
-                Register.R9d,
-                Register.R10d,
-                Register.R11d,
-                Register.R12d,
-                Register.R13d,
-                Register.R14d,
-                Register.R15d
+                RegisterId.Eax,
+                RegisterId.Ebx,
+                RegisterId.Ecx,
+                RegisterId.Edx,
+                RegisterId.Ebp,
+                RegisterId.Esp,
+                RegisterId.Edi,
+                RegisterId.R8d,
+                RegisterId.R9d,
+                RegisterId.R10d,
+                RegisterId.R11d,
+                RegisterId.R12d,
+                RegisterId.R13d,
+                RegisterId.R14d,
+                RegisterId.R15d
             };
 
             var mask = Analysis.RegisterMaskGp.None;
@@ -146,23 +146,23 @@ namespace Dotx64Dbg.Managed.Tests
         [Test]
         public void TestMaskCountRandom()
         {
-            List<Register> regs = new()
+            List<RegisterId> regs = new()
             {
-                Register.Eax,
-                Register.Ebx,
-                Register.Ecx,
-                Register.Edx,
-                Register.Ebp,
-                Register.Esp,
-                Register.Edi,
-                Register.R8d,
-                Register.R9d,
-                Register.R10d,
-                Register.R11d,
-                Register.R12d,
-                Register.R13d,
-                Register.R14d,
-                Register.R15d
+                RegisterId.Eax,
+                RegisterId.Ebx,
+                RegisterId.Ecx,
+                RegisterId.Edx,
+                RegisterId.Ebp,
+                RegisterId.Esp,
+                RegisterId.Edi,
+                RegisterId.R8d,
+                RegisterId.R9d,
+                RegisterId.R10d,
+                RegisterId.R11d,
+                RegisterId.R12d,
+                RegisterId.R13d,
+                RegisterId.R14d,
+                RegisterId.R15d
             };
 
             for (int seed = 0; seed < 100; seed++)
