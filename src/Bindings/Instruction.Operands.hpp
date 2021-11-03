@@ -582,9 +582,9 @@ namespace Dotx64Dbg {
         }
 
     public:
-        static Operand::OpImm^ Imm(Int64 val)
+        static Operand::Immediate^ Imm(Int64 val)
         {
-            return gcnew Operand::OpImm(val);
+            return gcnew Operand::Immediate(val);
         }
     };
 
