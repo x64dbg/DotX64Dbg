@@ -2577,33 +2577,21 @@ namespace Dotx64Dbg
         public Assembler Jmp(Operand.Immediate a) => CreateInstr(Mnemonic.Jmp, a);
 
         public Assembler Jnz(Label a) => CreateInstr(Mnemonic.Jnz, a);
-        public Assembler Jnz(Operand.Register a) => CreateInstr(Mnemonic.Jnz, a);
-        public Assembler Jnz(Operand.Memory a) => CreateInstr(Mnemonic.Jnz, a);
         public Assembler Jnz(Operand.Immediate a) => CreateInstr(Mnemonic.Jnz, a);
 
         public Assembler Jz(Label a) => CreateInstr(Mnemonic.Jz, a);
-        public Assembler Jz(Operand.Register a) => CreateInstr(Mnemonic.Jz, a);
-        public Assembler Jz(Operand.Memory a) => CreateInstr(Mnemonic.Jz, a);
         public Assembler Jz(Operand.Immediate a) => CreateInstr(Mnemonic.Jz, a);
 
         public Assembler Jnb(Label a) => CreateInstr(Mnemonic.Jnb, a);
-        public Assembler Jnb(Operand.Register a) => CreateInstr(Mnemonic.Jnb, a);
-        public Assembler Jnb(Operand.Memory a) => CreateInstr(Mnemonic.Jnb, a);
         public Assembler Jnb(Operand.Immediate a) => CreateInstr(Mnemonic.Jnb, a);
 
         public Assembler Jno(Label a) => CreateInstr(Mnemonic.Jno, a);
-        public Assembler Jno(Operand.Register a) => CreateInstr(Mnemonic.Jno, a);
-        public Assembler Jno(Operand.Memory a) => CreateInstr(Mnemonic.Jno, a);
         public Assembler Jno(Operand.Immediate a) => CreateInstr(Mnemonic.Jno, a);
 
         public Assembler Js(Label a) => CreateInstr(Mnemonic.Js, a);
-        public Assembler Js(Operand.Register a) => CreateInstr(Mnemonic.Js, a);
-        public Assembler Js(Operand.Memory a) => CreateInstr(Mnemonic.Js, a);
         public Assembler Js(Operand.Immediate a) => CreateInstr(Mnemonic.Js, a);
 
         public Assembler Jp(Label a) => CreateInstr(Mnemonic.Jp, a);
-        public Assembler Jp(Operand.Register a) => CreateInstr(Mnemonic.Jp, a);
-        public Assembler Jp(Operand.Memory a) => CreateInstr(Mnemonic.Jp, a);
         public Assembler Jp(Operand.Immediate a) => CreateInstr(Mnemonic.Jp, a);
 
         public Assembler Call(Operand.Register a) => CreateInstr(Mnemonic.Call, a);
