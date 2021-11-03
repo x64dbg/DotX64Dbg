@@ -11,12 +11,6 @@ namespace Dotx64Dbg.Managed.Tests
 
     class TestRegisters
     {
-        public TestRegisters()
-        {
-            // Warm-up
-            _ = Operands.Al.RootId;
-        }
-
         [Test]
         public void TestRoot()
         {
