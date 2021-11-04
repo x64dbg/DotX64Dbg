@@ -171,10 +171,11 @@
     <ClCompile Include="Breakpoints.cpp" />
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="Debugger.cpp" />
-    <ClCompile Include="Decoder.cpp" />
-    <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="Expressions.cpp" />
     <ClCompile Include="Instruction.cpp" />
+    <ClCompile Include="Instruction.Decoder.cpp" />
+    <ClCompile Include="Instruction.Encoder.cpp" />
+    <ClCompile Include="Instruction.Generator.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Module.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="Decoder.Converter.hpp" />
     <ClInclude Include="Encoder.Converter.hpp" />
     <ClInclude Include="Instruction.EFlags.hpp" />
+    <ClInclude Include="Instruction.Generator.hpp" />
     <ClInclude Include="Instruction.hpp" />
     <ClInclude Include="Instruction.Meta.hpp" />
     <ClInclude Include="Instruction.Operand.hpp" />

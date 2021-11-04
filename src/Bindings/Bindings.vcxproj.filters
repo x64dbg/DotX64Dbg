@@ -8,15 +8,16 @@
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Thread.cpp" />
     <ClCompile Include="Instruction.cpp" />
-    <ClCompile Include="Decoder.cpp" />
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="Expressions.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Module.cpp" />
-    <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="Symbols.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Process.cpp" />
+    <ClCompile Include="Instruction.Generator.cpp" />
+    <ClCompile Include="Instruction.Encoder.cpp" />
+    <ClCompile Include="Instruction.Decoder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Instruction.hpp" />
@@ -30,5 +31,6 @@
     <ClInclude Include="Symbols.hpp" />
     <ClInclude Include="Marshal.hpp" />
     <ClInclude Include="Decoder.Converter.hpp" />
+    <ClInclude Include="Instruction.Generator.hpp" />
   </ItemGroup>
 </Project>
