@@ -75,6 +75,56 @@ namespace Dotx64Dbg.Managed.Tests
             AssertEq(0x00, data[7]);
             AssertEq(0x00, data[8]);
         }
+
+        [Test]
+        public void TestEncodeLeaScale2()
+        {
+            var assembler = new Dotx64Dbg.Assembler();
+            assembler.Lea(Rax, DwordPtr(Rax, Rdx, 2, 0));
+            assembler.Finalize();
+
+            var data = assembler.GetData();
+            AssertEq(5, data.Length);
+            AssertEq(0x3E, data[0]);
+            AssertEq(0x48, data[1]);
+            AssertEq(0x8D, data[2]);
+            AssertEq(0x04, data[3]);
+            AssertEq(0x50, data[4]);
+        }
+
+
+        [Test]
+        public void TestEncodeLeaScale4()
+        {
+            var assembler = new Dotx64Dbg.Assembler();
+            assembler.Lea(Rax, DwordPtr(Rax, Rdx, 4, 0));
+            assembler.Finalize();
+
+            var data = assembler.GetData();
+            AssertEq(5, data.Length);
+            AssertEq(0x3E, data[0]);
+            AssertEq(0x48, data[1]);
+            AssertEq(0x8D, data[2]);
+            AssertEq(0x04, data[3]);
+            AssertEq(0x90, data[4]);
+        }
+
+
+        [Test]
+        public void TestEncodeLeaScale8()
+        {
+            var assembler = new Dotx64Dbg.Assembler();
+            assembler.Lea(Rax, DwordPtr(Rax, Rdx, 8, 0));
+            assembler.Finalize();
+
+            var data = assembler.GetData();
+            AssertEq(5, data.Length);
+            AssertEq(0x3E, data[0]);
+            AssertEq(0x48, data[1]);
+            AssertEq(0x8D, data[2]);
+            AssertEq(0x04, data[3]);
+            AssertEq(0xD0, data[4]);
+        }
 #else
         [Test]
         public void TestEncodeLeaBasic32()
@@ -106,6 +156,53 @@ namespace Dotx64Dbg.Managed.Tests
             AssertEq(0x00, data[4]);
             AssertEq(0x00, data[5]);
         }
+
+        [Test]
+        public void TestEncodeLeaScale2()
+        {
+            var assembler = new Dotx64Dbg.Assembler();
+            assembler.Lea(Eax, DwordPtr(Eax, Edx, 2, 0));
+            assembler.Finalize();
+
+            var data = assembler.GetData();
+            AssertEq(4, data.Length);
+            AssertEq(0x3E, data[0]);
+            AssertEq(0x8D, data[1]);
+            AssertEq(0x04, data[2]);
+            AssertEq(0x50, data[3]);
+        }
+
+
+        [Test]
+        public void TestEncodeLeaScale4()
+        {
+            var assembler = new Dotx64Dbg.Assembler();
+            assembler.Lea(Eax, DwordPtr(Eax, Edx, 4, 0));
+            assembler.Finalize();
+
+            var data = assembler.GetData();
+            AssertEq(4, data.Length);
+            AssertEq(0x3E, data[0]);
+            AssertEq(0x8D, data[1]);
+            AssertEq(0x04, data[2]);
+            AssertEq(0x90, data[3]);
+        }
+
+
+        [Test]
+        public void TestEncodeLeaScale8()
+        {
+            var assembler = new Dotx64Dbg.Assembler();
+            assembler.Lea(Eax, DwordPtr(Eax, Edx, 8, 0));
+            assembler.Finalize();
+
+            var data = assembler.GetData();
+            AssertEq(4, data.Length);
+            AssertEq(0x3E, data[0]);
+            AssertEq(0x8D, data[1]);
+            AssertEq(0x04, data[2]);
+            AssertEq(0xD0, data[3]);
+        }
 #endif
 
         [Test]
@@ -120,6 +217,7 @@ namespace Dotx64Dbg.Managed.Tests
             AssertEq(0x31, data[0]);
             AssertEq(0xC0, data[1]);
         }
+
 
     }
 }
