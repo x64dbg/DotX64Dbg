@@ -19,7 +19,256 @@ namespace Dotx64Dbg {
 
     static EncoderErrorHandler _errHandler{};
 
-    public ref class Encoder
+	template<typename T>
+	static constexpr T getShift(T x)
+	{
+		if (x == 0)
+			return 0;
+		T shift = 0;
+		while ((x & 1) == 0)
+		{
+			x >>= 1;
+			shift++;
+		}
+		return shift;
+	}
+
+	static asmjit::Operand convertOp(asmjit::x86::Assembler* a, 
+		IOperand^ op, 
+		System::Collections::Generic::Dictionary<Label^, UInt32>^ labels)
+	{
+		if (op->Type == OperandType::None)
+			return {};
+
+		if (op->Type == OperandType::Register)
+		{
+			auto opReg = (Operand::Register^)op;
+			return convertAsmJitRegister(opReg->Value);
+		}
+		else if (op->Type == OperandType::Immediate)
+		{
+			auto opImm = (Operand::Immediate^)op;
+			return asmjit::Imm(opImm->Value);
+		}
+		else if (op->Type == OperandType::Memory)
+		{
+			auto opMem = (Operand::Memory^)op;
+			auto mem = asmjit::x86::Mem();
+			mem.setBase(convertAsmJitRegister(opMem->Base));
+			mem.setIndex(convertAsmJitRegister(opMem->Index), getShift(opMem->Scale));
+			mem.setSegment(convertAsmJitRegister(opMem->Segment).as<asmjit::x86::SReg>());
+			mem.setSize(opMem->Size);
+			mem.setOffset(opMem->Displacement);
+			return mem;
+		}
+		else if (op->Type == OperandType::Label)
+		{
+			if (labels == nullptr)
+			{
+				return asmjit::Imm(0x7FFFFFFF);
+			}
+			else
+			{
+				auto opLabel = (Label^)op;
+
+				asmjit::Label realLabel{};
+
+				UInt32 labelId;
+				if (labels->TryGetValue(opLabel, labelId))
+				{
+					realLabel = asmjit::Label{ labelId };
+				}
+				else
+				{
+					realLabel = a->newLabel();
+					labels->Add(opLabel, realLabel.id());
+				}
+
+				return realLabel;
+			}
+
+		}
+		return {};
+	}
+
+	bool encodeInstruction(asmjit::x86::Assembler* a,
+		System::Collections::Generic::Dictionary<Label^, UInt32>^ labels,
+		Instruction::Attributes attrib,
+		Mnemonic mnemonic,
+		IOperand^ op0_,
+		IOperand^ op1_,
+		IOperand^ op2_,
+		IOperand^ op3_)
+	{
+		auto op0 = convertOp(a, op0_, labels);
+		auto op1 = convertOp(a, op1_, labels);
+		auto op2 = convertOp(a, op2_, labels);
+		auto op3 = convertOp(a, op3_, labels);
+
+		if ((attrib & Instruction::Attributes::Lock) != Instruction::Attributes::None)
+			a->lock();
+
+		if ((attrib & Instruction::Attributes::Rep) != Instruction::Attributes::None)
+			a->rep();
+
+		if ((attrib & Instruction::Attributes::RepNe) != Instruction::Attributes::None)
+			a->repne();
+
+		if ((attrib & Instruction::Attributes::RepEq) != Instruction::Attributes::None)
+			a->repe();
+
+		if ((attrib & Instruction::Attributes::RepNz) != Instruction::Attributes::None)
+			a->repnz();
+
+		const auto asmjitMnemonic = convertAsmJitMnemonic(mnemonic);
+		switch (mnemonic)
+		{
+		case Mnemonic::Cmpsb:
+			if (a->cmpsb() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Cmpsw:
+			if (a->cmpsw() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Cmpsd:
+			if (a->cmpsd() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Cmpsq:
+			if (a->cmpsq() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Movsb:
+			if (a->movsb() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Movsw:
+			if (a->movsw() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Movsd:
+			if (a->movsd() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Movsq:
+			if (a->movsq() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Lodsb:
+			if (a->lodsb() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Lodsw:
+			if (a->lodsw() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Lodsd:
+			if (a->lodsd() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Lodsq:
+			if (a->lodsq() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Stosb:
+			if (a->stosb() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Stosw:
+			if (a->stosw() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Stosd:
+			if (a->stosd() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Stosq:
+			if (a->stosq() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Scasb:
+			if (a->scasb() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Scasw:
+			if (a->scasw() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Scasd:
+			if (a->scasd() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		case Mnemonic::Scasq:
+			if (a->scasq() != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		default:
+			if (a->emit(asmjitMnemonic, op0, op1, op2, op3) != asmjit::kErrorOk)
+			{
+				return false;
+			}
+			break;
+		}
+
+		return true;
+	}
+
+	static bool encodeInstruction(asmjit::x86::Assembler* a, 
+		System::Collections::Generic::Dictionary<Label^, UInt32>^ labels,
+		Instruction^ instr)
+	{
+		auto op0 = instr->GetOperandVisibility(0) == OperandVisibility::Hidden ? Operand::None : instr->GetOperand(0);
+		auto op1 = instr->GetOperandVisibility(1) == OperandVisibility::Hidden ? Operand::None : instr->GetOperand(1);
+		auto op2 = instr->GetOperandVisibility(2) == OperandVisibility::Hidden ? Operand::None : instr->GetOperand(2);
+		auto op3 = instr->GetOperandVisibility(3) == OperandVisibility::Hidden ? Operand::None : instr->GetOperand(3);
+
+		auto mnemonic = convertAsmJitMnemonic(instr->Id);
+
+		return encodeInstruction(a, labels, instr->Attribs, instr->Id, op0, op1, op2, op3);
+	}
+
+	public ref class Encoder
     {
         asmjit::CodeHolder* _code{};
         asmjit::x86::Assembler* _assembler{};
@@ -80,162 +329,7 @@ namespace Dotx64Dbg {
 
         bool Encode(Instruction^ instr)
         {
-            EncoderErrorHandler handler;
-            _assembler->setErrorHandler(&handler);
-
-            auto op0 = instr->GetOperandVisibility(0) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(0));
-            auto op1 = instr->GetOperandVisibility(1) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(1));
-            auto op2 = instr->GetOperandVisibility(2) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(2));
-            auto op3 = instr->GetOperandVisibility(3) == OperandVisibility::Hidden ? asmjit::Operand{} : convertOp(instr->GetOperand(3));
-
-            auto mnemonic = convertAsmJitMnemonic(instr->Id);
-
-            if ((instr->Attribs & Instruction::Attributes::Lock) != Instruction::Attributes::None)
-                _assembler->lock();
-
-            if ((instr->Attribs & Instruction::Attributes::Rep) != Instruction::Attributes::None)
-                _assembler->rep();
-
-            if ((instr->Attribs & Instruction::Attributes::RepNe) != Instruction::Attributes::None)
-                _assembler->repne();
-
-            if ((instr->Attribs & Instruction::Attributes::RepEq) != Instruction::Attributes::None)
-                _assembler->repe();
-
-            if ((instr->Attribs & Instruction::Attributes::RepNz) != Instruction::Attributes::None)
-                _assembler->repnz();
-
-            switch (instr->Id)
-            {
-            case Mnemonic::Cmpsb:
-                if (_assembler->cmpsb() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Cmpsw:
-                if (_assembler->cmpsw() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Cmpsd:
-                if (_assembler->cmpsd() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Cmpsq:
-                if (_assembler->cmpsq() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Movsb:
-                if (_assembler->movsb() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Movsw:
-                if (_assembler->movsw() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Movsd:
-                if (_assembler->movsd() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Movsq:
-                if (_assembler->movsq() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Lodsb:
-                if (_assembler->lodsb() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Lodsw:
-                if (_assembler->lodsw() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Lodsd:
-                if (_assembler->lodsd() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Lodsq:
-                if (_assembler->lodsq() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Stosb:
-                if (_assembler->stosb() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Stosw:
-                if (_assembler->stosw() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Stosd:
-                if (_assembler->stosd() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Stosq:
-                if (_assembler->stosq() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Scasb:
-                if (_assembler->scasb() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Scasw:
-                if (_assembler->scasw() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Scasd:
-                if (_assembler->scasd() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            case Mnemonic::Scasq:
-                if (_assembler->scasq() != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            default:
-                if (_assembler->emit(mnemonic, op0, op1, op2, op3) != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
-            }
-
-            return true;
+			return encodeInstruction(_assembler, _labels, instr);
         }
 
         System::UIntPtr GetLabelBaseOffset(Label^ label)
@@ -287,68 +381,7 @@ namespace Dotx64Dbg {
             _code->copyFlattenedData(ptr, codeSize);
 
             return res;
-        }
-
-    private:
-		template<typename T>
-		static constexpr T getShift(T x)
-		{
-            if (x == 0)
-                return 0;
-			T shift = 0;
-			while ((x & 1) == 0)
-			{
-				x >>= 1;
-				shift++;
-			}
-			return shift;
-		}
-
-        inline asmjit::Operand convertOp(IOperand^ op)
-        {
-
-            if (op->Type == OperandType::Register)
-            {
-                auto opReg = (Operand::Register^)op;
-                return convertAsmJitRegister(opReg->Value);
-            }
-            else if (op->Type == OperandType::Immediate)
-            {
-                auto opImm = (Operand::Immediate^)op;
-                return asmjit::Imm(opImm->Value);
-            }
-            else if (op->Type == OperandType::Memory)
-            {
-                auto opMem = (Operand::Memory^)op;
-                auto mem = asmjit::x86::Mem();
-                mem.setBase(convertAsmJitRegister(opMem->Base));
-                mem.setIndex(convertAsmJitRegister(opMem->Index), getShift(opMem->Scale));
-                mem.setSegment(convertAsmJitRegister(opMem->Segment).as<asmjit::x86::SReg>());
-                mem.setSize(opMem->Size);
-                mem.setOffset(opMem->Displacement);
-                return mem;
-            }
-            else if (op->Type == OperandType::Label)
-            {
-                auto opLabel = (Label^)op;
-
-                asmjit::Label realLabel{};
-
-                UInt32 labelId;
-                if (_labels->TryGetValue(opLabel, labelId))
-                {
-                    realLabel = asmjit::Label{ labelId };
-                }
-                else
-                {
-                    realLabel = _assembler->newLabel();
-                    _labels->Add(opLabel, realLabel.id());
-                }
-
-                return realLabel;
-            }
-            return {};
-        }
+        }        
     };
 
 }

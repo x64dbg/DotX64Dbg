@@ -24,7 +24,6 @@
     <ClInclude Include="Register.hpp" />
     <ClInclude Include="Mnemonic.hpp" />
     <ClInclude Include="Encoder.Converter.hpp" />
-    <ClInclude Include="Instruction.Meta.hpp" />
     <ClInclude Include="Instruction.Operand.hpp" />
     <ClInclude Include="Instruction.Operands.hpp" />
     <ClInclude Include="Instruction.EFlags.hpp" />
@@ -32,5 +31,8 @@
     <ClInclude Include="Marshal.hpp" />
     <ClInclude Include="Decoder.Converter.hpp" />
     <ClInclude Include="Instruction.Generator.hpp" />
+    <ClInclude Include="Instruction.Encoder.hpp" />
+    <ClInclude Include="Instruction.Decoder.hpp" />
+    <ClInclude Include="Instruction.Meta.hpp" />
   </ItemGroup>
 </Project>

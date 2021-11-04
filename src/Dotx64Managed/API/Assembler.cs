@@ -85,7 +85,7 @@ namespace Dotx64Dbg
 
         internal Assembler CreateInstr(Mnemonic id)
         {
-            var node = new NodeInstr() { Value = new Instruction(AttribState, id) };
+            var node = new NodeInstr() { Value = InstructionGenerator.Generate(AttribState, id) };
             AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
@@ -93,7 +93,7 @@ namespace Dotx64Dbg
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0)
         {
-            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0) };
+            var node = new NodeInstr() { Value = InstructionGenerator.Generate(AttribState, id, op0) };
             AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
@@ -101,7 +101,7 @@ namespace Dotx64Dbg
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0, IOperand op1)
         {
-            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0, op1) };
+            var node = new NodeInstr() { Value = InstructionGenerator.Generate(AttribState, id, op0, op1) };
             AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
@@ -109,7 +109,7 @@ namespace Dotx64Dbg
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0, IOperand op1, IOperand op2)
         {
-            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0, op1, op2) };
+            var node = new NodeInstr() { Value = InstructionGenerator.Generate(AttribState, id, op0, op1, op2) };
             AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
@@ -117,7 +117,7 @@ namespace Dotx64Dbg
 
         internal Assembler CreateInstr(Mnemonic id, IOperand op0, IOperand op1, IOperand op2, IOperand op3)
         {
-            var node = new NodeInstr() { Value = new Instruction(AttribState, id, op0, op1, op2, op3) };
+            var node = new NodeInstr() { Value = InstructionGenerator.Generate(AttribState, id, op0, op1, op2, op3) };
             AttribState = Instruction.Attributes.None;
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
@@ -125,7 +125,15 @@ namespace Dotx64Dbg
 
         public Assembler Emit(Instruction instr)
         {
-            var node = new NodeInstr() { Value = instr };
+            // Max explicit operands.
+            var ops = new IOperand[] { Operand.None, Operand.None, Operand.None, Operand.None };
+            for (int i = 0; i < Instruction.MaxOperands; i++)
+            {
+                if (instr.GetOperandVisibility(i) == OperandVisibility.Hidden)
+                    continue;
+                ops[i] = instr.GetOperand(i);
+            }
+            var node = new NodeInstr() { Value = InstructionGenerator.Generate(instr.Attribs, instr.Id, ops[0], ops[1], ops[2], ops[3]) };
             Cursor = Nodes.InsertAfter(Cursor, node);
             return this;
         }
