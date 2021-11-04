@@ -1,4 +1,4 @@
-﻿#include "Instruction.hpp"
+#include "Instruction.hpp"
 #include <cstdio>
 
 namespace Dotx64Dbg {

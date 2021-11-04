@@ -8,27 +8,31 @@
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Thread.cpp" />
     <ClCompile Include="Instruction.cpp" />
-    <ClCompile Include="Decoder.cpp" />
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="Expressions.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Module.cpp" />
-    <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="Symbols.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Process.cpp" />
+    <ClCompile Include="Instruction.Generator.cpp" />
+    <ClCompile Include="Instruction.Encoder.cpp" />
+    <ClCompile Include="Instruction.Decoder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Instruction.hpp" />
     <ClInclude Include="Register.hpp" />
     <ClInclude Include="Mnemonic.hpp" />
     <ClInclude Include="Encoder.Converter.hpp" />
-    <ClInclude Include="Instruction.Meta.hpp" />
     <ClInclude Include="Instruction.Operand.hpp" />
     <ClInclude Include="Instruction.Operands.hpp" />
     <ClInclude Include="Instruction.EFlags.hpp" />
     <ClInclude Include="Symbols.hpp" />
     <ClInclude Include="Marshal.hpp" />
     <ClInclude Include="Decoder.Converter.hpp" />
+    <ClInclude Include="Instruction.Generator.hpp" />
+    <ClInclude Include="Instruction.Encoder.hpp" />
+    <ClInclude Include="Instruction.Decoder.hpp" />
+    <ClInclude Include="Instruction.Meta.hpp" />
   </ItemGroup>
 </Project>

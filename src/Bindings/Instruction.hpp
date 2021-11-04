@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <cstdint>
 #include <cstdlib>
@@ -6,9 +6,9 @@
 
 #include "Register.hpp"
 #include "Mnemonic.hpp"
-#include "Instruction.Meta.hpp"
 #include "Instruction.Operand.hpp"
 #include "Instruction.EFlags.hpp"
+#include "Instruction.Meta.hpp"
 
 namespace Dotx64Dbg {
 
@@ -16,20 +16,24 @@ namespace Dotx64Dbg {
 
     public ref class Instruction
     {
+    internal:
         array<IOperand^>^ Operands;
         array<OperandVisibility>^ Visibility;
         array<OperandAccess>^ Access;
-        InstructionMeta^ _Meta;
-        Mnemonic _Id;
+        Mnemonic _Id{};
+        EFlags _FlagsRead{};
+        EFlags _FlagsModified{};
+        int _Size{};
+        uint64_t _Address{};
 
-        static initonly int32_t MaxOperands = 5;
+    public:
+        static initonly int32_t MaxOperands = 8;
 
     private:
 
         void Init(Mnemonic mnemonic)
         {
             _Id = mnemonic;
-            _Meta = InstructionMetaData::get(Id);
 
             Operands = gcnew array<IOperand^>(MaxOperands);
             Visibility = gcnew array<OperandVisibility>(MaxOperands);
@@ -37,9 +41,9 @@ namespace Dotx64Dbg {
 
             for (int i = 0; i < MaxOperands; i++)
             {
-                Operands[i] = _Meta->Operands[i];
-                Visibility[i] = _Meta->Visibility[i];
-                Access[i] = _Meta->Access[i];
+                Operands[i] = Operand::None;
+                Visibility[i] = OperandVisibility::Invalid;
+                Access[i] = OperandAccess::None;
             }
         }
 
@@ -60,6 +64,7 @@ namespace Dotx64Dbg {
             Init(Mnemonic::Invalid);
         }
 
+    internal:
         Instruction(Attributes attribs, Mnemonic id)
         {
             Init(id);
@@ -100,43 +105,22 @@ namespace Dotx64Dbg {
             SetOperand(3, op3);
         }
 
-        Instruction(Mnemonic id)
+    public:
+        property uint32_t Size
         {
-            Init(id);
+            uint32_t get()
+            {
+                return _Size;
+            }
         }
 
-        Instruction(Mnemonic id, IOperand^ op0)
+        property System::IntPtr Address
         {
-            Init(id);
-            SetOperand(0, op0);
+            System::IntPtr get()
+            {
+                return System::IntPtr((long long)_Address);
+            }
         }
-
-        Instruction(Mnemonic id, IOperand^ op0, IOperand^ op1)
-        {
-            Init(id);
-            SetOperand(0, op0);
-            SetOperand(1, op1);
-        }
-
-        Instruction(Mnemonic id, IOperand^ op0, IOperand^ op1, IOperand^ op2)
-        {
-            Init(id);
-            SetOperand(0, op0);
-            SetOperand(1, op1);
-            SetOperand(2, op2);
-        }
-
-        Instruction(Mnemonic id, IOperand^ op0, IOperand^ op1, IOperand^ op2, IOperand^ op3)
-        {
-            Init(id);
-            SetOperand(0, op0);
-            SetOperand(1, op1);
-            SetOperand(2, op2);
-            SetOperand(3, op3);
-        }
-
-        property int Size;
-        property uint64_t Address;
 
         property Mnemonic Id
         {
@@ -146,19 +130,11 @@ namespace Dotx64Dbg {
             }
         }
 
-        property InstructionMeta^ Meta
-        {
-            InstructionMeta^ get()
-            {
-                return _Meta;
-            }
-        }
-
         property EFlags FlagsWrite
         {
             EFlags get()
             {
-                return (EFlags)_Meta->FlagsModified;
+                return _FlagsModified;
             }
         }
 
@@ -166,7 +142,7 @@ namespace Dotx64Dbg {
         {
             EFlags get()
             {
-                return (EFlags)_Meta->FlagsRead;
+                return _FlagsRead;
             }
         }
 
@@ -236,7 +212,6 @@ namespace Dotx64Dbg {
             return Access[index];
         }
 
-
         OperandVisibility GetOperandVisibility(int index)
         {
             if (index < 0 || index >= MaxOperands)
@@ -245,22 +220,9 @@ namespace Dotx64Dbg {
             return Visibility[index];
         }
 
-        void SetOperandAccess(int index, OperandAccess access)
-        {
-            if (index < 0 || index >= MaxOperands)
-                return;
+        System::String^ ToString() override;
 
-            Access[index] = access;
-        }
-
-        void SetOperandVisibility(int index, OperandVisibility vis)
-        {
-            if (index < 0 || index >= MaxOperands)
-                return;
-
-            Visibility[index] = vis;
-        }
-
+    internal:
         void SetOperand(int index, IOperand^ op)
         {
             if (index < 0 || index >= MaxOperands)
@@ -279,8 +241,5 @@ namespace Dotx64Dbg {
             Access[index] = access;
         }
 
-        System::String^ ToString() override;
     };
-
-
 }

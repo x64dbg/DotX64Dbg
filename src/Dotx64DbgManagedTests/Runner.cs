@@ -122,7 +122,7 @@ namespace Dotx64Dbg.Managed.Tests
             {
                 test.Function.Invoke(instance, Array.Empty<object>());
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

@@ -11,7 +11,7 @@ public class AssemblerTest
     [Command("TestAssembler")]
     public void BasicAssembly(string[] args)
     {
-        nuint ip = Thread.Active.Nip;
+        nuint ip = Thread.Active != null ? Thread.Active.Nip : 0;
         using (var asm = new Assembler(ip))
         {
 #if _X64_
@@ -110,4 +110,5 @@ public class AssemblerTest
 
         UI.Disassembly.Update();
     }
+	
 }
