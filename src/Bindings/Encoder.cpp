@@ -290,6 +290,20 @@ namespace Dotx64Dbg {
         }
 
     private:
+		template<typename T>
+		static constexpr T getShift(T x)
+		{
+            if (x == 0)
+                return 0;
+			T shift = 0;
+			while ((x & 1) == 0)
+			{
+				x >>= 1;
+				shift++;
+			}
+			return shift;
+		}
+
         inline asmjit::Operand convertOp(IOperand^ op)
         {
 
@@ -308,7 +322,7 @@ namespace Dotx64Dbg {
                 auto opMem = (Operand::Memory^)op;
                 auto mem = asmjit::x86::Mem();
                 mem.setBase(convertAsmJitRegister(opMem->Base));
-                mem.setIndex(convertAsmJitRegister(opMem->Index), opMem->Scale);
+                mem.setIndex(convertAsmJitRegister(opMem->Index), getShift(opMem->Scale));
                 mem.setSegment(convertAsmJitRegister(opMem->Segment).as<asmjit::x86::SReg>());
                 mem.setSize(opMem->Size);
                 mem.setOffset(opMem->Displacement);
