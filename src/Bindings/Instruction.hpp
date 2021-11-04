@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <cstdint>
 #include <cstdlib>
@@ -17,14 +17,14 @@ namespace Dotx64Dbg {
     public ref class Instruction
     {
     internal:
-		array<IOperand^>^ Operands;
-		array<OperandVisibility>^ Visibility;
-		array<OperandAccess>^ Access;
+        array<IOperand^>^ Operands;
+        array<OperandVisibility>^ Visibility;
+        array<OperandAccess>^ Access;
         Mnemonic _Id{};
         EFlags _FlagsRead{};
         EFlags _FlagsModified{};
         int _Size{};
-		uint64_t _Address{};
+        uint64_t _Address{};
 
     public:
         static initonly int32_t MaxOperands = 8;
@@ -106,21 +106,21 @@ namespace Dotx64Dbg {
         }
 
     public:
-		property uint32_t Size
-		{
+        property uint32_t Size
+        {
             uint32_t get()
-			{
-				return _Size;
-			}
-		}
+            {
+                return _Size;
+            }
+        }
 
-		property System::IntPtr Address
-		{
+        property System::IntPtr Address
+        {
             System::IntPtr get()
-			{
-				return System::IntPtr((long long)_Address);
-			}
-		}
+            {
+                return System::IntPtr((long long)_Address);
+            }
+        }
 
         property Mnemonic Id
         {

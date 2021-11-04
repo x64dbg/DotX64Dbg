@@ -1,4 +1,4 @@
-﻿#include <cstdint>
+#include <cstdint>
 #include <utility>
 #include <cctype>
 
@@ -12,36 +12,11 @@
 
 namespace Dotx64Dbg
 {
-
-    static constexpr uint32_t Flags[] = {
-        (1 << 0),  // ZYDIS_CPUFLAG_CF
-        (1 << 2),  // ZYDIS_CPUFLAG_PF,
-        (1 << 4),  // ZYDIS_CPUFLAG_AF,
-        (1 << 6),  // ZYDIS_CPUFLAG_ZF,
-        (1 << 7),  // ZYDIS_CPUFLAG_SF,
-        (1 << 8),  // ZYDIS_CPUFLAG_TF,
-        (1 << 9),  // ZYDIS_CPUFLAG_IF,
-        (1 << 10), // ZYDIS_CPUFLAG_DF,
-        (1 << 11), // ZYDIS_CPUFLAG_OF,
-        (1 << 12), // ZYDIS_CPUFLAG_IOPL,
-        (1 << 14), // ZYDIS_CPUFLAG_NT,
-        (1 << 16), // ZYDIS_CPUFLAG_RF,
-        (1 << 17), // ZYDIS_CPUFLAG_VM,
-        (1 << 18), // ZYDIS_CPUFLAG_AC,
-        (1 << 19), // ZYDIS_CPUFLAG_VIF,
-        (1 << 20), // ZYDIS_CPUFLAG_VIP,
-        (1 << 21), // ZYDIS_CPUFLAG_ID,
-        (1 << 22), // ZYDIS_CPUFLAG_C0
-        (1 << 23), // ZYDIS_CPUFLAG_C1,
-        (1 << 24), // ZYDIS_CPUFLAG_C2,
-        (1 << 25), // ZYDIS_CPUFLAG_C3,
-    };
-
-    struct EFlagsData
-    {
-        uint32_t read;
-        uint32_t write;
-    };
+	struct EFlagsData
+	{
+		uint32_t read;
+		uint32_t write;
+	};
 
 	static IOperand^ ConvertOperandImm(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
 	{
@@ -104,16 +79,6 @@ namespace Dotx64Dbg
 		return Operand::None;
 	}
 
-	static EFlagsData getEFlags(const ZydisDecodedInstruction& ins)
-	{
-		EFlagsData res{};
-
-		res.read = ins.cpu_flags_read;
-		res.write = ins.cpu_flags_written;
-
-		return res;
-	}
-
 	static Instruction^ Convert(ZydisDecodedInstruction& instr, uint64_t addr)
 	{
 		const auto id = convertZydisMnemonic(instr.mnemonic);
@@ -153,10 +118,8 @@ namespace Dotx64Dbg
 		auto res = gcnew Instruction(attribs, id);
 		res->_Size = instr.length;
 		res->_Address = addr;
-
-		auto instrFlags = getEFlags(instr);
-		res->_FlagsModified = (EFlags)instrFlags.write;
-		res->_FlagsRead = (EFlags)instrFlags.read;
+		res->_FlagsModified = (EFlags)instr.cpu_flags_written;
+		res->_FlagsRead = (EFlags)instr.cpu_flags_read;
 
 		int opIndex = 0;
 		for (int i = 0; i < instr.operand_count; i++)
@@ -194,73 +157,77 @@ namespace Dotx64Dbg
 		return res;
 	}
 
-	Instruction^ decodeInstruction(const ZydisDecoder* decoder, const uint8_t* buf, size_t len, uint64_t address)
+    namespace Internal {
+
+        Instruction^ decodeInstruction(const ZydisDecoder* decoder, const uint8_t* buf, size_t len, uint64_t address)
+        {
+            ZydisDecodedInstruction instr{};
+            if (auto status = ZydisDecoderDecodeBuffer(decoder, buf, len, &instr); status != ZYAN_STATUS_SUCCESS)
+            {
+                return nullptr;
+            }
+
+            return Convert(instr, address);
+        }
+
+    }
+
+	public ref class Decoder
 	{
-		ZydisDecodedInstruction instr{};
-		if (auto status = ZydisDecoderDecodeBuffer(decoder, buf, len, &instr); status != ZYAN_STATUS_SUCCESS)
+		ZydisDecoder* _decoder;
+
+	private:
+		Decoder()
 		{
-			return nullptr;
+			_decoder = new ZydisDecoder();
+#ifdef _M_AMD64
+			auto mode = ZYDIS_MACHINE_MODE_LONG_64;
+			auto addrSize = ZYDIS_ADDRESS_WIDTH_64;
+#else
+			auto mode = ZYDIS_MACHINE_MODE_LEGACY_32;
+			auto addrSize = ZYDIS_ADDRESS_WIDTH_32;
+#endif
+			if (auto status = ZydisDecoderInit(_decoder, mode, addrSize);
+				status != ZYAN_STATUS_SUCCESS)
+			{
+				char msg[64]{};
+				sprintf_s(msg, "ZydisDecoderInit failed: %u\n", status);
+				_plugin_logprint(msg);
+			}
 		}
 
-		return Convert(instr, address);
-	}
+	public:
+		~Decoder()
+		{
+			delete _decoder;
+		}
 
-    public ref class Decoder
-    {
-        ZydisDecoder* _decoder;
+		static Decoder^ Create()
+		{
+			return gcnew Decoder();
+		}
 
-    private:
-        Decoder()
-        {
-            _decoder = new ZydisDecoder();
-#ifdef _M_AMD64
-            auto mode = ZYDIS_MACHINE_MODE_LONG_64;
-            auto addrSize = ZYDIS_ADDRESS_WIDTH_64;
-#else
-            auto mode = ZYDIS_MACHINE_MODE_LEGACY_32;
-            auto addrSize = ZYDIS_ADDRESS_WIDTH_32;
-#endif
-            if (auto status = ZydisDecoderInit(_decoder, mode, addrSize);
-                status != ZYAN_STATUS_SUCCESS)
-            {
-                char msg[64]{};
-                sprintf_s(msg, "ZydisDecoderInit failed: %u\n", status);
-                _plugin_logprint(msg);
-            }
-        }
+		Instruction^ Decode(array<System::Byte>^ data, uint64_t address)
+		{
+			pin_ptr<uint8_t> ptr = &data[0];
+			const uint8_t* buf = ptr;
 
-    public:
-        ~Decoder()
-        {
-            delete _decoder;
-        }
+			return Internal::decodeInstruction(_decoder, buf, data->Length, address);
+		}
 
-        static Decoder^ Create()
-        {
-            return gcnew Decoder();
-        }
+		Instruction^ Decode(System::UIntPtr address)
+		{
+			auto va = static_cast<duint>(address.ToUInt64());
+			duint readSize = 0;
 
-        Instruction^ Decode(array<System::Byte>^ data, uint64_t address)
-        {
-            pin_ptr<uint8_t> ptr = &data[0];
-            const uint8_t* buf = ptr;
+			uint8_t buf[15];
+			if (!Script::Memory::Read(static_cast<duint>(va), buf, sizeof(buf), &readSize))
+				return nullptr;
 
-			return decodeInstruction(_decoder, buf, data->Length, address);
-        }
+			return Internal::decodeInstruction(_decoder, buf, readSize, va);
+		}
 
-        Instruction^ Decode(System::UIntPtr address)
-        {
-            auto va = static_cast<duint>(address.ToUInt64());
-            duint readSize = 0;
+	private:
 
-            uint8_t buf[15];
-            if (!Script::Memory::Read(static_cast<duint>(va), buf, sizeof(buf), &readSize))
-                return nullptr;
-
-			return decodeInstruction(_decoder, buf, readSize, va);
-        }
-
-    private:
-        
-    };
+	};
 } // namespace Dotx64Dbg

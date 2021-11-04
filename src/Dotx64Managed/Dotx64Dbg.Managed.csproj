@@ -59,8 +59,4 @@
     <ProjectReference Include="..\Bindings\Bindings.vcxproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Tests\" />
-  </ItemGroup>
-
 </Project>
