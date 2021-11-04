@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Dotx64Dbg
@@ -127,11 +127,16 @@ namespace Dotx64Dbg
         {
             // Max explicit operands.
             var ops = new IOperand[] { Operand.None, Operand.None, Operand.None, Operand.None };
+            var numOps = 0;
             for (int i = 0; i < Instruction.MaxOperands; i++)
             {
                 if (instr.GetOperandVisibility(i) == OperandVisibility.Hidden)
                     continue;
-                ops[i] = instr.GetOperand(i);
+                var op = instr.GetOperand(i);
+                if (op.Type == OperandType.None)
+                    continue;
+                ops[numOps] = instr.GetOperand(i);
+                numOps++;
             }
             var node = new NodeInstr() { Value = InstructionGenerator.Generate(instr.Attribs, instr.Id, ops[0], ops[1], ops[2], ops[3]) };
             Cursor = Nodes.InsertAfter(Cursor, node);
