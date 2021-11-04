@@ -62,7 +62,7 @@ namespace Dotx64Dbg
 
         Type GetPluginClass(Assembly assembly)
         {
-            var entries = assembly.GetTypes().Where(a => a.GetInterface("IPlugin") != null).ToArray();
+            var entries = assembly.GetTypes().Where(a => a.GetInterface(nameof(IPlugin)) != null).ToArray();
             if (entries.Length > 1)
             {
                 throw new Exception("Assembly has multiple classes with IPlugin, can have only one entry.");

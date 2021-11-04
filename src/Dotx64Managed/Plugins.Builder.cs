@@ -107,14 +107,15 @@ namespace Dotx64Dbg
         }
 
         /// <summary>
-        /// Resolve all the project dependencies via NuGet
+        /// Gets all the packages references in the csproj.
         /// </summary>
         /// <param name="csProjectPath">The path to the csharp project</param>
-        /// <param name="token">The cancelation token</param>
-        /// <returns>A list containing the full path for the dependencies</returns>
-        static List<string> GetProjectDependencies(string csProjectPath, CancellationToken token)
+        /// <returns>A list containing nuget dependencies</returns>
+        /// <remarks>TODO: Maybe write proper code for handling cs projects</remarks>
+        [Obsolete]
+        static List<NuGetFramework> GetProjectPackagesReferences(string csProjectPath)
         {
-            List<string> requiredLibs = new();
+            List<NuGetFramework> requiredLibs = new();
             System.Xml.XmlDocument csProject = new();
             csProject.Load(csProjectPath);
             var packages = csProject.GetElementsByTagName("PackageReference");
@@ -122,36 +123,46 @@ namespace Dotx64Dbg
             {
                 string pkgId = package.Attributes.GetNamedItem("Include")!.Value;
                 string pkgVersion = package.Attributes.GetNamedItem("Version")!.Value;
-
-                var packageInfo = NugetHelper.FindLocalOrDownloadPackage(pkgId, pkgVersion, token);
-                if (packageInfo is null)
-                {
-                    Console.WriteLine("Failed to acquire nuget package: {0}", pkgId);
-                    continue;
-                }
-
-                var executingFramework = NugetHelper.Versioning.GetFrameworkFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
-                using var pkgReader = packageInfo.GetReader();
-                var requiredPkg = pkgReader.GetLibItems().GetNearest(executingFramework);
-                var requiredPkgDeps = NugetHelper.ResolvePackageDepencies(pkgId, pkgVersion, requiredPkg.TargetFramework, token);
-
-                requiredLibs.AddRange(requiredPkg.Items
-                    .Where(item => Path.GetExtension(item).Equals(".dll"))
-                    // TODO: Resolve the load context:
-                    .Select((item) => System.Reflection.Assembly.LoadFrom(Path.Combine(Path.GetDirectoryName(packageInfo.Path), item)).Location)
-                );
-
-                foreach (var pkgDep in requiredPkgDeps)
-                {
-                    using var depPkgReader = pkgDep.GetReader();
-                    var libItems = depPkgReader.GetLibItems().GetNearest(requiredPkg.TargetFramework);
-                    requiredLibs.AddRange(libItems.Items
-                        .Where(item => Path.GetExtension(item).Equals(".dll"))
-                        .Select(item => Path.GetFullPath(Path.Combine(Path.GetDirectoryName(pkgDep.Path), item)))
-                    );
-                }
+                requiredLibs.Add(new NuGetFramework(pkgId, new Version(pkgVersion)));
             }
             return requiredLibs;
+        }
+
+        /// <summary>
+        /// Update the plugin info dependencies for the dependency manager. This is a temporary 
+        /// attempt for handling the 'synchronization' between the plugin JSON and the local csproj
+        /// </summary>
+        /// <remarks>TODO: write a more proper code for handling references between the csproj and the plugin JSON</remarks>
+        /// <param name="plugin"></param>
+        [Obsolete]
+        static void UpdatePluginInfoPackagseReferences(Plugin plugin)
+        {
+            var projectFilePath = Path.Combine(plugin.Path, plugin.Info.Name + ".csproj");
+
+            if (!File.Exists(projectFilePath))
+                return;
+
+            List<string> references = new(plugin.Info.Dependencies);
+            var notIncludeFrameworks = GetProjectPackagesReferences(projectFilePath)
+                .Where(framework => !references.Any(_ref => framework.DotNetFrameworkName.Equals(_ref, StringComparison.OrdinalIgnoreCase)));
+            
+            bool requireUpdate = notIncludeFrameworks.Any();
+            foreach (var framework in notIncludeFrameworks)
+            {
+                references.Add(framework.DotNetFrameworkName);
+            }
+            
+            if(requireUpdate)
+            {
+                plugin.Info.Dependencies = references.ToArray();
+                string json = System.Text.Json.JsonSerializer.Serialize(
+                    plugin.Info, 
+                    typeof(PluginInfo), 
+                    new System.Text.Json.JsonSerializerOptions() { WriteIndented = true}
+                );
+                using var pluginFile = File.Create(Path.Combine(plugin.Path, "plugin.json"));
+                pluginFile.Write(Encoding.UTF8.GetBytes(json));
+            }
         }
 
         void RebuildPlugin(Plugin plugin, CancellationToken token)
@@ -161,21 +172,8 @@ namespace Dotx64Dbg
             Console.WriteLine("Rebuilding plugin '{0}'...", plugin.Info.Name);
             stopwatch.Start();
 
-            string csProjctPath = System.IO.Path.Combine(plugin.Path, plugin.Info.Name + ".csproj");
-            if (System.IO.File.Exists(csProjctPath))
-            {
-                var projctDeps = GetProjectDependencies(csProjctPath, token);
-                if (plugin.Info.Dependencies != null)
-                {
-                    var distinct = plugin.Info.Dependencies.Where(libItem => !projctDeps.Any(depLib => depLib == libItem));
-                    projctDeps.AddRange(distinct);
-                }
-
-                plugin.Info.Dependencies = projctDeps.ToArray();
-            }
-
             var compiler = new Compiler(plugin.Info.Name, plugin.BuildOutputPath)
-                .WithDependencies(plugin.Info.Dependencies ?? Array.Empty<string>());
+                .WithDependencies(plugin.ResolveDependencies(dependencyResolver, token));
 
             var res = compiler.Compile(plugin.SourceFiles.ToArray());
             stopwatch.Stop();
@@ -208,6 +206,7 @@ namespace Dotx64Dbg
                     Utils.DebugPrintLine($"Plugin without json: {plugin.Path}, skipping.");
                     continue;
                 }
+                UpdatePluginInfoPackagseReferences(plugin);
 
                 if (plugin.RequiresRebuild == false)
                 {

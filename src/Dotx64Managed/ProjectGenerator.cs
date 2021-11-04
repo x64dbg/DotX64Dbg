@@ -11,7 +11,9 @@ namespace Dotx64Dbg
 
         public string Platforms = "x64;x86";
 
-        public string[] References = new string[0];
+        public string[] References = Array.Empty<string>();
+
+        public NuGet.Frameworks.NuGetFramework[] Frameworks = Array.Empty<NuGet.Frameworks.NuGetFramework>();
 
         public string ReferencePathX86;
 
@@ -72,6 +74,19 @@ namespace Dotx64Dbg
                 }
 
                 nodeProject.AppendChild(nodeItemsX64);
+
+                // Packages References
+                var nodePkgRefs = doc.CreateElement("ItemGroup");
+                foreach(var pkg in Frameworks)
+                {
+                    var nodeRef = doc.CreateElement("PackageReference");
+                    nodeRef.SetAttribute("Include", pkg.Framework);
+                    nodeRef.SetAttribute("Version", pkg.Version.ToString(3));
+
+                    nodePkgRefs.AppendChild(nodeRef);
+                }
+
+                nodeProject.AppendChild(nodePkgRefs);
 
                 doc.AppendChild(nodeProject);
 
