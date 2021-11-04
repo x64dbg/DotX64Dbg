@@ -230,6 +230,210 @@ namespace Dotx64Dbg {
             return gcnew Operand::Memory(64, baseReg->Value, index->Value, scale, disp);
         }
 
+        // Tword
+        //////////////////////////////////////////////////////////////////////////
+        static Operand::Memory^ TwordPtr(Int64 disp)
+        {
+            return gcnew Operand::Memory(80, RegisterId::None, RegisterId::None, 0, disp);
+        }
+        static Operand::Memory^ TwordPtr(RegisterId baseReg)
+        {
+            return gcnew Operand::Memory(80, baseReg, RegisterId::None, 0, 0);
+        }
+        static Operand::Memory^ TwordPtr(Operand::Register^ baseReg)
+        {
+            return gcnew Operand::Memory(80, baseReg->Value, RegisterId::None, 0, 0);
+        }
+
+        static Operand::Memory^ TwordPtr(RegisterId baseReg, Int64 disp)
+        {
+            return gcnew Operand::Memory(80, baseReg, RegisterId::None, 0, disp);
+        }
+        static Operand::Memory^ TwordPtr(Operand::Register^ baseReg, Int64 disp)
+        {
+            return gcnew Operand::Memory(80, baseReg->Value, RegisterId::None, 0, disp);
+        }
+
+        static Operand::Memory^ TwordPtr(RegisterId baseReg, RegisterId index)
+        {
+            return gcnew Operand::Memory(80, baseReg, index, 0, 0);
+        }
+        static Operand::Memory^ TwordPtr(Operand::Register^ baseReg, Operand::Register^ index)
+        {
+            return gcnew Operand::Memory(80, baseReg->Value, index->Value, 0, 0);
+        }
+
+        static Operand::Memory^ TwordPtr(RegisterId baseReg, RegisterId index, Int64 disp)
+        {
+            return gcnew Operand::Memory(80, baseReg, index, 0, disp);
+        }
+        static Operand::Memory^ TwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int64 disp)
+        {
+            return gcnew Operand::Memory(80, baseReg->Value, index->Value, 0, disp);
+        }
+
+        static Operand::Memory^ TwordPtr(RegisterId baseReg, RegisterId index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(80, baseReg, index, scale, disp);
+        }
+        static Operand::Memory^ TwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(80, baseReg->Value, index->Value, scale, disp);
+        }
+
+        // Xmmword
+        //////////////////////////////////////////////////////////////////////////
+        static Operand::Memory^ XmmwordPtr(Int64 disp)
+        {
+            return gcnew Operand::Memory(128, RegisterId::None, RegisterId::None, 0, disp);
+        }
+        static Operand::Memory^ XmmwordPtr(RegisterId baseReg)
+        {
+            return gcnew Operand::Memory(128, baseReg, RegisterId::None, 0, 0);
+        }
+        static Operand::Memory^ XmmwordPtr(Operand::Register^ baseReg)
+        {
+            return gcnew Operand::Memory(128, baseReg->Value, RegisterId::None, 0, 0);
+        }
+
+        static Operand::Memory^ XmmwordPtr(RegisterId baseReg, Int64 disp)
+        {
+            return gcnew Operand::Memory(128, baseReg, RegisterId::None, 0, disp);
+        }
+        static Operand::Memory^ XmmwordPtr(Operand::Register^ baseReg, Int64 disp)
+        {
+            return gcnew Operand::Memory(128, baseReg->Value, RegisterId::None, 0, disp);
+        }
+
+        static Operand::Memory^ XmmwordPtr(RegisterId baseReg, RegisterId index)
+        {
+            return gcnew Operand::Memory(128, baseReg, index, 0, 0);
+        }
+        static Operand::Memory^ XmmwordPtr(Operand::Register^ baseReg, Operand::Register^ index)
+        {
+            return gcnew Operand::Memory(128, baseReg->Value, index->Value, 0, 0);
+        }
+
+        static Operand::Memory^ XmmwordPtr(RegisterId baseReg, RegisterId index, Int64 disp)
+        {
+            return gcnew Operand::Memory(128, baseReg, index, 0, disp);
+        }
+        static Operand::Memory^ XmmwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int64 disp)
+        {
+            return gcnew Operand::Memory(128, baseReg->Value, index->Value, 0, disp);
+        }
+
+        static Operand::Memory^ XmmwordPtr(RegisterId baseReg, RegisterId index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(128, baseReg, index, scale, disp);
+        }
+        static Operand::Memory^ XmmwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(128, baseReg->Value, index->Value, scale, disp);
+        }
+
+        // Ymmword
+        //////////////////////////////////////////////////////////////////////////
+        static Operand::Memory^ YmmwordPtr(Int64 disp)
+        {
+            return gcnew Operand::Memory(256, RegisterId::None, RegisterId::None, 0, disp);
+        }
+        static Operand::Memory^ YmmwordPtr(RegisterId baseReg)
+        {
+            return gcnew Operand::Memory(256, baseReg, RegisterId::None, 0, 0);
+        }
+        static Operand::Memory^ YmmwordPtr(Operand::Register^ baseReg)
+        {
+            return gcnew Operand::Memory(256, baseReg->Value, RegisterId::None, 0, 0);
+        }
+
+        static Operand::Memory^ YmmwordPtr(RegisterId baseReg, Int64 disp)
+        {
+            return gcnew Operand::Memory(256, baseReg, RegisterId::None, 0, disp);
+        }
+        static Operand::Memory^ YmmwordPtr(Operand::Register^ baseReg, Int64 disp)
+        {
+            return gcnew Operand::Memory(256, baseReg->Value, RegisterId::None, 0, disp);
+        }
+
+        static Operand::Memory^ YmmwordPtr(RegisterId baseReg, RegisterId index)
+        {
+            return gcnew Operand::Memory(256, baseReg, index, 0, 0);
+        }
+        static Operand::Memory^ YmmwordPtr(Operand::Register^ baseReg, Operand::Register^ index)
+        {
+            return gcnew Operand::Memory(256, baseReg->Value, index->Value, 0, 0);
+        }
+
+        static Operand::Memory^ YmmwordPtr(RegisterId baseReg, RegisterId index, Int64 disp)
+        {
+            return gcnew Operand::Memory(256, baseReg, index, 0, disp);
+        }
+        static Operand::Memory^ YmmwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int64 disp)
+        {
+            return gcnew Operand::Memory(256, baseReg->Value, index->Value, 0, disp);
+        }
+
+        static Operand::Memory^ YmmwordPtr(RegisterId baseReg, RegisterId index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(256, baseReg, index, scale, disp);
+        }
+        static Operand::Memory^ YmmwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(256, baseReg->Value, index->Value, scale, disp);
+        }
+
+        // Zmmword
+        //////////////////////////////////////////////////////////////////////////
+        static Operand::Memory^ ZmmwordPtr(Int64 disp)
+        {
+            return gcnew Operand::Memory(512, RegisterId::None, RegisterId::None, 0, disp);
+        }
+        static Operand::Memory^ ZmmwordPtr(RegisterId baseReg)
+        {
+            return gcnew Operand::Memory(512, baseReg, RegisterId::None, 0, 0);
+        }
+        static Operand::Memory^ ZmmwordPtr(Operand::Register^ baseReg)
+        {
+            return gcnew Operand::Memory(512, baseReg->Value, RegisterId::None, 0, 0);
+        }
+
+        static Operand::Memory^ ZmmwordPtr(RegisterId baseReg, Int64 disp)
+        {
+            return gcnew Operand::Memory(512, baseReg, RegisterId::None, 0, disp);
+        }
+        static Operand::Memory^ ZmmwordPtr(Operand::Register^ baseReg, Int64 disp)
+        {
+            return gcnew Operand::Memory(512, baseReg->Value, RegisterId::None, 0, disp);
+        }
+
+        static Operand::Memory^ ZmmwordPtr(RegisterId baseReg, RegisterId index)
+        {
+            return gcnew Operand::Memory(512, baseReg, index, 0, 0);
+        }
+        static Operand::Memory^ ZmmwordPtr(Operand::Register^ baseReg, Operand::Register^ index)
+        {
+            return gcnew Operand::Memory(512, baseReg->Value, index->Value, 0, 0);
+        }
+
+        static Operand::Memory^ ZmmwordPtr(RegisterId baseReg, RegisterId index, Int64 disp)
+        {
+            return gcnew Operand::Memory(512, baseReg, index, 0, disp);
+        }
+        static Operand::Memory^ ZmmwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int64 disp)
+        {
+            return gcnew Operand::Memory(512, baseReg->Value, index->Value, 0, disp);
+        }
+
+        static Operand::Memory^ ZmmwordPtr(RegisterId baseReg, RegisterId index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(512, baseReg, index, scale, disp);
+        }
+        static Operand::Memory^ ZmmwordPtr(Operand::Register^ baseReg, Operand::Register^ index, Int32 scale, Int64 disp)
+        {
+            return gcnew Operand::Memory(512, baseReg->Value, index->Value, scale, disp);
+        }
+
         // Host
         //////////////////////////////////////////////////////////////////////////
         static Operand::Memory^ Ptr(Int64 disp)

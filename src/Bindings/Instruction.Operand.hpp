@@ -502,6 +502,18 @@ namespace Dotx64Dbg {
                 case 64:
                     p += snprintf(temp + p, sizeof(temp) - p, "qword ptr [");
                     break;
+                case 80:
+                    p += snprintf(temp + p, sizeof(temp) - p, "tword ptr [");
+                    break;
+                case 128:
+                    p += snprintf(temp + p, sizeof(temp) - p, "xmmword ptr [");
+                    break;
+                case 256:
+                    p += snprintf(temp + p, sizeof(temp) - p, "ymmword ptr [");
+                    break;
+                case 512:
+                    p += snprintf(temp + p, sizeof(temp) - p, "zmmword ptr [");
+                    break;
                 }
 
                 if (Segment != RegisterId::Ds && Segment != RegisterId::Cs)
