@@ -69,16 +69,17 @@ namespace Dotx64Dbg
         if (op->Type == OperandType::Memory)
         {
             auto mem = (Operand::Memory^)op;
-            auto replacement = gcnew Operand::Memory();
-            replacement->Segment = mem->Segment;
-            replacement->Base = mem->Base;
-            replacement->Index = mem->Index;
-            replacement->Scale = mem->Scale;
             if (mem->Displacement != 0)
             {
+                auto replacement = gcnew Operand::Memory();
+                replacement->Size = mem->Size;
+                replacement->Segment = mem->Segment;
+                replacement->Base = mem->Base;
+                replacement->Index = mem->Index;
+                replacement->Scale = mem->Scale;
                 replacement->Displacement = DispMagic;
+                return replacement;
             }
-            return replacement;
         }
         else if (op->Type == OperandType::Label)
         {
