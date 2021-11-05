@@ -543,14 +543,20 @@ namespace Dotx64Dbg {
 
                 if (Displacement > 0)
                 {
+                    auto val = Displacement;
                     if (Base != RegisterId::None || Index != RegisterId::None)
                     {
-                        if (Displacement < 0)
+                        if (val < 0)
+                        {
                             p += snprintf(temp + p, sizeof(temp) - p, "-");
+                            val = -val;
+                        }
                         else
+                        {
                             p += snprintf(temp + p, sizeof(temp) - p, "+");
+                        }
                     }
-                    p += snprintf(temp + p, sizeof(temp) - p, "%llu", std::abs(Displacement));
+                    p += snprintf(temp + p, sizeof(temp) - p, "%llu", val);
                 }
 
                 p += snprintf(temp + p, sizeof(temp) - p, "]");
