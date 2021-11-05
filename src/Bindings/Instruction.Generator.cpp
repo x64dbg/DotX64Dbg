@@ -77,6 +77,7 @@ namespace Dotx64Dbg
     constexpr int32_t DispMagic = 0xF000BA;
     constexpr int32_t LabelMagic = 0xF111BA;
     constexpr int32_t TargetMagic = 0xF222BA;
+    constexpr int8_t LoopMagic = 0x5F;
 
     // Because we encode at the address zero we have to make sure certain values
     // are within the range of rel32 due to x86 restrictions.
@@ -114,7 +115,10 @@ namespace Dotx64Dbg
                 InstructionMetaData::isControlFlow(mnemonic) &&
                 !InstructionMetaData::isRet(mnemonic))
             {
-                return gcnew Operand::Immediate(TargetMagic);
+                if(InstructionMetaData::isLoop(mnemonic))
+                    return gcnew Operand::Immediate(LoopMagic);
+                else
+                    return gcnew Operand::Immediate(TargetMagic);
             }
         }
 
@@ -192,8 +196,9 @@ namespace Dotx64Dbg
             {
                 if (InstructionMetaData::isControlFlow(mnemonic) && !InstructionMetaData::isRet(mnemonic))
                 {
+                    auto magicVal = InstructionMetaData::isLoop(mnemonic) ? LoopMagic : TargetMagic;
                     auto imm = (Operand::Immediate^)newOp;
-                    if (imm->Value == TargetMagic)
+                    if (imm->Value == magicVal)
                     {
                         instr->SetOperand(0, op0);
                     }
