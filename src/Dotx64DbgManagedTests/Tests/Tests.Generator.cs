@@ -10,7 +10,7 @@ namespace Dotx64Dbg.Managed.Tests
     using static Testing;
     using static Operands;
 
-    class TestGenerator
+    class TestInstructionGenerator
     {
         [Test]
         public void TestSubEaxEdx()
@@ -65,6 +65,22 @@ namespace Dotx64Dbg.Managed.Tests
             AssertEq(mem.Base, RegisterId.Eax);
             AssertEq(mem.Index, RegisterId.Edx);
             AssertEq(mem.Displacement, 0);
+        }
+
+        [Test]
+        public void TestLeaDisp()
+        {
+            var instr = InstructionGenerator.Generate(Mnemonic.Lea, Eax, DwordPtr(Eax, Edx, 0xBADBABE));
+            AssertNeq(instr, null);
+            AssertEq((instr.GetOperand(0) as Operand.Register).Value, Eax.Value);
+            AssertEq(instr.GetOperandAccess(0), OperandAccess.Write);
+            var op1 = instr.GetOperand(1);
+            AssertEq(op1.Type, OperandType.Memory);
+            var mem = op1 as Operand.Memory;
+            AssertEq(mem.Segment, RegisterId.Ds);
+            AssertEq(mem.Base, RegisterId.Eax);
+            AssertEq(mem.Index, RegisterId.Edx);
+            AssertEq(mem.Displacement, 0xBADBABE);
         }
     }
 }
