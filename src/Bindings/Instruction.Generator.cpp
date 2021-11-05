@@ -1,12 +1,33 @@
 #include "Instruction.Generator.hpp"
 #include "Instruction.Encoder.hpp"
 #include "Instruction.Decoder.hpp"
+#include "AsmJitHelper.hpp"
 
 #include <asmjit/asmjit.h>
 #include <zydis/Zydis.h>
 
 namespace Dotx64Dbg
 {
+    struct EncoderErrorHandler : asmjit::ErrorHandler
+    {
+        void handleError(asmjit::Error err, const char* message, asmjit::BaseEmitter* origin) override
+        {
+            auto errMsg = getAsmjitErrorString(err);
+            if (!errMsg)
+                return;
+
+            auto exMsg = "Generator Error: " + *errMsg;
+            if (message != nullptr && strlen(message) > 0)
+            {
+                exMsg += "\nMessage: " + std::string(message);
+            }
+            auto strMessage = gcnew System::String(exMsg.c_str());
+            throw gcnew System::InvalidOperationException(strMessage);
+        }
+    };
+
+    static EncoderErrorHandler _errHandler{};
+
     Instruction^ InstructionGenerator::Generate(Mnemonic mnemonic)
     {
         return Generate(Instruction::Attributes::None, mnemonic);
@@ -93,6 +114,7 @@ namespace Dotx64Dbg
     {
         asmjit::CodeHolder code;
         code.init(asmjit::Environment::host(), 0);
+        code.setErrorHandler(&_errHandler);
 
         asmjit::x86::Assembler assembler(&code);
 

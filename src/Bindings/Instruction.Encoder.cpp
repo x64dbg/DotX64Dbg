@@ -1,9 +1,10 @@
+#include "AsmJitHelper.hpp"
+#include "Encoder.Converter.hpp"
+
 #include <cstdint>
 #include <utility>
 #include <vector>
 #include <string>
-
-#include "Encoder.Converter.hpp"
 
 namespace Dotx64Dbg {
 
@@ -11,9 +12,17 @@ namespace Dotx64Dbg {
     {
         void handleError(asmjit::Error err, const char* message, asmjit::BaseEmitter* origin) override
         {
-            auto errMsg = "Encode Error: " + std::string(message);
-            auto strMessage = gcnew System::String(errMsg.c_str());
-            Console::WriteLine(strMessage);
+            auto errMsg = getAsmjitErrorString(err);
+            if (!errMsg)
+                return;
+
+            auto exMsg = "Encoder Error: " + *errMsg;
+            if (message != nullptr && strlen(message) > 0)
+            {
+                exMsg += "\nMessage: " + std::string(message);
+            }
+            auto strMessage = gcnew System::String(exMsg.c_str());
+            throw gcnew System::InvalidOperationException(strMessage);
         }
     };
 
