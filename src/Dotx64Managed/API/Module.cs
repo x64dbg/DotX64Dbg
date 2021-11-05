@@ -15,6 +15,8 @@ namespace Dotx64Dbg
 
         public nuint EntryPoint { get => GetEntryPoint(); }
 
+        public nuint Size { get => GetSize(); }
+
         internal Module(nuint baseAddr)
         {
             Base = baseAddr;
@@ -28,6 +30,15 @@ namespace Dotx64Dbg
         public static Module FindByName(string name)
         {
             var baseAddr = Native.Module.FindByName(name);
+            if (baseAddr == 0)
+                return null;
+
+            return new Module((nuint)baseAddr);
+        }
+
+        public static Module FindByAddress(nuint address)
+        {
+            var baseAddr = Native.Module.FindByAddress(address);
             if (baseAddr == 0)
                 return null;
 
@@ -58,6 +69,11 @@ namespace Dotx64Dbg
         public nuint GetEntryPoint()
         {
             return (nuint)Native.Module.GetEntrypoint(Base);
+        }
+
+        public nuint GetSize()
+        {
+            return (nuint)Native.Module.GetSize(Base);
         }
 
         /// <summary>Pretty name</summary>

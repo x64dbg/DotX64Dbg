@@ -54,6 +54,13 @@ namespace Dotx64Dbg::Native
             return Script::Module::BaseFromName(cstr);
         }
 
+        static duint FindByAddress(System::UIntPtr addr)
+        {
+            auto va = static_cast<duint>(addr.ToUInt64());
+
+            return Script::Module::BaseFromAddr(va);
+        }
+
         static duint GetSize(System::UIntPtr base)
         {
             auto va = static_cast<duint>(base.ToUInt64());
