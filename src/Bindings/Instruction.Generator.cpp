@@ -52,6 +52,42 @@ namespace Dotx64Dbg
         return Generate(attribs, mnemonic, op0, op1, op2, Operand::None);
     }
 
+    // NOTE: This has to be within rel32
+    constexpr int32_t DispMagic = 0xF000BA;
+    constexpr int32_t LabelMagic = 0xF111BA;
+
+    // Because we encode at the address zero we have to make sure certain values
+    // are within the range of rel32 due to x86 restrictions.
+    // Labels will be replaced by LabelMagic and memory displacements will be
+    // replaced by DispMagic.
+    // Those values will be set back to the original once decoded.
+    static IOperand^ HandleOperand(IOperand^ op)
+    {
+        if (op->Type == OperandType::None)
+            return op;
+
+        if (op->Type == OperandType::Memory)
+        {
+            auto mem = (Operand::Memory^)op;
+            auto replacement = gcnew Operand::Memory();
+            replacement->Segment = mem->Segment;
+            replacement->Base = mem->Base;
+            replacement->Index = mem->Index;
+            replacement->Scale = mem->Scale;
+            if (mem->Displacement != 0)
+            {
+                replacement->Displacement = DispMagic;
+            }
+            return replacement;
+        }
+        else if (op->Type == OperandType::Label)
+        {
+            return gcnew Operand::Immediate(LabelMagic);
+        }
+
+        return op;
+    }
+
     Instruction^ InstructionGenerator::Generate(Instruction::Attributes attribs, Mnemonic mnemonic, IOperand^ op0, IOperand^ op1, IOperand^ op2, IOperand^ op3)
     {
         asmjit::CodeHolder code;
@@ -59,7 +95,14 @@ namespace Dotx64Dbg
 
         asmjit::x86::Assembler assembler(&code);
 
-        bool encoded = Internal::encodeInstruction(&assembler, nullptr, attribs, mnemonic, op0, op1, op2, op3);
+        bool encoded = Internal::encodeInstruction(&assembler,
+            nullptr,
+            attribs,
+            mnemonic,
+            HandleOperand(op0),
+            HandleOperand(op1),
+            HandleOperand(op2),
+            HandleOperand(op3));
 
         if (!encoded)
             return nullptr;
@@ -85,13 +128,78 @@ namespace Dotx64Dbg
 
         auto instr = Internal::decodeInstruction(&decoder, buffer, codeSize, 0);
 
-        // Switch back the labels.
-        if (op0 != nullptr && op0->Type == OperandType::Label)
+        // Switch out the operands if required.
+        if (op0 != nullptr && op0->Type != OperandType::None)
         {
-            instr->SetOperand(0, op0);
+            auto newOp = instr->GetOperand(0);
+            if (op0->Type == OperandType::Label)
+            {
+                if (newOp->Type == OperandType::Immediate)
+                {
+                    auto imm = (Operand::Immediate^)newOp;
+                    if (imm->Value == LabelMagic)
+                    {
+                        instr->SetOperand(0, op0);
+                    }
+                }
+            }
+            else if (op0->Type == OperandType::Memory)
+            {
+                if (newOp->Type == OperandType::Memory)
+                {
+                    auto mem = (Operand::Memory^)newOp;
+                    if (mem->Displacement == DispMagic)
+                    {
+                        instr->SetOperand(0, op0);
+                    }
+                }
+            }
         }
-
-        // FIXME: Do this for memory operands, currently unsupported to have labels.
+        if (op1 != nullptr && op1->Type != OperandType::None)
+        {
+            if (op1->Type == OperandType::Memory)
+            {
+                auto newOp = instr->GetOperand(1);
+                if (newOp->Type == OperandType::Memory)
+                {
+                    auto mem = (Operand::Memory^)newOp;
+                    if (mem->Displacement == DispMagic)
+                    {
+                        instr->SetOperand(1, op1);
+                    }
+                }
+            }
+        }
+        if (op2 != nullptr && op2->Type != OperandType::None)
+        {
+            if (op2->Type == OperandType::Memory)
+            {
+                auto newOp = instr->GetOperand(2);
+                if (newOp->Type == OperandType::Memory)
+                {
+                    auto mem = (Operand::Memory^)newOp;
+                    if (mem->Displacement == DispMagic)
+                    {
+                        instr->SetOperand(2, op2);
+                    }
+                }
+            }
+        }
+        if (op3 != nullptr && op3->Type != OperandType::None)
+        {
+            if (op2->Type == OperandType::Memory)
+            {
+                auto newOp = instr->GetOperand(3);
+                if (newOp->Type == OperandType::Memory)
+                {
+                    auto mem = (Operand::Memory^)newOp;
+                    if (mem->Displacement == DispMagic)
+                    {
+                        instr->SetOperand(3, op3);
+                    }
+                }
+            }
+        }
 
         return instr;
     }

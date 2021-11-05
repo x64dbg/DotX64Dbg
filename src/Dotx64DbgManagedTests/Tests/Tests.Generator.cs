@@ -12,8 +12,6 @@ namespace Dotx64Dbg.Managed.Tests
 
     class TestGenerator
     {
-        static readonly EFlags FlagsSub = Dotx64Dbg.EFlags.Cf | Dotx64Dbg.EFlags.Pf;
-
         [Test]
         public void TestSubEaxEdx()
         {
@@ -51,6 +49,22 @@ namespace Dotx64Dbg.Managed.Tests
                     Dotx64Dbg.EFlags.Pf |
                     Dotx64Dbg.EFlags.Cf);
             }
+        }
+
+        [Test]
+        public void TestLeaNoDisp()
+        {
+            var instr = InstructionGenerator.Generate(Mnemonic.Lea, Eax, DwordPtr(Eax, Edx));
+            AssertNeq(instr, null);
+            AssertEq((instr.GetOperand(0) as Operand.Register).Value, Eax.Value);
+            AssertEq(instr.GetOperandAccess(0), OperandAccess.Write);
+            var op1 = instr.GetOperand(1);
+            AssertEq(op1.Type, OperandType.Memory);
+            var mem = op1 as Operand.Memory;
+            AssertEq(mem.Segment, RegisterId.Ds);
+            AssertEq(mem.Base, RegisterId.Eax);
+            AssertEq(mem.Index, RegisterId.Edx);
+            AssertEq(mem.Displacement, 0);
         }
     }
 }
