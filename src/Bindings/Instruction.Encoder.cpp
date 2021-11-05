@@ -111,10 +111,23 @@ namespace Dotx64Dbg {
             IOperand^ op2_,
             IOperand^ op3_)
         {
+            auto opCount = 0;
+
             auto op0 = convertOp(a, op0_, labels);
+            if (!op0.isNone())
+                opCount++;
+
             auto op1 = convertOp(a, op1_, labels);
+            if (!op1.isNone())
+                opCount++;
+
             auto op2 = convertOp(a, op2_, labels);
+            if (!op2.isNone())
+                opCount++;
+
             auto op3 = convertOp(a, op3_, labels);
+            if (!op3.isNone())
+                opCount++;
 
             if ((attrib & Instruction::Attributes::Lock) != Instruction::Attributes::None)
                 a->lock();
@@ -139,47 +152,63 @@ namespace Dotx64Dbg {
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Cmpsw:
                 if (a->cmpsw() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Cmpsd:
                 if (a->cmpsd() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Cmpsq:
                 if (a->cmpsq() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Movsb:
-                if (a->movsb() != asmjit::kErrorOk)
+                if (opCount == 0)
                 {
-                    return false;
+                    if (a->movsb() != asmjit::kErrorOk)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
                 break;
             case Mnemonic::Movsw:
-                if (a->movsw() != asmjit::kErrorOk)
+                if (opCount == 0)
                 {
-                    return false;
+                    if (a->movsw() != asmjit::kErrorOk)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
                 break;
             case Mnemonic::Movsd:
-                if (a->movsd() != asmjit::kErrorOk)
+                if (opCount == 0)
                 {
-                    return false;
+                    if (a->movsd() != asmjit::kErrorOk)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
                 break;
             case Mnemonic::Movsq:
-                if (a->movsq() != asmjit::kErrorOk)
+                if (opCount == 0)
                 {
-                    return false;
+                    if (a->movsq() != asmjit::kErrorOk)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
                 break;
             case Mnemonic::Lodsb:
@@ -187,79 +216,79 @@ namespace Dotx64Dbg {
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Lodsw:
                 if (a->lodsw() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Lodsd:
                 if (a->lodsd() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Lodsq:
                 if (a->lodsq() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Stosb:
                 if (a->stosb() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Stosw:
                 if (a->stosw() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Stosd:
                 if (a->stosd() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Stosq:
                 if (a->stosq() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Scasb:
                 if (a->scasb() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Scasw:
                 if (a->scasw() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Scasd:
                 if (a->scasd() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
+                return true;
             case Mnemonic::Scasq:
                 if (a->scasq() != asmjit::kErrorOk)
                 {
                     return false;
                 }
-                break;
-            default:
-                if (a->emit(asmjitMnemonic, op0, op1, op2, op3) != asmjit::kErrorOk)
-                {
-                    return false;
-                }
-                break;
+                return true;
+            }
+
+            // Generic case.
+            if (a->emit(asmjitMnemonic, op0, op1, op2, op3) != asmjit::kErrorOk)
+            {
+                return false;
             }
 
             return true;
