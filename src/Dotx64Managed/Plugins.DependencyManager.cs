@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,8 @@ using NuGet.Packaging.Core;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
+using System.Threading.Tasks;
+using NuGet.Common;
 
 namespace Dotx64Dbg
 {
@@ -20,7 +22,7 @@ namespace Dotx64Dbg
         internal abstract class DependencyResolver
         {
             readonly Dictionary<int, (int depsHash, string[] cachedResolvedDependencies)> pluginDepsCache;
-
+            
             public DependencyResolver()
             {
                 AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
@@ -35,6 +37,7 @@ namespace Dotx64Dbg
                 if (!HasDependenciesChanged(plugin))
                     return pluginDepsCache[plugin.GetHashCode()].cachedResolvedDependencies;
                 string[] deps = GetPluginDepencies(plugin, cancellationToken);
+
                 AddPluginToCache(plugin, deps);
 
                 return deps;
@@ -105,6 +108,9 @@ namespace Dotx64Dbg
             static readonly string NugetSource = "https://api.nuget.org/v3/index.json";
             static string LocalNugetRepo => Path.Combine(Manager.PluginManager.PluginsPath, ".nuget");
 
+            // TODO: Implement a logger
+            private readonly NuGet.Common.ILogger Logger;
+
             private static readonly object _lock = new();
             readonly SourceRepository localRepository;
             readonly SourceRepository globalCache;
@@ -113,6 +119,7 @@ namespace Dotx64Dbg
             {
                 this.localRepository = new SourceRepository(new(LocalNugetRepo), Repository.Provider.GetCoreV3());
                 this.globalCache = new SourceRepository(new(GetGlobalPackagesPath()), Repository.Provider.GetCoreV3());
+                Logger = new NuGetDependencyResolverLogger(Console.Out);
             }
 
             protected override string[] GetPluginDepencies(Plugin plugin, CancellationToken cancellationToken)
@@ -135,7 +142,7 @@ namespace Dotx64Dbg
                     var packageInfo = FindLocalOrDownloadPackage(pkgId, pkgVersion, cancellationToken);
                     if (packageInfo is null)
                     {
-                        Console.WriteLine("[ERROR] Failed to acquire nuget package: {0}", pkgId);
+                        Logger.LogError($"Failed to acquire nuget package: {pkgId}");
                         continue;
                     }
 
@@ -146,8 +153,7 @@ namespace Dotx64Dbg
 
                     requiredLibs.AddRange(requiredPkg.Items
                         .Where(item => Path.GetExtension(item).Equals(".dll"))
-                        // TODO: Resolve the load context:
-                        .Select((item) => Path.Combine(Path.GetDirectoryName(packageInfo.Path), item))
+                        .Select((item) => Path.GetFullPath(Path.Combine(Path.GetDirectoryName(packageInfo.Path), item)))
                     );
 
                     foreach (var pkgDep in requiredPkgDeps)
@@ -182,18 +188,18 @@ namespace Dotx64Dbg
                 return globalPkgFolder;
             }
 
-            private static void InitializePackageFolder(string pkgFullName, CancellationToken token)
+            private static bool InitializePackageFolder(string pkgFullName, CancellationToken token)
             {
                 var pkgArchiveReader = new NuGet.Packaging.PackageArchiveReader(pkgFullName);
 
-                pkgArchiveReader.CopyFiles(
-                    System.IO.Path.GetDirectoryName(pkgFullName),
+                var copiedFiles = pkgArchiveReader.CopyFiles(
+                    Path.GetDirectoryName(pkgFullName),
                     pkgArchiveReader.GetFiles(),
-                    new NuGet.Packaging.Core.ExtractPackageFileDelegate((pkgFileName, targetFilePath, Stream) =>
+                    new ExtractPackageFileDelegate((pkgFileName, targetFilePath, Stream) =>
                     {
-                        var fileInfo = new System.IO.FileInfo(targetFilePath);
+                        var fileInfo = new FileInfo(targetFilePath);
                         fileInfo.Directory!.Create();
-                        using var fs = System.IO.File.OpenWrite(fileInfo.FullName);
+                        using var fs = File.Create(fileInfo.FullName);
                         Stream.CopyTo(fs);
                         fs.Close();
                         return targetFilePath;
@@ -202,6 +208,9 @@ namespace Dotx64Dbg
                     token
                 );
 
+                if (!copiedFiles.All(filePath => File.Exists(filePath)))
+                    return false;
+
                 // NuGetV3 - https://github.com/NuGet/Home/wiki/Nupkg-Metadata-File#solution
                 NuGet.Packaging.NupkgMetadataFile nupkgMetadataFile = new()
                 {
@@ -209,22 +218,63 @@ namespace Dotx64Dbg
                     Version = 2,
                     Source = NugetSource
                 };
-                NuGet.Packaging.NupkgMetadataFileFormat.Write(
-                    System.IO.Path.Combine(
-                        System.IO.Path.GetDirectoryName(pkgFullName),
-                        PackagingCoreConstants.NupkgMetadataFileExtension),
-                    nupkgMetadataFile
-                );
 
                 //  NuGet package original hash
                 string hashFilePath = Path.Combine(
                     Path.GetDirectoryName(pkgFullName), 
                     Path.GetFileNameWithoutExtension(pkgFullName) + PackagingCoreConstants.HashFileExtension);
                 using var hashFile = File.Create(hashFilePath);
-                hashFile.Write(Encoding.UTF8.GetBytes(nupkgMetadataFile.ContentHash));
+
+                // Write operations
+                try
+                {
+                    // Metadada
+                    NuGet.Packaging.NupkgMetadataFileFormat.Write(
+                        System.IO.Path.Combine(
+                            System.IO.Path.GetDirectoryName(pkgFullName),
+                            PackagingCoreConstants.NupkgMetadataFileExtension),
+                        nupkgMetadataFile
+                    );
+
+                    // Hash file
+                    hashFile.Write(Encoding.UTF8.GetBytes(nupkgMetadataFile.ContentHash));
+
+                } catch (IOException)
+                {
+                    return false;
+                }
+
+                return true;
             }
 
-            private static bool DownloadPackage(string pkgId, string version, System.IO.Stream destStream, CancellationToken token)
+            private static bool IsPackageInitialized(string pkgFullName, CancellationToken token)
+            {
+                if (!File.Exists(pkgFullName))
+                    return false;
+
+                string hashFilePath = Path.Combine(
+                    Path.GetDirectoryName(pkgFullName),
+                    Path.GetFileNameWithoutExtension(pkgFullName) + PackagingCoreConstants.HashFileExtension);
+                if (!File.Exists(hashFilePath))
+                    return false;
+
+                string metadataFilePath = Path.Combine(
+                           Path.GetDirectoryName(pkgFullName),
+                           PackagingCoreConstants.NupkgMetadataFileExtension);
+                if (!File.Exists(metadataFilePath))
+                    return false;
+
+                var pkgArchiveReader = new PackageArchiveReader(pkgFullName);
+                var metadataFile = NupkgMetadataFileFormat.Read(metadataFilePath);
+
+                string hashFileHash = File.OpenText(hashFilePath).ReadToEnd();
+                string nupkgHash = pkgArchiveReader.GetContentHash(token);
+
+                return nupkgHash.Equals(hashFileHash, StringComparison.InvariantCultureIgnoreCase) &&
+                    nupkgHash.Equals(metadataFile.ContentHash, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            private bool DownloadPackage(string pkgId, string version, System.IO.Stream destStream, CancellationToken token)
             {
                 SourceCacheContext cache = new();
                 var repo = Repository.Factory.GetCoreV3(NugetSource);
@@ -238,21 +288,21 @@ namespace Dotx64Dbg
                         pkgVersion,
                         destStream,
                         cache,
-                        NuGet.Common.NullLogger.Instance,
+                        Logger,
                         token
                 ).GetAwaiter().GetResult();
             }
 
-            private static LocalPackageInfo FindPackage(SourceRepository sourceRepository, string pkgId, string version, CancellationToken token)
+            private LocalPackageInfo FindPackage(SourceRepository sourceRepository, string pkgId, string version, CancellationToken token)
             {
-                var logger = NuGet.Common.NullLogger.Instance;
                 var searchLocalResource = sourceRepository.GetResource<FindLocalPackagesResource>();
 
                 var result = searchLocalResource.FindPackagesById(
                         pkgId,
-                        logger,
+                        Logger,
                         token
                 );
+
                 return result.Where(pkg => pkg.Identity.Version.OriginalVersion == version).FirstOrDefault();
             }
 
@@ -274,18 +324,19 @@ namespace Dotx64Dbg
 
                     lock (_lock)
                     {
-                        if (!System.IO.File.Exists(pkgFullName))
+                        if (!File.Exists(pkgFullName))
                         {
-                            using (var fs = new System.IO.FileStream(
+                            using var fs = new FileStream(
                                 pkgFullName,
-                                System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, System.IO.FileShare.Read
-                            ))
-                            {
-                                if (!DownloadPackage(pkgId, version, fs, token))
-                                    return null;
-                            }
-
-                            InitializePackageFolder(pkgFullName, token);
+                                FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read
+                            );
+                            if (!DownloadPackage(pkgId, version, fs, token))
+                                return null;
+                        }
+                        if(!IsPackageInitialized(pkgFullName, token) && !InitializePackageFolder(pkgFullName, token))
+                        {
+                            Logger.LogError($"Package '{pkgId}' directory initialization failed!");
+                            File.Delete(pkgFullName); // Maybe the nupkg is corrupted?
                         }
                     }
                     localPackageInfo = FindPackgeOnLocalRepo(pkgId, version, token);
@@ -348,7 +399,29 @@ namespace Dotx64Dbg
 
                 public static bool IsValidDotNetFrameworkName(string dotNetFrameworkName) => Regex.IsMatch(dotNetFrameworkName);
             }
+
+            internal class NuGetDependencyResolverLogger : NuGet.Common.LoggerBase
+            {
+                private readonly TextWriter textWriter;
+
+                public NuGetDependencyResolverLogger(TextWriter textWriter)
+                {
+                    this.textWriter = textWriter;
+                }
+
+                string FormatLog(ILogMessage message) => string.Format(
+                        "[{0}] {1}: {2}",
+                        message.Level,
+                        nameof(NuGetDependencyResolver),
+                        message.Message);
+
+                public override void Log(ILogMessage message) => textWriter.WriteLine(FormatLog(message));
+
+                public override Task LogAsync(ILogMessage message) => Task.Run(() => Log(message));
+            }
         }
+
+        
     }
 
     internal static class DependencyResolverExtensions

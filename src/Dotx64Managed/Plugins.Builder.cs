@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,66 +106,6 @@ namespace Dotx64Dbg
             }
         }
 
-        /// <summary>
-        /// Gets all the packages references in the csproj.
-        /// </summary>
-        /// <param name="csProjectPath">The path to the csharp project</param>
-        /// <returns>A list containing nuget dependencies</returns>
-        /// <remarks>TODO: Maybe write proper code for handling cs projects?</remarks>
-        static List<NuGetFramework> GetProjectPackagesReferences(string csProjectPath)
-        {
-            List<NuGetFramework> requiredLibs = new();
-            System.Xml.XmlDocument csProject = new();
-            csProject.Load(csProjectPath);
-            var packages = csProject.GetElementsByTagName("PackageReference");
-            foreach (System.Xml.XmlNode package in packages)
-            {
-                string pkgId = package.Attributes.GetNamedItem("Include")!.Value;
-                string pkgVersion = package.Attributes.GetNamedItem("Version")!.Value;
-                requiredLibs.Add(new NuGetFramework(pkgId, new Version(pkgVersion)));
-            }
-            return requiredLibs;
-        }
-
-        /// <summary>
-        /// Update the plugin info dependencies for the dependency manager. This is a temporary 
-        /// attempt for handling the 'synchronization' between the plugin JSON and the local csproj
-        /// </summary>
-        /// <remarks>TODO: maybe improve the csproj and the plugin JSON sync</remarks>
-        /// <param name="plugin"></param>
-        static void UpdatePluginInfoPackagseReferences(Plugin plugin)
-        {
-            var projectFilePath = Path.Combine(plugin.Path, plugin.Info.Name + ".csproj");
-
-            if (!File.Exists(projectFilePath))
-                return;
-
-            List<string> references = new();
-            if (plugin.Info.Dependencies != null)
-                references.AddRange(plugin.Info.Dependencies);
-
-            var notIncludeFrameworks = GetProjectPackagesReferences(projectFilePath)
-                .Where(framework => !references.Any(_ref => framework.DotNetFrameworkName.Equals(_ref, StringComparison.OrdinalIgnoreCase)));
-            
-            bool requireUpdate = notIncludeFrameworks.Any();
-            foreach (var framework in notIncludeFrameworks)
-            {
-                references.Add(framework.DotNetFrameworkName);
-            }
-            
-            if(requireUpdate)
-            {
-                plugin.Info.Dependencies = references.ToArray();
-                string json = System.Text.Json.JsonSerializer.Serialize(
-                    plugin.Info, 
-                    typeof(PluginInfo), 
-                    new System.Text.Json.JsonSerializerOptions() { WriteIndented = true}
-                );
-                using var pluginFile = File.Create(Path.Combine(plugin.Path, "plugin.json"));
-                pluginFile.Write(Encoding.UTF8.GetBytes(json));
-            }
-        }
-
         void RebuildPlugin(Plugin plugin, CancellationToken token)
         {
             var stopwatch = new Stopwatch();
@@ -194,7 +134,6 @@ namespace Dotx64Dbg
             }
         }
 
-
         void RebuildPlugins(CancellationToken token)
         {
             // We have to make sure things aren't build in parallel.
@@ -207,7 +146,6 @@ namespace Dotx64Dbg
                     Utils.DebugPrintLine($"Plugin without json: {plugin.Path}, skipping.");
                     continue;
                 }
-                UpdatePluginInfoPackagseReferences(plugin);
 
                 if (plugin.RequiresRebuild == false)
                 {
