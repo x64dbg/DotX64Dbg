@@ -111,8 +111,7 @@ namespace Dotx64Dbg
         /// </summary>
         /// <param name="csProjectPath">The path to the csharp project</param>
         /// <returns>A list containing nuget dependencies</returns>
-        /// <remarks>TODO: Maybe write proper code for handling cs projects</remarks>
-        [Obsolete]
+        /// <remarks>TODO: Maybe write proper code for handling cs projects?</remarks>
         static List<NuGetFramework> GetProjectPackagesReferences(string csProjectPath)
         {
             List<NuGetFramework> requiredLibs = new();
@@ -132,9 +131,8 @@ namespace Dotx64Dbg
         /// Update the plugin info dependencies for the dependency manager. This is a temporary 
         /// attempt for handling the 'synchronization' between the plugin JSON and the local csproj
         /// </summary>
-        /// <remarks>TODO: write a more proper code for handling references between the csproj and the plugin JSON</remarks>
+        /// <remarks>TODO: maybe improve the csproj and the plugin JSON sync</remarks>
         /// <param name="plugin"></param>
-        [Obsolete]
         static void UpdatePluginInfoPackagseReferences(Plugin plugin)
         {
             var projectFilePath = Path.Combine(plugin.Path, plugin.Info.Name + ".csproj");
@@ -142,7 +140,10 @@ namespace Dotx64Dbg
             if (!File.Exists(projectFilePath))
                 return;
 
-            List<string> references = new(plugin.Info.Dependencies);
+            List<string> references = new();
+            if (plugin.Info.Dependencies != null)
+                references.AddRange(plugin.Info.Dependencies);
+
             var notIncludeFrameworks = GetProjectPackagesReferences(projectFilePath)
                 .Where(framework => !references.Any(_ref => framework.DotNetFrameworkName.Equals(_ref, StringComparison.OrdinalIgnoreCase)));
             

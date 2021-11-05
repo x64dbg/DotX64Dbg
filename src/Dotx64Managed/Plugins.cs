@@ -138,12 +138,15 @@ namespace Dotx64Dbg
                 projGen.ReferencePathX86 = binaryPathX86;
                 projGen.ReferencePathX64 = binaryPathX64;
                 projGen.References = assemblies;
-                projGen.Frameworks = plugin.Info.Dependencies
-                    .Where(deps => NuGetDependencyResolver.VersioningHelper.IsValidDotNetFrameworkName(deps))
-                    .Select(deps => new NuGet.Frameworks.NuGetFramework(
-                            NuGetDependencyResolver.VersioningHelper.GetFrameworkName(deps),
-                            new Version(NuGetDependencyResolver.VersioningHelper.GetFrameworkVersion(deps)))
-                    ).ToArray();
+                if (plugin.Info.Dependencies is not null)
+                {
+                    projGen.Frameworks = plugin.Info.Dependencies
+                        .Where(deps => NuGetDependencyResolver.VersioningHelper.IsValidDotNetFrameworkName(deps))
+                        .Select(deps => new NuGet.Frameworks.NuGetFramework(
+                                NuGetDependencyResolver.VersioningHelper.GetFrameworkName(deps),
+                                new Version(NuGetDependencyResolver.VersioningHelper.GetFrameworkVersion(deps)))
+                        ).ToArray();
+                }
 
                 projGen.Save(projectFilePath);
             }

@@ -29,7 +29,7 @@ namespace Dotx64Dbg
 
             public string[] ResolvePluginDepencies(Plugin plugin, CancellationToken cancellationToken)
             {
-                if (plugin.Info is null || plugin.Info!.Dependencies.Length == 0)
+                if (plugin.Info.Dependencies is null || plugin.Info!.Dependencies.Length == 0)
                     return Array.Empty<string>();
 
                 if (!HasDependenciesChanged(plugin))
@@ -104,9 +104,6 @@ namespace Dotx64Dbg
         {
             static readonly string NugetSource = "https://api.nuget.org/v3/index.json";
             static string LocalNugetRepo => Path.Combine(Manager.PluginManager.PluginsPath, ".nuget");
-            //static readonly string NupkgMetadataFileName = ".nupkg.metadata";
-            //static readonly string NupkgHashFileExtension = ".sha512";
-            //static readonly string NupkgExtension = ".nupkg";
 
             private static readonly object _lock = new();
             readonly SourceRepository localRepository;
@@ -128,7 +125,7 @@ namespace Dotx64Dbg
                 {
                     if(!VersioningHelper.IsValidDotNetFrameworkName(dep))
                     {
-                        requiredLibs.Add(dep);
+                        requiredLibs.Add(dep); //  We can't resolve this library, let it pass through
                         continue;
                     }
 
@@ -142,7 +139,7 @@ namespace Dotx64Dbg
                         continue;
                     }
 
-                    var executingFramework = VersioningHelper.GetFrameworkFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+                    var executingFramework = VersioningHelper.GetFrameworkFromAssembly(Assembly.GetExecutingAssembly());
                     using var pkgReader = packageInfo.GetReader();
                     var requiredPkg = pkgReader.GetLibItems().GetNearest(executingFramework);
                     var requiredPkgDeps = ResolvePackageDepencies(pkgId, pkgVersion, requiredPkg.TargetFramework, cancellationToken);
@@ -319,7 +316,8 @@ namespace Dotx64Dbg
 
             public class VersioningHelper
             {
-                private static readonly string FrameworkNamePattern = @"^(?<Name>[a-zA-Z.]*),{1}(?:Version=v(?<Version>(?:(?<Major>\d)\.(?<Minor>\d)\.?(?<Revision>\d)?)))$";
+                private static readonly string FrameworkNamePattern =
+                    @"^(?<Name>[a-zA-Z.]*),{1}(?:Version=v(?<Version>(?:(?<Major>\d*)\.(?<Minor>\d*)\.?(?<Revision>\d*)?)))$";
 
                 private readonly static System.Text.RegularExpressions.Regex Regex = new(FrameworkNamePattern); 
 
