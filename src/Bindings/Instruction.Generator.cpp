@@ -76,13 +76,14 @@ namespace Dotx64Dbg
     // NOTE: This has to be within rel32
     constexpr int32_t DispMagic = 0xF000BA;
     constexpr int32_t LabelMagic = 0xF111BA;
+    constexpr int32_t TargetMagic = 0xF222BA;
 
     // Because we encode at the address zero we have to make sure certain values
     // are within the range of rel32 due to x86 restrictions.
     // Labels will be replaced by LabelMagic and memory displacements will be
     // replaced by DispMagic.
     // Those values will be set back to the original once decoded.
-    static IOperand^ HandleOperand(IOperand^ op)
+    static IOperand^ HandleOperand(Mnemonic mnemonic, int index, IOperand^ op)
     {
         if (op->Type == OperandType::None)
             return op;
@@ -106,6 +107,16 @@ namespace Dotx64Dbg
         {
             return gcnew Operand::Immediate(LabelMagic);
         }
+        else if (op->Type == OperandType::Immediate)
+        {
+            // Temporarily swap immediate for control flow instructions.
+            if (index == 0 &&
+                InstructionMetaData::isControlFlow(mnemonic) &&
+                !InstructionMetaData::isRet(mnemonic))
+            {
+                return gcnew Operand::Immediate(TargetMagic);
+            }
+        }
 
         return op;
     }
@@ -122,10 +133,10 @@ namespace Dotx64Dbg
             nullptr,
             attribs,
             mnemonic,
-            HandleOperand(op0),
-            HandleOperand(op1),
-            HandleOperand(op2),
-            HandleOperand(op3));
+            HandleOperand(mnemonic, 0, op0),
+            HandleOperand(mnemonic, 1, op1),
+            HandleOperand(mnemonic, 2, op2),
+            HandleOperand(mnemonic, 3, op3));
 
         if (!encoded)
             return nullptr;
@@ -172,6 +183,17 @@ namespace Dotx64Dbg
                 {
                     auto mem = (Operand::Memory^)newOp;
                     if (mem->Displacement == DispMagic)
+                    {
+                        instr->SetOperand(0, op0);
+                    }
+                }
+            }
+            else if (op0->Type == OperandType::Immediate)
+            {
+                if (InstructionMetaData::isControlFlow(mnemonic) && !InstructionMetaData::isRet(mnemonic))
+                {
+                    auto imm = (Operand::Immediate^)newOp;
+                    if (imm->Value == TargetMagic)
                     {
                         instr->SetOperand(0, op0);
                     }
