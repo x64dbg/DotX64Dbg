@@ -42,6 +42,11 @@ namespace Dotx64Dbg {
         return shift;
     }
 
+    static uint32_t bitsToBytes(uint32_t bits)
+    {
+        return bits >> 3;
+    }
+
     static asmjit::Operand convertOp(asmjit::x86::Assembler* a,
         IOperand^ op,
         System::Collections::Generic::Dictionary<Label^, UInt32>^ labels)
@@ -66,7 +71,7 @@ namespace Dotx64Dbg {
             mem.setBase(convertAsmJitRegister(opMem->Base));
             mem.setIndex(convertAsmJitRegister(opMem->Index), getShift(opMem->Scale));
             mem.setSegment(convertAsmJitRegister(opMem->Segment).as<asmjit::x86::SReg>());
-            mem.setSize(opMem->Size);
+            mem.setSize(bitsToBytes(opMem->Size));
             mem.setOffset(opMem->Displacement);
             return mem;
         }
