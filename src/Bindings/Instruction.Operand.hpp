@@ -164,10 +164,7 @@ namespace Dotx64Dbg {
             System::String^ ToString() override
             {
                 char temp[128];
-                if (Value < 0)
-                    snprintf(temp, sizeof(temp), "-0x%llx", std::abs(Value));
-                else
-                    snprintf(temp, sizeof(temp), "0x%llx", Value);
+                snprintf(temp, sizeof(temp), "0x%llx", Value);
                 return gcnew System::String(temp);
             }
         };
