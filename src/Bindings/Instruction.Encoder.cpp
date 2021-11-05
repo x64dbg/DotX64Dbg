@@ -153,29 +153,45 @@ namespace Dotx64Dbg {
             switch (mnemonic)
             {
             case Mnemonic::Cmpsb:
-                if (a->cmpsb() != asmjit::kErrorOk)
+                if (opCount == 0)
                 {
-                    return false;
+                    if (a->cmpsb() != asmjit::kErrorOk)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
-                return true;
+                break;
             case Mnemonic::Cmpsw:
-                if (a->cmpsw() != asmjit::kErrorOk)
+                if (opCount == 0)
                 {
-                    return false;
+                    if (a->cmpsw() != asmjit::kErrorOk)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
-                return true;
+                break;
             case Mnemonic::Cmpsd:
-                if (a->cmpsd() != asmjit::kErrorOk)
+                if (opCount == 0)
                 {
-                    return false;
+                    if (a->cmpsd() != asmjit::kErrorOk)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
-                return true;
+                break;
             case Mnemonic::Cmpsq:
-                if (a->cmpsq() != asmjit::kErrorOk)
+                if (opCount == 0)
                 {
-                    return false;
+                    if (a->cmpsq() != asmjit::kErrorOk)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
-                return true;
+                break;
             case Mnemonic::Movsb:
                 if (opCount == 0)
                 {
