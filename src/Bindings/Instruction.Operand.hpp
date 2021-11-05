@@ -491,28 +491,28 @@ namespace Dotx64Dbg {
                 switch (Size)
                 {
                 case 8:
-                    p += snprintf(temp + p, sizeof(temp) - p, "byte ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "byte ptr ");
                     break;
                 case 16:
-                    p += snprintf(temp + p, sizeof(temp) - p, "word ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "word ptr ");
                     break;
                 case 32:
-                    p += snprintf(temp + p, sizeof(temp) - p, "dword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "dword ptr ");
                     break;
                 case 64:
-                    p += snprintf(temp + p, sizeof(temp) - p, "qword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "qword ptr ");
                     break;
                 case 80:
-                    p += snprintf(temp + p, sizeof(temp) - p, "tword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "tword ptr ");
                     break;
                 case 128:
-                    p += snprintf(temp + p, sizeof(temp) - p, "xmmword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "xmmword ptr ");
                     break;
                 case 256:
-                    p += snprintf(temp + p, sizeof(temp) - p, "ymmword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "ymmword ptr ");
                     break;
                 case 512:
-                    p += snprintf(temp + p, sizeof(temp) - p, "zmmword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "zmmword ptr ");
                     break;
                 }
 
@@ -520,6 +520,8 @@ namespace Dotx64Dbg {
                 {
                     p += snprintf(temp + p, sizeof(temp) - p, "%s:", RegisterGetName(Segment));
                 }
+
+                p += snprintf(temp + p, sizeof(temp) - p, "[");
 
                 if (Base != RegisterId::None)
                 {
