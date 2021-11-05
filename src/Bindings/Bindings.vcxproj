@@ -187,6 +187,7 @@
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AsmJitHelper.hpp" />
     <ClInclude Include="Decoder.Converter.hpp" />
     <ClInclude Include="Encoder.Converter.hpp" />
     <ClInclude Include="Instruction.Decoder.hpp" />

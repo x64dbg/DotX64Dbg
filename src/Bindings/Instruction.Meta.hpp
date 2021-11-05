@@ -42,6 +42,21 @@ namespace Dotx64Dbg {
             case Mnemonic::Jrcxz:
             case Mnemonic::Js:
             case Mnemonic::Jz:
+            case Mnemonic::Loop:
+            case Mnemonic::Loope:
+            case Mnemonic::Loopne:
+                return true;
+            }
+            return false;
+        }
+
+        static inline bool isLoop(Mnemonic mnemonic)
+        {
+            switch (mnemonic)
+            {
+            case Mnemonic::Loop:
+            case Mnemonic::Loope:
+            case Mnemonic::Loopne:
                 return true;
             }
             return false;

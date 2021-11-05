@@ -164,10 +164,7 @@ namespace Dotx64Dbg {
             System::String^ ToString() override
             {
                 char temp[128];
-                if (Value < 0)
-                    snprintf(temp, sizeof(temp), "-0x%llx", std::abs(Value));
-                else
-                    snprintf(temp, sizeof(temp), "0x%llx", Value);
+                snprintf(temp, sizeof(temp), "0x%llx", Value);
                 return gcnew System::String(temp);
             }
         };
@@ -491,28 +488,28 @@ namespace Dotx64Dbg {
                 switch (Size)
                 {
                 case 8:
-                    p += snprintf(temp + p, sizeof(temp) - p, "byte ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "byte ptr ");
                     break;
                 case 16:
-                    p += snprintf(temp + p, sizeof(temp) - p, "word ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "word ptr ");
                     break;
                 case 32:
-                    p += snprintf(temp + p, sizeof(temp) - p, "dword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "dword ptr ");
                     break;
                 case 64:
-                    p += snprintf(temp + p, sizeof(temp) - p, "qword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "qword ptr ");
                     break;
                 case 80:
-                    p += snprintf(temp + p, sizeof(temp) - p, "tword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "tword ptr ");
                     break;
                 case 128:
-                    p += snprintf(temp + p, sizeof(temp) - p, "xmmword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "xmmword ptr ");
                     break;
                 case 256:
-                    p += snprintf(temp + p, sizeof(temp) - p, "ymmword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "ymmword ptr ");
                     break;
                 case 512:
-                    p += snprintf(temp + p, sizeof(temp) - p, "zmmword ptr [");
+                    p += snprintf(temp + p, sizeof(temp) - p, "zmmword ptr ");
                     break;
                 }
 
@@ -520,6 +517,8 @@ namespace Dotx64Dbg {
                 {
                     p += snprintf(temp + p, sizeof(temp) - p, "%s:", RegisterGetName(Segment));
                 }
+
+                p += snprintf(temp + p, sizeof(temp) - p, "[");
 
                 if (Base != RegisterId::None)
                 {
@@ -544,14 +543,20 @@ namespace Dotx64Dbg {
 
                 if (Displacement > 0)
                 {
+                    auto val = Displacement;
                     if (Base != RegisterId::None || Index != RegisterId::None)
                     {
-                        if (Displacement < 0)
+                        if (val < 0)
+                        {
                             p += snprintf(temp + p, sizeof(temp) - p, "-");
+                            val = -val;
+                        }
                         else
+                        {
                             p += snprintf(temp + p, sizeof(temp) - p, "+");
+                        }
                     }
-                    p += snprintf(temp + p, sizeof(temp) - p, "%llu", std::abs(Displacement));
+                    p += snprintf(temp + p, sizeof(temp) - p, "%llu", val);
                 }
 
                 p += snprintf(temp + p, sizeof(temp) - p, "]");

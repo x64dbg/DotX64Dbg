@@ -3,6 +3,7 @@
 #include "Instruction.hpp"
 
 #include <asmjit/asmjit.h>
+#include <optional>
 
 namespace Dotx64Dbg
 {

@@ -16,9 +16,4 @@ namespace Dotx64Dbg::Internal {
         IOperand^ op2_,
         IOperand^ op3_
     );
-
-    bool encodeInstruction(asmjit::x86::Assembler* a,
-        System::Collections::Generic::Dictionary<Label^, UInt32>^ labels,
-        Instruction^ instr);
-
 }

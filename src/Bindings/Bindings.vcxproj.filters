@@ -34,5 +34,6 @@
     <ClInclude Include="Instruction.Encoder.hpp" />
     <ClInclude Include="Instruction.Decoder.hpp" />
     <ClInclude Include="Instruction.Meta.hpp" />
+    <ClInclude Include="AsmJitHelper.hpp" />
   </ItemGroup>
 </Project>
