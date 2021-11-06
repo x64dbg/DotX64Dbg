@@ -157,8 +157,8 @@ namespace Dotx64Dbg::Native
                 const auto& info = list[i];
 
                 auto entry = gcnew Export();
-                entry->Rva = System::UIntPtr(info.rva);
-                entry->Va = System::UIntPtr(info.va);
+                entry->Rva = System::UIntPtr(static_cast<uintptr_t>(info.rva));
+                entry->Va = System::UIntPtr(static_cast<uintptr_t>(info.va));
                 entry->DecoratedName = gcnew System::String(info.name);
                 entry->UndecoratedName = gcnew System::String(info.undecoratedName);
                 entry->ForwarderName = gcnew System::String(info.forwardName);
@@ -188,8 +188,8 @@ namespace Dotx64Dbg::Native
                 const auto& info = list[i];
 
                 auto entry = gcnew Import();
-                entry->Rva = System::UIntPtr(info.iatRva);
-                entry->Va = System::UIntPtr(info.iatVa);
+                entry->Rva = System::UIntPtr(static_cast<uintptr_t>(info.iatRva));
+                entry->Va = System::UIntPtr(static_cast<uintptr_t>(info.iatVa));
                 entry->DecoratedName = gcnew System::String(info.name);
                 entry->UndecoratedName = gcnew System::String(info.undecoratedName);
                 entry->Ordinal = (int)info.ordinal;
