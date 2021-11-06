@@ -25,6 +25,27 @@ namespace Dotx64Dbg::Native
             duint Size;
         };
 
+        ref class Export
+        {
+        public:
+            System::UIntPtr Rva;
+            System::UIntPtr Va;
+            System::String^ DecoratedName;
+            System::String^ UndecoratedName;
+            System::String^ ForwarderName;
+            int Ordinal;
+        };
+
+        ref class Import
+        {
+        public:
+            System::UIntPtr Rva;
+            System::UIntPtr Va;
+            System::String^ DecoratedName;
+            System::String^ UndecoratedName;
+            int Ordinal;
+        };
+
         static array<duint>^ GetAll()
         {
             BridgeList<Script::Module::ModuleInfo> list;
@@ -115,6 +136,67 @@ namespace Dotx64Dbg::Native
             res->Address = sect.addr;
             res->Size = sect.size;
             res->Name = gcnew System::String(sect.name);
+            return res;
+        }
+
+        static array<Export^>^ GetExports(System::UIntPtr base)
+        {
+            auto va = static_cast<duint>(base.ToUInt64());
+
+            BridgeList<Script::Module::ModuleExport> list;
+
+            Script::Module::ModuleInfo mod{};
+            mod.base = va;
+
+            if (!Script::Module::GetExports(&mod, &list))
+                return nullptr;
+
+            auto res = gcnew array<Export^>(list.Count());
+            for (int i = 0; i < list.Count(); i++)
+            {
+                const auto& info = list[i];
+
+                auto entry = gcnew Export();
+                entry->Rva = System::UIntPtr(info.rva);
+                entry->Va = System::UIntPtr(info.va);
+                entry->DecoratedName = gcnew System::String(info.name);
+                entry->UndecoratedName = gcnew System::String(info.undecoratedName);
+                entry->ForwarderName = gcnew System::String(info.forwardName);
+                entry->Ordinal = (int)info.ordinal;
+
+                res[i] = entry;
+            }
+
+            return res;
+        }
+
+        static array<Import^>^ GetImports(System::UIntPtr base)
+        {
+            auto va = static_cast<duint>(base.ToUInt64());
+
+            BridgeList<Script::Module::ModuleImport> list;
+
+            Script::Module::ModuleInfo mod{};
+            mod.base = va;
+
+            if (!Script::Module::GetExports(&mod, &list))
+                return nullptr;
+
+            auto res = gcnew array<Import^>(list.Count());
+            for (int i = 0; i < list.Count(); i++)
+            {
+                const auto& info = list[i];
+
+                auto entry = gcnew Import();
+                entry->Rva = System::UIntPtr(info.iatRva);
+                entry->Va = System::UIntPtr(info.iatVa);
+                entry->DecoratedName = gcnew System::String(info.name);
+                entry->UndecoratedName = gcnew System::String(info.undecoratedName);
+                entry->Ordinal = (int)info.ordinal;
+
+                res[i] = entry;
+            }
+
             return res;
         }
     };
