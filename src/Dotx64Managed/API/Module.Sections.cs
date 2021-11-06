@@ -1,7 +1,7 @@
 namespace Dotx64Dbg
 {
     /// <summary>
-    /// A thread object that represents a module in the debugged process.
+    /// Object that represents a module in the debugged process.
     /// </summary>
     public partial class Module
     {
@@ -13,6 +13,8 @@ namespace Dotx64Dbg
         }
 
         public int SectionCount { get => GetSectionCount(); }
+
+        public Section[] Sections { get => GetSections(); }
 
         public int GetSectionCount()
         {
