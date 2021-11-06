@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -19,8 +19,7 @@ namespace Dotx64Dbg
         {
             PluginHandle = pluginHandle;
 
-            if(string.IsNullOrEmpty(AppDomain.CurrentDomain.BaseDirectory))
-                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             Logging.Initialize();
             Commands.Initialize();
@@ -46,7 +45,7 @@ namespace Dotx64Dbg
 
         private static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            var libs = new DirectoryInfo(Utils.GetPluginsPath()).GetFiles("*.dll");
+            var libs = new DirectoryInfo(Utils.DotX64DbgNugetDepsPath).GetFiles("*.dll");
             var assemblyName = new System.Reflection.AssemblyName(args.Name);
 
             var dll = libs.FirstOrDefault(file => Path.GetFileNameWithoutExtension(file.Name)

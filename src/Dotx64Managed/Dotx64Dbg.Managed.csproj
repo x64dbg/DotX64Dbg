@@ -51,6 +51,14 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
+    <Target Name="CopyPackageAssembliesToSubFolder" AfterTargets="ResolveReferences">
+	    <ItemGroup>
+		    <ReferenceCopyLocalPaths Condition=" %(ReferenceCopyLocalPaths.NuGetPackageId) != '' "
+			    Update="%(ReferenceCopyLocalPaths)"
+			    DestinationSubDirectory=".nuget\" />
+	    </ItemGroup>
+    </Target>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Compilers" Version="3.10.0" />
     <PackageReference Include="NuGet.Configuration" Version="5.11.0" />
