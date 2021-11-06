@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -14,6 +14,17 @@ namespace Dotx64Dbg
             string x64DbgPath = Path.GetFullPath(Path.Combine(processPath, ".."));
             return x64DbgPath;
         }
+
+        public static string GetPluginsPath()
+        {
+            var process = System.Diagnostics.Process.GetCurrentProcess();
+            string fullPath = process.MainModule.FileName;
+            string processPath = Path.GetDirectoryName(fullPath);
+            
+            return Path.GetFullPath(Path.Combine(processPath, "plugins"));
+        }
+
+        public static string DotX64DbgNugetDepsPath => Path.Combine(GetPluginsPath(), ".nuget");
 
         public static void PrintFields(object obj)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Timers;
 using System.Diagnostics;
+
+using NuGet.Packaging;
+using NuGet.Frameworks;
 
 namespace Dotx64Dbg
 {
@@ -110,7 +114,7 @@ namespace Dotx64Dbg
             stopwatch.Start();
 
             var compiler = new Compiler(plugin.Info.Name, plugin.BuildOutputPath)
-                .WithDependencies(plugin.Info.Dependencies ?? Array.Empty<string>());
+                .WithDependencies(plugin.ResolveDependencies(dependencyResolver, token));
 
             var res = compiler.Compile(plugin.SourceFiles.ToArray());
             stopwatch.Stop();
@@ -129,7 +133,6 @@ namespace Dotx64Dbg
                 plugin.RequiresRebuild = false;
             }
         }
-
 
         void RebuildPlugins(CancellationToken token)
         {

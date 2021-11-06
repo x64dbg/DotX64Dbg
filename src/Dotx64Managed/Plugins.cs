@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -41,6 +41,7 @@ namespace Dotx64Dbg
         string PluginOutputPath;
 
         FileSystemWatcher PluginWatch;
+        NuGetDependencyResolver dependencyResolver;
 
         List<Plugin> Registered = new();
 
@@ -92,6 +93,8 @@ namespace Dotx64Dbg
             PluginWatch.Renamed += OnPluginRename;
             PluginWatch.Changed += OnPluginChange;
 
+            dependencyResolver = new();
+
             RegisterPlugins();
             GenerateProjects();
             StartBuildWorker();
@@ -135,6 +138,15 @@ namespace Dotx64Dbg
                 projGen.ReferencePathX86 = binaryPathX86;
                 projGen.ReferencePathX64 = binaryPathX64;
                 projGen.References = assemblies;
+                if (plugin.Info.Dependencies is not null)
+                {
+                    projGen.Frameworks = plugin.Info.Dependencies
+                        .Where(deps => NuGetDependencyResolver.VersioningHelper.IsValidDotNetFrameworkName(deps))
+                        .Select(deps => new NuGet.Frameworks.NuGetFramework(
+                                NuGetDependencyResolver.VersioningHelper.GetFrameworkName(deps),
+                                new Version(NuGetDependencyResolver.VersioningHelper.GetFrameworkVersion(deps)))
+                        ).ToArray();
+                }
 
                 projGen.Save(projectFilePath);
             }
