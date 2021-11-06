@@ -167,7 +167,20 @@ namespace Dotx64Dbg
                 var jsonString = Utils.ReadFileContents(jsonFile);
                 var pluginInfo = JsonSerializer.Deserialize<PluginInfo>(jsonString);
 
-                return JsonSerializer.Deserialize<PluginInfo>(jsonString);
+                var res = JsonSerializer.Deserialize<PluginInfo>(jsonString);
+                if(res.Dependencies == null)
+                {
+                    // Ensure this is never null.
+                    res.Dependencies = Array.Empty<string>();
+                }
+
+                // Ensure no duplicates exist.
+                res.Dependencies = res.Dependencies.Distinct().ToArray();
+
+                // This list has to be sorted to avoid rebuilds when only the order changes.
+                Array.Sort(res.Dependencies);
+
+                return res;
             }
             catch (System.Exception)
             {
@@ -480,6 +493,17 @@ namespace Dotx64Dbg
             }
         }
 
+        bool CheckDependeniesChanged(string[] left, string[] right)
+        {
+            if (left.Length != right.Length)
+                return true;
+
+            if (Enumerable.SequenceEqual(left, right))
+                return false;
+
+            return true;
+        }
+
         void OnPluginFileChange(Plugin plugin, PluginFileInfo info)
         {
             var fullPath = Path.Combine(PluginsPath, info.PluginName, info.FilePath);
@@ -487,7 +511,7 @@ namespace Dotx64Dbg
             if (plugin.ConfigPath == fullPath)
             {
                 Utils.DebugPrintLine("Plugin info modified, reloading meta...");
-                var requiresRebuild = plugin.Info == null;
+                var oldInfo = plugin.Info;
 
                 var pluginInfo = GetPluginInfo(fullPath);
                 if (pluginInfo == null)
@@ -496,7 +520,23 @@ namespace Dotx64Dbg
                 }
 
                 plugin.Info = pluginInfo;
-                if (requiresRebuild && pluginInfo != null)
+
+                var requiresRebuild = false;
+                if (oldInfo == null && pluginInfo != null)
+                {
+                    // No info previously
+                    requiresRebuild = true;
+                }
+                else if (oldInfo != null && pluginInfo != null)
+                {
+                    if (CheckDependeniesChanged(oldInfo.Dependencies, pluginInfo.Dependencies))
+                    {
+                        Utils.DebugPrintLine("Dependencies changed");
+                        requiresRebuild = true;
+                    }
+                }
+
+                if (requiresRebuild)
                 {
                     plugin.RequiresRebuild = true;
                     TriggerRebuild(50);
