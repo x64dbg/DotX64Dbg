@@ -367,7 +367,7 @@ namespace Dotx64Dbg
             public class VersioningHelper
             {
                 private static readonly string FrameworkNamePattern =
-                    @"^(?<Name>[a-zA-Z.]*),{1}(?:Version=v(?<Version>(?:(?<Major>\d*)\.(?<Minor>\d*)\.?(?<Revision>\d*)?)))$";
+                    @"^(?<Name>[a-zA-Z.]+),Version=v(?<Version>(?<Major>[\d]+)\.(?<Minor>[\d]+)(?:\.(?<Build>[\d]+))?)$";
 
                 private readonly static System.Text.RegularExpressions.Regex Regex = new(FrameworkNamePattern); 
 
