@@ -108,7 +108,6 @@ namespace Dotx64Dbg
             static readonly string NugetSource = "https://api.nuget.org/v3/index.json";
             static string LocalNugetRepo => Path.Combine(Manager.PluginManager.PluginsPath, ".nuget");
 
-            // TODO: Implement a logger
             private readonly NuGet.Common.ILogger Logger;
 
             private static readonly object _lock = new();
@@ -306,15 +305,15 @@ namespace Dotx64Dbg
                 return result.Where(pkg => pkg.Identity.Version.OriginalVersion == version).FirstOrDefault();
             }
 
-            private LocalPackageInfo FindPackgeOnLocalRepo(string pkgId, string version, CancellationToken token) =>
+            private LocalPackageInfo FindPackageOnLocalRepo(string pkgId, string version, CancellationToken token) =>
                 FindPackage(localRepository, pkgId, version, token);
 
-            private LocalPackageInfo GetGlobalLocalPackage(string pkgId, string version, CancellationToken token) =>
+            private LocalPackageInfo FindPackageOnGlobalCache(string pkgId, string version, CancellationToken token) =>
                 FindPackage(globalCache, pkgId, version, token);
 
             private LocalPackageInfo FindLocalOrDownloadPackage(string pkgId, string version, CancellationToken token, bool allowDownload = true)
             {
-                LocalPackageInfo localPackageInfo = GetGlobalLocalPackage(pkgId, version, token);
+                LocalPackageInfo localPackageInfo = FindPackageOnGlobalCache(pkgId, version, token);
 
                 if (localPackageInfo == null && allowDownload)
                 {
@@ -339,7 +338,7 @@ namespace Dotx64Dbg
                             File.Delete(pkgFullName); // Maybe the nupkg is corrupted?
                         }
                     }
-                    localPackageInfo = FindPackgeOnLocalRepo(pkgId, version, token);
+                    localPackageInfo = FindPackageOnLocalRepo(pkgId, version, token);
                 }
 
                 return localPackageInfo;
@@ -368,7 +367,7 @@ namespace Dotx64Dbg
             public class VersioningHelper
             {
                 private static readonly string FrameworkNamePattern =
-                    @"^(?<Name>[a-zA-Z.]*),{1}(?:Version=v(?<Version>(?:(?<Major>\d*)\.(?<Minor>\d*)\.?(?<Revision>\d*)?)))$";
+                    @"^(?<Name>[a-zA-Z.]+),Version=v(?<Version>(?<Major>[\d]+)\.(?<Minor>[\d]+)(?:\.(?<Build>[\d]+))?)$";
 
                 private readonly static System.Text.RegularExpressions.Regex Regex = new(FrameworkNamePattern); 
 
