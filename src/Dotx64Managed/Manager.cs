@@ -51,7 +51,7 @@ namespace Dotx64Dbg
             var dll = libs.FirstOrDefault(file => Path.GetFileNameWithoutExtension(file.Name)
                 .Equals(assemblyName.Name, StringComparison.InvariantCultureIgnoreCase));
 
-            if(dll is not null)
+            if (dll is not null)
             {
                 return System.Reflection.Assembly.LoadFrom(dll.FullName);
             }
@@ -70,7 +70,7 @@ namespace Dotx64Dbg
 
         public static void SetMenuData(MenuData data)
         {
-            Menus.SetMenuData(data);
+            Menus.InitializeMenus(data);
         }
 
         public static void OnMenuCallback(int id)

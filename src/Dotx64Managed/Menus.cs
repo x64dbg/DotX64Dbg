@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +17,7 @@ namespace Dotx64Dbg
         public int hMenuSymmod; //plugin symbol module menu handle
     }
 
-    internal static class Menus
+    internal static partial class Menus
     {
         internal class MenuEntry
         {
@@ -31,6 +31,7 @@ namespace Dotx64Dbg
         internal static Dictionary<int, UI.Menu.MenuDelegate> Handlers;
 
         internal static UI.Menu.Id NextInternalId = 0;
+        internal static UI.Menu.Id MainMenu;
 
         internal static void Initialize()
         {
@@ -38,8 +39,11 @@ namespace Dotx64Dbg
             Handlers = new();
         }
 
-        internal static void SetMenuData(MenuData data)
+        internal static void InitializeMenus(MenuData data)
         {
+            MainMenu = data.hMenu;
+            Registered.Add("Main", new() { plugin = null, id = data.hMenu, parent = -1 });
+
             UI.Disassembly.SetMenuId(data.hMenuDisasm);
             Registered.Add("Disassembly", new() { plugin = null, id = data.hMenuDisasm, parent = -1 });
 
@@ -51,6 +55,8 @@ namespace Dotx64Dbg
 
             UI.Stack.SetMenuId(data.hMenuStack);
             Registered.Add("Stack", new() { plugin = null, id = data.hMenuStack, parent = -1 });
+
+            InitializeMainMenu();
         }
 
         internal static void HandleCallback(int id)
@@ -69,7 +75,12 @@ namespace Dotx64Dbg
             }
         }
 
-        internal static void Register(Plugin plugin, string path, UI.Menu.MenuDelegate func)
+        internal static void AddMenu(string path, UI.Menu.MenuDelegate func)
+        {
+            AddMenu(null, path, func);
+        }
+
+        internal static void AddMenu(Plugin plugin, string path, UI.Menu.MenuDelegate func)
         {
             var pos = 0;
             var prev = 0;
@@ -125,6 +136,28 @@ namespace Dotx64Dbg
             Native.UI.Menu.AddEntry(nextEntry.parent, nextEntry.id, entryName);
 
             NextInternalId++;
+        }
+
+        internal static bool TryFindMenu(string path, out UI.Menu.Id id)
+        {
+            MenuEntry entry = null;
+            if (!Registered.TryGetValue(path, out entry))
+            {
+                id = -1;
+                return false;
+            }
+            id = entry.id;
+            return true;
+        }
+
+        internal static bool AddSeperator(string path)
+        {
+            UI.Menu.Id id;
+            if (!TryFindMenu(path, out id))
+            {
+                return false;
+            }
+            return Native.UI.Menu.AddSeperator(id);
         }
 
         internal static bool Remove(string name)

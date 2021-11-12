@@ -162,6 +162,11 @@ namespace Dotx64Dbg::Native
                 return _plugin_menuaddentry(parent, id, cstr);
             }
 
+            static bool AddSeperator(int parent)
+            {
+                return _plugin_menuaddseparator(parent);
+            }
+
             static bool RemoveEntry(int pluginHandle, int id)
             {
                 return _plugin_menuentryremove(pluginHandle, id);

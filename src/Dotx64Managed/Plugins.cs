@@ -32,6 +32,16 @@ namespace Dotx64Dbg
         internal string AssemblyPath;
         internal object Instance;
         internal Type InstanceType;
+
+        public string ProjectFilePath
+        {
+            get
+            {
+                if (Info == null)
+                    return null;
+                return System.IO.Path.Combine(Path, Info.Name + ".csproj");
+            }
+        }
     }
 
     internal partial class Plugins
@@ -115,7 +125,7 @@ namespace Dotx64Dbg
             }
         }
 
-        void GenerateProjects()
+        void GenerateProject(Plugin plugin)
         {
             var binaryPathX86 = Path.Combine(Utils.GetRootPath(), "x86", "plugins");
             var binaryPathX64 = Path.Combine(Utils.GetRootPath(), "x64", "plugins");
@@ -123,32 +133,34 @@ namespace Dotx64Dbg
                 "Dotx64Dbg.Bindings.dll", "Dotx64Dbg.Managed.dll"
             };
 
+            if (plugin.Info == null)
+                return;
+
+            var projectFilePath = plugin.ProjectFilePath;
+            Console.WriteLine($"Generating project file for {plugin.Info.Name}");
+
+            var projGen = new ProjectGenerator();
+            projGen.ReferencePathX86 = binaryPathX86;
+            projGen.ReferencePathX64 = binaryPathX64;
+            projGen.References = assemblies;
+            if (plugin.Info.Dependencies is not null)
+            {
+                projGen.Frameworks = plugin.Info.Dependencies
+                    .Where(deps => NuGetDependencyResolver.VersioningHelper.IsValidDotNetFrameworkName(deps))
+                    .Select(deps => new NuGet.Frameworks.NuGetFramework(
+                            NuGetDependencyResolver.VersioningHelper.GetFrameworkName(deps),
+                            new Version(NuGetDependencyResolver.VersioningHelper.GetFrameworkVersion(deps)))
+                    ).ToArray();
+            }
+
+            projGen.Save(projectFilePath);
+        }
+
+        void GenerateProjects()
+        {
             foreach (var plugin in Registered)
             {
-                if (plugin.Info == null)
-                    continue;
-
-                var projectFilePath = Path.Combine(plugin.Path, plugin.Info.Name + ".csproj");
-                if (File.Exists(projectFilePath))
-                    continue;
-
-                Console.WriteLine($"Generating project file for {plugin.Info.Name}");
-
-                var projGen = new ProjectGenerator();
-                projGen.ReferencePathX86 = binaryPathX86;
-                projGen.ReferencePathX64 = binaryPathX64;
-                projGen.References = assemblies;
-                if (plugin.Info.Dependencies is not null)
-                {
-                    projGen.Frameworks = plugin.Info.Dependencies
-                        .Where(deps => NuGetDependencyResolver.VersioningHelper.IsValidDotNetFrameworkName(deps))
-                        .Select(deps => new NuGet.Frameworks.NuGetFramework(
-                                NuGetDependencyResolver.VersioningHelper.GetFrameworkName(deps),
-                                new Version(NuGetDependencyResolver.VersioningHelper.GetFrameworkVersion(deps)))
-                        ).ToArray();
-                }
-
-                projGen.Save(projectFilePath);
+                GenerateProject(plugin);
             }
         }
 
@@ -168,7 +180,7 @@ namespace Dotx64Dbg
                 var pluginInfo = JsonSerializer.Deserialize<PluginInfo>(jsonString);
 
                 var res = JsonSerializer.Deserialize<PluginInfo>(jsonString);
-                if(res.Dependencies == null)
+                if (res.Dependencies == null)
                 {
                     // Ensure this is never null.
                     res.Dependencies = Array.Empty<string>();
@@ -451,8 +463,8 @@ namespace Dotx64Dbg
 
             if (plugin.ConfigPath == oldFullPath)
             {
-                plugin.Info = null;
                 UnloadPlugin(plugin);
+                plugin.Info = null;
             }
             else if (plugin.ConfigPath == fullPath)
             {
@@ -522,18 +534,28 @@ namespace Dotx64Dbg
                 plugin.Info = pluginInfo;
 
                 var requiresRebuild = false;
+                var dependeniesChanged = false;
                 if (oldInfo == null && pluginInfo != null)
                 {
                     // No info previously
                     requiresRebuild = true;
+                    dependeniesChanged = true;
                 }
                 else if (oldInfo != null && pluginInfo != null)
                 {
-                    if (CheckDependeniesChanged(oldInfo.Dependencies, pluginInfo.Dependencies))
+                    dependeniesChanged = CheckDependeniesChanged(oldInfo.Dependencies, pluginInfo.Dependencies);
+                    if (dependeniesChanged)
                     {
                         Utils.DebugPrintLine("Dependencies changed");
                         requiresRebuild = true;
                     }
+                }
+
+                // The json drives the project settings.
+                if (dependeniesChanged)
+                {
+                    // Also generate new project, currently doesn't deal with nuget references.
+                    GenerateProject(plugin);
                 }
 
                 if (requiresRebuild)
