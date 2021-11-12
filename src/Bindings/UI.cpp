@@ -1,5 +1,6 @@
 #include "pluginsdk/bridgemain.h"
 #include "pluginsdk/_plugins.h"
+#include "pluginsdk/_scriptapi_gui.h"
 
 #include "Marshal.hpp"
 
@@ -177,5 +178,21 @@ namespace Dotx64Dbg::Native
                 return _plugin_menuremove(id);
             }
         };
+
+        static System::String^ InputPrompt(System::String^ title)
+        {
+            msclr::interop::marshal_context oMarshalContext;
+
+            auto buf = std::make_unique<char[]>(GUI_MAX_LINE_SIZE);
+
+            const char* ctitle = oMarshalContext.marshal_as<const char*>(title);
+
+            if (!Script::Gui::InputLine(ctitle, buf.get()))
+            {
+                return nullptr;
+            }
+
+            return gcnew System::String(buf.get());
+        }
     };
 }

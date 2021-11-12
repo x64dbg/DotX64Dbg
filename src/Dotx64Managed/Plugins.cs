@@ -275,6 +275,11 @@ namespace Dotx64Dbg
             Utils.DebugPrintLine("Plugin meta loaded, activating plugin.");
             plugin.Info = pluginInfo;
 
+            if (!File.Exists(plugin.ProjectFilePath))
+            {
+                GenerateProject(plugin);
+            }
+
             plugin.RequiresRebuild = true;
             TriggerRebuild(50);
         }
