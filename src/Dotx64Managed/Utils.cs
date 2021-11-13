@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace Dotx64Dbg
 {
@@ -20,7 +22,7 @@ namespace Dotx64Dbg
             var process = System.Diagnostics.Process.GetCurrentProcess();
             string fullPath = process.MainModule.FileName;
             string processPath = Path.GetDirectoryName(fullPath);
-            
+
             return Path.GetFullPath(Path.Combine(processPath, "plugins"));
         }
 
@@ -86,6 +88,39 @@ namespace Dotx64Dbg
         internal static void DebugPrintLine(string line)
         {
             Console.WriteLine($"[DEBUG] {line}");
+        }
+
+        /// <summary>
+        /// Replaces the contents of inputText with replacements before writing to targetFile.
+        /// </summary>
+        internal static bool WriteReplacedContents(string inputText, Dictionary<string, string> replacements, string targetFile)
+        {
+            try
+            {
+                foreach (var kv in replacements)
+                {
+                    inputText = inputText.Replace(kv.Key, kv.Value);
+                }
+                File.WriteAllText(targetFile, inputText, Encoding.UTF8);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static bool CreateDir(string path)
+        {
+            try
+            {
+                System.IO.Directory.CreateDirectory(path);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -281,6 +281,7 @@ namespace Dotx64Dbg
             if (plugin.Instance == null)
                 return;
 
+            var pluginName = plugin.Info.Name;
             Utils.DebugPrintLine($"Unloading plugin: {plugin.Path}");
 
             UnloadPluginInstanceRecursive(plugin, plugin.Instance, new());
@@ -289,7 +290,7 @@ namespace Dotx64Dbg
             Expressions.RemoveAllFor(plugin);
             Menus.RemoveAllFor(plugin);
 
-            Console.WriteLine($"Unloaded plugin: {plugin.Info.Name}");
+            Console.WriteLine($"Unloaded plugin: {pluginName}");
         }
 
         void RegisterPluginCommand(Plugin plugin, MethodInfo fn, Command cmd, object obj)
@@ -358,7 +359,7 @@ namespace Dotx64Dbg
             var menuPath = menu.Path;
             var rootMenu = menu.Parent.ToString();
 
-            Menus.Register(plugin, $"{rootMenu}/{plugin.Info.Name}/{menuPath}", cb);
+            Menus.AddMenu(plugin, $"{rootMenu}/{plugin.Info.Name}/{menuPath}", cb);
         }
 
         void LoadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed, CancellationToken token)
@@ -581,6 +582,8 @@ namespace Dotx64Dbg
             }
 
             Console.WriteLine($"{(isReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
+
+            Menus.AddPluginMenu(plugin);
         }
 
         public void UnloadPlugin(Plugin plugin, CancellationToken token = default(CancellationToken))
