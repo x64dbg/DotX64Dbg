@@ -66,23 +66,23 @@ namespace Dotx64Dbg.Properties {
         ///
         ///public partial class MyPlugin : IPlugin, IHotload
         ///{
-        ///	/// &lt;summary&gt;
-        ///	/// Called as soon the plugin is first loaded, consequent hot-loads will not call this again.
-        ///	/// &lt;/summary&gt;
+        ///    /// &lt;summary&gt;
+        ///    /// Called as soon the plugin is first loaded, consequent hot-loads will not call this again.
+        ///    /// &lt;/summary&gt;
         ///    public MyPlugin()
         ///    {
-        ///		Console.WriteLine(&quot;Hello World&quot;);
+        ///        Console.WriteLine(&quot;Hello World&quot;);
         ///    }
         ///
-        ///	/// &lt;summary&gt;
-        ///	/// This is called after construction. This is also only called once.
-        ///	/// &lt;/summary&gt;
+        ///    /// &lt;summary&gt;
+        ///    /// This is called after construction. This is also only called once.
+        ///    /// &lt;/summary&gt;
         ///    public void Startup()
         ///    {
         ///    }
         ///
-        ///	/// &lt;summary&gt;
-        ///	/// Classes that  have IHotload can implement this to [rest of string was truncated]&quot;;.
+        ///    /// &lt;summary&gt;
+        ///    /// Classes that  have IHotload can implemen [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string plugin_cs {
             get {
