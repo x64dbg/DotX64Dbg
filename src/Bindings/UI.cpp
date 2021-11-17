@@ -181,18 +181,15 @@ namespace Dotx64Dbg::Native
 
         static System::String^ InputPrompt(System::String^ title)
         {
-            msclr::interop::marshal_context oMarshalContext;
+            auto titleStr = interop::toUTF8(title);
 
             auto buf = std::make_unique<char[]>(GUI_MAX_LINE_SIZE);
-
-            const char* ctitle = oMarshalContext.marshal_as<const char*>(title);
-
-            if (!Script::Gui::InputLine(ctitle, buf.get()))
+            if (!Script::Gui::InputLine(titleStr.c_str(), buf.get()))
             {
                 return nullptr;
             }
 
-            return gcnew System::String(buf.get());
+            return interop::stringFromUTF8(buf.get());
         }
     };
 }

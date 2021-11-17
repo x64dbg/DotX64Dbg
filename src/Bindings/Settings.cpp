@@ -9,9 +9,6 @@
 
 #include "Marshal.hpp"
 
-using namespace System;
-using namespace System::Runtime::InteropServices;
-
 namespace Dotx64Dbg {
 
     public ref class X64DbgSettings
@@ -19,16 +16,14 @@ namespace Dotx64Dbg {
     public:
         static System::String^ Get(System::String^ section, System::String^ key)
         {
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cSection = oMarshalContext.marshal_as<const char*>(section);
-            const char* cKey = oMarshalContext.marshal_as<const char*>(key);
+            auto sectionStr = interop::toUTF8(section);
+            auto keyStr = interop::toUTF8(key);
 
             char buf[1024]{};
-            if (!BridgeSettingGet(cSection, cKey, buf))
+            if (!BridgeSettingGet(sectionStr.c_str(), keyStr.c_str(), buf))
                 return nullptr;
 
-            return gcnew System::String(buf);
+            return interop::stringFromUTF8(buf);
         }
     };
 

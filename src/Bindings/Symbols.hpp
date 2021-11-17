@@ -1,4 +1,4 @@
-﻿#pragma once 
+#pragma once 
 
 #include <cstdint>
 #include <utility>
@@ -10,11 +10,8 @@
 #include "pluginsdk/_scriptapi_function.h"
 #include "pluginsdk/_scriptapi_comment.h"
 
-#include <msclr/marshal.h>
+#include "Marshal.hpp"
 #include <optional>
-
-using namespace System;
-using namespace System::Runtime::InteropServices;
 
 namespace Dotx64Dbg {
 
@@ -164,7 +161,7 @@ namespace Dotx64Dbg {
                 {
                     if (auto info = Detail::GetLabelInfo(_address))
                     {
-                        return gcnew System::String(info->text);
+                        return interop::stringFromUTF8(info->text);
                     }
                     return nullptr;
                 }
@@ -176,7 +173,7 @@ namespace Dotx64Dbg {
                 {
                     if (auto info = Detail::GetLabelInfo(_address))
                     {
-                        return gcnew System::String(info->mod);
+                        return interop::stringFromUTF8(info->mod);
                     }
                     return nullptr;
                 }
@@ -219,15 +216,13 @@ namespace Dotx64Dbg {
             {
                 auto va = reinterpret_cast<duint>(address.ToPointer());
 
-                msclr::interop::marshal_context oMarshalContext;
-                const char* cstr = oMarshalContext.marshal_as<const char*>(name);
-
+                auto nameStr = interop::toUTF8(name);
                 bool manual = (attribs & Symbols::Label::Attribs::Manual) != Symbols::Label::Attribs::None;
 
                 // NOTE: Temporary is not supported until the https://github.com/x64dbg/x64dbg/pull/2695 is merged.
                 bool temporary = (attribs & Label::Attribs::Manual) != Symbols::Label::Attribs::None;
 
-                return Script::Label::Set(va, cstr, manual, temporary);
+                return Script::Label::Set(va, nameStr.c_str(), manual, temporary);
             }
 
             static bool Remove(System::UIntPtr address)
@@ -303,7 +298,7 @@ namespace Dotx64Dbg {
                 {
                     if (auto info = Detail::GetFuncInfo(_address))
                     {
-                        return gcnew System::String(info->mod);
+                        return interop::stringFromUTF8(info->mod);
                     }
                     return nullptr;
                 }
@@ -387,7 +382,7 @@ namespace Dotx64Dbg {
                 {
                     if (auto cmtInfo = Detail::GetCommentInfo(_address))
                     {
-                        return gcnew System::String(cmtInfo->text);
+                        return interop::stringFromUTF8(cmtInfo->text);
                     }
                     return nullptr;
                 }
@@ -399,7 +394,7 @@ namespace Dotx64Dbg {
                 {
                     if (auto info = Detail::GetCommentInfo(_address))
                     {
-                        return gcnew System::String(info->mod);
+                        return interop::stringFromUTF8(info->mod);
                     }
                     return nullptr;
                 }
@@ -419,10 +414,8 @@ namespace Dotx64Dbg {
             {
                 auto va = reinterpret_cast<duint>(address.ToPointer());
 
-                msclr::interop::marshal_context oMarshalContext;
-                const char* cstr = oMarshalContext.marshal_as<const char*>(text);
-
-                return Script::Comment::Set(va, cstr, manual);
+                auto textStr = interop::toUTF8(text);
+                return Script::Comment::Set(va, textStr.c_str(), manual);
             }
 
             static bool Remove(System::UIntPtr address)

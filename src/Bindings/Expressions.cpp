@@ -1,4 +1,4 @@
-﻿#include "pluginsdk/bridgemain.h"
+#include "pluginsdk/bridgemain.h"
 #include "pluginsdk/_plugins.h"
 #include "pluginsdk/_scriptapi_misc.h"
 #include "pluginsdk/_dbgfunctions.h"
@@ -18,12 +18,10 @@ namespace Dotx64Dbg::Native
     public:
         static bool TryEvaluate(System::String^ expr, [Out] IntPtr% value)
         {
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(expr);
+            auto exprStr = interop::toUTF8(expr);
 
             duint val = 0;
-            bool res = Script::Misc::ParseExpression(cstr, &val);
+            bool res = Script::Misc::ParseExpression(exprStr.c_str(), &val);
 
 #ifdef _WIN64
             value = IntPtr((long long)val);
@@ -48,17 +46,15 @@ namespace Dotx64Dbg::Native
             if (!DbgFunctions()->StringFormatInline)
                 return false;
 
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(expr);
+            auto exprStr = interop::toUTF8(expr);
 
             char buf[1024]{};
-            if (!DbgFunctions()->StringFormatInline(cstr, sizeof(buf), buf))
+            if (!DbgFunctions()->StringFormatInline(exprStr.c_str(), sizeof(buf), buf))
             {
                 return false;
             }
 
-            value = gcnew System::String(buf);
+            value = interop::stringFromUTF8(buf);
             return true;
         }
 
@@ -67,26 +63,21 @@ namespace Dotx64Dbg::Native
             if (!DbgFunctions()->StringFormatInline)
                 return nullptr;
 
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(expr);
+            auto exprStr = interop::toUTF8(expr);
 
             char buf[1024]{};
-            if (!DbgFunctions()->StringFormatInline(cstr, sizeof(buf), buf))
+            if (!DbgFunctions()->StringFormatInline(exprStr.c_str(), sizeof(buf), buf))
             {
                 throw gcnew System::Exception("Invalid expression");
             }
 
-            return gcnew System::String(buf);
+            return interop::stringFromUTF8(buf);
         }
 
         static bool IsValidExpression(System::String^ expr)
         {
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(expr);
-
-            return DbgIsValidExpression(cstr);
+            auto exprStr = interop::toUTF8(expr);
+            return DbgIsValidExpression(exprStr.c_str());
         }
 
         static bool RegisterExpression(int pluginHandle, System::String^ name, int argc, ExpressionHandler^ cb)
@@ -96,19 +87,14 @@ namespace Dotx64Dbg::Native
             IntPtr ip = Marshal::GetFunctionPointerForDelegate(cb);
             auto* fn = static_cast<CBPLUGINEXPRFUNCTION>(ip.ToPointer());
 
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(name);
-            return _plugin_registerexprfunction(pluginHandle, cstr, argc, fn, nullptr);
+            auto nameStr = interop::toUTF8(name);
+            return _plugin_registerexprfunction(pluginHandle, nameStr.c_str(), argc, fn, nullptr);
         }
 
         static bool UnregisterExpression(int pluginHandle, System::String^ name)
         {
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(name);
-
-            return _plugin_unregisterexprfunction(pluginHandle, cstr);
+            auto nameStr = interop::toUTF8(name);
+            return _plugin_unregisterexprfunction(pluginHandle, nameStr.c_str());
         }
 
     };

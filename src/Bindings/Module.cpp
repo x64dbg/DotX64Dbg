@@ -68,11 +68,8 @@ namespace Dotx64Dbg::Native
 
         static duint FindByName(System::String^ name)
         {
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(name);
-
-            return Script::Module::BaseFromName(cstr);
+            auto nameStr = interop::toUTF8(name);
+            return Script::Module::BaseFromName(nameStr.c_str());
         }
 
         static duint FindByAddress(System::UIntPtr addr)
@@ -96,7 +93,7 @@ namespace Dotx64Dbg::Native
             if (!Script::Module::PathFromAddr(va, modPath))
                 return nullptr;
 
-            return gcnew System::String(modPath);
+            return interop::stringFromUTF8(modPath);
         }
 
         static System::String^ GetName(System::UIntPtr base)
@@ -107,7 +104,7 @@ namespace Dotx64Dbg::Native
             if (!Script::Module::NameFromAddr(va, modName))
                 return nullptr;
 
-            return gcnew System::String(modName);
+            return interop::stringFromUTF8(modName);
         }
 
         static duint GetEntrypoint(System::UIntPtr base)
@@ -135,7 +132,7 @@ namespace Dotx64Dbg::Native
             auto res = gcnew Section();
             res->Address = sect.addr;
             res->Size = sect.size;
-            res->Name = gcnew System::String(sect.name);
+            res->Name = interop::stringFromUTF8(sect.name);
             return res;
         }
 
@@ -159,9 +156,9 @@ namespace Dotx64Dbg::Native
                 auto entry = gcnew Export();
                 entry->Rva = System::UIntPtr(static_cast<uintptr_t>(info.rva));
                 entry->Va = System::UIntPtr(static_cast<uintptr_t>(info.va));
-                entry->DecoratedName = gcnew System::String(info.name);
-                entry->UndecoratedName = gcnew System::String(info.undecoratedName);
-                entry->ForwarderName = gcnew System::String(info.forwardName);
+                entry->DecoratedName = interop::stringFromUTF8(info.name);
+                entry->UndecoratedName = interop::stringFromUTF8(info.undecoratedName);
+                entry->ForwarderName = interop::stringFromUTF8(info.forwardName);
                 entry->Ordinal = (int)info.ordinal;
 
                 res[i] = entry;
@@ -190,8 +187,8 @@ namespace Dotx64Dbg::Native
                 auto entry = gcnew Import();
                 entry->Rva = System::UIntPtr(static_cast<uintptr_t>(info.iatRva));
                 entry->Va = System::UIntPtr(static_cast<uintptr_t>(info.iatVa));
-                entry->DecoratedName = gcnew System::String(info.name);
-                entry->UndecoratedName = gcnew System::String(info.undecoratedName);
+                entry->DecoratedName = interop::stringFromUTF8(info.name);
+                entry->UndecoratedName = interop::stringFromUTF8(info.undecoratedName);
                 entry->Ordinal = (int)info.ordinal;
 
                 res[i] = entry;
