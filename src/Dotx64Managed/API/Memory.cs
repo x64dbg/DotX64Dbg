@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Dotx64Dbg
 {
@@ -36,6 +36,11 @@ namespace Dotx64Dbg
             return Native.Memory.Read(addr, length);
         }
 
+        public static byte[] Read(nuint addr, nuint length)
+        {
+            return Native.Memory.Read(addr, (int)length);
+        }
+
         public static byte[] Read(ulong addr, int length)
         {
             return Native.Memory.Read((nuint)addr, length);
@@ -51,6 +56,10 @@ namespace Dotx64Dbg
         public static int Write(nuint address, byte[] data, int length)
         {
             return Native.Memory.Write(address, data, length);
+        }
+        public static int Write(nuint address, byte[] data, nuint length)
+        {
+            return Native.Memory.Write(address, data, (int)length);
         }
 
         public static int Write(ulong address, byte[] data, int length)

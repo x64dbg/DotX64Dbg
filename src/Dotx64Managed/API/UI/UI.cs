@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,19 +24,19 @@ namespace Dotx64Dbg
         {
             public Selection() { }
 
-            public Selection(ulong start, ulong end) { Start = start; End = end; }
+            public Selection(ulong start, ulong end) { Start = (nuint)start; End = (nuint)end; }
 
             internal Selection(Native.UI.Selection sel)
             {
-                Start = sel.Start;
-                End = sel.End;
+                Start = (nuint)sel.Start;
+                End = (nuint)sel.End;
             }
 
             internal static Selection FromNative(Native.UI.Selection sel)
             {
                 if (sel == null)
                     return null;
-                return new Selection() { Start = sel.Start, End = sel.End };
+                return new Selection() { Start = (nuint)sel.Start, End = (nuint)sel.End };
             }
 
             internal Native.UI.Selection ToNative()
@@ -51,16 +51,16 @@ namespace Dotx64Dbg
             //
             // Summary:
             //     Start address of the selection.
-            public ulong Start;
+            public nuint Start;
             //
             // Summary:
             //     End address of the selection.
-            public ulong End;
+            public nuint End;
 
             //
             // Summary:
             //     The size of the selection, End - Start.
-            public ulong Size { get => End - Start; }
+            public nuint Size { get => End - Start; }
         }
 
         /// <summary>
