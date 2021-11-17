@@ -24,7 +24,7 @@ namespace Dotx64Dbg
         {
             public Selection() { }
 
-            public Selection(ulong start, ulong end) { Start = start; End = end; }
+            public Selection(ulong start, ulong end) { Start = (nuint)start; End = (nuint)end; }
 
             internal Selection(Native.UI.Selection sel)
             {
