@@ -1,4 +1,4 @@
-﻿#include "pluginsdk/bridgemain.h"
+#include "pluginsdk/bridgemain.h"
 #include "pluginsdk/_plugins.h"
 #include "pluginsdk/_scriptapi_debug.h"
 
@@ -51,20 +51,14 @@ namespace Dotx64Dbg::Native
 
         static bool RunCommand(System::String^ cmd)
         {
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(cmd);
-
-            return DbgCmdExecDirect(cstr);
+            auto cmdStr = interop::toUTF8(cmd);
+            return DbgCmdExecDirect(cmdStr.c_str());
         }
 
         static bool RunCommandAsync(System::String^ cmd)
         {
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(cmd);
-
-            return DbgCmdExec(cstr);
+            auto cmdStr = interop::toUTF8(cmd);
+            return DbgCmdExec(cmdStr.c_str());
         }
     };
 }

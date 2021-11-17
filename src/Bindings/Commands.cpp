@@ -1,4 +1,4 @@
-﻿#include <vector>
+#include <vector>
 #include <cstdint>
 
 #include "pluginsdk/bridgemain.h"
@@ -25,19 +25,14 @@ namespace Dotx64Dbg::Native
             IntPtr ip = Marshal::GetFunctionPointerForDelegate(cb);
             auto* fn = static_cast<CBPLUGINCOMMAND>(ip.ToPointer());
 
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(cmd);
-            return _plugin_registercommand(pluginHandle, cstr, fn, debugOnly);
+            auto cmdStr = interop::toUTF8(cmd);
+            return _plugin_registercommand(pluginHandle, cmdStr.c_str(), fn, debugOnly);
         }
 
         static bool UnregisterCommand(int pluginHandle, System::String^ cmd)
         {
-            msclr::interop::marshal_context oMarshalContext;
-
-            const char* cstr = oMarshalContext.marshal_as<const char*>(cmd);
-
-            return _plugin_unregistercommand(pluginHandle, cstr);
+            auto cmdStr = interop::toUTF8(cmd);
+            return _plugin_unregistercommand(pluginHandle, cmdStr.c_str());
         }
     };
 }

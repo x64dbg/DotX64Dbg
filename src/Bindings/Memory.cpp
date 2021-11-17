@@ -1,4 +1,4 @@
-﻿#include <vector>
+#include <vector>
 #include <cstdint>
 
 #include "pluginsdk/bridgemain.h"
@@ -112,11 +112,12 @@ namespace Dotx64Dbg::Native
             return System::UIntPtr(reinterpret_cast<void*>(base));
         }
 
-        static uint64_t GetSize(System::UIntPtr addr)
+        static System::UIntPtr GetSize(System::UIntPtr addr)
         {
             auto va = static_cast<duint>(addr.ToUInt64());
 
-            return Script::Memory::GetSize(va);
+            const uintptr_t size = Script::Memory::GetSize(va);
+            return System::UIntPtr(size);
         }
     };
 }
