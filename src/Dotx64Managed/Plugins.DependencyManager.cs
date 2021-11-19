@@ -29,25 +29,25 @@ namespace Dotx64Dbg
                 pluginDepsCache = new();
             }
 
-            public string[] ResolvePluginDepencies(Plugin plugin, CancellationToken cancellationToken)
+            public string[] ResolvePluginDependencies(Plugin plugin, CancellationToken cancellationToken)
             {
                 if (plugin.Info.Dependencies is null || plugin.Info!.Dependencies.Length == 0)
                     return Array.Empty<string>();
 
                 if (!HasDependenciesChanged(plugin))
                     return pluginDepsCache[plugin.GetHashCode()].cachedResolvedDependencies;
-                string[] deps = GetPluginDepencies(plugin, cancellationToken);
+                string[] deps = GetPluginDependencies(plugin, cancellationToken);
 
                 AddPluginToCache(plugin, deps);
 
                 return deps;
             }
 
-            public string[] ResolvePluginDepencies(string pluginPath) => throw new NotImplementedException();
+            public string[] ResolvePluginDependencies(string pluginPath) => throw new NotImplementedException();
 
-            protected abstract string[] GetPluginDepencies(Plugin plugin, CancellationToken cancellationToken);
+            protected abstract string[] GetPluginDependencies(Plugin plugin, CancellationToken cancellationToken);
 
-            private static int GetDepenciesHash(Plugin plugin)
+            private static int GetDependenciesHash(Plugin plugin)
             {
                 int hash = 0;
                 foreach (var p in plugin.Info.Dependencies)
@@ -58,7 +58,7 @@ namespace Dotx64Dbg
             private bool HasDependenciesChanged(Plugin plugin)
             {
                 int pluginInstanceHash = plugin.GetHashCode();
-                int currentDepsHash = GetDepenciesHash(plugin);
+                int currentDepsHash = GetDependenciesHash(plugin);
                 if (!pluginDepsCache.TryGetValue(pluginInstanceHash, out var cache))
                 {
                     return true;
@@ -69,7 +69,7 @@ namespace Dotx64Dbg
             private void AddPluginToCache(Plugin plugin, string[] resolvedDepencies)
             {
                 int pluginInstanceHash = plugin.GetHashCode();
-                int currentDepsHash = GetDepenciesHash(plugin);
+                int currentDepsHash = GetDependenciesHash(plugin);
                 pluginDepsCache[pluginInstanceHash] = (currentDepsHash, resolvedDepencies);
             }
 
@@ -121,7 +121,7 @@ namespace Dotx64Dbg
                 Logger = new NuGetDependencyResolverLogger(Console.Out);
             }
 
-            protected override string[] GetPluginDepencies(Plugin plugin, CancellationToken cancellationToken)
+            protected override string[] GetPluginDependencies(Plugin plugin, CancellationToken cancellationToken)
             {
                 if (plugin.Info is null)
                     return Array.Empty<string>();
@@ -427,7 +427,7 @@ namespace Dotx64Dbg
     {
         public static string[] ResolveDependencies(this Plugin plugin, Plugins.DependencyResolver resolver, CancellationToken token)
         {
-            return resolver.ResolvePluginDepencies(plugin, token);
+            return resolver.ResolvePluginDependencies(plugin, token);
         }
         
         public static string[] ResolveDependencies(this Plugin plugin, Plugins.DependencyResolver resolver) =>
