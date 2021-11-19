@@ -4,6 +4,8 @@
 
 #include "Marshal.hpp"
 
+#pragma comment(lib, "Gdi32.lib")
+
 using namespace System;
 using namespace System::Runtime::InteropServices;
 
@@ -154,6 +156,75 @@ namespace Dotx64Dbg::Native
                 return _plugin_menuadd(parent, cstr);
             }
 
+            static bool SetIcon(int hMenu, System::Drawing::Image^ image)
+            {
+                HANDLE hProcessHeap = GetProcessHeap();
+
+                // A pointer for the bitmap data
+                LPVOID lpIconData;
+                // The size of the bitmap
+                size_t iconDataSize;
+
+                iconDataSize = GetIconData(nullptr, 0, image); // Get the amount of memory required for the bitmap
+                if (!iconDataSize)
+                    return false;
+
+                if (lpIconData = HeapAlloc(hProcessHeap, HEAP_ZERO_MEMORY, iconDataSize); !lpIconData)
+                    return false;
+
+                if (!GetIconData(lpIconData, iconDataSize, image))  // Get the actual bitmap data
+                    return false;
+
+                ICONDATA icon{ 0 };
+                icon.size = iconDataSize;
+                icon.data = lpIconData;
+
+                _plugin_menuseticon(hMenu, &icon);
+
+                HeapFree(
+                    hProcessHeap,
+                    0,
+                    lpIconData
+                );
+
+                return true;
+            }
+
+            static bool SetEntryIcon(int hPlugin, int hEntry, System::Drawing::Image^ image)
+            {
+                HANDLE hProcessHeap = GetProcessHeap();
+
+                // A pointer for the bitmap data
+                LPVOID lpIconData;
+                // The size of the bitmap
+                size_t iconDataSize;
+
+                iconDataSize = GetIconData(nullptr, 0, image); // Get the amount of memory required for the bitmap
+                if (!iconDataSize)
+                    return false;
+
+                if (lpIconData = HeapAlloc(hProcessHeap, HEAP_ZERO_MEMORY, iconDataSize); !lpIconData)
+                    return false;
+
+                if (!GetIconData(lpIconData, iconDataSize, image))  // Get the actual bitmap data
+                    return false;
+
+                ICONDATA icon{ 0 };
+                icon.size = iconDataSize;
+                icon.data = lpIconData;
+
+                _plugin_menuentryseticon(hPlugin, hEntry, &icon);
+
+
+                HeapFree(
+                    hProcessHeap,
+                    0,
+                    lpIconData
+                );
+
+                return true;
+            }
+
             static bool AddEntry(int parent, int id, System::String^ name)
             {
                 msclr::interop::marshal_context oMarshalContext;
@@ -176,6 +247,63 @@ namespace Dotx64Dbg::Native
             static bool Remove(int id)
             {
                 return _plugin_menuremove(id);
+            }
+
+        private:
+
+            _Success_( return != 0)
+            static size_t GetIconData(_Out_writes_bytes_to_opt_(bufferSize, return) LPVOID lpData, size_t bufferSize, _In_ System::Drawing::Image^ image)
+            {
+                auto bitmap = gcnew System::Drawing::Bitmap(image);
+                HBITMAP hIcon = (HBITMAP)bitmap->GetHbitmap().ToPointer();
+
+                BITMAP bmp{ 0 };
+                if (!GetObject(hIcon, sizeof(BITMAP), &bmp) || !bmp.bmBits)
+                    return 0;
+
+                LONG pixelArraySize = bmp.bmWidthBytes * bmp.bmHeight;
+                const size_t bitmapSize = pixelArraySize + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPV5HEADER);
+
+                if (lpData == nullptr)
+                    return bitmapSize; // Return the required size for the bitmap
+                if (bufferSize < bitmapSize)
+                    return 0;   // Not enouth memory
+
+                BITMAPFILEHEADER bmfh{ 0 };
+                bmfh.bfType = 0x4D42;
+                bmfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPV5HEADER);
+                bmfh.bfSize = (DWORD)bitmapSize;
+
+                BITMAPV5HEADER bmh{ 0 };
+                bmh.bV5Size = sizeof(BITMAPV5HEADER);
+                bmh.bV5Width = bmp.bmWidth;
+                bmh.bV5Height = bmp.bmHeight;
+                bmh.bV5Planes = bmp.bmPlanes;
+                bmh.bV5BitCount = bmp.bmBitsPixel;
+                bmh.bV5Compression = BI_RGB;
+                bmh.bV5SizeImage = 0;
+                bmh.bV5XPelsPerMeter = 0;
+                bmh.bV5YPelsPerMeter = 0;
+                bmh.bV5CSType = (DWORD)bmp.bmType;
+
+                // pixel array
+                memcpy_s(
+                    (char*)lpData + bmfh.bfOffBits,
+                    bufferSize - bmfh.bfOffBits,
+                    bmp.bmBits,
+                    pixelArraySize
+                );
+                // bmp file header
+                memcpy_s(lpData, bufferSize, &bmfh, sizeof(BITMAPFILEHEADER));
+                // bmp v5 header
+                memcpy_s(
+                    (char*)lpData + sizeof(BITMAPFILEHEADER),
+                    bufferSize - sizeof(BITMAPFILEHEADER),
+                    &bmh,
+                    sizeof(BITMAPV5HEADER)
+                );
+
+                return bitmapSize;
             }
         };
 

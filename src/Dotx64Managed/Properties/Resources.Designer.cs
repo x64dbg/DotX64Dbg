@@ -19,7 +19,7 @@ namespace Dotx64Dbg.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,6 +61,26 @@ namespace Dotx64Dbg.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Dotx64DbgIcon {
+            get {
+                object obj = ResourceManager.GetObject("Dotx64DbgIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NewScriptIcon {
+            get {
+                object obj = ResourceManager.GetObject("NewScriptIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to using System;
         ///using Dotx64Dbg;
         ///
@@ -82,7 +102,7 @@ namespace Dotx64Dbg.Properties {
         ///    }
         ///
         ///    /// &lt;summary&gt;
-        ///    /// Classes that  have IHotload can implemen [rest of string was truncated]&quot;;.
+        ///    /// Classes that  have  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string plugin_cs {
             get {
@@ -103,6 +123,16 @@ namespace Dotx64Dbg.Properties {
         internal static string plugin_json {
             get {
                 return ResourceManager.GetString("plugin_json", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RunIcon {
+            get {
+                object obj = ResourceManager.GetObject("RunIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }
