@@ -173,7 +173,10 @@ namespace Dotx64Dbg::Native
                     return false;
 
                 if (!GetIconData(lpIconData, iconDataSize, image))  // Get the actual bitmap data
+                {
+                    HeapFree(lpIconData, 0, lpIconData);
                     return false;
+                }
 
                 ICONDATA icon{ 0 };
                 icon.size = iconDataSize;
@@ -207,14 +210,16 @@ namespace Dotx64Dbg::Native
                     return false;
 
                 if (!GetIconData(lpIconData, iconDataSize, image))  // Get the actual bitmap data
+                {
+                    HeapFree(hProcessHeap, 0, lpIconData);
                     return false;
+                }
 
                 ICONDATA icon{ 0 };
                 icon.size = iconDataSize;
                 icon.data = lpIconData;
 
                 _plugin_menuentryseticon(hPlugin, hEntry, &icon);
-
 
                 HeapFree(
                     hProcessHeap,
