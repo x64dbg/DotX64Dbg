@@ -19,13 +19,139 @@ namespace Dotx64Dbg
 {
     internal partial class Plugins
     {
-        internal abstract class DependencyResolver
+        internal class PluginDependencyConsumer
         {
-            readonly Dictionary<int, (int depsHash, string[] cachedResolvedDependencies)> pluginDepsCache;
-            
+            public PluginInfo PluginInfo { get; }
+
+            public bool HasNext => (_currentNode is null & _head.Next is not null) | _currentNode?.Next is not null;
+
+            public bool HasAny => _head.Next is not null;
+
+            public string Name => _currentNode?.Name ?? throw new NullReferenceException($"The consumer was not initialized with '{nameof(MoveNext)}'");
+
+            public string[] ResolvedDepencies => fullpathDeps.ToArray();
+
+            public bool ResetIterator()
+            {
+                if (_head.Next is null)
+                    return false;
+                _currentNode = null;
+                return true;
+            }
+
+            public bool MoveNext()
+            {
+                if (!HasNext)
+                {
+                    if(_head.Next?.Resolved ?? false)
+                        _head.Next = null; // The last item was consumed
+                    return false;
+                }
+
+                if (_currentNode is null)
+                {
+                    _currentNode = _head.Next;
+                    return true;
+                }
+
+                if(_currentNode.Resolved) // Detach from list
+                {
+                    _currentNode.Previous.Next = _currentNode.Next;
+                    if (_currentNode.Next is not null)
+                        _currentNode.Next.Previous = _currentNode.Previous;
+                }
+                _currentNode = _currentNode.Next;
+
+                return true;
+            }
+
+            public bool Resolve(string libFullPath)
+            {
+                if (_currentNode == null)
+                    throw new NullReferenceException($"The consumer was not initialized with '{nameof(MoveNext)}'");
+
+                if (_currentNode.Resolved || !File.Exists(libFullPath))
+                    return false;
+
+                _currentNode.Resolved = true;
+                fullpathDeps.Add(libFullPath);
+                return true;
+            }
+
+            public bool AddRequiredAssemblies(IEnumerable<string> libsFullPath) =>
+                AddRequiredAssemblies(libsFullPath.ToArray());
+
+            public bool AddRequiredAssemblies(string[] libsFullPath)
+            {
+                if (!_currentNode.Resolved || libsFullPath.Any(path => !Path.IsPathFullyQualified(path) || !File.Exists(path)))
+                    return false;
+
+                fullpathDeps.AddRange(libsFullPath);
+                return true;
+            }
+
+            public PluginDependencyConsumer(PluginInfo pluginInfo)
+            {
+                this.PluginInfo = pluginInfo;
+
+                string[] deps = pluginInfo.Dependencies;
+                if (deps is null)
+                    return;
+
+                var it = _head;
+                foreach (var dep in deps)
+                {
+                    DependencyNode node = new(dep);
+                    node.Previous = it;
+                    it.Next = node;
+                    it = node;
+                }
+            }
+
+            private readonly DependencyNode _head = DependencyNode.Null;
+            private DependencyNode _currentNode = null;
+            private readonly HashSet<string> fullpathDeps = new();
+
+            class DependencyNode : IEquatable<DependencyNode>
+            {
+                public static DependencyNode Null => new();
+
+                public DependencyNode Next { get; set; }
+                public DependencyNode Previous { get; set; }
+                public bool Resolved { get; set; } = false;
+
+                public int Id { get; } = 0;
+                public string Name { get; } = string.Empty;
+
+                public DependencyNode(string name)
+                {
+                    Name = name;
+                    Id = name.GetHashCode();
+                }
+
+                private DependencyNode() { }
+
+                public bool Equals(DependencyNode other) => Id == other.Id;
+
+                public override bool Equals(object obj) => Equals(obj as DependencyNode);
+
+                public override int GetHashCode() => Id;
+            }
+        }
+
+
+        /// <summary>
+        /// Represents a class that can resolve full paths from dependencies names
+        /// </summary>
+        internal interface IDependencyResolver
+        {
+            void ResolveFullpathToDependency(PluginDependencyConsumer dependencyConsumer, CancellationToken token);
+        }
+
+        internal class DependencyResolver
+        {
             public DependencyResolver()
             {
-                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
                 pluginDepsCache = new();
             }
 
@@ -36,16 +162,32 @@ namespace Dotx64Dbg
 
                 if (!HasDependenciesChanged(plugin))
                     return pluginDepsCache[plugin.GetHashCode()].cachedResolvedDependencies;
-                string[] deps = GetPluginDependencies(plugin, cancellationToken);
 
+                PluginDependencyConsumer dependencyConsumer = new (plugin.Info);
+
+                foreach (var resolver in resolvers)
+                {
+                    resolver.ResolveFullpathToDependency(dependencyConsumer, cancellationToken);
+                    if (!dependencyConsumer.HasAny)
+                        break; // We don't need to continue, all deps are resolved
+                    dependencyConsumer.ResetIterator();
+                }
+
+                if(dependencyConsumer.HasAny)
+                {
+                    // TODO: Create a proper exception for this
+                    throw new Exception("The current resolvers where not able to resolve all the dependencies");
+                }
+
+                var deps = dependencyConsumer.ResolvedDepencies;
                 AddPluginToCache(plugin, deps);
-
                 return deps;
             }
 
-            public string[] ResolvePluginDependencies(string pluginPath) => throw new NotImplementedException();
-
-            protected abstract string[] GetPluginDependencies(Plugin plugin, CancellationToken cancellationToken);
+            public void AddResolver(IDependencyResolver dependencyResolver)
+            {
+                resolvers.Add(dependencyResolver);
+            }
 
             private static int GetDependenciesHash(Plugin plugin)
             {
@@ -73,37 +215,14 @@ namespace Dotx64Dbg
                 pluginDepsCache[pluginInstanceHash] = (currentDepsHash, resolvedDepencies);
             }
 
-
-            /// <summary>
-            /// Resolves external assemblies to the current domain
-            /// </summary>
-            /// <remarks>
-            /// Any external dependency required by plugins needs to be loaded in the current domain otherwise, the execution fails.
-            /// </remarks>
-            /// <param name="sender"></param>
-            /// <param name="args"></param>
-            /// <returns>The loaded assembly</returns>
-            private System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-            {
-                var assemblyName = new AssemblyName(args.Name);
-                var pluginDeps = pluginDepsCache.Values
-                    .Select(values => values.cachedResolvedDependencies);
-                foreach(var deps in pluginDeps)
-                {
-                    var assemblyPath = deps
-                        .FirstOrDefault(file => Path.GetFileNameWithoutExtension(file).Equals(assemblyName.Name, StringComparison.OrdinalIgnoreCase));
-
-                    if(assemblyPath != null)
-                    {
-                        return Assembly.LoadFrom(assemblyPath);
-                    }
-                }
-                return null;
-            }
-
+            readonly Dictionary<int, (int depsHash, string[] cachedResolvedDependencies)> pluginDepsCache;
+            readonly List<IDependencyResolver> resolvers = new();
         }
 
-        internal partial class NuGetDependencyResolver : DependencyResolver
+        /// <summary>
+        /// A class that can resolve dependencies via nuget
+        /// </summary>
+        internal class NuGetDependencyResolver : IDependencyResolver
         {
             static readonly string NugetSource = "https://api.nuget.org/v3/index.json";
             static string LocalNugetRepo => Path.Combine(Manager.PluginManager.PluginsPath, ".nuget");
@@ -121,24 +240,20 @@ namespace Dotx64Dbg
                 Logger = new NuGetDependencyResolverLogger(Console.Out);
             }
 
-            protected override string[] GetPluginDependencies(Plugin plugin, CancellationToken cancellationToken)
+            public void ResolveFullpathToDependency(PluginDependencyConsumer dependencyConsumer, CancellationToken token)
             {
-                if (plugin.Info is null)
-                    return Array.Empty<string>();
-
-                List<string> requiredLibs = new();
-                foreach (string dep in plugin.Info.Dependencies)
+                while (dependencyConsumer.MoveNext())
                 {
-                    if(!VersioningHelper.IsValidDotNetFrameworkName(dep))
+                    string name = dependencyConsumer.Name;
+                    if (!VersioningHelper.IsValidDotNetFrameworkName(name))
                     {
-                        requiredLibs.Add(dep); //  We can't resolve this library, let it pass through
-                        continue;
+                        continue; //  We can't resolve this library
                     }
 
-                    string pkgId = dep[..dep.IndexOf(',')];
-                    string pkgVersion = VersioningHelper.GetFrameworkVersion(dep);
+                    string pkgId = name[..name.IndexOf(',')];
+                    string pkgVersion = VersioningHelper.GetFrameworkVersion(name);
 
-                    var packageInfo = FindLocalOrDownloadPackage(pkgId, pkgVersion, cancellationToken);
+                    var packageInfo = FindLocalOrDownloadPackage(pkgId, pkgVersion, token);
                     if (packageInfo is null)
                     {
                         Logger.LogError($"Failed to acquire nuget package: {pkgId}");
@@ -148,25 +263,24 @@ namespace Dotx64Dbg
                     var executingFramework = VersioningHelper.GetFrameworkFromAssembly(Assembly.GetExecutingAssembly());
                     using var pkgReader = packageInfo.GetReader();
                     var requiredPkg = pkgReader.GetLibItems().GetNearest(executingFramework);
-                    var requiredPkgDeps = ResolvePackageDepencies(pkgId, pkgVersion, requiredPkg.TargetFramework, cancellationToken);
+                    var requiredPkgDeps = ResolvePackageDepencies(pkgId, pkgVersion, requiredPkg.TargetFramework, token);
 
-                    requiredLibs.AddRange(requiredPkg.Items
+                    dependencyConsumer.Resolve(requiredPkg.Items
                         .Where(item => Path.GetExtension(item).Equals(".dll"))
                         .Select((item) => Path.GetFullPath(Path.Combine(Path.GetDirectoryName(packageInfo.Path), item)))
+                        .First()
                     );
 
                     foreach (var pkgDep in requiredPkgDeps)
                     {
                         using var depPkgReader = pkgDep.GetReader();
                         var libItems = depPkgReader.GetLibItems().GetNearest(requiredPkg.TargetFramework);
-                        requiredLibs.AddRange(libItems.Items
+                        dependencyConsumer.AddRequiredAssemblies(libItems.Items
                             .Where(item => Path.GetExtension(item).Equals(".dll"))
                             .Select(item => Path.GetFullPath(Path.Combine(Path.GetDirectoryName(pkgDep.Path), item)))
                         );
                     }
                 }
-
-                return requiredLibs.ToArray();
             }
 
             private static string GetOrCreatePackageDirectory(string pkgId, string version)
@@ -364,6 +478,7 @@ namespace Dotx64Dbg
                 return localPackages;
             }
 
+
             public class VersioningHelper
             {
                 private static readonly string FrameworkNamePattern =
@@ -420,7 +535,20 @@ namespace Dotx64Dbg
             }
         }
 
-        
+        internal class LocalAssembliesResolver : IDependencyResolver
+        {
+            public void ResolveFullpathToDependency(PluginDependencyConsumer dependencyConsumer, CancellationToken token)
+            {
+                while(dependencyConsumer.MoveNext())
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    string assemblyName = dependencyConsumer.Name;
+                    var coreAssemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
+                    dependencyConsumer.Resolve(Path.Combine(coreAssemblyPath, assemblyName));
+                }
+            }
+        }
     }
 
     internal static class DependencyResolverExtensions

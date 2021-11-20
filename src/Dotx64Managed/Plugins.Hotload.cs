@@ -457,6 +457,7 @@ namespace Dotx64Dbg
                 UnloadPluginInstance(plugin, token);
 
                 var loader = new AssemblyLoader();
+                loader.AddExternalRequiredAssemblies(plugin.ResolveDependencies(dependencyResolver, token));
                 var newAssembly = loader.LoadFromFile(newAssemblyPath);
 
                 var pluginClass = GetPluginClass(newAssembly);
