@@ -259,11 +259,12 @@ namespace Dotx64Dbg::Native
             _Success_( return != 0)
             static size_t GetIconData(_Out_writes_bytes_to_opt_(bufferSize, return) LPVOID lpData, size_t bufferSize, _In_ System::Drawing::Image^ image)
             {
-                auto bitmap = gcnew System::Drawing::Bitmap(image);
-                HBITMAP hIcon = (HBITMAP)bitmap->GetHbitmap().ToPointer();
+                System::Drawing::Bitmap bitmap(image);
+                bitmap.MakeTransparent();
+                HBITMAP hBitmap = (HBITMAP)bitmap.GetHbitmap().ToPointer(); // Used only for bitmap info
 
                 BITMAP bmp{ 0 };
-                if (!GetObject(hIcon, sizeof(BITMAP), &bmp) || !bmp.bmBits)
+                if (!GetObject(hBitmap, sizeof(BITMAP), &bmp) || !bmp.bmBits)
                     return 0;
 
                 LONG pixelArraySize = bmp.bmWidthBytes * bmp.bmHeight;
@@ -272,7 +273,7 @@ namespace Dotx64Dbg::Native
                 if (lpData == nullptr)
                     return bitmapSize; // Return the required size for the bitmap
                 if (bufferSize < bitmapSize)
-                    return 0;   // Not enouth memory
+                    return 0;   // Not enough memory
 
                 BITMAPFILEHEADER bmfh{ 0 };
                 bmfh.bfType = 0x4D42;
@@ -282,22 +283,36 @@ namespace Dotx64Dbg::Native
                 BITMAPV5HEADER bmh{ 0 };
                 bmh.bV5Size = sizeof(BITMAPV5HEADER);
                 bmh.bV5Width = bmp.bmWidth;
-                bmh.bV5Height = bmp.bmHeight;
-                bmh.bV5Planes = bmp.bmPlanes;
+                bmh.bV5Height = -bmp.bmHeight;
+                bmh.bV5Planes = 1;
                 bmh.bV5BitCount = bmp.bmBitsPixel;
-                bmh.bV5Compression = BI_RGB;
-                bmh.bV5SizeImage = 0;
+                bmh.bV5Compression = BI_RGB | BI_BITFIELDS,
+                bmh.bV5RedMask = 0xFF << 16;
+                bmh.bV5GreenMask = 0xFF << 8;
+                bmh.bV5BlueMask = 0xFF;
+                bmh.bV5AlphaMask = 0xFF << 24;
+                bmh.bV5SizeImage = pixelArraySize;
                 bmh.bV5XPelsPerMeter = 0;
                 bmh.bV5YPelsPerMeter = 0;
-                bmh.bV5CSType = (DWORD)bmp.bmType;
+                bmh.bV5CSType = LCS_sRGB;
+                bmh.bV5Intent = LCS_GM_GRAPHICS;
 
                 // pixel array
+                /*
+                    Don't get the DI bitmap bits from a handle retrieved by 'Bitmap::GetHbitmap()' because the alpha channel gets destroy.
+                    For this, use the Gdiplus functions like 'LockBits' for retrieving the bitmap data.
+                    Note: Functions and classes fom 'System::Drawing' are pretty much wrappers for Gdiplus
+                */
+                System::Drawing::Rectangle retangle(0, 0, bmp.bmWidth, bmp.bmHeight);
+                auto bmpData = bitmap.LockBits(retangle, System::Drawing::Imaging::ImageLockMode::ReadOnly, System::Drawing::Imaging::PixelFormat::Format32bppArgb);
+                void* bmpBits = bmpData->Scan0.ToPointer();
                 memcpy_s(
                     (char*)lpData + bmfh.bfOffBits,
                     bufferSize - bmfh.bfOffBits,
-                    bmp.bmBits,
+                    bmpBits,
                     pixelArraySize
                 );
+                bitmap.UnlockBits(bmpData);
                 // bmp file header
                 memcpy_s(lpData, bufferSize, &bmfh, sizeof(BITMAPFILEHEADER));
                 // bmp v5 header
