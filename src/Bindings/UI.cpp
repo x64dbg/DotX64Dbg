@@ -158,74 +158,28 @@ namespace Dotx64Dbg::Native
 
             static bool SetIcon(int hMenu, System::Drawing::Image^ image)
             {
-                HANDLE hProcessHeap = GetProcessHeap();
-
-                // A pointer for the bitmap data
-                LPVOID lpIconData;
-                // The size of the bitmap
-                size_t iconDataSize;
-
-                iconDataSize = GetIconData(nullptr, 0, image); // Get the amount of memory required for the bitmap
-                if (!iconDataSize)
-                    return false;
-
-                if (lpIconData = HeapAlloc(hProcessHeap, HEAP_ZERO_MEMORY, iconDataSize); !lpIconData)
-                    return false;
-
-                if (!GetIconData(lpIconData, iconDataSize, image))  // Get the actual bitmap data
-                {
-                    HeapFree(lpIconData, 0, lpIconData);
-                    return false;
-                }
+                auto data = GetIconData(image);
 
                 ICONDATA icon{ 0 };
-                icon.size = iconDataSize;
-                icon.data = lpIconData;
+                icon.data = &data[0];
+                if (icon.size = data.size(); !icon.size)
+                    return false;
 
                 _plugin_menuseticon(hMenu, &icon);
-
-                HeapFree(
-                    hProcessHeap,
-                    0,
-                    lpIconData
-                );
 
                 return true;
             }
 
             static bool SetEntryIcon(int hPlugin, int hEntry, System::Drawing::Image^ image)
             {
-                HANDLE hProcessHeap = GetProcessHeap();
-
-                // A pointer for the bitmap data
-                LPVOID lpIconData;
-                // The size of the bitmap
-                size_t iconDataSize;
-
-                iconDataSize = GetIconData(nullptr, 0, image); // Get the amount of memory required for the bitmap
-                if (!iconDataSize)
-                    return false;
-
-                if (lpIconData = HeapAlloc(hProcessHeap, HEAP_ZERO_MEMORY, iconDataSize); !lpIconData)
-                    return false;
-
-                if (!GetIconData(lpIconData, iconDataSize, image))  // Get the actual bitmap data
-                {
-                    HeapFree(hProcessHeap, 0, lpIconData);
-                    return false;
-                }
+                auto data = GetIconData(image);
 
                 ICONDATA icon{ 0 };
-                icon.size = iconDataSize;
-                icon.data = lpIconData;
+                icon.data = &data[0];
+                if (icon.size = data.size(); !icon.size)
+                    return false;
 
                 _plugin_menuentryseticon(hPlugin, hEntry, &icon);
-
-                HeapFree(
-                    hProcessHeap,
-                    0,
-                    lpIconData
-                );
 
                 return true;
             }
@@ -256,24 +210,19 @@ namespace Dotx64Dbg::Native
 
         private:
 
-            _Success_( return != 0)
-            static size_t GetIconData(_Out_writes_bytes_to_opt_(bufferSize, return) LPVOID lpData, size_t bufferSize, _In_ System::Drawing::Image^ image)
+            static std::vector<uint8_t> GetIconData(_In_ System::Drawing::Image^ image)
             {
                 System::Drawing::Bitmap bitmap(image);
                 bitmap.MakeTransparent();
                 HBITMAP hBitmap = (HBITMAP)bitmap.GetHbitmap().ToPointer(); // Used only for bitmap info
 
                 BITMAP bmp{ 0 };
-                if (!GetObject(hBitmap, sizeof(BITMAP), &bmp) || !bmp.bmBits)
-                    return 0;
+                if (!GetObject(hBitmap, sizeof(BITMAP), &bmp))
+                    return {};
 
                 LONG pixelArraySize = bmp.bmWidthBytes * bmp.bmHeight;
                 const size_t bitmapSize = pixelArraySize + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPV5HEADER);
-
-                if (lpData == nullptr)
-                    return bitmapSize; // Return the required size for the bitmap
-                if (bufferSize < bitmapSize)
-                    return 0;   // Not enough memory
+                auto bitmapData = std::vector<uint8_t>(bitmapSize);
 
                 BITMAPFILEHEADER bmfh{ 0 };
                 bmfh.bfType = 0x4D42;
@@ -297,33 +246,33 @@ namespace Dotx64Dbg::Native
                 bmh.bV5CSType = LCS_sRGB;
                 bmh.bV5Intent = LCS_GM_GRAPHICS;
 
-                // pixel array
                 /*
                     Don't get the DI bitmap bits from a handle retrieved by 'Bitmap::GetHbitmap()' because the alpha channel gets destroy.
                     For this, use the Gdiplus functions like 'LockBits' for retrieving the bitmap data.
                     Note: Functions and classes fom 'System::Drawing' are pretty much wrappers for Gdiplus
                 */
-                System::Drawing::Rectangle retangle(0, 0, bmp.bmWidth, bmp.bmHeight);
-                auto bmpData = bitmap.LockBits(retangle, System::Drawing::Imaging::ImageLockMode::ReadOnly, System::Drawing::Imaging::PixelFormat::Format32bppArgb);
+                System::Drawing::Rectangle regionRect(0, 0, bmp.bmWidth, bmp.bmHeight);
+                auto bmpData = bitmap.LockBits(regionRect, System::Drawing::Imaging::ImageLockMode::ReadOnly, System::Drawing::Imaging::PixelFormat::Format32bppArgb);
                 void* bmpBits = bmpData->Scan0.ToPointer();
+                // pixel array
                 memcpy_s(
-                    (char*)lpData + bmfh.bfOffBits,
-                    bufferSize - bmfh.bfOffBits,
+                    &bitmapData[bmfh.bfOffBits],
+                    bitmapSize - bmfh.bfOffBits,
                     bmpBits,
                     pixelArraySize
                 );
                 bitmap.UnlockBits(bmpData);
                 // bmp file header
-                memcpy_s(lpData, bufferSize, &bmfh, sizeof(BITMAPFILEHEADER));
+                memcpy_s(&bitmapData[0], bitmapSize, &bmfh, sizeof(BITMAPFILEHEADER));
                 // bmp v5 header
                 memcpy_s(
-                    (char*)lpData + sizeof(BITMAPFILEHEADER),
-                    bufferSize - sizeof(BITMAPFILEHEADER),
+                    &bitmapData[sizeof(BITMAPFILEHEADER)],
+                    bitmapSize - sizeof(BITMAPFILEHEADER),
                     &bmh,
                     sizeof(BITMAPV5HEADER)
                 );
 
-                return bitmapSize;
+                return bitmapData;
             }
         };
 
