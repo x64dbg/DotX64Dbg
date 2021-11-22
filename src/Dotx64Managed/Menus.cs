@@ -75,12 +75,16 @@ namespace Dotx64Dbg
             }
         }
 
-        internal static void AddMenu(string path, UI.Menu.MenuDelegate func)
-        {
-            AddMenu(null, path, func);
-        }
+        internal static void AddMenu(string path, UI.Menu.MenuDelegate func) =>
+            AddMenu(path, null, func);
 
-        internal static void AddMenu(Plugin plugin, string path, UI.Menu.MenuDelegate func)
+        internal static void AddMenu(string path, System.Drawing.Image image, UI.Menu.MenuDelegate func) =>
+            AddMenu(null, path, image, func);
+
+        internal static void AddMenu(Plugin plugin, string path, UI.Menu.MenuDelegate func) =>
+            AddMenu(plugin, path, null, func);
+
+        internal static void AddMenu(Plugin plugin, string path, System.Drawing.Image image, UI.Menu.MenuDelegate func)
         {
             var pos = 0;
             var prev = 0;
@@ -134,6 +138,8 @@ namespace Dotx64Dbg
 
             entryName = path.Substring(prev);
             Native.UI.Menu.AddEntry(nextEntry.parent, nextEntry.id, entryName);
+            if (image is not null)
+                Native.UI.Menu.SetEntryIcon(Manager.PluginHandle, nextEntry.id, image);
 
             NextInternalId++;
         }

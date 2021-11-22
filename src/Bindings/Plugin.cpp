@@ -1,4 +1,4 @@
-﻿#ifdef _WIN64
+#ifdef _WIN64
 #pragma comment(lib, "pluginsdk/x64dbg.lib")
 #pragma comment(lib, "pluginsdk/x64bridge.lib")
 #pragma comment(lib, "pluginsdk/DeviceNameResolver/DeviceNameResolver_x64.lib")
