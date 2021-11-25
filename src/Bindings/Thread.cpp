@@ -1,4 +1,4 @@
-﻿#include <vector>
+#include <vector>
 #include <cstdint>
 
 #include "pluginsdk/bridgemain.h"
@@ -153,599 +153,599 @@ namespace Dotx64Dbg::Native
             return ReadRegister(hThread, reg, size, 0);
         }
 
-        static array<System::Byte>^ GetRegisterData(System::UIntPtr hThread, RegisterId reg)
+        static array<System::Byte>^ GetRegisterData(System::UIntPtr hThread, Registers::Id reg)
         {
             switch (reg)
             {
-            case RegisterId::None:
+            case Registers::Id::None:
                 return gcnew array<System::Byte>(0);
 #ifdef _M_X64
-            case RegisterId::Al:
+            case Registers::Id::Al:
                 return ReadRegister(hThread, UE_RAX, 1);
-            case RegisterId::Cl:
+            case Registers::Id::Cl:
                 return ReadRegister(hThread, UE_RCX, 1);
-            case RegisterId::Dl:
+            case Registers::Id::Dl:
                 return ReadRegister(hThread, UE_RDX, 1);
-            case RegisterId::Bl:
+            case Registers::Id::Bl:
                 return ReadRegister(hThread, UE_RBX, 1);
-            case RegisterId::Ah:
+            case Registers::Id::Ah:
                 return ReadRegister(hThread, UE_RAX, 1, 1);
-            case RegisterId::Ch:
+            case Registers::Id::Ch:
                 return ReadRegister(hThread, UE_RCX, 1, 1);
-            case RegisterId::Dh:
+            case Registers::Id::Dh:
                 return ReadRegister(hThread, UE_RDX, 1, 1);
-            case RegisterId::Bh:
+            case Registers::Id::Bh:
                 return ReadRegister(hThread, UE_RBX, 1, 1);
-            case RegisterId::Spl:
+            case Registers::Id::Spl:
                 return ReadRegister(hThread, UE_RSP, 1);
-            case RegisterId::Bpl:
+            case Registers::Id::Bpl:
                 return ReadRegister(hThread, UE_RBP, 1);
-            case RegisterId::Sil:
+            case Registers::Id::Sil:
                 return ReadRegister(hThread, UE_RSI, 1);
-            case RegisterId::Dil:
+            case Registers::Id::Dil:
                 return ReadRegister(hThread, UE_RDI, 1);
-            case RegisterId::R8b:
+            case Registers::Id::R8b:
                 return ReadRegister(hThread, UE_R8, 1);
-            case RegisterId::R9b:
+            case Registers::Id::R9b:
                 return ReadRegister(hThread, UE_R9, 1);
-            case RegisterId::R10b:
+            case Registers::Id::R10b:
                 return ReadRegister(hThread, UE_R10, 1);
-            case RegisterId::R11b:
+            case Registers::Id::R11b:
                 return ReadRegister(hThread, UE_R11, 1);
-            case RegisterId::R12b:
+            case Registers::Id::R12b:
                 return ReadRegister(hThread, UE_R12, 1);
-            case RegisterId::R13b:
+            case Registers::Id::R13b:
                 return ReadRegister(hThread, UE_R13, 1);
-            case RegisterId::R14b:
+            case Registers::Id::R14b:
                 return ReadRegister(hThread, UE_R14, 1);
-            case RegisterId::R15b:
+            case Registers::Id::R15b:
                 return ReadRegister(hThread, UE_R15, 1);
-            case RegisterId::Ax:
+            case Registers::Id::Ax:
                 return ReadRegister(hThread, UE_RAX, 2);
-            case RegisterId::Cx:
+            case Registers::Id::Cx:
                 return ReadRegister(hThread, UE_RCX, 2);
-            case RegisterId::Dx:
+            case Registers::Id::Dx:
                 return ReadRegister(hThread, UE_RDX, 2);
-            case RegisterId::Bx:
+            case Registers::Id::Bx:
                 return ReadRegister(hThread, UE_RBX, 2);
-            case RegisterId::Sp:
+            case Registers::Id::Sp:
                 return ReadRegister(hThread, UE_RSP, 2);
-            case RegisterId::Bp:
+            case Registers::Id::Bp:
                 return ReadRegister(hThread, UE_RBP, 2);
-            case RegisterId::Si:
+            case Registers::Id::Si:
                 return ReadRegister(hThread, UE_RSI, 2);
-            case RegisterId::Di:
+            case Registers::Id::Di:
                 return ReadRegister(hThread, UE_RDI, 2);
-            case RegisterId::R8w:
+            case Registers::Id::R8w:
                 return ReadRegister(hThread, UE_R8, 2);
-            case RegisterId::R9w:
+            case Registers::Id::R9w:
                 return ReadRegister(hThread, UE_R9, 2);
-            case RegisterId::R10w:
+            case Registers::Id::R10w:
                 return ReadRegister(hThread, UE_R10, 2);
-            case RegisterId::R11w:
+            case Registers::Id::R11w:
                 return ReadRegister(hThread, UE_R11, 2);
-            case RegisterId::R12w:
+            case Registers::Id::R12w:
                 return ReadRegister(hThread, UE_R12, 2);
-            case RegisterId::R13w:
+            case Registers::Id::R13w:
                 return ReadRegister(hThread, UE_R13, 2);
-            case RegisterId::R14w:
+            case Registers::Id::R14w:
                 return ReadRegister(hThread, UE_R14, 2);
-            case RegisterId::R15w:
+            case Registers::Id::R15w:
                 return ReadRegister(hThread, UE_R15, 2);
-            case RegisterId::Eax:
+            case Registers::Id::Eax:
                 return ReadRegister(hThread, UE_RAX, 4);
-            case RegisterId::Ecx:
+            case Registers::Id::Ecx:
                 return ReadRegister(hThread, UE_RCX, 4);
-            case RegisterId::Edx:
+            case Registers::Id::Edx:
                 return ReadRegister(hThread, UE_RDX, 4);
-            case RegisterId::Ebx:
+            case Registers::Id::Ebx:
                 return ReadRegister(hThread, UE_RBX, 4);
-            case RegisterId::Esp:
+            case Registers::Id::Esp:
                 return ReadRegister(hThread, UE_RSP, 4);
-            case RegisterId::Ebp:
+            case Registers::Id::Ebp:
                 return ReadRegister(hThread, UE_RBP, 4);
-            case RegisterId::Esi:
+            case Registers::Id::Esi:
                 return ReadRegister(hThread, UE_RSI, 4);
-            case RegisterId::Edi:
+            case Registers::Id::Edi:
                 return ReadRegister(hThread, UE_RDI, 4);
-            case RegisterId::R8d:
+            case Registers::Id::R8d:
                 return ReadRegister(hThread, UE_R8, 4);
-            case RegisterId::R9d:
+            case Registers::Id::R9d:
                 return ReadRegister(hThread, UE_R9, 4);
-            case RegisterId::R10d:
+            case Registers::Id::R10d:
                 return ReadRegister(hThread, UE_R10, 4);
-            case RegisterId::R11d:
+            case Registers::Id::R11d:
                 return ReadRegister(hThread, UE_R11, 4);
-            case RegisterId::R12d:
+            case Registers::Id::R12d:
                 return ReadRegister(hThread, UE_R12, 4);
-            case RegisterId::R13d:
+            case Registers::Id::R13d:
                 return ReadRegister(hThread, UE_R13, 4);
-            case RegisterId::R14d:
+            case Registers::Id::R14d:
                 return ReadRegister(hThread, UE_R14, 4);
-            case RegisterId::R15d:
+            case Registers::Id::R15d:
                 return ReadRegister(hThread, UE_R15, 4);
-            case RegisterId::Rax:
+            case Registers::Id::Rax:
                 return ReadRegister(hThread, UE_RAX, 8);
-            case RegisterId::Rcx:
+            case Registers::Id::Rcx:
                 return ReadRegister(hThread, UE_RCX, 8);
-            case RegisterId::Rdx:
+            case Registers::Id::Rdx:
                 return ReadRegister(hThread, UE_RDX, 8);
-            case RegisterId::Rbx:
+            case Registers::Id::Rbx:
                 return ReadRegister(hThread, UE_RBP, 8);
-            case RegisterId::Rsp:
+            case Registers::Id::Rsp:
                 return ReadRegister(hThread, UE_RSP, 8);
-            case RegisterId::Rbp:
+            case Registers::Id::Rbp:
                 return ReadRegister(hThread, UE_RBP, 8);
-            case RegisterId::Rsi:
+            case Registers::Id::Rsi:
                 return ReadRegister(hThread, UE_RSI, 8);
-            case RegisterId::Rdi:
+            case Registers::Id::Rdi:
                 return ReadRegister(hThread, UE_RDI, 8);
-            case RegisterId::R8:
+            case Registers::Id::R8:
                 return ReadRegister(hThread, UE_R8, 8);
-            case RegisterId::R9:
+            case Registers::Id::R9:
                 return ReadRegister(hThread, UE_R9, 8);
-            case RegisterId::R10:
+            case Registers::Id::R10:
                 return ReadRegister(hThread, UE_R10, 8);
-            case RegisterId::R11:
+            case Registers::Id::R11:
                 return ReadRegister(hThread, UE_R11, 8);
-            case RegisterId::R12:
+            case Registers::Id::R12:
                 return ReadRegister(hThread, UE_R12, 8);
-            case RegisterId::R13:
+            case Registers::Id::R13:
                 return ReadRegister(hThread, UE_R13, 8);
-            case RegisterId::R14:
+            case Registers::Id::R14:
                 return ReadRegister(hThread, UE_R14, 8);
-            case RegisterId::R15:
+            case Registers::Id::R15:
                 return ReadRegister(hThread, UE_R15, 8);
 #else
-            case RegisterId::Al:
+            case Registers::Id::Al:
                 return ReadRegister(hThread, UE_EAX, 1);
-            case RegisterId::Cl:
+            case Registers::Id::Cl:
                 return ReadRegister(hThread, UE_ECX, 1);
-            case RegisterId::Dl:
+            case Registers::Id::Dl:
                 return ReadRegister(hThread, UE_EDX, 1);
-            case RegisterId::Bl:
+            case Registers::Id::Bl:
                 return ReadRegister(hThread, UE_EBX, 1);
-            case RegisterId::Ah:
+            case Registers::Id::Ah:
                 return ReadRegister(hThread, UE_EAX, 1, 1);
-            case RegisterId::Ch:
+            case Registers::Id::Ch:
                 return ReadRegister(hThread, UE_ECX, 1, 1);
-            case RegisterId::Dh:
+            case Registers::Id::Dh:
                 return ReadRegister(hThread, UE_EDX, 1, 1);
-            case RegisterId::Bh:
+            case Registers::Id::Bh:
                 return ReadRegister(hThread, UE_EBX, 1, 1);
-            case RegisterId::Spl:
+            case Registers::Id::Spl:
                 return ReadRegister(hThread, UE_ESP, 1);
-            case RegisterId::Bpl:
+            case Registers::Id::Bpl:
                 return ReadRegister(hThread, UE_EBP, 1);
-            case RegisterId::Sil:
+            case Registers::Id::Sil:
                 return ReadRegister(hThread, UE_ESI, 1);
-            case RegisterId::Dil:
+            case Registers::Id::Dil:
                 return ReadRegister(hThread, UE_EDI, 1);
-            case RegisterId::Ax:
+            case Registers::Id::Ax:
                 return ReadRegister(hThread, UE_EAX, 2);
-            case RegisterId::Cx:
+            case Registers::Id::Cx:
                 return ReadRegister(hThread, UE_ECX, 2);
-            case RegisterId::Dx:
+            case Registers::Id::Dx:
                 return ReadRegister(hThread, UE_EDX, 2);
-            case RegisterId::Bx:
+            case Registers::Id::Bx:
                 return ReadRegister(hThread, UE_EBX, 2);
-            case RegisterId::Sp:
+            case Registers::Id::Sp:
                 return ReadRegister(hThread, UE_ESP, 2);
-            case RegisterId::Bp:
+            case Registers::Id::Bp:
                 return ReadRegister(hThread, UE_EBP, 2);
-            case RegisterId::Si:
+            case Registers::Id::Si:
                 return ReadRegister(hThread, UE_ESI, 2);
-            case RegisterId::Di:
+            case Registers::Id::Di:
                 return ReadRegister(hThread, UE_EDI, 2);
-            case RegisterId::Eax:
+            case Registers::Id::Eax:
                 return ReadRegister(hThread, UE_EAX, 4);
-            case RegisterId::Ecx:
+            case Registers::Id::Ecx:
                 return ReadRegister(hThread, UE_ECX, 4);
-            case RegisterId::Edx:
+            case Registers::Id::Edx:
                 return ReadRegister(hThread, UE_EDX, 4);
-            case RegisterId::Ebx:
+            case Registers::Id::Ebx:
                 return ReadRegister(hThread, UE_EBX, 4);
-            case RegisterId::Esp:
+            case Registers::Id::Esp:
                 return ReadRegister(hThread, UE_ESP, 4);
-            case RegisterId::Ebp:
+            case Registers::Id::Ebp:
                 return ReadRegister(hThread, UE_EBP, 4);
-            case RegisterId::Esi:
+            case Registers::Id::Esi:
                 return ReadRegister(hThread, UE_ESI, 4);
-            case RegisterId::Edi:
+            case Registers::Id::Edi:
                 return ReadRegister(hThread, UE_EDI, 4);
-            case RegisterId::Rax:
+            case Registers::Id::Rax:
                 return ReadRegister(hThread, UE_EAX, 8);
 #endif
-            case RegisterId::St0:
+            case Registers::Id::St0:
                 break;
-            case RegisterId::St1:
+            case Registers::Id::St1:
                 break;
-            case RegisterId::St2:
+            case Registers::Id::St2:
                 break;
-            case RegisterId::St3:
+            case Registers::Id::St3:
                 break;
-            case RegisterId::St4:
+            case Registers::Id::St4:
                 break;
-            case RegisterId::St5:
+            case Registers::Id::St5:
                 break;
-            case RegisterId::St6:
+            case Registers::Id::St6:
                 break;
-            case RegisterId::St7:
+            case Registers::Id::St7:
                 break;
-            case RegisterId::X87Control:
+            case Registers::Id::X87Control:
                 break;
-            case RegisterId::X87Status:
+            case Registers::Id::X87Status:
                 break;
-            case RegisterId::X87Tag:
+            case Registers::Id::X87Tag:
                 break;
-            case RegisterId::Mm0:
+            case Registers::Id::Mm0:
                 break;
-            case RegisterId::Mm1:
+            case Registers::Id::Mm1:
                 break;
-            case RegisterId::Mm2:
+            case Registers::Id::Mm2:
                 break;
-            case RegisterId::Mm3:
+            case Registers::Id::Mm3:
                 break;
-            case RegisterId::Mm4:
+            case Registers::Id::Mm4:
                 break;
-            case RegisterId::Mm5:
+            case Registers::Id::Mm5:
                 break;
-            case RegisterId::Mm6:
+            case Registers::Id::Mm6:
                 break;
-            case RegisterId::Mm7:
+            case Registers::Id::Mm7:
                 break;
-            case RegisterId::Xmm0:
+            case Registers::Id::Xmm0:
                 break;
-            case RegisterId::Xmm1:
+            case Registers::Id::Xmm1:
                 break;
-            case RegisterId::Xmm2:
+            case Registers::Id::Xmm2:
                 break;
-            case RegisterId::Xmm3:
+            case Registers::Id::Xmm3:
                 break;
-            case RegisterId::Xmm4:
+            case Registers::Id::Xmm4:
                 break;
-            case RegisterId::Xmm5:
+            case Registers::Id::Xmm5:
                 break;
-            case RegisterId::Xmm6:
+            case Registers::Id::Xmm6:
                 break;
-            case RegisterId::Xmm7:
+            case Registers::Id::Xmm7:
                 break;
-            case RegisterId::Xmm8:
+            case Registers::Id::Xmm8:
                 break;
-            case RegisterId::Xmm9:
+            case Registers::Id::Xmm9:
                 break;
-            case RegisterId::Xmm10:
+            case Registers::Id::Xmm10:
                 break;
-            case RegisterId::Xmm11:
+            case Registers::Id::Xmm11:
                 break;
-            case RegisterId::Xmm12:
+            case Registers::Id::Xmm12:
                 break;
-            case RegisterId::Xmm13:
+            case Registers::Id::Xmm13:
                 break;
-            case RegisterId::Xmm14:
+            case Registers::Id::Xmm14:
                 break;
-            case RegisterId::Xmm15:
+            case Registers::Id::Xmm15:
                 break;
-            case RegisterId::Xmm16:
+            case Registers::Id::Xmm16:
                 break;
-            case RegisterId::Xmm17:
+            case Registers::Id::Xmm17:
                 break;
-            case RegisterId::Xmm18:
+            case Registers::Id::Xmm18:
                 break;
-            case RegisterId::Xmm19:
+            case Registers::Id::Xmm19:
                 break;
-            case RegisterId::Xmm20:
+            case Registers::Id::Xmm20:
                 break;
-            case RegisterId::Xmm21:
+            case Registers::Id::Xmm21:
                 break;
-            case RegisterId::Xmm22:
+            case Registers::Id::Xmm22:
                 break;
-            case RegisterId::Xmm23:
+            case Registers::Id::Xmm23:
                 break;
-            case RegisterId::Xmm24:
+            case Registers::Id::Xmm24:
                 break;
-            case RegisterId::Xmm25:
+            case Registers::Id::Xmm25:
                 break;
-            case RegisterId::Xmm26:
+            case Registers::Id::Xmm26:
                 break;
-            case RegisterId::Xmm27:
+            case Registers::Id::Xmm27:
                 break;
-            case RegisterId::Xmm28:
+            case Registers::Id::Xmm28:
                 break;
-            case RegisterId::Xmm29:
+            case Registers::Id::Xmm29:
                 break;
-            case RegisterId::Xmm30:
+            case Registers::Id::Xmm30:
                 break;
-            case RegisterId::Xmm31:
+            case Registers::Id::Xmm31:
                 break;
-            case RegisterId::Ymm0:
+            case Registers::Id::Ymm0:
                 break;
-            case RegisterId::Ymm1:
+            case Registers::Id::Ymm1:
                 break;
-            case RegisterId::Ymm2:
+            case Registers::Id::Ymm2:
                 break;
-            case RegisterId::Ymm3:
+            case Registers::Id::Ymm3:
                 break;
-            case RegisterId::Ymm4:
+            case Registers::Id::Ymm4:
                 break;
-            case RegisterId::Ymm5:
+            case Registers::Id::Ymm5:
                 break;
-            case RegisterId::Ymm6:
+            case Registers::Id::Ymm6:
                 break;
-            case RegisterId::Ymm7:
+            case Registers::Id::Ymm7:
                 break;
-            case RegisterId::Ymm8:
+            case Registers::Id::Ymm8:
                 break;
-            case RegisterId::Ymm9:
+            case Registers::Id::Ymm9:
                 break;
-            case RegisterId::Ymm10:
+            case Registers::Id::Ymm10:
                 break;
-            case RegisterId::Ymm11:
+            case Registers::Id::Ymm11:
                 break;
-            case RegisterId::Ymm12:
+            case Registers::Id::Ymm12:
                 break;
-            case RegisterId::Ymm13:
+            case Registers::Id::Ymm13:
                 break;
-            case RegisterId::Ymm14:
+            case Registers::Id::Ymm14:
                 break;
-            case RegisterId::Ymm15:
+            case Registers::Id::Ymm15:
                 break;
-            case RegisterId::Ymm16:
+            case Registers::Id::Ymm16:
                 break;
-            case RegisterId::Ymm17:
+            case Registers::Id::Ymm17:
                 break;
-            case RegisterId::Ymm18:
+            case Registers::Id::Ymm18:
                 break;
-            case RegisterId::Ymm19:
+            case Registers::Id::Ymm19:
                 break;
-            case RegisterId::Ymm20:
+            case Registers::Id::Ymm20:
                 break;
-            case RegisterId::Ymm21:
+            case Registers::Id::Ymm21:
                 break;
-            case RegisterId::Ymm22:
+            case Registers::Id::Ymm22:
                 break;
-            case RegisterId::Ymm23:
+            case Registers::Id::Ymm23:
                 break;
-            case RegisterId::Ymm24:
+            case Registers::Id::Ymm24:
                 break;
-            case RegisterId::Ymm25:
+            case Registers::Id::Ymm25:
                 break;
-            case RegisterId::Ymm26:
+            case Registers::Id::Ymm26:
                 break;
-            case RegisterId::Ymm27:
+            case Registers::Id::Ymm27:
                 break;
-            case RegisterId::Ymm28:
+            case Registers::Id::Ymm28:
                 break;
-            case RegisterId::Ymm29:
+            case Registers::Id::Ymm29:
                 break;
-            case RegisterId::Ymm30:
+            case Registers::Id::Ymm30:
                 break;
-            case RegisterId::Ymm31:
+            case Registers::Id::Ymm31:
                 break;
-            case RegisterId::Zmm0:
+            case Registers::Id::Zmm0:
                 break;
-            case RegisterId::Zmm1:
+            case Registers::Id::Zmm1:
                 break;
-            case RegisterId::Zmm2:
+            case Registers::Id::Zmm2:
                 break;
-            case RegisterId::Zmm3:
+            case Registers::Id::Zmm3:
                 break;
-            case RegisterId::Zmm4:
+            case Registers::Id::Zmm4:
                 break;
-            case RegisterId::Zmm5:
+            case Registers::Id::Zmm5:
                 break;
-            case RegisterId::Zmm6:
+            case Registers::Id::Zmm6:
                 break;
-            case RegisterId::Zmm7:
+            case Registers::Id::Zmm7:
                 break;
-            case RegisterId::Zmm8:
+            case Registers::Id::Zmm8:
                 break;
-            case RegisterId::Zmm9:
+            case Registers::Id::Zmm9:
                 break;
-            case RegisterId::Zmm10:
+            case Registers::Id::Zmm10:
                 break;
-            case RegisterId::Zmm11:
+            case Registers::Id::Zmm11:
                 break;
-            case RegisterId::Zmm12:
+            case Registers::Id::Zmm12:
                 break;
-            case RegisterId::Zmm13:
+            case Registers::Id::Zmm13:
                 break;
-            case RegisterId::Zmm14:
+            case Registers::Id::Zmm14:
                 break;
-            case RegisterId::Zmm15:
+            case Registers::Id::Zmm15:
                 break;
-            case RegisterId::Zmm16:
+            case Registers::Id::Zmm16:
                 break;
-            case RegisterId::Zmm17:
+            case Registers::Id::Zmm17:
                 break;
-            case RegisterId::Zmm18:
+            case Registers::Id::Zmm18:
                 break;
-            case RegisterId::Zmm19:
+            case Registers::Id::Zmm19:
                 break;
-            case RegisterId::Zmm20:
+            case Registers::Id::Zmm20:
                 break;
-            case RegisterId::Zmm21:
+            case Registers::Id::Zmm21:
                 break;
-            case RegisterId::Zmm22:
+            case Registers::Id::Zmm22:
                 break;
-            case RegisterId::Zmm23:
+            case Registers::Id::Zmm23:
                 break;
-            case RegisterId::Zmm24:
+            case Registers::Id::Zmm24:
                 break;
-            case RegisterId::Zmm25:
+            case Registers::Id::Zmm25:
                 break;
-            case RegisterId::Zmm26:
+            case Registers::Id::Zmm26:
                 break;
-            case RegisterId::Zmm27:
+            case Registers::Id::Zmm27:
                 break;
-            case RegisterId::Zmm28:
+            case Registers::Id::Zmm28:
                 break;
-            case RegisterId::Zmm29:
+            case Registers::Id::Zmm29:
                 break;
-            case RegisterId::Zmm30:
+            case Registers::Id::Zmm30:
                 break;
-            case RegisterId::Zmm31:
+            case Registers::Id::Zmm31:
                 break;
 #ifdef _M_X64
-            case RegisterId::Flags:
+            case Registers::Id::Flags:
                 return ReadRegister(hThread, UE_RFLAGS, 2);
-            case RegisterId::EFlags:
+            case Registers::Id::EFlags:
                 return ReadRegister(hThread, UE_RFLAGS, 4);
-            case RegisterId::RFlags:
+            case Registers::Id::RFlags:
                 return ReadRegister(hThread, UE_RFLAGS, 8);
 #else
-            case RegisterId::Flags:
+            case Registers::Id::Flags:
                 return ReadRegister(hThread, UE_EFLAGS, 2);
-            case RegisterId::EFlags:
+            case Registers::Id::EFlags:
                 return ReadRegister(hThread, UE_EFLAGS, 4);
 #endif
 
 #ifdef _M_X64
-            case RegisterId::Ip:
+            case Registers::Id::Ip:
                 return ReadRegister(hThread, UE_RIP, 2);
-            case RegisterId::Eip:
+            case Registers::Id::Eip:
                 return ReadRegister(hThread, UE_RIP, 4);
-            case RegisterId::Rip:
+            case Registers::Id::Rip:
                 return ReadRegister(hThread, UE_RIP, 8);
 #else
-            case RegisterId::Ip:
+            case Registers::Id::Ip:
                 return ReadRegister(hThread, UE_EIP, 2);
-            case RegisterId::Eip:
+            case Registers::Id::Eip:
                 return ReadRegister(hThread, UE_EIP, 4);
 #endif
-            case RegisterId::Es:
+            case Registers::Id::Es:
                 return ReadRegister(hThread, UE_SEG_ES, 2);
-            case RegisterId::Cs:
+            case Registers::Id::Cs:
                 return ReadRegister(hThread, UE_SEG_CS, 2);
-            case RegisterId::Ss:
+            case Registers::Id::Ss:
                 return ReadRegister(hThread, UE_SEG_SS, 2);
-            case RegisterId::Ds:
+            case Registers::Id::Ds:
                 return ReadRegister(hThread, UE_SEG_DS, 2);
-            case RegisterId::Fs:
+            case Registers::Id::Fs:
                 return ReadRegister(hThread, UE_SEG_FS, 2);
-            case RegisterId::Gs:
+            case Registers::Id::Gs:
                 return ReadRegister(hThread, UE_SEG_GS, 2);
-            case RegisterId::Gdtr:
+            case Registers::Id::Gdtr:
                 break;
-            case RegisterId::Ldtr:
+            case Registers::Id::Ldtr:
                 break;
-            case RegisterId::Idtr:
+            case Registers::Id::Idtr:
                 break;
-            case RegisterId::Tr:
+            case Registers::Id::Tr:
                 break;
-            case RegisterId::Tr0:
+            case Registers::Id::Tr0:
                 break;
-            case RegisterId::Tr1:
+            case Registers::Id::Tr1:
                 break;
-            case RegisterId::Tr2:
+            case Registers::Id::Tr2:
                 break;
-            case RegisterId::Tr3:
+            case Registers::Id::Tr3:
                 break;
-            case RegisterId::Tr4:
+            case Registers::Id::Tr4:
                 break;
-            case RegisterId::Tr5:
+            case Registers::Id::Tr5:
                 break;
-            case RegisterId::Tr6:
+            case Registers::Id::Tr6:
                 break;
-            case RegisterId::Tr7:
+            case Registers::Id::Tr7:
                 break;
-            case RegisterId::Cr0:
+            case Registers::Id::Cr0:
                 break;
-            case RegisterId::Cr1:
+            case Registers::Id::Cr1:
                 break;
-            case RegisterId::Cr2:
+            case Registers::Id::Cr2:
                 break;
-            case RegisterId::Cr3:
+            case Registers::Id::Cr3:
                 break;
-            case RegisterId::Cr4:
+            case Registers::Id::Cr4:
                 break;
-            case RegisterId::Cr5:
+            case Registers::Id::Cr5:
                 break;
-            case RegisterId::Cr6:
+            case Registers::Id::Cr6:
                 break;
-            case RegisterId::Cr7:
+            case Registers::Id::Cr7:
                 break;
-            case RegisterId::Cr8:
+            case Registers::Id::Cr8:
                 break;
-            case RegisterId::Cr9:
+            case Registers::Id::Cr9:
                 break;
-            case RegisterId::Cr10:
+            case Registers::Id::Cr10:
                 break;
-            case RegisterId::Cr11:
+            case Registers::Id::Cr11:
                 break;
-            case RegisterId::Cr12:
+            case Registers::Id::Cr12:
                 break;
-            case RegisterId::Cr13:
+            case Registers::Id::Cr13:
                 break;
-            case RegisterId::Cr14:
+            case Registers::Id::Cr14:
                 break;
-            case RegisterId::Cr15:
+            case Registers::Id::Cr15:
                 break;
-            case RegisterId::Dr0:
+            case Registers::Id::Dr0:
                 break;
-            case RegisterId::Dr1:
+            case Registers::Id::Dr1:
                 break;
-            case RegisterId::Dr2:
+            case Registers::Id::Dr2:
                 break;
-            case RegisterId::Dr3:
+            case Registers::Id::Dr3:
                 break;
-            case RegisterId::Dr4:
+            case Registers::Id::Dr4:
                 break;
-            case RegisterId::Dr5:
+            case Registers::Id::Dr5:
                 break;
-            case RegisterId::Dr6:
+            case Registers::Id::Dr6:
                 break;
-            case RegisterId::Dr7:
+            case Registers::Id::Dr7:
                 break;
-            case RegisterId::Dr8:
+            case Registers::Id::Dr8:
                 break;
-            case RegisterId::Dr9:
+            case Registers::Id::Dr9:
                 break;
-            case RegisterId::Dr10:
+            case Registers::Id::Dr10:
                 break;
-            case RegisterId::Dr11:
+            case Registers::Id::Dr11:
                 break;
-            case RegisterId::Dr12:
+            case Registers::Id::Dr12:
                 break;
-            case RegisterId::Dr13:
+            case Registers::Id::Dr13:
                 break;
-            case RegisterId::Dr14:
+            case Registers::Id::Dr14:
                 break;
-            case RegisterId::Dr15:
+            case Registers::Id::Dr15:
                 break;
-            case RegisterId::K0:
+            case Registers::Id::K0:
                 break;
-            case RegisterId::K1:
+            case Registers::Id::K1:
                 break;
-            case RegisterId::K2:
+            case Registers::Id::K2:
                 break;
-            case RegisterId::K3:
+            case Registers::Id::K3:
                 break;
-            case RegisterId::K4:
+            case Registers::Id::K4:
                 break;
-            case RegisterId::K5:
+            case Registers::Id::K5:
                 break;
-            case RegisterId::K6:
+            case Registers::Id::K6:
                 break;
-            case RegisterId::K7:
+            case Registers::Id::K7:
                 break;
-            case RegisterId::Bnd0:
+            case Registers::Id::Bnd0:
                 break;
-            case RegisterId::Bnd1:
+            case Registers::Id::Bnd1:
                 break;
-            case RegisterId::Bnd2:
+            case Registers::Id::Bnd2:
                 break;
-            case RegisterId::Bnd3:
+            case Registers::Id::Bnd3:
                 break;
-            case RegisterId::BndCfg:
+            case Registers::Id::BndCfg:
                 break;
-            case RegisterId::BndStatus:
+            case Registers::Id::BndStatus:
                 break;
-            case RegisterId::Mxcsr:
+            case Registers::Id::Mxcsr:
                 break;
-            case RegisterId::Pkru:
+            case Registers::Id::Pkru:
                 break;
-            case RegisterId::Xcr0:
+            case Registers::Id::Xcr0:
                 break;
             default:
                 break;
@@ -780,593 +780,593 @@ namespace Dotx64Dbg::Native
             GuiUpdateRegisterView();
         }
 
-        static void SetRegisterData(System::UIntPtr hThread, RegisterId reg, array<System::Byte>^ data)
+        static void SetRegisterData(System::UIntPtr hThread, Registers::Id reg, array<System::Byte>^ data)
         {
             switch (reg)
             {
-            case RegisterId::None:
+            case Registers::Id::None:
                 return;
 #ifdef _M_X64
-            case RegisterId::Al:
+            case Registers::Id::Al:
                 return WriteRegister(hThread, data, UE_RAX, 1);
-            case RegisterId::Cl:
+            case Registers::Id::Cl:
                 return WriteRegister(hThread, data, UE_RCX, 1);
-            case RegisterId::Dl:
+            case Registers::Id::Dl:
                 return WriteRegister(hThread, data, UE_RDX, 1);
-            case RegisterId::Bl:
+            case Registers::Id::Bl:
                 return WriteRegister(hThread, data, UE_RBX, 1);
-            case RegisterId::Ah:
+            case Registers::Id::Ah:
                 return WriteRegister(hThread, data, UE_RAX, 1, 1);
-            case RegisterId::Ch:
+            case Registers::Id::Ch:
                 return WriteRegister(hThread, data, UE_RCX, 1, 1);
-            case RegisterId::Dh:
+            case Registers::Id::Dh:
                 return WriteRegister(hThread, data, UE_RDX, 1, 1);
-            case RegisterId::Bh:
+            case Registers::Id::Bh:
                 return WriteRegister(hThread, data, UE_RBX, 1, 1);
-            case RegisterId::Spl:
+            case Registers::Id::Spl:
                 return WriteRegister(hThread, data, UE_RSP, 1);
-            case RegisterId::Bpl:
+            case Registers::Id::Bpl:
                 return WriteRegister(hThread, data, UE_RBP, 1);
-            case RegisterId::Sil:
+            case Registers::Id::Sil:
                 return WriteRegister(hThread, data, UE_RSI, 1);
-            case RegisterId::Dil:
+            case Registers::Id::Dil:
                 return WriteRegister(hThread, data, UE_RDI, 1);
-            case RegisterId::R8b:
+            case Registers::Id::R8b:
                 return WriteRegister(hThread, data, UE_R8, 1);
-            case RegisterId::R9b:
+            case Registers::Id::R9b:
                 return WriteRegister(hThread, data, UE_R9, 1);
-            case RegisterId::R10b:
+            case Registers::Id::R10b:
                 return WriteRegister(hThread, data, UE_R10, 1);
-            case RegisterId::R11b:
+            case Registers::Id::R11b:
                 return WriteRegister(hThread, data, UE_R11, 1);
-            case RegisterId::R12b:
+            case Registers::Id::R12b:
                 return WriteRegister(hThread, data, UE_R12, 1);
-            case RegisterId::R13b:
+            case Registers::Id::R13b:
                 return WriteRegister(hThread, data, UE_R13, 1);
-            case RegisterId::R14b:
+            case Registers::Id::R14b:
                 return WriteRegister(hThread, data, UE_R14, 1);
-            case RegisterId::R15b:
+            case Registers::Id::R15b:
                 return WriteRegister(hThread, data, UE_R15, 1);
-            case RegisterId::Ax:
+            case Registers::Id::Ax:
                 return WriteRegister(hThread, data, UE_RAX, 2);
-            case RegisterId::Cx:
+            case Registers::Id::Cx:
                 return WriteRegister(hThread, data, UE_RCX, 2);
-            case RegisterId::Dx:
+            case Registers::Id::Dx:
                 return WriteRegister(hThread, data, UE_RDX, 2);
-            case RegisterId::Bx:
+            case Registers::Id::Bx:
                 return WriteRegister(hThread, data, UE_RBX, 2);
-            case RegisterId::Sp:
+            case Registers::Id::Sp:
                 return WriteRegister(hThread, data, UE_RSP, 2);
-            case RegisterId::Bp:
+            case Registers::Id::Bp:
                 return WriteRegister(hThread, data, UE_RBP, 2);
-            case RegisterId::Si:
+            case Registers::Id::Si:
                 return WriteRegister(hThread, data, UE_RSI, 2);
-            case RegisterId::Di:
+            case Registers::Id::Di:
                 return WriteRegister(hThread, data, UE_RDI, 2);
-            case RegisterId::R8w:
+            case Registers::Id::R8w:
                 return WriteRegister(hThread, data, UE_R8, 2);
-            case RegisterId::R9w:
+            case Registers::Id::R9w:
                 return WriteRegister(hThread, data, UE_R9, 2);
-            case RegisterId::R10w:
+            case Registers::Id::R10w:
                 return WriteRegister(hThread, data, UE_R10, 2);
-            case RegisterId::R11w:
+            case Registers::Id::R11w:
                 return WriteRegister(hThread, data, UE_R11, 2);
-            case RegisterId::R12w:
+            case Registers::Id::R12w:
                 return WriteRegister(hThread, data, UE_R12, 2);
-            case RegisterId::R13w:
+            case Registers::Id::R13w:
                 return WriteRegister(hThread, data, UE_R13, 2);
-            case RegisterId::R14w:
+            case Registers::Id::R14w:
                 return WriteRegister(hThread, data, UE_R14, 2);
-            case RegisterId::R15w:
+            case Registers::Id::R15w:
                 return WriteRegister(hThread, data, UE_R15, 2);
-            case RegisterId::Eax:
+            case Registers::Id::Eax:
                 return WriteRegister(hThread, data, UE_RAX, 4);
-            case RegisterId::Ecx:
+            case Registers::Id::Ecx:
                 return WriteRegister(hThread, data, UE_RCX, 4);
-            case RegisterId::Edx:
+            case Registers::Id::Edx:
                 return WriteRegister(hThread, data, UE_RDX, 4);
-            case RegisterId::Ebx:
+            case Registers::Id::Ebx:
                 return WriteRegister(hThread, data, UE_RBX, 4);
-            case RegisterId::Esp:
+            case Registers::Id::Esp:
                 return WriteRegister(hThread, data, UE_RSP, 4);
-            case RegisterId::Ebp:
+            case Registers::Id::Ebp:
                 return WriteRegister(hThread, data, UE_RBP, 4);
-            case RegisterId::Esi:
+            case Registers::Id::Esi:
                 return WriteRegister(hThread, data, UE_RSI, 4);
-            case RegisterId::Edi:
+            case Registers::Id::Edi:
                 return WriteRegister(hThread, data, UE_RDI, 4);
-            case RegisterId::R8d:
+            case Registers::Id::R8d:
                 return WriteRegister(hThread, data, UE_R8, 4);
-            case RegisterId::R9d:
+            case Registers::Id::R9d:
                 return WriteRegister(hThread, data, UE_R9, 4);
-            case RegisterId::R10d:
+            case Registers::Id::R10d:
                 return WriteRegister(hThread, data, UE_R10, 4);
-            case RegisterId::R11d:
+            case Registers::Id::R11d:
                 return WriteRegister(hThread, data, UE_R11, 4);
-            case RegisterId::R12d:
+            case Registers::Id::R12d:
                 return WriteRegister(hThread, data, UE_R12, 4);
-            case RegisterId::R13d:
+            case Registers::Id::R13d:
                 return WriteRegister(hThread, data, UE_R13, 4);
-            case RegisterId::R14d:
+            case Registers::Id::R14d:
                 return WriteRegister(hThread, data, UE_R14, 4);
-            case RegisterId::R15d:
+            case Registers::Id::R15d:
                 return WriteRegister(hThread, data, UE_R15, 4);
-            case RegisterId::Rax:
+            case Registers::Id::Rax:
                 return WriteRegister(hThread, data, UE_RAX, 8);
-            case RegisterId::Rcx:
+            case Registers::Id::Rcx:
                 return WriteRegister(hThread, data, UE_RCX, 8);
-            case RegisterId::Rdx:
+            case Registers::Id::Rdx:
                 return WriteRegister(hThread, data, UE_RDX, 8);
-            case RegisterId::Rbx:
+            case Registers::Id::Rbx:
                 return WriteRegister(hThread, data, UE_RBP, 8);
-            case RegisterId::Rsp:
+            case Registers::Id::Rsp:
                 return WriteRegister(hThread, data, UE_RSP, 8);
-            case RegisterId::Rbp:
+            case Registers::Id::Rbp:
                 return WriteRegister(hThread, data, UE_RBP, 8);
-            case RegisterId::Rsi:
+            case Registers::Id::Rsi:
                 return WriteRegister(hThread, data, UE_RSI, 8);
-            case RegisterId::Rdi:
+            case Registers::Id::Rdi:
                 return WriteRegister(hThread, data, UE_RDI, 8);
-            case RegisterId::R8:
+            case Registers::Id::R8:
                 return WriteRegister(hThread, data, UE_R8, 8);
-            case RegisterId::R9:
+            case Registers::Id::R9:
                 return WriteRegister(hThread, data, UE_R9, 8);
-            case RegisterId::R10:
+            case Registers::Id::R10:
                 return WriteRegister(hThread, data, UE_R10, 8);
-            case RegisterId::R11:
+            case Registers::Id::R11:
                 return WriteRegister(hThread, data, UE_R11, 8);
-            case RegisterId::R12:
+            case Registers::Id::R12:
                 return WriteRegister(hThread, data, UE_R12, 8);
-            case RegisterId::R13:
+            case Registers::Id::R13:
                 return WriteRegister(hThread, data, UE_R13, 8);
-            case RegisterId::R14:
+            case Registers::Id::R14:
                 return WriteRegister(hThread, data, UE_R14, 8);
-            case RegisterId::R15:
+            case Registers::Id::R15:
                 return WriteRegister(hThread, data, UE_R15, 8);
 #else
-            case RegisterId::Al:
+            case Registers::Id::Al:
                 return WriteRegister(hThread, data, UE_EAX, 1);
-            case RegisterId::Cl:
+            case Registers::Id::Cl:
                 return WriteRegister(hThread, data, UE_ECX, 1);
-            case RegisterId::Dl:
+            case Registers::Id::Dl:
                 return WriteRegister(hThread, data, UE_EDX, 1);
-            case RegisterId::Bl:
+            case Registers::Id::Bl:
                 return WriteRegister(hThread, data, UE_EBX, 1);
-            case RegisterId::Ah:
+            case Registers::Id::Ah:
                 return WriteRegister(hThread, data, UE_EAX, 1, 1);
-            case RegisterId::Ch:
+            case Registers::Id::Ch:
                 return WriteRegister(hThread, data, UE_ECX, 1, 1);
-            case RegisterId::Dh:
+            case Registers::Id::Dh:
                 return WriteRegister(hThread, data, UE_EDX, 1, 1);
-            case RegisterId::Bh:
+            case Registers::Id::Bh:
                 return WriteRegister(hThread, data, UE_EBX, 1, 1);
-            case RegisterId::Spl:
+            case Registers::Id::Spl:
                 return WriteRegister(hThread, data, UE_ESP, 1);
-            case RegisterId::Bpl:
+            case Registers::Id::Bpl:
                 return WriteRegister(hThread, data, UE_EBP, 1);
-            case RegisterId::Sil:
+            case Registers::Id::Sil:
                 return WriteRegister(hThread, data, UE_ESI, 1);
-            case RegisterId::Dil:
+            case Registers::Id::Dil:
                 return WriteRegister(hThread, data, UE_EDI, 1);
-            case RegisterId::Ax:
+            case Registers::Id::Ax:
                 return WriteRegister(hThread, data, UE_EAX, 2);
-            case RegisterId::Cx:
+            case Registers::Id::Cx:
                 return WriteRegister(hThread, data, UE_ECX, 2);
-            case RegisterId::Dx:
+            case Registers::Id::Dx:
                 return WriteRegister(hThread, data, UE_EDX, 2);
-            case RegisterId::Bx:
+            case Registers::Id::Bx:
                 return WriteRegister(hThread, data, UE_EBX, 2);
-            case RegisterId::Sp:
+            case Registers::Id::Sp:
                 return WriteRegister(hThread, data, UE_ESP, 2);
-            case RegisterId::Bp:
+            case Registers::Id::Bp:
                 return WriteRegister(hThread, data, UE_EBP, 2);
-            case RegisterId::Si:
+            case Registers::Id::Si:
                 return WriteRegister(hThread, data, UE_ESI, 2);
-            case RegisterId::Di:
+            case Registers::Id::Di:
                 return WriteRegister(hThread, data, UE_EDI, 2);
-            case RegisterId::Eax:
+            case Registers::Id::Eax:
                 return WriteRegister(hThread, data, UE_EAX, 4);
-            case RegisterId::Ecx:
+            case Registers::Id::Ecx:
                 return WriteRegister(hThread, data, UE_ECX, 4);
-            case RegisterId::Edx:
+            case Registers::Id::Edx:
                 return WriteRegister(hThread, data, UE_EDX, 4);
-            case RegisterId::Ebx:
+            case Registers::Id::Ebx:
                 return WriteRegister(hThread, data, UE_EBX, 4);
-            case RegisterId::Esp:
+            case Registers::Id::Esp:
                 return WriteRegister(hThread, data, UE_ESP, 4);
-            case RegisterId::Ebp:
+            case Registers::Id::Ebp:
                 return WriteRegister(hThread, data, UE_EBP, 4);
-            case RegisterId::Esi:
+            case Registers::Id::Esi:
                 return WriteRegister(hThread, data, UE_ESI, 4);
-            case RegisterId::Edi:
+            case Registers::Id::Edi:
                 return WriteRegister(hThread, data, UE_EDI, 4);
 #endif
-            case RegisterId::St0:
+            case Registers::Id::St0:
                 break;
-            case RegisterId::St1:
+            case Registers::Id::St1:
                 break;
-            case RegisterId::St2:
+            case Registers::Id::St2:
                 break;
-            case RegisterId::St3:
+            case Registers::Id::St3:
                 break;
-            case RegisterId::St4:
+            case Registers::Id::St4:
                 break;
-            case RegisterId::St5:
+            case Registers::Id::St5:
                 break;
-            case RegisterId::St6:
+            case Registers::Id::St6:
                 break;
-            case RegisterId::St7:
+            case Registers::Id::St7:
                 break;
-            case RegisterId::X87Control:
+            case Registers::Id::X87Control:
                 break;
-            case RegisterId::X87Status:
+            case Registers::Id::X87Status:
                 break;
-            case RegisterId::X87Tag:
+            case Registers::Id::X87Tag:
                 break;
-            case RegisterId::Mm0:
+            case Registers::Id::Mm0:
                 break;
-            case RegisterId::Mm1:
+            case Registers::Id::Mm1:
                 break;
-            case RegisterId::Mm2:
+            case Registers::Id::Mm2:
                 break;
-            case RegisterId::Mm3:
+            case Registers::Id::Mm3:
                 break;
-            case RegisterId::Mm4:
+            case Registers::Id::Mm4:
                 break;
-            case RegisterId::Mm5:
+            case Registers::Id::Mm5:
                 break;
-            case RegisterId::Mm6:
+            case Registers::Id::Mm6:
                 break;
-            case RegisterId::Mm7:
+            case Registers::Id::Mm7:
                 break;
-            case RegisterId::Xmm0:
+            case Registers::Id::Xmm0:
                 break;
-            case RegisterId::Xmm1:
+            case Registers::Id::Xmm1:
                 break;
-            case RegisterId::Xmm2:
+            case Registers::Id::Xmm2:
                 break;
-            case RegisterId::Xmm3:
+            case Registers::Id::Xmm3:
                 break;
-            case RegisterId::Xmm4:
+            case Registers::Id::Xmm4:
                 break;
-            case RegisterId::Xmm5:
+            case Registers::Id::Xmm5:
                 break;
-            case RegisterId::Xmm6:
+            case Registers::Id::Xmm6:
                 break;
-            case RegisterId::Xmm7:
+            case Registers::Id::Xmm7:
                 break;
-            case RegisterId::Xmm8:
+            case Registers::Id::Xmm8:
                 break;
-            case RegisterId::Xmm9:
+            case Registers::Id::Xmm9:
                 break;
-            case RegisterId::Xmm10:
+            case Registers::Id::Xmm10:
                 break;
-            case RegisterId::Xmm11:
+            case Registers::Id::Xmm11:
                 break;
-            case RegisterId::Xmm12:
+            case Registers::Id::Xmm12:
                 break;
-            case RegisterId::Xmm13:
+            case Registers::Id::Xmm13:
                 break;
-            case RegisterId::Xmm14:
+            case Registers::Id::Xmm14:
                 break;
-            case RegisterId::Xmm15:
+            case Registers::Id::Xmm15:
                 break;
-            case RegisterId::Xmm16:
+            case Registers::Id::Xmm16:
                 break;
-            case RegisterId::Xmm17:
+            case Registers::Id::Xmm17:
                 break;
-            case RegisterId::Xmm18:
+            case Registers::Id::Xmm18:
                 break;
-            case RegisterId::Xmm19:
+            case Registers::Id::Xmm19:
                 break;
-            case RegisterId::Xmm20:
+            case Registers::Id::Xmm20:
                 break;
-            case RegisterId::Xmm21:
+            case Registers::Id::Xmm21:
                 break;
-            case RegisterId::Xmm22:
+            case Registers::Id::Xmm22:
                 break;
-            case RegisterId::Xmm23:
+            case Registers::Id::Xmm23:
                 break;
-            case RegisterId::Xmm24:
+            case Registers::Id::Xmm24:
                 break;
-            case RegisterId::Xmm25:
+            case Registers::Id::Xmm25:
                 break;
-            case RegisterId::Xmm26:
+            case Registers::Id::Xmm26:
                 break;
-            case RegisterId::Xmm27:
+            case Registers::Id::Xmm27:
                 break;
-            case RegisterId::Xmm28:
+            case Registers::Id::Xmm28:
                 break;
-            case RegisterId::Xmm29:
+            case Registers::Id::Xmm29:
                 break;
-            case RegisterId::Xmm30:
+            case Registers::Id::Xmm30:
                 break;
-            case RegisterId::Xmm31:
+            case Registers::Id::Xmm31:
                 break;
-            case RegisterId::Ymm0:
+            case Registers::Id::Ymm0:
                 break;
-            case RegisterId::Ymm1:
+            case Registers::Id::Ymm1:
                 break;
-            case RegisterId::Ymm2:
+            case Registers::Id::Ymm2:
                 break;
-            case RegisterId::Ymm3:
+            case Registers::Id::Ymm3:
                 break;
-            case RegisterId::Ymm4:
+            case Registers::Id::Ymm4:
                 break;
-            case RegisterId::Ymm5:
+            case Registers::Id::Ymm5:
                 break;
-            case RegisterId::Ymm6:
+            case Registers::Id::Ymm6:
                 break;
-            case RegisterId::Ymm7:
+            case Registers::Id::Ymm7:
                 break;
-            case RegisterId::Ymm8:
+            case Registers::Id::Ymm8:
                 break;
-            case RegisterId::Ymm9:
+            case Registers::Id::Ymm9:
                 break;
-            case RegisterId::Ymm10:
+            case Registers::Id::Ymm10:
                 break;
-            case RegisterId::Ymm11:
+            case Registers::Id::Ymm11:
                 break;
-            case RegisterId::Ymm12:
+            case Registers::Id::Ymm12:
                 break;
-            case RegisterId::Ymm13:
+            case Registers::Id::Ymm13:
                 break;
-            case RegisterId::Ymm14:
+            case Registers::Id::Ymm14:
                 break;
-            case RegisterId::Ymm15:
+            case Registers::Id::Ymm15:
                 break;
-            case RegisterId::Ymm16:
+            case Registers::Id::Ymm16:
                 break;
-            case RegisterId::Ymm17:
+            case Registers::Id::Ymm17:
                 break;
-            case RegisterId::Ymm18:
+            case Registers::Id::Ymm18:
                 break;
-            case RegisterId::Ymm19:
+            case Registers::Id::Ymm19:
                 break;
-            case RegisterId::Ymm20:
+            case Registers::Id::Ymm20:
                 break;
-            case RegisterId::Ymm21:
+            case Registers::Id::Ymm21:
                 break;
-            case RegisterId::Ymm22:
+            case Registers::Id::Ymm22:
                 break;
-            case RegisterId::Ymm23:
+            case Registers::Id::Ymm23:
                 break;
-            case RegisterId::Ymm24:
+            case Registers::Id::Ymm24:
                 break;
-            case RegisterId::Ymm25:
+            case Registers::Id::Ymm25:
                 break;
-            case RegisterId::Ymm26:
+            case Registers::Id::Ymm26:
                 break;
-            case RegisterId::Ymm27:
+            case Registers::Id::Ymm27:
                 break;
-            case RegisterId::Ymm28:
+            case Registers::Id::Ymm28:
                 break;
-            case RegisterId::Ymm29:
+            case Registers::Id::Ymm29:
                 break;
-            case RegisterId::Ymm30:
+            case Registers::Id::Ymm30:
                 break;
-            case RegisterId::Ymm31:
+            case Registers::Id::Ymm31:
                 break;
-            case RegisterId::Zmm0:
+            case Registers::Id::Zmm0:
                 break;
-            case RegisterId::Zmm1:
+            case Registers::Id::Zmm1:
                 break;
-            case RegisterId::Zmm2:
+            case Registers::Id::Zmm2:
                 break;
-            case RegisterId::Zmm3:
+            case Registers::Id::Zmm3:
                 break;
-            case RegisterId::Zmm4:
+            case Registers::Id::Zmm4:
                 break;
-            case RegisterId::Zmm5:
+            case Registers::Id::Zmm5:
                 break;
-            case RegisterId::Zmm6:
+            case Registers::Id::Zmm6:
                 break;
-            case RegisterId::Zmm7:
+            case Registers::Id::Zmm7:
                 break;
-            case RegisterId::Zmm8:
+            case Registers::Id::Zmm8:
                 break;
-            case RegisterId::Zmm9:
+            case Registers::Id::Zmm9:
                 break;
-            case RegisterId::Zmm10:
+            case Registers::Id::Zmm10:
                 break;
-            case RegisterId::Zmm11:
+            case Registers::Id::Zmm11:
                 break;
-            case RegisterId::Zmm12:
+            case Registers::Id::Zmm12:
                 break;
-            case RegisterId::Zmm13:
+            case Registers::Id::Zmm13:
                 break;
-            case RegisterId::Zmm14:
+            case Registers::Id::Zmm14:
                 break;
-            case RegisterId::Zmm15:
+            case Registers::Id::Zmm15:
                 break;
-            case RegisterId::Zmm16:
+            case Registers::Id::Zmm16:
                 break;
-            case RegisterId::Zmm17:
+            case Registers::Id::Zmm17:
                 break;
-            case RegisterId::Zmm18:
+            case Registers::Id::Zmm18:
                 break;
-            case RegisterId::Zmm19:
+            case Registers::Id::Zmm19:
                 break;
-            case RegisterId::Zmm20:
+            case Registers::Id::Zmm20:
                 break;
-            case RegisterId::Zmm21:
+            case Registers::Id::Zmm21:
                 break;
-            case RegisterId::Zmm22:
+            case Registers::Id::Zmm22:
                 break;
-            case RegisterId::Zmm23:
+            case Registers::Id::Zmm23:
                 break;
-            case RegisterId::Zmm24:
+            case Registers::Id::Zmm24:
                 break;
-            case RegisterId::Zmm25:
+            case Registers::Id::Zmm25:
                 break;
-            case RegisterId::Zmm26:
+            case Registers::Id::Zmm26:
                 break;
-            case RegisterId::Zmm27:
+            case Registers::Id::Zmm27:
                 break;
-            case RegisterId::Zmm28:
+            case Registers::Id::Zmm28:
                 break;
-            case RegisterId::Zmm29:
+            case Registers::Id::Zmm29:
                 break;
-            case RegisterId::Zmm30:
+            case Registers::Id::Zmm30:
                 break;
-            case RegisterId::Zmm31:
+            case Registers::Id::Zmm31:
                 break;
 #ifdef _M_X64
-            case RegisterId::Flags:
+            case Registers::Id::Flags:
                 return WriteRegister(hThread, data, UE_RFLAGS, 2);
-            case RegisterId::EFlags:
+            case Registers::Id::EFlags:
                 return WriteRegister(hThread, data, UE_RFLAGS, 4);
-            case RegisterId::RFlags:
+            case Registers::Id::RFlags:
                 return WriteRegister(hThread, data, UE_RFLAGS, 8);
-            case RegisterId::Ip:
+            case Registers::Id::Ip:
                 return WriteRegister(hThread, data, UE_RIP, 2);
-            case RegisterId::Eip:
+            case Registers::Id::Eip:
                 return WriteRegister(hThread, data, UE_RIP, 4);
-            case RegisterId::Rip:
+            case Registers::Id::Rip:
                 return WriteRegister(hThread, data, UE_RIP, 8);
 #else
-            case RegisterId::Flags:
+            case Registers::Id::Flags:
                 return WriteRegister(hThread, data, UE_EFLAGS, 2);
-            case RegisterId::EFlags:
+            case Registers::Id::EFlags:
                 return WriteRegister(hThread, data, UE_EFLAGS, 4);
-            case RegisterId::Ip:
+            case Registers::Id::Ip:
                 return WriteRegister(hThread, data, UE_EIP, 2);
-            case RegisterId::Eip:
+            case Registers::Id::Eip:
                 return WriteRegister(hThread, data, UE_EIP, 4);
 #endif
-            case RegisterId::Es:
+            case Registers::Id::Es:
                 return WriteRegister(hThread, data, UE_SEG_ES, 2);
-            case RegisterId::Cs:
+            case Registers::Id::Cs:
                 return WriteRegister(hThread, data, UE_SEG_CS, 2);
-            case RegisterId::Ss:
+            case Registers::Id::Ss:
                 return WriteRegister(hThread, data, UE_SEG_SS, 2);
-            case RegisterId::Ds:
+            case Registers::Id::Ds:
                 return WriteRegister(hThread, data, UE_SEG_DS, 2);
-            case RegisterId::Fs:
+            case Registers::Id::Fs:
                 return WriteRegister(hThread, data, UE_SEG_FS, 2);
-            case RegisterId::Gs:
+            case Registers::Id::Gs:
                 return WriteRegister(hThread, data, UE_SEG_GS, 2);
-            case RegisterId::Gdtr:
+            case Registers::Id::Gdtr:
                 break;
-            case RegisterId::Ldtr:
+            case Registers::Id::Ldtr:
                 break;
-            case RegisterId::Idtr:
+            case Registers::Id::Idtr:
                 break;
-            case RegisterId::Tr:
+            case Registers::Id::Tr:
                 break;
-            case RegisterId::Tr0:
+            case Registers::Id::Tr0:
                 break;
-            case RegisterId::Tr1:
+            case Registers::Id::Tr1:
                 break;
-            case RegisterId::Tr2:
+            case Registers::Id::Tr2:
                 break;
-            case RegisterId::Tr3:
+            case Registers::Id::Tr3:
                 break;
-            case RegisterId::Tr4:
+            case Registers::Id::Tr4:
                 break;
-            case RegisterId::Tr5:
+            case Registers::Id::Tr5:
                 break;
-            case RegisterId::Tr6:
+            case Registers::Id::Tr6:
                 break;
-            case RegisterId::Tr7:
+            case Registers::Id::Tr7:
                 break;
-            case RegisterId::Cr0:
+            case Registers::Id::Cr0:
                 break;
-            case RegisterId::Cr1:
+            case Registers::Id::Cr1:
                 break;
-            case RegisterId::Cr2:
+            case Registers::Id::Cr2:
                 break;
-            case RegisterId::Cr3:
+            case Registers::Id::Cr3:
                 break;
-            case RegisterId::Cr4:
+            case Registers::Id::Cr4:
                 break;
-            case RegisterId::Cr5:
+            case Registers::Id::Cr5:
                 break;
-            case RegisterId::Cr6:
+            case Registers::Id::Cr6:
                 break;
-            case RegisterId::Cr7:
+            case Registers::Id::Cr7:
                 break;
-            case RegisterId::Cr8:
+            case Registers::Id::Cr8:
                 break;
-            case RegisterId::Cr9:
+            case Registers::Id::Cr9:
                 break;
-            case RegisterId::Cr10:
+            case Registers::Id::Cr10:
                 break;
-            case RegisterId::Cr11:
+            case Registers::Id::Cr11:
                 break;
-            case RegisterId::Cr12:
+            case Registers::Id::Cr12:
                 break;
-            case RegisterId::Cr13:
+            case Registers::Id::Cr13:
                 break;
-            case RegisterId::Cr14:
+            case Registers::Id::Cr14:
                 break;
-            case RegisterId::Cr15:
+            case Registers::Id::Cr15:
                 break;
-            case RegisterId::Dr0:
+            case Registers::Id::Dr0:
                 break;
-            case RegisterId::Dr1:
+            case Registers::Id::Dr1:
                 break;
-            case RegisterId::Dr2:
+            case Registers::Id::Dr2:
                 break;
-            case RegisterId::Dr3:
+            case Registers::Id::Dr3:
                 break;
-            case RegisterId::Dr4:
+            case Registers::Id::Dr4:
                 break;
-            case RegisterId::Dr5:
+            case Registers::Id::Dr5:
                 break;
-            case RegisterId::Dr6:
+            case Registers::Id::Dr6:
                 break;
-            case RegisterId::Dr7:
+            case Registers::Id::Dr7:
                 break;
-            case RegisterId::Dr8:
+            case Registers::Id::Dr8:
                 break;
-            case RegisterId::Dr9:
+            case Registers::Id::Dr9:
                 break;
-            case RegisterId::Dr10:
+            case Registers::Id::Dr10:
                 break;
-            case RegisterId::Dr11:
+            case Registers::Id::Dr11:
                 break;
-            case RegisterId::Dr12:
+            case Registers::Id::Dr12:
                 break;
-            case RegisterId::Dr13:
+            case Registers::Id::Dr13:
                 break;
-            case RegisterId::Dr14:
+            case Registers::Id::Dr14:
                 break;
-            case RegisterId::Dr15:
+            case Registers::Id::Dr15:
                 break;
-            case RegisterId::K0:
+            case Registers::Id::K0:
                 break;
-            case RegisterId::K1:
+            case Registers::Id::K1:
                 break;
-            case RegisterId::K2:
+            case Registers::Id::K2:
                 break;
-            case RegisterId::K3:
+            case Registers::Id::K3:
                 break;
-            case RegisterId::K4:
+            case Registers::Id::K4:
                 break;
-            case RegisterId::K5:
+            case Registers::Id::K5:
                 break;
-            case RegisterId::K6:
+            case Registers::Id::K6:
                 break;
-            case RegisterId::K7:
+            case Registers::Id::K7:
                 break;
-            case RegisterId::Bnd0:
+            case Registers::Id::Bnd0:
                 break;
-            case RegisterId::Bnd1:
+            case Registers::Id::Bnd1:
                 break;
-            case RegisterId::Bnd2:
+            case Registers::Id::Bnd2:
                 break;
-            case RegisterId::Bnd3:
+            case Registers::Id::Bnd3:
                 break;
-            case RegisterId::BndCfg:
+            case Registers::Id::BndCfg:
                 break;
-            case RegisterId::BndStatus:
+            case Registers::Id::BndStatus:
                 break;
-            case RegisterId::Mxcsr:
+            case Registers::Id::Mxcsr:
                 break;
-            case RegisterId::Pkru:
+            case Registers::Id::Pkru:
                 break;
-            case RegisterId::Xcr0:
+            case Registers::Id::Xcr0:
                 break;
             default:
                 break;

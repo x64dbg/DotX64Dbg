@@ -8,542 +8,542 @@
 namespace Dotx64Dbg
 {
 
-    constexpr RegisterId convertZydisRegister(ZydisRegister reg)
+    constexpr Registers::Id convertZydisRegister(ZydisRegister reg)
     {
         switch (reg)
         {
         case ZYDIS_REGISTER_NONE:
-            return RegisterId::None;
+            return Registers::Id::None;
         case ZYDIS_REGISTER_AL:
-            return RegisterId::Al;
+            return Registers::Id::Al;
         case ZYDIS_REGISTER_CL:
-            return RegisterId::Cl;
+            return Registers::Id::Cl;
         case ZYDIS_REGISTER_DL:
-            return RegisterId::Dl;
+            return Registers::Id::Dl;
         case ZYDIS_REGISTER_BL:
-            return RegisterId::Bl;
+            return Registers::Id::Bl;
         case ZYDIS_REGISTER_AH:
-            return RegisterId::Ah;
+            return Registers::Id::Ah;
         case ZYDIS_REGISTER_CH:
-            return RegisterId::Ch;
+            return Registers::Id::Ch;
         case ZYDIS_REGISTER_DH:
-            return RegisterId::Dh;
+            return Registers::Id::Dh;
         case ZYDIS_REGISTER_BH:
-            return RegisterId::Bh;
+            return Registers::Id::Bh;
         case ZYDIS_REGISTER_SPL:
-            return RegisterId::Spl;
+            return Registers::Id::Spl;
         case ZYDIS_REGISTER_BPL:
-            return RegisterId::Bpl;
+            return Registers::Id::Bpl;
         case ZYDIS_REGISTER_SIL:
-            return RegisterId::Sil;
+            return Registers::Id::Sil;
         case ZYDIS_REGISTER_DIL:
-            return RegisterId::Dil;
+            return Registers::Id::Dil;
         case ZYDIS_REGISTER_R8B:
-            return RegisterId::R8b;
+            return Registers::Id::R8b;
         case ZYDIS_REGISTER_R9B:
-            return RegisterId::R9b;
+            return Registers::Id::R9b;
         case ZYDIS_REGISTER_R10B:
-            return RegisterId::R10b;
+            return Registers::Id::R10b;
         case ZYDIS_REGISTER_R11B:
-            return RegisterId::R11b;
+            return Registers::Id::R11b;
         case ZYDIS_REGISTER_R12B:
-            return RegisterId::R12b;
+            return Registers::Id::R12b;
         case ZYDIS_REGISTER_R13B:
-            return RegisterId::R13b;
+            return Registers::Id::R13b;
         case ZYDIS_REGISTER_R14B:
-            return RegisterId::R14b;
+            return Registers::Id::R14b;
         case ZYDIS_REGISTER_R15B:
-            return RegisterId::R15b;
+            return Registers::Id::R15b;
         case ZYDIS_REGISTER_AX:
-            return RegisterId::Ax;
+            return Registers::Id::Ax;
         case ZYDIS_REGISTER_CX:
-            return RegisterId::Cx;
+            return Registers::Id::Cx;
         case ZYDIS_REGISTER_DX:
-            return RegisterId::Dx;
+            return Registers::Id::Dx;
         case ZYDIS_REGISTER_BX:
-            return RegisterId::Bx;
+            return Registers::Id::Bx;
         case ZYDIS_REGISTER_SP:
-            return RegisterId::Sp;
+            return Registers::Id::Sp;
         case ZYDIS_REGISTER_BP:
-            return RegisterId::Bp;
+            return Registers::Id::Bp;
         case ZYDIS_REGISTER_SI:
-            return RegisterId::Si;
+            return Registers::Id::Si;
         case ZYDIS_REGISTER_DI:
-            return RegisterId::Di;
+            return Registers::Id::Di;
         case ZYDIS_REGISTER_R8W:
-            return RegisterId::R8w;
+            return Registers::Id::R8w;
         case ZYDIS_REGISTER_R9W:
-            return RegisterId::R9w;
+            return Registers::Id::R9w;
         case ZYDIS_REGISTER_R10W:
-            return RegisterId::R10w;
+            return Registers::Id::R10w;
         case ZYDIS_REGISTER_R11W:
-            return RegisterId::R11w;
+            return Registers::Id::R11w;
         case ZYDIS_REGISTER_R12W:
-            return RegisterId::R12w;
+            return Registers::Id::R12w;
         case ZYDIS_REGISTER_R13W:
-            return RegisterId::R13w;
+            return Registers::Id::R13w;
         case ZYDIS_REGISTER_R14W:
-            return RegisterId::R14w;
+            return Registers::Id::R14w;
         case ZYDIS_REGISTER_R15W:
-            return RegisterId::R15w;
+            return Registers::Id::R15w;
         case ZYDIS_REGISTER_EAX:
-            return RegisterId::Eax;
+            return Registers::Id::Eax;
         case ZYDIS_REGISTER_ECX:
-            return RegisterId::Ecx;
+            return Registers::Id::Ecx;
         case ZYDIS_REGISTER_EDX:
-            return RegisterId::Edx;
+            return Registers::Id::Edx;
         case ZYDIS_REGISTER_EBX:
-            return RegisterId::Ebx;
+            return Registers::Id::Ebx;
         case ZYDIS_REGISTER_ESP:
-            return RegisterId::Esp;
+            return Registers::Id::Esp;
         case ZYDIS_REGISTER_EBP:
-            return RegisterId::Ebp;
+            return Registers::Id::Ebp;
         case ZYDIS_REGISTER_ESI:
-            return RegisterId::Esi;
+            return Registers::Id::Esi;
         case ZYDIS_REGISTER_EDI:
-            return RegisterId::Edi;
+            return Registers::Id::Edi;
         case ZYDIS_REGISTER_R8D:
-            return RegisterId::R8d;
+            return Registers::Id::R8d;
         case ZYDIS_REGISTER_R9D:
-            return RegisterId::R9d;
+            return Registers::Id::R9d;
         case ZYDIS_REGISTER_R10D:
-            return RegisterId::R10d;
+            return Registers::Id::R10d;
         case ZYDIS_REGISTER_R11D:
-            return RegisterId::R11d;
+            return Registers::Id::R11d;
         case ZYDIS_REGISTER_R12D:
-            return RegisterId::R12d;
+            return Registers::Id::R12d;
         case ZYDIS_REGISTER_R13D:
-            return RegisterId::R13d;
+            return Registers::Id::R13d;
         case ZYDIS_REGISTER_R14D:
-            return RegisterId::R14d;
+            return Registers::Id::R14d;
         case ZYDIS_REGISTER_R15D:
-            return RegisterId::R15d;
+            return Registers::Id::R15d;
         case ZYDIS_REGISTER_RAX:
-            return RegisterId::Rax;
+            return Registers::Id::Rax;
         case ZYDIS_REGISTER_RCX:
-            return RegisterId::Rcx;
+            return Registers::Id::Rcx;
         case ZYDIS_REGISTER_RDX:
-            return RegisterId::Rdx;
+            return Registers::Id::Rdx;
         case ZYDIS_REGISTER_RBX:
-            return RegisterId::Rbx;
+            return Registers::Id::Rbx;
         case ZYDIS_REGISTER_RSP:
-            return RegisterId::Rsp;
+            return Registers::Id::Rsp;
         case ZYDIS_REGISTER_RBP:
-            return RegisterId::Rbp;
+            return Registers::Id::Rbp;
         case ZYDIS_REGISTER_RSI:
-            return RegisterId::Rsi;
+            return Registers::Id::Rsi;
         case ZYDIS_REGISTER_RDI:
-            return RegisterId::Rdi;
+            return Registers::Id::Rdi;
         case ZYDIS_REGISTER_R8:
-            return RegisterId::R8;
+            return Registers::Id::R8;
         case ZYDIS_REGISTER_R9:
-            return RegisterId::R9;
+            return Registers::Id::R9;
         case ZYDIS_REGISTER_R10:
-            return RegisterId::R10;
+            return Registers::Id::R10;
         case ZYDIS_REGISTER_R11:
-            return RegisterId::R11;
+            return Registers::Id::R11;
         case ZYDIS_REGISTER_R12:
-            return RegisterId::R12;
+            return Registers::Id::R12;
         case ZYDIS_REGISTER_R13:
-            return RegisterId::R13;
+            return Registers::Id::R13;
         case ZYDIS_REGISTER_R14:
-            return RegisterId::R14;
+            return Registers::Id::R14;
         case ZYDIS_REGISTER_R15:
-            return RegisterId::R15;
+            return Registers::Id::R15;
         case ZYDIS_REGISTER_ST0:
-            return RegisterId::St0;
+            return Registers::Id::St0;
         case ZYDIS_REGISTER_ST1:
-            return RegisterId::St1;
+            return Registers::Id::St1;
         case ZYDIS_REGISTER_ST2:
-            return RegisterId::St2;
+            return Registers::Id::St2;
         case ZYDIS_REGISTER_ST3:
-            return RegisterId::St3;
+            return Registers::Id::St3;
         case ZYDIS_REGISTER_ST4:
-            return RegisterId::St4;
+            return Registers::Id::St4;
         case ZYDIS_REGISTER_ST5:
-            return RegisterId::St5;
+            return Registers::Id::St5;
         case ZYDIS_REGISTER_ST6:
-            return RegisterId::St6;
+            return Registers::Id::St6;
         case ZYDIS_REGISTER_ST7:
-            return RegisterId::St7;
+            return Registers::Id::St7;
         case ZYDIS_REGISTER_X87CONTROL:
-            return RegisterId::X87Control;
+            return Registers::Id::X87Control;
         case ZYDIS_REGISTER_X87STATUS:
-            return RegisterId::X87Status;
+            return Registers::Id::X87Status;
         case ZYDIS_REGISTER_X87TAG:
-            return RegisterId::X87Tag;
+            return Registers::Id::X87Tag;
         case ZYDIS_REGISTER_MM0:
-            return RegisterId::Mm0;
+            return Registers::Id::Mm0;
         case ZYDIS_REGISTER_MM1:
-            return RegisterId::Mm1;
+            return Registers::Id::Mm1;
         case ZYDIS_REGISTER_MM2:
-            return RegisterId::Mm2;
+            return Registers::Id::Mm2;
         case ZYDIS_REGISTER_MM3:
-            return RegisterId::Mm3;
+            return Registers::Id::Mm3;
         case ZYDIS_REGISTER_MM4:
-            return RegisterId::Mm4;
+            return Registers::Id::Mm4;
         case ZYDIS_REGISTER_MM5:
-            return RegisterId::Mm5;
+            return Registers::Id::Mm5;
         case ZYDIS_REGISTER_MM6:
-            return RegisterId::Mm6;
+            return Registers::Id::Mm6;
         case ZYDIS_REGISTER_MM7:
-            return RegisterId::Mm7;
+            return Registers::Id::Mm7;
         case ZYDIS_REGISTER_XMM0:
-            return RegisterId::Xmm0;
+            return Registers::Id::Xmm0;
         case ZYDIS_REGISTER_XMM1:
-            return RegisterId::Xmm1;
+            return Registers::Id::Xmm1;
         case ZYDIS_REGISTER_XMM2:
-            return RegisterId::Xmm2;
+            return Registers::Id::Xmm2;
         case ZYDIS_REGISTER_XMM3:
-            return RegisterId::Xmm3;
+            return Registers::Id::Xmm3;
         case ZYDIS_REGISTER_XMM4:
-            return RegisterId::Xmm4;
+            return Registers::Id::Xmm4;
         case ZYDIS_REGISTER_XMM5:
-            return RegisterId::Xmm5;
+            return Registers::Id::Xmm5;
         case ZYDIS_REGISTER_XMM6:
-            return RegisterId::Xmm6;
+            return Registers::Id::Xmm6;
         case ZYDIS_REGISTER_XMM7:
-            return RegisterId::Xmm7;
+            return Registers::Id::Xmm7;
         case ZYDIS_REGISTER_XMM8:
-            return RegisterId::Xmm8;
+            return Registers::Id::Xmm8;
         case ZYDIS_REGISTER_XMM9:
-            return RegisterId::Xmm9;
+            return Registers::Id::Xmm9;
         case ZYDIS_REGISTER_XMM10:
-            return RegisterId::Xmm10;
+            return Registers::Id::Xmm10;
         case ZYDIS_REGISTER_XMM11:
-            return RegisterId::Xmm11;
+            return Registers::Id::Xmm11;
         case ZYDIS_REGISTER_XMM12:
-            return RegisterId::Xmm12;
+            return Registers::Id::Xmm12;
         case ZYDIS_REGISTER_XMM13:
-            return RegisterId::Xmm13;
+            return Registers::Id::Xmm13;
         case ZYDIS_REGISTER_XMM14:
-            return RegisterId::Xmm14;
+            return Registers::Id::Xmm14;
         case ZYDIS_REGISTER_XMM15:
-            return RegisterId::Xmm15;
+            return Registers::Id::Xmm15;
         case ZYDIS_REGISTER_XMM16:
-            return RegisterId::Xmm16;
+            return Registers::Id::Xmm16;
         case ZYDIS_REGISTER_XMM17:
-            return RegisterId::Xmm17;
+            return Registers::Id::Xmm17;
         case ZYDIS_REGISTER_XMM18:
-            return RegisterId::Xmm18;
+            return Registers::Id::Xmm18;
         case ZYDIS_REGISTER_XMM19:
-            return RegisterId::Xmm19;
+            return Registers::Id::Xmm19;
         case ZYDIS_REGISTER_XMM20:
-            return RegisterId::Xmm20;
+            return Registers::Id::Xmm20;
         case ZYDIS_REGISTER_XMM21:
-            return RegisterId::Xmm21;
+            return Registers::Id::Xmm21;
         case ZYDIS_REGISTER_XMM22:
-            return RegisterId::Xmm22;
+            return Registers::Id::Xmm22;
         case ZYDIS_REGISTER_XMM23:
-            return RegisterId::Xmm23;
+            return Registers::Id::Xmm23;
         case ZYDIS_REGISTER_XMM24:
-            return RegisterId::Xmm24;
+            return Registers::Id::Xmm24;
         case ZYDIS_REGISTER_XMM25:
-            return RegisterId::Xmm25;
+            return Registers::Id::Xmm25;
         case ZYDIS_REGISTER_XMM26:
-            return RegisterId::Xmm26;
+            return Registers::Id::Xmm26;
         case ZYDIS_REGISTER_XMM27:
-            return RegisterId::Xmm27;
+            return Registers::Id::Xmm27;
         case ZYDIS_REGISTER_XMM28:
-            return RegisterId::Xmm28;
+            return Registers::Id::Xmm28;
         case ZYDIS_REGISTER_XMM29:
-            return RegisterId::Xmm29;
+            return Registers::Id::Xmm29;
         case ZYDIS_REGISTER_XMM30:
-            return RegisterId::Xmm30;
+            return Registers::Id::Xmm30;
         case ZYDIS_REGISTER_XMM31:
-            return RegisterId::Xmm31;
+            return Registers::Id::Xmm31;
         case ZYDIS_REGISTER_YMM0:
-            return RegisterId::Ymm0;
+            return Registers::Id::Ymm0;
         case ZYDIS_REGISTER_YMM1:
-            return RegisterId::Ymm1;
+            return Registers::Id::Ymm1;
         case ZYDIS_REGISTER_YMM2:
-            return RegisterId::Ymm2;
+            return Registers::Id::Ymm2;
         case ZYDIS_REGISTER_YMM3:
-            return RegisterId::Ymm3;
+            return Registers::Id::Ymm3;
         case ZYDIS_REGISTER_YMM4:
-            return RegisterId::Ymm4;
+            return Registers::Id::Ymm4;
         case ZYDIS_REGISTER_YMM5:
-            return RegisterId::Ymm5;
+            return Registers::Id::Ymm5;
         case ZYDIS_REGISTER_YMM6:
-            return RegisterId::Ymm6;
+            return Registers::Id::Ymm6;
         case ZYDIS_REGISTER_YMM7:
-            return RegisterId::Ymm7;
+            return Registers::Id::Ymm7;
         case ZYDIS_REGISTER_YMM8:
-            return RegisterId::Ymm8;
+            return Registers::Id::Ymm8;
         case ZYDIS_REGISTER_YMM9:
-            return RegisterId::Ymm9;
+            return Registers::Id::Ymm9;
         case ZYDIS_REGISTER_YMM10:
-            return RegisterId::Ymm10;
+            return Registers::Id::Ymm10;
         case ZYDIS_REGISTER_YMM11:
-            return RegisterId::Ymm11;
+            return Registers::Id::Ymm11;
         case ZYDIS_REGISTER_YMM12:
-            return RegisterId::Ymm12;
+            return Registers::Id::Ymm12;
         case ZYDIS_REGISTER_YMM13:
-            return RegisterId::Ymm13;
+            return Registers::Id::Ymm13;
         case ZYDIS_REGISTER_YMM14:
-            return RegisterId::Ymm14;
+            return Registers::Id::Ymm14;
         case ZYDIS_REGISTER_YMM15:
-            return RegisterId::Ymm15;
+            return Registers::Id::Ymm15;
         case ZYDIS_REGISTER_YMM16:
-            return RegisterId::Ymm16;
+            return Registers::Id::Ymm16;
         case ZYDIS_REGISTER_YMM17:
-            return RegisterId::Ymm17;
+            return Registers::Id::Ymm17;
         case ZYDIS_REGISTER_YMM18:
-            return RegisterId::Ymm18;
+            return Registers::Id::Ymm18;
         case ZYDIS_REGISTER_YMM19:
-            return RegisterId::Ymm19;
+            return Registers::Id::Ymm19;
         case ZYDIS_REGISTER_YMM20:
-            return RegisterId::Ymm20;
+            return Registers::Id::Ymm20;
         case ZYDIS_REGISTER_YMM21:
-            return RegisterId::Ymm21;
+            return Registers::Id::Ymm21;
         case ZYDIS_REGISTER_YMM22:
-            return RegisterId::Ymm22;
+            return Registers::Id::Ymm22;
         case ZYDIS_REGISTER_YMM23:
-            return RegisterId::Ymm23;
+            return Registers::Id::Ymm23;
         case ZYDIS_REGISTER_YMM24:
-            return RegisterId::Ymm24;
+            return Registers::Id::Ymm24;
         case ZYDIS_REGISTER_YMM25:
-            return RegisterId::Ymm25;
+            return Registers::Id::Ymm25;
         case ZYDIS_REGISTER_YMM26:
-            return RegisterId::Ymm26;
+            return Registers::Id::Ymm26;
         case ZYDIS_REGISTER_YMM27:
-            return RegisterId::Ymm27;
+            return Registers::Id::Ymm27;
         case ZYDIS_REGISTER_YMM28:
-            return RegisterId::Ymm28;
+            return Registers::Id::Ymm28;
         case ZYDIS_REGISTER_YMM29:
-            return RegisterId::Ymm29;
+            return Registers::Id::Ymm29;
         case ZYDIS_REGISTER_YMM30:
-            return RegisterId::Ymm30;
+            return Registers::Id::Ymm30;
         case ZYDIS_REGISTER_YMM31:
-            return RegisterId::Ymm31;
+            return Registers::Id::Ymm31;
         case ZYDIS_REGISTER_ZMM0:
-            return RegisterId::Zmm0;
+            return Registers::Id::Zmm0;
         case ZYDIS_REGISTER_ZMM1:
-            return RegisterId::Zmm1;
+            return Registers::Id::Zmm1;
         case ZYDIS_REGISTER_ZMM2:
-            return RegisterId::Zmm2;
+            return Registers::Id::Zmm2;
         case ZYDIS_REGISTER_ZMM3:
-            return RegisterId::Zmm3;
+            return Registers::Id::Zmm3;
         case ZYDIS_REGISTER_ZMM4:
-            return RegisterId::Zmm4;
+            return Registers::Id::Zmm4;
         case ZYDIS_REGISTER_ZMM5:
-            return RegisterId::Zmm5;
+            return Registers::Id::Zmm5;
         case ZYDIS_REGISTER_ZMM6:
-            return RegisterId::Zmm6;
+            return Registers::Id::Zmm6;
         case ZYDIS_REGISTER_ZMM7:
-            return RegisterId::Zmm7;
+            return Registers::Id::Zmm7;
         case ZYDIS_REGISTER_ZMM8:
-            return RegisterId::Zmm8;
+            return Registers::Id::Zmm8;
         case ZYDIS_REGISTER_ZMM9:
-            return RegisterId::Zmm9;
+            return Registers::Id::Zmm9;
         case ZYDIS_REGISTER_ZMM10:
-            return RegisterId::Zmm10;
+            return Registers::Id::Zmm10;
         case ZYDIS_REGISTER_ZMM11:
-            return RegisterId::Zmm11;
+            return Registers::Id::Zmm11;
         case ZYDIS_REGISTER_ZMM12:
-            return RegisterId::Zmm12;
+            return Registers::Id::Zmm12;
         case ZYDIS_REGISTER_ZMM13:
-            return RegisterId::Zmm13;
+            return Registers::Id::Zmm13;
         case ZYDIS_REGISTER_ZMM14:
-            return RegisterId::Zmm14;
+            return Registers::Id::Zmm14;
         case ZYDIS_REGISTER_ZMM15:
-            return RegisterId::Zmm15;
+            return Registers::Id::Zmm15;
         case ZYDIS_REGISTER_ZMM16:
-            return RegisterId::Zmm16;
+            return Registers::Id::Zmm16;
         case ZYDIS_REGISTER_ZMM17:
-            return RegisterId::Zmm17;
+            return Registers::Id::Zmm17;
         case ZYDIS_REGISTER_ZMM18:
-            return RegisterId::Zmm18;
+            return Registers::Id::Zmm18;
         case ZYDIS_REGISTER_ZMM19:
-            return RegisterId::Zmm19;
+            return Registers::Id::Zmm19;
         case ZYDIS_REGISTER_ZMM20:
-            return RegisterId::Zmm20;
+            return Registers::Id::Zmm20;
         case ZYDIS_REGISTER_ZMM21:
-            return RegisterId::Zmm21;
+            return Registers::Id::Zmm21;
         case ZYDIS_REGISTER_ZMM22:
-            return RegisterId::Zmm22;
+            return Registers::Id::Zmm22;
         case ZYDIS_REGISTER_ZMM23:
-            return RegisterId::Zmm23;
+            return Registers::Id::Zmm23;
         case ZYDIS_REGISTER_ZMM24:
-            return RegisterId::Zmm24;
+            return Registers::Id::Zmm24;
         case ZYDIS_REGISTER_ZMM25:
-            return RegisterId::Zmm25;
+            return Registers::Id::Zmm25;
         case ZYDIS_REGISTER_ZMM26:
-            return RegisterId::Zmm26;
+            return Registers::Id::Zmm26;
         case ZYDIS_REGISTER_ZMM27:
-            return RegisterId::Zmm27;
+            return Registers::Id::Zmm27;
         case ZYDIS_REGISTER_ZMM28:
-            return RegisterId::Zmm28;
+            return Registers::Id::Zmm28;
         case ZYDIS_REGISTER_ZMM29:
-            return RegisterId::Zmm29;
+            return Registers::Id::Zmm29;
         case ZYDIS_REGISTER_ZMM30:
-            return RegisterId::Zmm30;
+            return Registers::Id::Zmm30;
         case ZYDIS_REGISTER_ZMM31:
-            return RegisterId::Zmm31;
+            return Registers::Id::Zmm31;
         case ZYDIS_REGISTER_TMM0:
-            return RegisterId::Tmm0;
+            return Registers::Id::Tmm0;
         case ZYDIS_REGISTER_TMM1:
-            return RegisterId::Tmm1;
+            return Registers::Id::Tmm1;
         case ZYDIS_REGISTER_TMM2:
-            return RegisterId::Tmm2;
+            return Registers::Id::Tmm2;
         case ZYDIS_REGISTER_TMM3:
-            return RegisterId::Tmm3;
+            return Registers::Id::Tmm3;
         case ZYDIS_REGISTER_TMM4:
-            return RegisterId::Tmm4;
+            return Registers::Id::Tmm4;
         case ZYDIS_REGISTER_TMM5:
-            return RegisterId::Tmm5;
+            return Registers::Id::Tmm5;
         case ZYDIS_REGISTER_TMM6:
-            return RegisterId::Tmm6;
+            return Registers::Id::Tmm6;
         case ZYDIS_REGISTER_TMM7:
-            return RegisterId::Tmm7;
+            return Registers::Id::Tmm7;
         case ZYDIS_REGISTER_FLAGS:
-            return RegisterId::Flags;
+            return Registers::Id::Flags;
         case ZYDIS_REGISTER_EFLAGS:
-            return RegisterId::EFlags;
+            return Registers::Id::EFlags;
         case ZYDIS_REGISTER_RFLAGS:
-            return RegisterId::RFlags;
+            return Registers::Id::RFlags;
         case ZYDIS_REGISTER_IP:
-            return RegisterId::Ip;
+            return Registers::Id::Ip;
         case ZYDIS_REGISTER_EIP:
-            return RegisterId::Eip;
+            return Registers::Id::Eip;
         case ZYDIS_REGISTER_RIP:
-            return RegisterId::Rip;
+            return Registers::Id::Rip;
         case ZYDIS_REGISTER_ES:
-            return RegisterId::Es;
+            return Registers::Id::Es;
         case ZYDIS_REGISTER_CS:
-            return RegisterId::Cs;
+            return Registers::Id::Cs;
         case ZYDIS_REGISTER_SS:
-            return RegisterId::Ss;
+            return Registers::Id::Ss;
         case ZYDIS_REGISTER_DS:
-            return RegisterId::Ds;
+            return Registers::Id::Ds;
         case ZYDIS_REGISTER_FS:
-            return RegisterId::Fs;
+            return Registers::Id::Fs;
         case ZYDIS_REGISTER_GS:
-            return RegisterId::Gs;
+            return Registers::Id::Gs;
         case ZYDIS_REGISTER_GDTR:
-            return RegisterId::Gdtr;
+            return Registers::Id::Gdtr;
         case ZYDIS_REGISTER_LDTR:
-            return RegisterId::Ldtr;
+            return Registers::Id::Ldtr;
         case ZYDIS_REGISTER_IDTR:
-            return RegisterId::Idtr;
+            return Registers::Id::Idtr;
         case ZYDIS_REGISTER_TR:
-            return RegisterId::Tr;
+            return Registers::Id::Tr;
         case ZYDIS_REGISTER_TR0:
-            return RegisterId::Tr0;
+            return Registers::Id::Tr0;
         case ZYDIS_REGISTER_TR1:
-            return RegisterId::Tr1;
+            return Registers::Id::Tr1;
         case ZYDIS_REGISTER_TR2:
-            return RegisterId::Tr2;
+            return Registers::Id::Tr2;
         case ZYDIS_REGISTER_TR3:
-            return RegisterId::Tr3;
+            return Registers::Id::Tr3;
         case ZYDIS_REGISTER_TR4:
-            return RegisterId::Tr4;
+            return Registers::Id::Tr4;
         case ZYDIS_REGISTER_TR5:
-            return RegisterId::Tr5;
+            return Registers::Id::Tr5;
         case ZYDIS_REGISTER_TR6:
-            return RegisterId::Tr6;
+            return Registers::Id::Tr6;
         case ZYDIS_REGISTER_TR7:
-            return RegisterId::Tr7;
+            return Registers::Id::Tr7;
         case ZYDIS_REGISTER_CR0:
-            return RegisterId::Cr0;
+            return Registers::Id::Cr0;
         case ZYDIS_REGISTER_CR1:
-            return RegisterId::Cr1;
+            return Registers::Id::Cr1;
         case ZYDIS_REGISTER_CR2:
-            return RegisterId::Cr2;
+            return Registers::Id::Cr2;
         case ZYDIS_REGISTER_CR3:
-            return RegisterId::Cr3;
+            return Registers::Id::Cr3;
         case ZYDIS_REGISTER_CR4:
-            return RegisterId::Cr4;
+            return Registers::Id::Cr4;
         case ZYDIS_REGISTER_CR5:
-            return RegisterId::Cr5;
+            return Registers::Id::Cr5;
         case ZYDIS_REGISTER_CR6:
-            return RegisterId::Cr6;
+            return Registers::Id::Cr6;
         case ZYDIS_REGISTER_CR7:
-            return RegisterId::Cr7;
+            return Registers::Id::Cr7;
         case ZYDIS_REGISTER_CR8:
-            return RegisterId::Cr8;
+            return Registers::Id::Cr8;
         case ZYDIS_REGISTER_CR9:
-            return RegisterId::Cr9;
+            return Registers::Id::Cr9;
         case ZYDIS_REGISTER_CR10:
-            return RegisterId::Cr10;
+            return Registers::Id::Cr10;
         case ZYDIS_REGISTER_CR11:
-            return RegisterId::Cr11;
+            return Registers::Id::Cr11;
         case ZYDIS_REGISTER_CR12:
-            return RegisterId::Cr12;
+            return Registers::Id::Cr12;
         case ZYDIS_REGISTER_CR13:
-            return RegisterId::Cr13;
+            return Registers::Id::Cr13;
         case ZYDIS_REGISTER_CR14:
-            return RegisterId::Cr14;
+            return Registers::Id::Cr14;
         case ZYDIS_REGISTER_CR15:
-            return RegisterId::Cr15;
+            return Registers::Id::Cr15;
         case ZYDIS_REGISTER_DR0:
-            return RegisterId::Dr0;
+            return Registers::Id::Dr0;
         case ZYDIS_REGISTER_DR1:
-            return RegisterId::Dr1;
+            return Registers::Id::Dr1;
         case ZYDIS_REGISTER_DR2:
-            return RegisterId::Dr2;
+            return Registers::Id::Dr2;
         case ZYDIS_REGISTER_DR3:
-            return RegisterId::Dr3;
+            return Registers::Id::Dr3;
         case ZYDIS_REGISTER_DR4:
-            return RegisterId::Dr4;
+            return Registers::Id::Dr4;
         case ZYDIS_REGISTER_DR5:
-            return RegisterId::Dr5;
+            return Registers::Id::Dr5;
         case ZYDIS_REGISTER_DR6:
-            return RegisterId::Dr6;
+            return Registers::Id::Dr6;
         case ZYDIS_REGISTER_DR7:
-            return RegisterId::Dr7;
+            return Registers::Id::Dr7;
         case ZYDIS_REGISTER_DR8:
-            return RegisterId::Dr8;
+            return Registers::Id::Dr8;
         case ZYDIS_REGISTER_DR9:
-            return RegisterId::Dr9;
+            return Registers::Id::Dr9;
         case ZYDIS_REGISTER_DR10:
-            return RegisterId::Dr10;
+            return Registers::Id::Dr10;
         case ZYDIS_REGISTER_DR11:
-            return RegisterId::Dr11;
+            return Registers::Id::Dr11;
         case ZYDIS_REGISTER_DR12:
-            return RegisterId::Dr12;
+            return Registers::Id::Dr12;
         case ZYDIS_REGISTER_DR13:
-            return RegisterId::Dr13;
+            return Registers::Id::Dr13;
         case ZYDIS_REGISTER_DR14:
-            return RegisterId::Dr14;
+            return Registers::Id::Dr14;
         case ZYDIS_REGISTER_DR15:
-            return RegisterId::Dr15;
+            return Registers::Id::Dr15;
         case ZYDIS_REGISTER_K0:
-            return RegisterId::K0;
+            return Registers::Id::K0;
         case ZYDIS_REGISTER_K1:
-            return RegisterId::K1;
+            return Registers::Id::K1;
         case ZYDIS_REGISTER_K2:
-            return RegisterId::K2;
+            return Registers::Id::K2;
         case ZYDIS_REGISTER_K3:
-            return RegisterId::K3;
+            return Registers::Id::K3;
         case ZYDIS_REGISTER_K4:
-            return RegisterId::K4;
+            return Registers::Id::K4;
         case ZYDIS_REGISTER_K5:
-            return RegisterId::K5;
+            return Registers::Id::K5;
         case ZYDIS_REGISTER_K6:
-            return RegisterId::K6;
+            return Registers::Id::K6;
         case ZYDIS_REGISTER_K7:
-            return RegisterId::K7;
+            return Registers::Id::K7;
         case ZYDIS_REGISTER_BND0:
-            return RegisterId::Bnd0;
+            return Registers::Id::Bnd0;
         case ZYDIS_REGISTER_BND1:
-            return RegisterId::Bnd1;
+            return Registers::Id::Bnd1;
         case ZYDIS_REGISTER_BND2:
-            return RegisterId::Bnd2;
+            return Registers::Id::Bnd2;
         case ZYDIS_REGISTER_BND3:
-            return RegisterId::Bnd3;
+            return Registers::Id::Bnd3;
         case ZYDIS_REGISTER_BNDCFG:
-            return RegisterId::BndCfg;
+            return Registers::Id::BndCfg;
         case ZYDIS_REGISTER_BNDSTATUS:
-            return RegisterId::BndStatus;
+            return Registers::Id::BndStatus;
         case ZYDIS_REGISTER_MXCSR:
-            return RegisterId::Mxcsr;
+            return Registers::Id::Mxcsr;
         case ZYDIS_REGISTER_PKRU:
-            return RegisterId::Pkru;
+            return Registers::Id::Pkru;
         case ZYDIS_REGISTER_XCR0:
-            return RegisterId::Xcr0;
+            return Registers::Id::Xcr0;
         }
-        return RegisterId::Invalid;
+        return Registers::Id::Invalid;
     }
 
     inline Mnemonic convertZydisMnemonic(ZydisMnemonic mnemonic)

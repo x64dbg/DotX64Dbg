@@ -36,33 +36,33 @@ namespace Dotx64Dbg.Managed.Tests
         [Test]
         public void TestOperandReg()
         {
-            var al = Operands.Reg(RegisterId.Al);
+            var al = Operands.Reg(Registers.Id.Al);
             AssertEq(al.Size, 8);
 
-            var ax = Operands.Reg(RegisterId.Ax);
+            var ax = Operands.Reg(Registers.Id.Ax);
             AssertEq(ax.Size, 16);
 
-            var eax = Operands.Reg(RegisterId.Eax);
+            var eax = Operands.Reg(Registers.Id.Eax);
             AssertEq(eax.Size, 32);
 
-            var rax = Operands.Reg(RegisterId.Rax);
+            var rax = Operands.Reg(Registers.Id.Rax);
             AssertEq(rax.Size, 64);
         }
 
         [Test]
         public void TestOperandMemory8()
         {
-            var mem1 = Operands.BytePtr(RegisterId.Rax);
+            var mem1 = Operands.BytePtr(Registers.Id.Rax);
             AssertEq(mem1.Size, 8);
-            AssertEq(mem1.Base, RegisterId.Rax);
+            AssertEq(mem1.Base, Registers.Id.Rax);
 
             var str1 = mem1.ToString();
             AssertEq(str1, "byte ptr [rax]");
 
-            var mem2 = Operands.BytePtr(RegisterId.Rax, RegisterId.Rdx);
+            var mem2 = Operands.BytePtr(Registers.Id.Rax, Registers.Id.Rdx);
             AssertEq(mem2.Size, 8);
-            AssertEq(mem2.Base, RegisterId.Rax);
-            AssertEq(mem2.Index, RegisterId.Rdx);
+            AssertEq(mem2.Base, Registers.Id.Rax);
+            AssertEq(mem2.Index, Registers.Id.Rdx);
 
             var str2 = mem2.ToString();
             AssertEq(str2, "byte ptr [rax+rdx]");
@@ -71,17 +71,17 @@ namespace Dotx64Dbg.Managed.Tests
         [Test]
         public void TestOperandMemory16()
         {
-            var mem1 = Operands.WordPtr(RegisterId.Rax);
+            var mem1 = Operands.WordPtr(Registers.Id.Rax);
             AssertEq(mem1.Size, 16);
-            AssertEq(mem1.Base, RegisterId.Rax);
+            AssertEq(mem1.Base, Registers.Id.Rax);
 
             var str1 = mem1.ToString();
             AssertEq(str1, "word ptr [rax]");
 
-            var mem2 = Operands.WordPtr(RegisterId.Rax, RegisterId.Rdx);
+            var mem2 = Operands.WordPtr(Registers.Id.Rax, Registers.Id.Rdx);
             AssertEq(mem2.Size, 16);
-            AssertEq(mem2.Base, RegisterId.Rax);
-            AssertEq(mem2.Index, RegisterId.Rdx);
+            AssertEq(mem2.Base, Registers.Id.Rax);
+            AssertEq(mem2.Index, Registers.Id.Rdx);
 
             var str2 = mem2.ToString();
             AssertEq(str2, "word ptr [rax+rdx]");

@@ -12,150 +12,150 @@
 
 namespace Dotx64Dbg
 {
-	struct EFlagsData
-	{
-		uint32_t read;
-		uint32_t write;
-	};
+    struct EFlagsData
+    {
+        uint32_t read;
+        uint32_t write;
+    };
 
-	static IOperand^ ConvertOperandImm(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
-	{
-		Operand::Immediate^ res = gcnew Operand::Immediate();
-		res->Value = op.imm.value.s;
-		if (op.imm.is_relative)
-		{
-			res->Value += instr.length + addr;
-		}
-		return res;
-	}
+    static IOperand^ ConvertOperandImm(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
+    {
+        Operand::Immediate^ res = gcnew Operand::Immediate();
+        res->Value = op.imm.value.s;
+        if (op.imm.is_relative)
+        {
+            res->Value += instr.length + addr;
+        }
+        return res;
+    }
 
-	static IOperand^ ConvertOperandReg(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
-	{
-		const auto reg = convertZydisRegister(op.reg.value);
-		return gcnew Operand::Register(reg);
-	}
+    static IOperand^ ConvertOperandReg(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
+    {
+        const auto reg = convertZydisRegister(op.reg.value);
+        return gcnew Operand::Register(reg);
+    }
 
-	static IOperand^ ConvertOperandMem(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
-	{
-		const auto& mem = op.mem;
+    static IOperand^ ConvertOperandMem(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
+    {
+        const auto& mem = op.mem;
 
-		Operand::Memory^ res = gcnew Operand::Memory();
+        Operand::Memory^ res = gcnew Operand::Memory();
 
-		res->Size = op.size;
-		res->Segment = static_cast<RegisterId>(mem.segment);
-		res->Base = static_cast<RegisterId>(mem.base);
-		res->Index = static_cast<RegisterId>(mem.index);
-		res->Scale = mem.scale;
-		res->Displacement = mem.disp.value;
+        res->Size = op.size;
+        res->Segment = static_cast<Registers::Id>(mem.segment);
+        res->Base = static_cast<Registers::Id>(mem.base);
+        res->Index = static_cast<Registers::Id>(mem.index);
+        res->Scale = mem.scale;
+        res->Displacement = mem.disp.value;
 
-		if (res->Base == RegisterId::Rip || res->Base == RegisterId::Eip)
-		{
-			res->Displacement += instr.length + addr;
-			res->Base = RegisterId::None;
-		}
+        if (res->Base == Registers::Id::Rip || res->Base == Registers::Id::Eip)
+        {
+            res->Displacement += instr.length + addr;
+            res->Base = Registers::Id::None;
+        }
 
-		return res;
-	}
+        return res;
+    }
 
-	static IOperand^ ConvertOperand(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
-	{
-		if (op.type == ZYDIS_OPERAND_TYPE_IMMEDIATE)
-		{
-			return ConvertOperandImm(instr, op, addr);
-		}
-		else if (op.type == ZYDIS_OPERAND_TYPE_REGISTER)
-		{
-			return ConvertOperandReg(instr, op, addr);
-		}
-		else if (op.type == ZYDIS_OPERAND_TYPE_MEMORY)
-		{
-			return ConvertOperandMem(instr, op, addr);
-		}
-		else if (op.type == ZYDIS_OPERAND_TYPE_UNUSED)
-		{
-			return Operand::None;
-		}
-		// ??
-		return Operand::None;
-	}
+    static IOperand^ ConvertOperand(const ZydisDecodedInstruction& instr, const ZydisDecodedOperand& op, uint64_t addr)
+    {
+        if (op.type == ZYDIS_OPERAND_TYPE_IMMEDIATE)
+        {
+            return ConvertOperandImm(instr, op, addr);
+        }
+        else if (op.type == ZYDIS_OPERAND_TYPE_REGISTER)
+        {
+            return ConvertOperandReg(instr, op, addr);
+        }
+        else if (op.type == ZYDIS_OPERAND_TYPE_MEMORY)
+        {
+            return ConvertOperandMem(instr, op, addr);
+        }
+        else if (op.type == ZYDIS_OPERAND_TYPE_UNUSED)
+        {
+            return Operand::None;
+        }
+        // ??
+        return Operand::None;
+    }
 
-	static Instruction^ Convert(ZydisDecodedInstruction& instr, uint64_t addr)
-	{
-		const auto id = convertZydisMnemonic(instr.mnemonic);
+    static Instruction^ Convert(ZydisDecodedInstruction& instr, uint64_t addr)
+    {
+        const auto id = convertZydisMnemonic(instr.mnemonic);
 
-		auto attribs = Instruction::Attributes::None;
+        auto attribs = Instruction::Attributes::None;
 
-		auto addAttribute = [&](Instruction::Attributes a, Instruction::Attributes b)
-		{
-			return static_cast<Instruction::Attributes>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
-		};
+        auto addAttribute = [&](Instruction::Attributes a, Instruction::Attributes b)
+        {
+            return static_cast<Instruction::Attributes>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+        };
 
-		if (instr.attributes & ZYDIS_ATTRIB_HAS_LOCK)
-		{
-			attribs = addAttribute(attribs, Instruction::Attributes::Lock);
-		}
+        if (instr.attributes & ZYDIS_ATTRIB_HAS_LOCK)
+        {
+            attribs = addAttribute(attribs, Instruction::Attributes::Lock);
+        }
 
-		if (instr.attributes & ZYDIS_ATTRIB_HAS_REP)
-		{
-			attribs = addAttribute(attribs, Instruction::Attributes::Rep);
-		}
+        if (instr.attributes & ZYDIS_ATTRIB_HAS_REP)
+        {
+            attribs = addAttribute(attribs, Instruction::Attributes::Rep);
+        }
 
-		if (instr.attributes & ZYDIS_ATTRIB_HAS_REPE)
-		{
-			attribs = addAttribute(attribs, Instruction::Attributes::RepEq);
-		}
+        if (instr.attributes & ZYDIS_ATTRIB_HAS_REPE)
+        {
+            attribs = addAttribute(attribs, Instruction::Attributes::RepEq);
+        }
 
-		if (instr.attributes & ZYDIS_ATTRIB_HAS_REPNE)
-		{
-			attribs = addAttribute(attribs, Instruction::Attributes::RepNe);
-		}
+        if (instr.attributes & ZYDIS_ATTRIB_HAS_REPNE)
+        {
+            attribs = addAttribute(attribs, Instruction::Attributes::RepNe);
+        }
 
-		if (instr.attributes & ZYDIS_ATTRIB_HAS_REPNZ)
-		{
-			attribs = addAttribute(attribs, Instruction::Attributes::RepNz);
-		}
+        if (instr.attributes & ZYDIS_ATTRIB_HAS_REPNZ)
+        {
+            attribs = addAttribute(attribs, Instruction::Attributes::RepNz);
+        }
 
-		auto res = gcnew Instruction(attribs, id);
-		res->_Size = instr.length;
-		res->_Address = addr;
-		res->_FlagsModified = (EFlags)instr.cpu_flags_written;
-		res->_FlagsRead = (EFlags)instr.cpu_flags_read;
+        auto res = gcnew Instruction(attribs, id);
+        res->_Size = instr.length;
+        res->_Address = addr;
+        res->_FlagsModified = (EFlags)instr.cpu_flags_written;
+        res->_FlagsRead = (EFlags)instr.cpu_flags_read;
 
-		int opIndex = 0;
-		for (int i = 0; i < instr.operand_count; i++)
-		{
-			auto& op = instr.operands[i];
+        int opIndex = 0;
+        for (int i = 0; i < instr.operand_count; i++)
+        {
+            auto& op = instr.operands[i];
 
-			IOperand^ newOp = ConvertOperand(instr, op, addr);
-			OperandVisibility vis = OperandVisibility::Invalid;
-			if (op.visibility == ZYDIS_OPERAND_VISIBILITY_EXPLICIT)
-				vis = OperandVisibility::Explicit;
-			else if (op.visibility == ZYDIS_OPERAND_VISIBILITY_HIDDEN)
-				vis = OperandVisibility::Hidden;
-			else if (op.visibility == ZYDIS_OPERAND_VISIBILITY_IMPLICIT)
-				vis = OperandVisibility::Implicit;
-			else
-				vis = OperandVisibility::Invalid;
+            IOperand^ newOp = ConvertOperand(instr, op, addr);
+            OperandVisibility vis = OperandVisibility::Invalid;
+            if (op.visibility == ZYDIS_OPERAND_VISIBILITY_EXPLICIT)
+                vis = OperandVisibility::Explicit;
+            else if (op.visibility == ZYDIS_OPERAND_VISIBILITY_HIDDEN)
+                vis = OperandVisibility::Hidden;
+            else if (op.visibility == ZYDIS_OPERAND_VISIBILITY_IMPLICIT)
+                vis = OperandVisibility::Implicit;
+            else
+                vis = OperandVisibility::Invalid;
 
-			OperandAccess access = OperandAccess::None;
-			if (op.actions & ZYDIS_OPERAND_ACTION_MASK_READ)
-			{
-				access = static_cast<OperandAccess>(
-					static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Read));
-			}
+            OperandAccess access = OperandAccess::None;
+            if (op.actions & ZYDIS_OPERAND_ACTION_MASK_READ)
+            {
+                access = static_cast<OperandAccess>(
+                    static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Read));
+            }
 
-			if (op.actions & ZYDIS_OPERAND_ACTION_MASK_WRITE)
-			{
-				access = static_cast<OperandAccess>(
-					static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Write));
-			}
+            if (op.actions & ZYDIS_OPERAND_ACTION_MASK_WRITE)
+            {
+                access = static_cast<OperandAccess>(
+                    static_cast<uint32_t>(access) | static_cast<uint32_t>(OperandAccess::Write));
+            }
 
-			res->SetOperand(opIndex, newOp, access, vis);
-			opIndex++;
-		}
+            res->SetOperand(opIndex, newOp, access, vis);
+            opIndex++;
+        }
 
-		return res;
-	}
+        return res;
+    }
 
     namespace Internal {
 
@@ -172,62 +172,62 @@ namespace Dotx64Dbg
 
     }
 
-	public ref class Decoder
-	{
-		ZydisDecoder* _decoder;
+    public ref class Decoder
+    {
+        ZydisDecoder* _decoder;
 
-	private:
-		Decoder()
-		{
-			_decoder = new ZydisDecoder();
+    private:
+        Decoder()
+        {
+            _decoder = new ZydisDecoder();
 #ifdef _M_AMD64
-			auto mode = ZYDIS_MACHINE_MODE_LONG_64;
-			auto addrSize = ZYDIS_ADDRESS_WIDTH_64;
+            auto mode = ZYDIS_MACHINE_MODE_LONG_64;
+            auto addrSize = ZYDIS_ADDRESS_WIDTH_64;
 #else
-			auto mode = ZYDIS_MACHINE_MODE_LEGACY_32;
-			auto addrSize = ZYDIS_ADDRESS_WIDTH_32;
+            auto mode = ZYDIS_MACHINE_MODE_LEGACY_32;
+            auto addrSize = ZYDIS_ADDRESS_WIDTH_32;
 #endif
-			if (auto status = ZydisDecoderInit(_decoder, mode, addrSize);
-				status != ZYAN_STATUS_SUCCESS)
-			{
-				char msg[64]{};
-				sprintf_s(msg, "ZydisDecoderInit failed: %u\n", status);
-				_plugin_logprint(msg);
-			}
-		}
+            if (auto status = ZydisDecoderInit(_decoder, mode, addrSize);
+                status != ZYAN_STATUS_SUCCESS)
+            {
+                char msg[64]{};
+                sprintf_s(msg, "ZydisDecoderInit failed: %u\n", status);
+                _plugin_logprint(msg);
+            }
+        }
 
-	public:
-		~Decoder()
-		{
-			delete _decoder;
-		}
+    public:
+        ~Decoder()
+        {
+            delete _decoder;
+        }
 
-		static Decoder^ Create()
-		{
-			return gcnew Decoder();
-		}
+        static Decoder^ Create()
+        {
+            return gcnew Decoder();
+        }
 
-		Instruction^ Decode(array<System::Byte>^ data, uint64_t address)
-		{
-			pin_ptr<uint8_t> ptr = &data[0];
-			const uint8_t* buf = ptr;
+        Instruction^ Decode(array<System::Byte>^ data, uint64_t address)
+        {
+            pin_ptr<uint8_t> ptr = &data[0];
+            const uint8_t* buf = ptr;
 
-			return Internal::decodeInstruction(_decoder, buf, data->Length, address);
-		}
+            return Internal::decodeInstruction(_decoder, buf, data->Length, address);
+        }
 
-		Instruction^ Decode(System::UIntPtr address)
-		{
-			auto va = static_cast<duint>(address.ToUInt64());
-			duint readSize = 0;
+        Instruction^ Decode(System::UIntPtr address)
+        {
+            auto va = static_cast<duint>(address.ToUInt64());
+            duint readSize = 0;
 
-			uint8_t buf[15];
-			if (!Script::Memory::Read(static_cast<duint>(va), buf, sizeof(buf), &readSize))
-				return nullptr;
+            uint8_t buf[15];
+            if (!Script::Memory::Read(static_cast<duint>(va), buf, sizeof(buf), &readSize))
+                return nullptr;
 
-			return Internal::decodeInstruction(_decoder, buf, readSize, va);
-		}
+            return Internal::decodeInstruction(_decoder, buf, readSize, va);
+        }
 
-	private:
+    private:
 
-	};
+    };
 } // namespace Dotx64Dbg

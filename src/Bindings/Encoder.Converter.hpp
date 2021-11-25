@@ -2802,443 +2802,443 @@ namespace Dotx64Dbg
         return 0;
     }
 
-    inline asmjit::x86::Reg convertAsmJitRegister(const RegisterId reg)
+    inline asmjit::x86::Reg convertAsmJitRegister(const Registers::Id reg)
     {
         switch (reg)
         {
-        case RegisterId::None:
+        case Registers::Id::None:
             return {};
             // Segment registers
-        case RegisterId::Es:
+        case Registers::Id::Es:
             return asmjit::x86::es;
-        case RegisterId::Cs:
+        case Registers::Id::Cs:
             return asmjit::x86::cs;
-        case RegisterId::Ss:
+        case Registers::Id::Ss:
             return asmjit::x86::ss;
-        case RegisterId::Ds:
+        case Registers::Id::Ds:
             return asmjit::x86::ds;
-        case RegisterId::Fs:
+        case Registers::Id::Fs:
             return asmjit::x86::fs;
-        case RegisterId::Gs:
+        case Registers::Id::Gs:
             return asmjit::x86::gs;
             // General purpose registers  8-bit
-        case RegisterId::Al:
+        case Registers::Id::Al:
             return asmjit::x86::al;
-        case RegisterId::Cl:
+        case Registers::Id::Cl:
             return asmjit::x86::cl;
-        case RegisterId::Dl:
+        case Registers::Id::Dl:
             return asmjit::x86::dl;
-        case RegisterId::Bl:
+        case Registers::Id::Bl:
             return asmjit::x86::bl;
-        case RegisterId::Ah:
+        case Registers::Id::Ah:
             return asmjit::x86::ah;
-        case RegisterId::Ch:
+        case Registers::Id::Ch:
             return asmjit::x86::ch;
-        case RegisterId::Dh:
+        case Registers::Id::Dh:
             return asmjit::x86::dh;
-        case RegisterId::Bh:
+        case Registers::Id::Bh:
             return asmjit::x86::bh;
-        case RegisterId::Spl:
+        case Registers::Id::Spl:
             return asmjit::x86::spl;
-        case RegisterId::Bpl:
+        case Registers::Id::Bpl:
             return asmjit::x86::bpl;
-        case RegisterId::Sil:
+        case Registers::Id::Sil:
             return asmjit::x86::sil;
-        case RegisterId::Dil:
+        case Registers::Id::Dil:
             return asmjit::x86::dil;
-        case RegisterId::R8b:
+        case Registers::Id::R8b:
             return asmjit::x86::r8b;
-        case RegisterId::R9b:
+        case Registers::Id::R9b:
             return asmjit::x86::r9b;
-        case RegisterId::R10b:
+        case Registers::Id::R10b:
             return asmjit::x86::r10b;
-        case RegisterId::R11b:
+        case Registers::Id::R11b:
             return asmjit::x86::r11b;
-        case RegisterId::R12b:
+        case Registers::Id::R12b:
             return asmjit::x86::r12b;
-        case RegisterId::R13b:
+        case Registers::Id::R13b:
             return asmjit::x86::r13b;
-        case RegisterId::R14b:
+        case Registers::Id::R14b:
             return asmjit::x86::r14b;
-        case RegisterId::R15b:
+        case Registers::Id::R15b:
             return asmjit::x86::r15b;
             // General purpose registers 16-bit
-        case RegisterId::Ax:
+        case Registers::Id::Ax:
             return asmjit::x86::ax;
-        case RegisterId::Cx:
+        case Registers::Id::Cx:
             return asmjit::x86::cx;
-        case RegisterId::Dx:
+        case Registers::Id::Dx:
             return asmjit::x86::dx;
-        case RegisterId::Bx:
+        case Registers::Id::Bx:
             return asmjit::x86::bx;
-        case RegisterId::Sp:
+        case Registers::Id::Sp:
             return asmjit::x86::sp;
-        case RegisterId::Bp:
+        case Registers::Id::Bp:
             return asmjit::x86::bp;
-        case RegisterId::Si:
+        case Registers::Id::Si:
             return asmjit::x86::si;
-        case RegisterId::Di:
+        case Registers::Id::Di:
             return asmjit::x86::di;
-        case RegisterId::R8w:
+        case Registers::Id::R8w:
             return asmjit::x86::r8w;
-        case RegisterId::R9w:
+        case Registers::Id::R9w:
             return asmjit::x86::r9w;
-        case RegisterId::R10w:
+        case Registers::Id::R10w:
             return asmjit::x86::r10w;
-        case RegisterId::R11w:
+        case Registers::Id::R11w:
             return asmjit::x86::r11w;
-        case RegisterId::R12w:
+        case Registers::Id::R12w:
             return asmjit::x86::r12w;
-        case RegisterId::R13w:
+        case Registers::Id::R13w:
             return asmjit::x86::r13w;
-        case RegisterId::R14w:
+        case Registers::Id::R14w:
             return asmjit::x86::r14w;
-        case RegisterId::R15w:
+        case Registers::Id::R15w:
             return asmjit::x86::r15w;
             // General purpose registers 32-bit
-        case RegisterId::Eax:
+        case Registers::Id::Eax:
             return asmjit::x86::eax;
-        case RegisterId::Ecx:
+        case Registers::Id::Ecx:
             return asmjit::x86::ecx;
-        case RegisterId::Edx:
+        case Registers::Id::Edx:
             return asmjit::x86::edx;
-        case RegisterId::Ebx:
+        case Registers::Id::Ebx:
             return asmjit::x86::ebx;
-        case RegisterId::Esp:
+        case Registers::Id::Esp:
             return asmjit::x86::esp;
-        case RegisterId::Ebp:
+        case Registers::Id::Ebp:
             return asmjit::x86::ebp;
-        case RegisterId::Esi:
+        case Registers::Id::Esi:
             return asmjit::x86::esi;
-        case RegisterId::Edi:
+        case Registers::Id::Edi:
             return asmjit::x86::edi;
-        case RegisterId::R8d:
+        case Registers::Id::R8d:
             return asmjit::x86::r8d;
-        case RegisterId::R9d:
+        case Registers::Id::R9d:
             return asmjit::x86::r9d;
-        case RegisterId::R10d:
+        case Registers::Id::R10d:
             return asmjit::x86::r10d;
-        case RegisterId::R11d:
+        case Registers::Id::R11d:
             return asmjit::x86::r11d;
-        case RegisterId::R12d:
+        case Registers::Id::R12d:
             return asmjit::x86::r12d;
-        case RegisterId::R13d:
+        case Registers::Id::R13d:
             return asmjit::x86::r13d;
-        case RegisterId::R14d:
+        case Registers::Id::R14d:
             return asmjit::x86::r14d;
-        case RegisterId::R15d:
+        case Registers::Id::R15d:
             return asmjit::x86::r15d;
             // General purpose registers 64-bit
-        case RegisterId::Rax:
+        case Registers::Id::Rax:
             return asmjit::x86::rax;
-        case RegisterId::Rcx:
+        case Registers::Id::Rcx:
             return asmjit::x86::rcx;
-        case RegisterId::Rdx:
+        case Registers::Id::Rdx:
             return asmjit::x86::rdx;
-        case RegisterId::Rbx:
+        case Registers::Id::Rbx:
             return asmjit::x86::rbx;
-        case RegisterId::Rsp:
+        case Registers::Id::Rsp:
             return asmjit::x86::rsp;
-        case RegisterId::Rbp:
+        case Registers::Id::Rbp:
             return asmjit::x86::rbp;
-        case RegisterId::Rsi:
+        case Registers::Id::Rsi:
             return asmjit::x86::rsi;
-        case RegisterId::Rdi:
+        case Registers::Id::Rdi:
             return asmjit::x86::rdi;
-        case RegisterId::R8:
+        case Registers::Id::R8:
             return asmjit::x86::r8;
-        case RegisterId::R9:
+        case Registers::Id::R9:
             return asmjit::x86::r9;
-        case RegisterId::R10:
+        case Registers::Id::R10:
             return asmjit::x86::r10;
-        case RegisterId::R11:
+        case Registers::Id::R11:
             return asmjit::x86::r11;
-        case RegisterId::R12:
+        case Registers::Id::R12:
             return asmjit::x86::r12;
-        case RegisterId::R13:
+        case Registers::Id::R13:
             return asmjit::x86::r13;
-        case RegisterId::R14:
+        case Registers::Id::R14:
             return asmjit::x86::r14;
-        case RegisterId::R15:
+        case Registers::Id::R15:
             return asmjit::x86::r15;
             // Floating point legacy registers
-        case RegisterId::St0:
+        case Registers::Id::St0:
             return asmjit::x86::st0;
-        case RegisterId::St1:
+        case Registers::Id::St1:
             return asmjit::x86::st1;
-        case RegisterId::St2:
+        case Registers::Id::St2:
             return asmjit::x86::st2;
-        case RegisterId::St3:
+        case Registers::Id::St3:
             return asmjit::x86::st3;
-        case RegisterId::St4:
+        case Registers::Id::St4:
             return asmjit::x86::st4;
-        case RegisterId::St5:
+        case Registers::Id::St5:
             return asmjit::x86::st5;
-        case RegisterId::St6:
+        case Registers::Id::St6:
             return asmjit::x86::st6;
-        case RegisterId::St7:
+        case Registers::Id::St7:
             return asmjit::x86::st7;
             // Floating point multimedia registers
-        case RegisterId::Mm0:
+        case Registers::Id::Mm0:
             return asmjit::x86::mm0;
-        case RegisterId::Mm1:
+        case Registers::Id::Mm1:
             return asmjit::x86::mm1;
-        case RegisterId::Mm2:
+        case Registers::Id::Mm2:
             return asmjit::x86::mm2;
-        case RegisterId::Mm3:
+        case Registers::Id::Mm3:
             return asmjit::x86::mm3;
-        case RegisterId::Mm4:
+        case Registers::Id::Mm4:
             return asmjit::x86::mm4;
-        case RegisterId::Mm5:
+        case Registers::Id::Mm5:
             return asmjit::x86::mm5;
-        case RegisterId::Mm6:
+        case Registers::Id::Mm6:
             return asmjit::x86::mm6;
-        case RegisterId::Mm7:
+        case Registers::Id::Mm7:
             return asmjit::x86::mm7;
             // Floating point vector registers 128-bit
-        case RegisterId::Xmm0:
+        case Registers::Id::Xmm0:
             return asmjit::x86::xmm0;
-        case RegisterId::Xmm1:
+        case Registers::Id::Xmm1:
             return asmjit::x86::xmm1;
-        case RegisterId::Xmm2:
+        case Registers::Id::Xmm2:
             return asmjit::x86::xmm2;
-        case RegisterId::Xmm3:
+        case Registers::Id::Xmm3:
             return asmjit::x86::xmm3;
-        case RegisterId::Xmm4:
+        case Registers::Id::Xmm4:
             return asmjit::x86::xmm4;
-        case RegisterId::Xmm5:
+        case Registers::Id::Xmm5:
             return asmjit::x86::xmm5;
-        case RegisterId::Xmm6:
+        case Registers::Id::Xmm6:
             return asmjit::x86::xmm6;
-        case RegisterId::Xmm7:
+        case Registers::Id::Xmm7:
             return asmjit::x86::xmm7;
-        case RegisterId::Xmm8:
+        case Registers::Id::Xmm8:
             return asmjit::x86::xmm8;
-        case RegisterId::Xmm9:
+        case Registers::Id::Xmm9:
             return asmjit::x86::xmm9;
-        case RegisterId::Xmm10:
+        case Registers::Id::Xmm10:
             return asmjit::x86::xmm10;
-        case RegisterId::Xmm11:
+        case Registers::Id::Xmm11:
             return asmjit::x86::xmm11;
-        case RegisterId::Xmm12:
+        case Registers::Id::Xmm12:
             return asmjit::x86::xmm12;
-        case RegisterId::Xmm13:
+        case Registers::Id::Xmm13:
             return asmjit::x86::xmm13;
-        case RegisterId::Xmm14:
+        case Registers::Id::Xmm14:
             return asmjit::x86::xmm14;
-        case RegisterId::Xmm15:
+        case Registers::Id::Xmm15:
             return asmjit::x86::xmm15;
-        case RegisterId::Xmm16:
+        case Registers::Id::Xmm16:
             return asmjit::x86::xmm16;
-        case RegisterId::Xmm17:
+        case Registers::Id::Xmm17:
             return asmjit::x86::xmm17;
-        case RegisterId::Xmm18:
+        case Registers::Id::Xmm18:
             return asmjit::x86::xmm18;
-        case RegisterId::Xmm19:
+        case Registers::Id::Xmm19:
             return asmjit::x86::xmm19;
-        case RegisterId::Xmm20:
+        case Registers::Id::Xmm20:
             return asmjit::x86::xmm20;
-        case RegisterId::Xmm21:
+        case Registers::Id::Xmm21:
             return asmjit::x86::xmm21;
-        case RegisterId::Xmm22:
+        case Registers::Id::Xmm22:
             return asmjit::x86::xmm22;
-        case RegisterId::Xmm23:
+        case Registers::Id::Xmm23:
             return asmjit::x86::xmm23;
-        case RegisterId::Xmm24:
+        case Registers::Id::Xmm24:
             return asmjit::x86::xmm24;
-        case RegisterId::Xmm25:
+        case Registers::Id::Xmm25:
             return asmjit::x86::xmm25;
-        case RegisterId::Xmm26:
+        case Registers::Id::Xmm26:
             return asmjit::x86::xmm26;
-        case RegisterId::Xmm27:
+        case Registers::Id::Xmm27:
             return asmjit::x86::xmm27;
-        case RegisterId::Xmm28:
+        case Registers::Id::Xmm28:
             return asmjit::x86::xmm28;
-        case RegisterId::Xmm29:
+        case Registers::Id::Xmm29:
             return asmjit::x86::xmm29;
-        case RegisterId::Xmm30:
+        case Registers::Id::Xmm30:
             return asmjit::x86::xmm30;
-        case RegisterId::Xmm31:
+        case Registers::Id::Xmm31:
             return asmjit::x86::xmm31;
             // Floating point vector registers 256-bit
-        case RegisterId::Ymm0:
+        case Registers::Id::Ymm0:
             return asmjit::x86::ymm0;
-        case RegisterId::Ymm1:
+        case Registers::Id::Ymm1:
             return asmjit::x86::ymm1;
-        case RegisterId::Ymm2:
+        case Registers::Id::Ymm2:
             return asmjit::x86::ymm2;
-        case RegisterId::Ymm3:
+        case Registers::Id::Ymm3:
             return asmjit::x86::ymm3;
-        case RegisterId::Ymm4:
+        case Registers::Id::Ymm4:
             return asmjit::x86::ymm4;
-        case RegisterId::Ymm5:
+        case Registers::Id::Ymm5:
             return asmjit::x86::ymm5;
-        case RegisterId::Ymm6:
+        case Registers::Id::Ymm6:
             return asmjit::x86::ymm6;
-        case RegisterId::Ymm7:
+        case Registers::Id::Ymm7:
             return asmjit::x86::ymm7;
-        case RegisterId::Ymm8:
+        case Registers::Id::Ymm8:
             return asmjit::x86::ymm8;
-        case RegisterId::Ymm9:
+        case Registers::Id::Ymm9:
             return asmjit::x86::ymm9;
-        case RegisterId::Ymm10:
+        case Registers::Id::Ymm10:
             return asmjit::x86::ymm10;
-        case RegisterId::Ymm11:
+        case Registers::Id::Ymm11:
             return asmjit::x86::ymm11;
-        case RegisterId::Ymm12:
+        case Registers::Id::Ymm12:
             return asmjit::x86::ymm12;
-        case RegisterId::Ymm13:
+        case Registers::Id::Ymm13:
             return asmjit::x86::ymm13;
-        case RegisterId::Ymm14:
+        case Registers::Id::Ymm14:
             return asmjit::x86::ymm14;
-        case RegisterId::Ymm15:
+        case Registers::Id::Ymm15:
             return asmjit::x86::ymm15;
-        case RegisterId::Ymm16:
+        case Registers::Id::Ymm16:
             return asmjit::x86::ymm16;
-        case RegisterId::Ymm17:
+        case Registers::Id::Ymm17:
             return asmjit::x86::ymm17;
-        case RegisterId::Ymm18:
+        case Registers::Id::Ymm18:
             return asmjit::x86::ymm18;
-        case RegisterId::Ymm19:
+        case Registers::Id::Ymm19:
             return asmjit::x86::ymm19;
-        case RegisterId::Ymm20:
+        case Registers::Id::Ymm20:
             return asmjit::x86::ymm20;
-        case RegisterId::Ymm21:
+        case Registers::Id::Ymm21:
             return asmjit::x86::ymm21;
-        case RegisterId::Ymm22:
+        case Registers::Id::Ymm22:
             return asmjit::x86::ymm22;
-        case RegisterId::Ymm23:
+        case Registers::Id::Ymm23:
             return asmjit::x86::ymm23;
-        case RegisterId::Ymm24:
+        case Registers::Id::Ymm24:
             return asmjit::x86::ymm24;
-        case RegisterId::Ymm25:
+        case Registers::Id::Ymm25:
             return asmjit::x86::ymm25;
-        case RegisterId::Ymm26:
+        case Registers::Id::Ymm26:
             return asmjit::x86::ymm26;
-        case RegisterId::Ymm27:
+        case Registers::Id::Ymm27:
             return asmjit::x86::ymm27;
-        case RegisterId::Ymm28:
+        case Registers::Id::Ymm28:
             return asmjit::x86::ymm28;
-        case RegisterId::Ymm29:
+        case Registers::Id::Ymm29:
             return asmjit::x86::ymm29;
-        case RegisterId::Ymm30:
+        case Registers::Id::Ymm30:
             return asmjit::x86::ymm30;
-        case RegisterId::Ymm31:
+        case Registers::Id::Ymm31:
             return asmjit::x86::ymm31;
             // Floating point vector registers 512-bit
-        case RegisterId::Zmm0:
+        case Registers::Id::Zmm0:
             return asmjit::x86::zmm0;
-        case RegisterId::Zmm1:
+        case Registers::Id::Zmm1:
             return asmjit::x86::zmm1;
-        case RegisterId::Zmm2:
+        case Registers::Id::Zmm2:
             return asmjit::x86::zmm2;
-        case RegisterId::Zmm3:
+        case Registers::Id::Zmm3:
             return asmjit::x86::zmm3;
-        case RegisterId::Zmm4:
+        case Registers::Id::Zmm4:
             return asmjit::x86::zmm4;
-        case RegisterId::Zmm5:
+        case Registers::Id::Zmm5:
             return asmjit::x86::zmm5;
-        case RegisterId::Zmm6:
+        case Registers::Id::Zmm6:
             return asmjit::x86::zmm6;
-        case RegisterId::Zmm7:
+        case Registers::Id::Zmm7:
             return asmjit::x86::zmm7;
-        case RegisterId::Zmm8:
+        case Registers::Id::Zmm8:
             return asmjit::x86::zmm8;
-        case RegisterId::Zmm9:
+        case Registers::Id::Zmm9:
             return asmjit::x86::zmm9;
-        case RegisterId::Zmm10:
+        case Registers::Id::Zmm10:
             return asmjit::x86::zmm10;
-        case RegisterId::Zmm11:
+        case Registers::Id::Zmm11:
             return asmjit::x86::zmm11;
-        case RegisterId::Zmm12:
+        case Registers::Id::Zmm12:
             return asmjit::x86::zmm12;
-        case RegisterId::Zmm13:
+        case Registers::Id::Zmm13:
             return asmjit::x86::zmm13;
-        case RegisterId::Zmm14:
+        case Registers::Id::Zmm14:
             return asmjit::x86::zmm14;
-        case RegisterId::Zmm15:
+        case Registers::Id::Zmm15:
             return asmjit::x86::zmm15;
-        case RegisterId::Zmm16:
+        case Registers::Id::Zmm16:
             return asmjit::x86::zmm16;
-        case RegisterId::Zmm17:
+        case Registers::Id::Zmm17:
             return asmjit::x86::zmm17;
-        case RegisterId::Zmm18:
+        case Registers::Id::Zmm18:
             return asmjit::x86::zmm18;
-        case RegisterId::Zmm19:
+        case Registers::Id::Zmm19:
             return asmjit::x86::zmm19;
-        case RegisterId::Zmm20:
+        case Registers::Id::Zmm20:
             return asmjit::x86::zmm20;
-        case RegisterId::Zmm21:
+        case Registers::Id::Zmm21:
             return asmjit::x86::zmm21;
-        case RegisterId::Zmm22:
+        case Registers::Id::Zmm22:
             return asmjit::x86::zmm22;
-        case RegisterId::Zmm23:
+        case Registers::Id::Zmm23:
             return asmjit::x86::zmm23;
-        case RegisterId::Zmm24:
+        case Registers::Id::Zmm24:
             return asmjit::x86::zmm24;
-        case RegisterId::Zmm25:
+        case Registers::Id::Zmm25:
             return asmjit::x86::zmm25;
-        case RegisterId::Zmm26:
+        case Registers::Id::Zmm26:
             return asmjit::x86::zmm26;
-        case RegisterId::Zmm27:
+        case Registers::Id::Zmm27:
             return asmjit::x86::zmm27;
-        case RegisterId::Zmm28:
+        case Registers::Id::Zmm28:
             return asmjit::x86::zmm28;
-        case RegisterId::Zmm29:
+        case Registers::Id::Zmm29:
             return asmjit::x86::zmm29;
-        case RegisterId::Zmm30:
+        case Registers::Id::Zmm30:
             return asmjit::x86::zmm30;
-        case RegisterId::Zmm31:
+        case Registers::Id::Zmm31:
             return asmjit::x86::zmm31;
-        case RegisterId::Cr0:
+        case Registers::Id::Cr0:
             return asmjit::x86::cr0;
-        case RegisterId::Cr1:
+        case Registers::Id::Cr1:
             return asmjit::x86::cr1;
-        case RegisterId::Cr2:
+        case Registers::Id::Cr2:
             return asmjit::x86::cr2;
-        case RegisterId::Cr3:
+        case Registers::Id::Cr3:
             return asmjit::x86::cr3;
-        case RegisterId::Cr4:
+        case Registers::Id::Cr4:
             return asmjit::x86::cr4;
-        case RegisterId::Cr5:
+        case Registers::Id::Cr5:
             return asmjit::x86::cr5;
-        case RegisterId::Cr6:
+        case Registers::Id::Cr6:
             return asmjit::x86::cr6;
-        case RegisterId::Cr7:
+        case Registers::Id::Cr7:
             return asmjit::x86::cr7;
-        case RegisterId::Cr8:
+        case Registers::Id::Cr8:
             return asmjit::x86::cr8;
-        case RegisterId::Cr9:
+        case Registers::Id::Cr9:
             return asmjit::x86::cr9;
-        case RegisterId::Cr10:
+        case Registers::Id::Cr10:
             return asmjit::x86::cr10;
-        case RegisterId::Cr11:
+        case Registers::Id::Cr11:
             return asmjit::x86::cr11;
-        case RegisterId::Cr12:
+        case Registers::Id::Cr12:
             return asmjit::x86::cr12;
-        case RegisterId::Cr13:
+        case Registers::Id::Cr13:
             return asmjit::x86::cr13;
-        case RegisterId::Cr14:
+        case Registers::Id::Cr14:
             return asmjit::x86::cr14;
-        case RegisterId::Cr15:
+        case Registers::Id::Cr15:
             return asmjit::x86::cr15;
-        case RegisterId::Idtr:
+        case Registers::Id::Idtr:
             // Not mappable.
             return {};
             // NOTE: AsmJit might handle this differently.
-        case RegisterId::Ip:
-        case RegisterId::Eip:
-        case RegisterId::Rip:
+        case Registers::Id::Ip:
+        case Registers::Id::Eip:
+        case Registers::Id::Rip:
             return asmjit::x86::rip;
-        case RegisterId::Tr:
-        case RegisterId::Tr0:
-        case RegisterId::Tr1:
-        case RegisterId::Tr2:
-        case RegisterId::Tr3:
-        case RegisterId::Tr4:
-        case RegisterId::Tr5:
-        case RegisterId::Tr6:
-        case RegisterId::Tr7:
+        case Registers::Id::Tr:
+        case Registers::Id::Tr0:
+        case Registers::Id::Tr1:
+        case Registers::Id::Tr2:
+        case Registers::Id::Tr3:
+        case Registers::Id::Tr4:
+        case Registers::Id::Tr5:
+        case Registers::Id::Tr6:
+        case Registers::Id::Tr7:
             return {};
         }
 
