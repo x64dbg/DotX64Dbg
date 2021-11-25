@@ -19,7 +19,7 @@ namespace Dotx64Dbg
         {
             PluginHandle = pluginHandle;
 
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_NugetDepsAssemblyResolve;
 
             Logging.Initialize();
             Commands.Initialize();
@@ -43,7 +43,7 @@ namespace Dotx64Dbg
             PluginManager.Initialize();
         }
 
-        private static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        private static System.Reflection.Assembly CurrentDomain_NugetDepsAssemblyResolve(object sender, ResolveEventArgs args)
         {
             var libs = new DirectoryInfo(Utils.DotX64DbgNugetDepsPath).GetFiles("*.dll");
             var assemblyName = new System.Reflection.AssemblyName(args.Name);

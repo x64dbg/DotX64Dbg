@@ -51,7 +51,7 @@ namespace Dotx64Dbg
         string PluginOutputPath;
 
         FileSystemWatcher PluginWatch;
-        NuGetDependencyResolver dependencyResolver;
+        DependencyResolver dependencyResolver;
 
         List<Plugin> Registered = new();
 
@@ -104,6 +104,8 @@ namespace Dotx64Dbg
             PluginWatch.Changed += OnPluginChange;
 
             dependencyResolver = new();
+            dependencyResolver.AddResolver(new NuGetDependencyResolver());
+            dependencyResolver.AddResolver(new LocalAssembliesResolver());
 
             RegisterPlugins();
             GenerateProjects();
@@ -219,22 +221,6 @@ namespace Dotx64Dbg
             if (!Directory.Exists(plugin.BuildOutputPath))
             {
                 Directory.CreateDirectory(plugin.BuildOutputPath);
-            }
-
-            // Delete the old cache.
-            var oldFiles = Directory.GetFiles(plugin.BuildOutputPath, "*.*", SearchOption.AllDirectories);
-            foreach (var oldFile in oldFiles)
-            {
-                try
-                {
-                    if (oldFile.EndsWith(".dll") || oldFile.EndsWith(".pdb"))
-                    {
-                        File.Delete(oldFile);
-                    }
-                }
-                catch (Exception)
-                {
-                }
             }
 
             Registered.Add(plugin);
