@@ -160,7 +160,9 @@ namespace Dotx64Dbg
                 }
 
                 // We need to check if a rebuild is indeed necessary
-                var cacheFile = Path.Combine(plugin.Path, "plugin.cache");
+                var cacheDirectory = new DirectoryInfo(Path.Combine(plugin.BuildOutputPath, ".cache"));
+                cacheDirectory.Create();
+                var cacheFile = Path.Combine(cacheDirectory.FullName, "last_build");
                 if (plugin.AssemblyPath is null && File.Exists(cacheFile))
                 {
                     if (InitializePluginFromCache(plugin, cacheFile))
