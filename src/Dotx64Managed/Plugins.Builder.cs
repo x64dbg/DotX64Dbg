@@ -54,7 +54,7 @@ namespace Dotx64Dbg
 
                     System.Threading.Thread.Sleep(10);
 
-                    lock (this)
+                    lock (Manager.LoaderLock)
                     {
                         if (!RequiresRebuild)
                             continue;
@@ -71,7 +71,6 @@ namespace Dotx64Dbg
                         RebuildInProgress = false;
 
                         Utils.DebugPrintLine("End rebuild");
-
                     }
                 }
             }
