@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Text.Json;
+using System.IO;
 
 namespace Dotx64Dbg
 {
@@ -29,6 +30,11 @@ namespace Dotx64Dbg
             {
                 var fileData = System.IO.File.ReadAllText(file);
                 Data = JsonSerializer.Deserialize<SettingsData>(fileData);
+
+                if (!Path.IsPathFullyQualified(PluginsPath))
+                {
+                    Data.PluginsPath = Path.GetFullPath(Path.Combine(Utils.GetRootPath(), PluginsPath));
+                }
             }
             catch (Exception ex)
             {

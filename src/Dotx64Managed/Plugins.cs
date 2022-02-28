@@ -58,11 +58,6 @@ namespace Dotx64Dbg
         private void SetupDirectories()
         {
             PluginsPath = Settings.PluginsPath;
-            if (!Path.IsPathFullyQualified(PluginsPath))
-            {
-                PluginsPath = Path.GetFullPath(Path.Combine(Utils.GetRootPath(), PluginsPath));
-            }
-
             if (!Directory.Exists(PluginsPath))
             {
                 try
