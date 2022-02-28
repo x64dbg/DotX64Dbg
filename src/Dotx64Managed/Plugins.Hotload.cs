@@ -297,7 +297,9 @@ namespace Dotx64Dbg
         {
             Commands.Handler cb = null;
 
-            if (fn.ReturnType == typeof(void))
+            var hasArgs = fn.GetParameters().Length > 0;
+
+            if (fn.ReturnType == typeof(void) && hasArgs)
             {
                 var cb2 = fn.CreateDelegate<Commands.HandlerVoid>(obj);
                 cb = (string[] args) =>
@@ -306,7 +308,24 @@ namespace Dotx64Dbg
                     return true;
                 };
             }
-            else if (fn.ReturnType == typeof(bool))
+            if (fn.ReturnType == typeof(void) && !hasArgs)
+            {
+                var cb2 = fn.CreateDelegate<Commands.HandlerVoidNoArgs>(obj);
+                cb = (string[] args) =>
+                {
+                    cb2();
+                    return true;
+                };
+            }
+            else if (fn.ReturnType == typeof(bool) && !hasArgs)
+            {
+                var cb2 = fn.CreateDelegate<Commands.HandlerNoArgs>(obj);
+                cb = (string[] args) =>
+                {
+                    return cb2();
+                };
+            }
+            else if (fn.ReturnType == typeof(bool) && hasArgs)
             {
                 cb = fn.CreateDelegate<Commands.Handler>(obj);
             }

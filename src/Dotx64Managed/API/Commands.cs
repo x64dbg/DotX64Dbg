@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -32,7 +32,10 @@ namespace Dotx64Dbg
     internal static class Commands
     {
         public delegate bool Handler(string[] args);
+
+        internal delegate bool HandlerNoArgs();
         internal delegate void HandlerVoid(string[] args);
+        internal delegate void HandlerVoidNoArgs();
 
         internal struct CommandInfo
         {
