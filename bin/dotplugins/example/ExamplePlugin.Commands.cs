@@ -7,7 +7,7 @@ public partial class ExamplePlugin
     [Command("Test1")]
     void MyCommand(string[] args)
     {
-        Console.WriteLine("Hello World");
+        Console.WriteLine($"Hello World: {args[0]}");
     }
 
     // Works only when the debugger is active.
@@ -42,4 +42,17 @@ public partial class ExamplePlugin
         }
         Console.WriteLine($"Selection Start: {sel.Start:X}, End: {sel.End:X}");
     }
+	
+	[Command("CmdNoArgs")]
+	void NoArgsCmd()
+	{
+		Console.WriteLine("Yup");
+	}
+	
+	[Command("CmdNoArgs2")]
+	bool NoArgsCmd2()
+	{
+		Console.WriteLine("Yup");
+		return false;
+	}
 }
