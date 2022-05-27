@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Xml;
 
 namespace Dotx64Dbg
@@ -7,7 +7,7 @@ namespace Dotx64Dbg
     {
         public string Sdk = "Microsoft.NET.Sdk";
 
-        public string TargetFramework = "net5.0";
+        public string TargetFramework = "net6.0";
 
         public string Platforms = "x64;x86";
 
