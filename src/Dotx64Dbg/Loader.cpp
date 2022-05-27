@@ -1,13 +1,13 @@
-﻿#include "pluginsdk/bridgemain.h"
+#include "pluginsdk/bridgemain.h"
 #include "pluginsdk/_plugins.h"
 #include "pluginsdk/_scriptapi_memory.h"
 #include "pluginsdk/_scriptapi_register.h"
 
 struct Wrapper
 {
-    static void Init(int pluginHandle)
+    static bool Init(int pluginHandle)
     {
-        Dotx64Dbg::Manager::Init(pluginHandle);
+        return Dotx64Dbg::Manager::Init(pluginHandle);
     }
 
     static void Setup()
@@ -299,7 +299,10 @@ void CBSCRIPTAUTOCOMPLETE(const char* text, char** entries, int* entryCount)
 
 PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 {
-    Wrapper::Init(initStruct->pluginHandle);
+    if (!Wrapper::Init(initStruct->pluginHandle))
+    {
+        return false;
+    }
 
     initStruct->pluginVersion = 1;
     initStruct->sdkVersion = 1;
