@@ -19,35 +19,45 @@ namespace Dotx64Dbg
             tests.Run();
         }
 
-        public static void Init(int pluginHandle)
+        public static bool Init(int pluginHandle)
         {
-            lock(LoaderLock)
+            try
             {
-                PluginHandle = pluginHandle;
-
-                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_NugetDepsAssemblyResolve;
-
-                Logging.Initialize();
-                Commands.Initialize();
-                Expressions.Initialize();
-                ScriptLoader.Initialize();
-                Menus.Initialize();
-
-                if (!Settings.Load(Path.Combine(Utils.GetRootPath(), "dotx64dbg.json")))
+                lock (LoaderLock)
                 {
-                    Console.WriteLine("Failed to load settings, using default configuration");
+                    PluginHandle = pluginHandle;
+
+                    AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_NugetDepsAssemblyResolve;
+
+                    Logging.Initialize();
+                    Commands.Initialize();
+                    Expressions.Initialize();
+                    ScriptLoader.Initialize();
+                    Menus.Initialize();
+
+                    if (!Settings.Load(Path.Combine(Utils.GetRootPath(), "dotx64dbg.json")))
+                    {
+                        Console.WriteLine("Failed to load settings, using default configuration");
+                    }
+
+                    if (Settings.EnableTests)
+                    {
+                        RunTests();
+                    }
+
+                    Console.WriteLine("Dotx64Dbg.Managed initialized");
+
+                    PluginManager = new();
+                    PluginManager.Initialize();
                 }
-
-                if (Settings.EnableTests)
-                {
-                    RunTests();
-                }
-
-                Console.WriteLine("Dotx64Dbg.Managed initialized");
-
-                PluginManager = new();
-                PluginManager.Initialize();
             }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Exception: {ex.Message}");
+                return false;
+            }
+
+            return true;
         }
 
         private static System.Reflection.Assembly CurrentDomain_NugetDepsAssemblyResolve(object sender, ResolveEventArgs args)
