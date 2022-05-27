@@ -39,9 +39,6 @@ following:
   "Version": "1.0.0",
   "Author": "Bob",
   "Website": "http://github.com/[youruser]/yourplugin",
-  "Settings": {
-    "Test": true
-  }
 }
 ```
 Without the ```plugin.json``` file plugins will not load. The last thing
@@ -96,7 +93,7 @@ You can find an example script [here](bin/dotscripts/TestScript.cs)
 # Building
 
 ## Requirements
-- Net 5.0 SDK.
+- Net 6.0 SDK.
 - Visual Studio 2019 Community or greater.
 
 ## Building
