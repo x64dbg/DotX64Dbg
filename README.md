@@ -3,7 +3,7 @@ Plugins and Scripting with C# for x64Dbg.
 
 # Create Plugins for X64Dbg with ease
 DotX64Dbg aims to provide a seamless way to write and test plugins
-for X64Dbg using .Net 5.0 and C#.
+for X64Dbg using .Net 6.0 and C#.
 
 You can create/edit/debug plugins without ever restarting x64Dbg.
 ![Live Coding](.github/media/livecoding.gif?raw=true)
