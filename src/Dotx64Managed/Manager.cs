@@ -46,9 +46,6 @@ namespace Dotx64Dbg
                     }
 
                     Console.WriteLine("Dotx64Dbg.Managed initialized");
-
-                    PluginManager = new();
-                    PluginManager.Initialize();
                 }
             }
             catch (Exception ex)
@@ -90,6 +87,9 @@ namespace Dotx64Dbg
             lock(LoaderLock)
             {
                 Menus.InitializeMenus(data);
+
+                PluginManager = new();
+                PluginManager.Initialize();
             }
         }
 
