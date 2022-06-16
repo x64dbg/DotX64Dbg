@@ -105,7 +105,7 @@ namespace Dotx64Dbg
             }
         }
 
-        void RebuildPlugin(Plugin plugin, CancellationToken token)
+        bool RebuildPlugin(Plugin plugin, CancellationToken token)
         {
             var stopwatch = new Stopwatch();
 
@@ -121,16 +121,15 @@ namespace Dotx64Dbg
             if (!res.Success)
             {
                 Console.WriteLine("Build failed");
+                return false;
             }
-            else
-            {
-                Console.WriteLine("Compiled plugin '{0}' in {1} ms", plugin.Info.Name, stopwatch.ElapsedMilliseconds);
+  
+            Console.WriteLine("Compiled plugin '{0}' in {1} ms", plugin.Info.Name, stopwatch.ElapsedMilliseconds);
 
-                ReloadPlugin(plugin, res.OutputAssemblyPath, token);
+            // Successfully built.
+            plugin.RequiresRebuild = false;
 
-                // Successfully built.
-                plugin.RequiresRebuild = false;
-            }
+            return ReloadPlugin(plugin, res.OutputAssemblyPath, token);
         }
 
         void RebuildPlugins(CancellationToken token)
@@ -166,8 +165,10 @@ namespace Dotx64Dbg
                 {
                     if (InitializePluginFromCache(plugin, cacheFile))
                     {
-                        ReloadPlugin(plugin, plugin.AssemblyPath, token);
-                        Utils.DebugPrintLine($"Loaded plugin '{plugin.Info.Name}' from CACHE");
+                        if(ReloadPlugin(plugin, plugin.AssemblyPath, token))
+                        {
+                            Utils.DebugPrintLine($"Loaded plugin '{plugin.Info.Name}' from CACHE");
+                        }
                         DeleteNotUsedPluginCache(plugin);
                         plugin.RequiresRebuild = false;
                         continue;
@@ -175,8 +176,10 @@ namespace Dotx64Dbg
                     else
                         Utils.DebugPrintLine($"Skiping cache...");
                 }
-                RebuildPlugin(plugin, token);
-                CachePluginBuild(plugin, cacheFile);
+                if (RebuildPlugin(plugin, token))
+                {
+                    CachePluginBuild(plugin, cacheFile);
+                }
                 DeleteNotUsedPluginCache(plugin);
             }
 
@@ -235,7 +238,7 @@ namespace Dotx64Dbg
                 {
                     using System.IO.Compression.ZipArchive zipArchive = System.IO.Compression.ZipFile.OpenRead(cacheFilePath);
                     var entry = zipArchive.GetEntry(nameof(Plugin));
-                    if(entry is null)
+                    if (entry is null)
                         return false;
 
                     using BinaryReader br = new(entry.Open());
@@ -259,7 +262,8 @@ namespace Dotx64Dbg
                     plugin.BuildOutputPath = buildOutputPath;
                     return true;
 
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     if (ex is FormatException || ex is EndOfStreamException || ex is InvalidDataException)
                         return false;

@@ -101,7 +101,7 @@ namespace Dotx64Dbg
 
                 if (!Registered.TryGetValue(currentPath, out nextEntry))
                 {
-                    var parentId = entry.id;
+                    var parentId = entry != null ? entry.id : (UI.Menu.Id)(-1);
 
                     nextEntry = new()
                     {

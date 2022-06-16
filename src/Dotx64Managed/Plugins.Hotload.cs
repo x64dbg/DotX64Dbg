@@ -464,7 +464,7 @@ namespace Dotx64Dbg
             LoadPluginInstanceRecursive(plugin, plugin.Instance, new(), token);
         }
 
-        void ReloadPlugin(Plugin plugin, string newAssemblyPath, CancellationToken token)
+        bool ReloadPlugin(Plugin plugin, string newAssemblyPath, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -519,7 +519,7 @@ namespace Dotx64Dbg
                             {
                                 startup.Invoke(newInstance, Array.Empty<object>());
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
                                 throw;
                             }
@@ -594,16 +594,17 @@ namespace Dotx64Dbg
                 plugin.AssemblyPath = newAssemblyPath;
 
                 LoadPluginInstance(plugin, token);
+
+                Menus.AddPluginMenu(plugin);
             }
             catch (Exception ex)
             {
                 Utils.PrintException(ex);
-                return;
+                return false;
             }
 
             Console.WriteLine($"{(isReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
-
-            Menus.AddPluginMenu(plugin);
+            return true;
         }
 
         public void UnloadPlugin(Plugin plugin, CancellationToken token = default(CancellationToken))
