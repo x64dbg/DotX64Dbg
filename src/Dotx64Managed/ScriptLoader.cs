@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Dotx64Dbg
@@ -28,12 +26,12 @@ namespace Dotx64Dbg
         private static void SetupDirectories()
         {
             string AppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DotX64Dbg");
-            if (!Directory.Exists(AppDataPath))
-            {
-                Directory.CreateDirectory(AppDataPath);
-            }
-
-            ScriptBuildOutputPath = Path.Combine(AppDataPath, "Scripts");
+#if _X64_
+            ScriptBuildOutputPath = Path.Combine(AppDataPath, "x64");
+#else
+            ScriptBuildOutputPath = Path.Combine(AppDataPath, "x86");
+#endif
+            ScriptBuildOutputPath = Path.Combine(ScriptBuildOutputPath, "Scripts");
             if (!Directory.Exists(ScriptBuildOutputPath))
             {
                 Directory.CreateDirectory(ScriptBuildOutputPath);
