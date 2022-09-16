@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Loader;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -521,7 +520,7 @@ namespace Dotx64Dbg
                             }
                             catch (Exception ex)
                             {
-                                throw;
+                                Utils.PrintException(ex);
                             }
                         }
                     }
