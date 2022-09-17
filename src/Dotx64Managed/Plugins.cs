@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
@@ -73,12 +70,12 @@ namespace Dotx64Dbg
             Console.WriteLine("DotX64Dbg Plugins Path: {0}", PluginsPath);
 
             AppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DotX64Dbg");
-            if (!Directory.Exists(AppDataPath))
-            {
-                Directory.CreateDirectory(AppDataPath);
-            }
-
-            PluginOutputPath = Path.Combine(AppDataPath, "Plugins");
+#if _X64_
+            PluginOutputPath = Path.Combine(AppDataPath, "x64");
+#else
+            PluginOutputPath = Path.Combine(AppDataPath, "x86");
+#endif
+            PluginOutputPath = Path.Combine(PluginOutputPath, "Plugins");
             if (!Directory.Exists(PluginOutputPath))
             {
                 Directory.CreateDirectory(PluginOutputPath);
