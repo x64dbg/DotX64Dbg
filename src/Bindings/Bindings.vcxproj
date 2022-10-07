@@ -167,6 +167,8 @@
       <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(SolutionDir)include;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>x64dbg.dll;x64bridge.dll;TitanEngine.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
