@@ -13,8 +13,14 @@ namespace Dotx64Dbg
     {
         Dictionary<object, object> ReferenceMap = new();
         List<object> NewObjects = new();
-        public Assembly OldAssembly { get; }
-        public Assembly NewAssembly { get; }
+        public Assembly OldAssembly
+        {
+            get;
+        }
+        public Assembly NewAssembly
+        {
+            get;
+        }
 
         public TransitionContext(Assembly oldAssembly, Assembly newAssembly)
         {
@@ -280,7 +286,7 @@ namespace Dotx64Dbg
             if (plugin.Instance == null)
                 return;
 
-            var pluginName = plugin.Info.Name;
+            var pluginName = plugin.Info != null ? plugin.Info.Name : plugin.Path;
             Utils.DebugPrintLine($"Unloading plugin: {plugin.Path}");
 
             UnloadPluginInstanceRecursive(plugin, plugin.Instance, new());

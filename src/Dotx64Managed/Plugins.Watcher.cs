@@ -63,7 +63,7 @@ namespace Dotx64Dbg
                 {
                     PluginRootFolder = false,
                     PluginName = pluginName,
-                    RelativeFilePath = relativePath.Substring(pos + 1),
+                    RelativeFilePath = relativePath,
                     PluginPath = Path.Combine(PluginsPath, pluginName),
                     FilePath = Path.Combine(PluginsPath, pluginName, relativePath),
                 };
