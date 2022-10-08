@@ -84,7 +84,7 @@ namespace Dotx64Dbg
 
         public static void SetMenuData(MenuData data)
         {
-            lock(LoaderLock)
+            lock (LoaderLock)
             {
                 Menus.InitializeMenus(data);
 
@@ -101,6 +101,11 @@ namespace Dotx64Dbg
         public static bool EvalScript(string code)
         {
             return ScriptLoader.ExecuteCode(code);
+        }
+
+        internal static Plugins GetPlugins()
+        {
+            return PluginManager;
         }
     }
 }

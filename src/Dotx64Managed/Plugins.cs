@@ -232,8 +232,7 @@ namespace Dotx64Dbg
 
             if (plugin.Info != null)
             {
-                plugin.RequiresRebuild = true;
-                TriggerRebuild();
+                LoadPlugin(plugin);
             }
         }
 
@@ -320,6 +319,52 @@ namespace Dotx64Dbg
                 .Select(x => x.Instance as IPlugin)
                 .Where(x => x != null)
                 .ToList();
+        }
+
+        internal bool IsPluginNameTaken(string pluginName)
+        {
+            var path = Path.Combine(Settings.PluginsPath, pluginName);
+            if (Directory.Exists(path))
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        public string CreatePluginTemplate(string pluginName)
+        {
+            var pluginPath = Path.Combine(Settings.PluginsPath, pluginName);
+            if (Directory.Exists(pluginPath))
+            {
+                return null;
+            }
+
+            var pluginJsonPath = Path.Combine(pluginPath, "plugin.json");
+            var pluginCsPath = Path.Combine(pluginPath, "plugin.cs");
+
+            // Search and replace keywords in templates.
+            var replacements = new Dictionary<string, string> {
+                { "%PLUGIN_NAME%", pluginName }
+            };
+
+            if (!Utils.CreateDir(pluginPath))
+            {
+                // ERROR.
+                return null;
+            }
+
+            if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_json, replacements, pluginJsonPath))
+            {
+                // ERROR.
+            }
+
+            if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_cs, replacements, pluginCsPath))
+            {
+                // ERROR.
+            }
+
+            return pluginPath;
         }
     }
 }
