@@ -1,28 +1,17 @@
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Timers;
 using System.Diagnostics;
-
-using NuGet.Packaging;
-using NuGet.Frameworks;
+using System.IO;
 
 namespace Dotx64Dbg
 {
     internal partial class Plugins
     {
         System.Threading.Thread BuildThread;
-        CancellationTokenSource BuildCancellation = new();
-
-        bool RequiresRebuild = false;
-        int RebuildDelay = 0;
-        Stopwatch RebuildTimer = new();
+        System.Threading.AutoResetEvent WorkerWakeup = new(false);
+        System.Threading.CancellationTokenSource BuildCancellation = new();
 
         bool RebuildInProgress = false;
+        bool SkipRebuilding = false;
 
         void StartBuildWorker()
         {
@@ -35,6 +24,7 @@ namespace Dotx64Dbg
             try
             {
                 BuildCancellation.Cancel();
+                WorkerWakeup.Set();
                 BuildThread.Join();
             }
             catch (Exception)
@@ -50,33 +40,28 @@ namespace Dotx64Dbg
 
                 while (true)
                 {
+                    WorkerWakeup.WaitOne();
+
                     cancelToken.ThrowIfCancellationRequested();
 
-                    System.Threading.Thread.Sleep(10);
+                    // Delay this a bit to give the file notification handler a chance
+                    // to process multiple files.
+                    System.Threading.Thread.Sleep(100);
 
                     lock (Manager.LoaderLock)
                     {
-                        if (!RequiresRebuild)
-                            continue;
-
-                        if (RebuildTimer.ElapsedMilliseconds < RebuildDelay)
-                            continue;
-
-                        RequiresRebuild = false;
-
                         Utils.DebugPrintLine("Begin rebuild");
 
-                        RebuildInProgress = true;
                         RebuildPlugins(cancelToken);
-                        RebuildInProgress = false;
 
                         Utils.DebugPrintLine("End rebuild");
+                        RebuildInProgress = false;
                     }
                 }
             }
             catch (OperationCanceledException)
             {
-                Utils.DebugPrintLine("Loop cancelled");
+                Utils.DebugPrintLine("Loop canceled");
                 RebuildInProgress = false;
             }
             catch (Exception ex)
@@ -86,26 +71,26 @@ namespace Dotx64Dbg
             }
         }
 
-        private void TriggerRebuild(int delayMilliseconds = 0)
+        private void TriggerRebuild()
         {
-            Utils.DebugPrintLine($"TriggerRebuild {delayMilliseconds}");
-            lock (this)
-            {
-                RequiresRebuild = true;
-                RebuildTimer.Restart();
-                RebuildDelay = delayMilliseconds;
-            }
+            if (SkipRebuilding)
+                return;
+
+            Utils.DebugPrintLine($"TriggerRebuild");
+
+            RebuildInProgress = true;
+            WorkerWakeup.Set();
         }
 
         private void WaitForRebuild()
         {
             while (RebuildInProgress)
             {
-                System.Threading.Thread.Sleep(1);
+                System.Threading.Thread.Sleep(10);
             }
         }
 
-        bool RebuildPlugin(Plugin plugin, CancellationToken token)
+        bool RebuildPlugin(Plugin plugin, System.Threading.CancellationToken token)
         {
             var stopwatch = new Stopwatch();
 
@@ -123,7 +108,7 @@ namespace Dotx64Dbg
                 Console.WriteLine("Build failed");
                 return false;
             }
-  
+
             Console.WriteLine("Compiled plugin '{0}' in {1} ms", plugin.Info.Name, stopwatch.ElapsedMilliseconds);
 
             // Successfully built.
@@ -132,29 +117,23 @@ namespace Dotx64Dbg
             return ReloadPlugin(plugin, res.OutputAssemblyPath, token);
         }
 
-        void RebuildPlugins(CancellationToken token)
+        void RebuildPlugins(System.Threading.CancellationToken token)
         {
-            // We have to make sure things aren't build in parallel.
-            foreach (var plugin in Registered)
+            // TODO: Investigate building in parallel            
+            //Parallel.ForEach(Registered, plugin =>
+            Registered.ForEach(plugin =>
             {
                 token.ThrowIfCancellationRequested();
 
-                if (plugin.Info == null)
+                if (plugin.Info == null || plugin.RequiresRebuild == false)
                 {
-                    Utils.DebugPrintLine($"Plugin without json: {plugin.Path}, skipping.");
-                    continue;
-                }
-
-                if (plugin.RequiresRebuild == false)
-                {
-                    Utils.DebugPrintLine($"Plugin {plugin.Path} requires no rebuild, skipping.");
-                    continue;
+                    return;
                 }
 
                 if (plugin.SourceFiles.Count == 0)
                 {
                     Utils.DebugPrintLine($"Plugin {plugin.Path} has no source files, skipping.");
-                    continue;
+                    return;
                 }
 
                 // We need to check if a rebuild is indeed necessary
@@ -165,23 +144,23 @@ namespace Dotx64Dbg
                 {
                     if (InitializePluginFromCache(plugin, cacheFile))
                     {
-                        if(ReloadPlugin(plugin, plugin.AssemblyPath, token))
+                        if (ReloadPlugin(plugin, plugin.AssemblyPath, token))
                         {
-                            Utils.DebugPrintLine($"Loaded plugin '{plugin.Info.Name}' from CACHE");
+                            Utils.DebugPrintLine($"Loaded plugin '{plugin.Info.Name}' from cache");
                         }
                         DeleteNotUsedPluginCache(plugin);
                         plugin.RequiresRebuild = false;
-                        continue;
+                        return;
                     }
                     else
-                        Utils.DebugPrintLine($"Skiping cache...");
+                        Utils.DebugPrintLine($"Skipking cache...");
                 }
                 if (RebuildPlugin(plugin, token))
                 {
                     CachePluginBuild(plugin, cacheFile);
                 }
                 DeleteNotUsedPluginCache(plugin);
-            }
+            });
 
             void DeleteNotUsedPluginCache(Plugin plugin)
             {

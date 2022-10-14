@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
 
 namespace Dotx64Dbg
 {
@@ -33,51 +27,42 @@ namespace Dotx64Dbg
             System.Diagnostics.Process.Start(new ProcessStartInfo(folder) { UseShellExecute = true });
         }
 
-        internal static void CreateNewPlugin()
+        internal static string PromptPluginName()
         {
-            string pluginName;
-            string newPluginPath;
+            var plugins = Manager.GetPlugins();
 
             for (; ; )
             {
-                pluginName = Native.UI.InputPrompt("Enter a name for the Plugin");
+                var pluginName = Native.UI.InputPrompt("Enter a name for the Plugin");
                 if (pluginName == null)
-                    return;
+                    return null;
 
-                newPluginPath = Path.Combine(Settings.PluginsPath, pluginName);
-                if (Directory.Exists(newPluginPath))
+                if (plugins.IsPluginNameTaken(pluginName))
                 {
                     MessageBox.Show("A plugin with the specified name already exists.\n");
                     continue;
                 }
 
-                break;
+                return pluginName;
             }
+        }
 
-            var pluginJsonPath = Path.Combine(newPluginPath, "plugin.json");
-            var pluginCsPath = Path.Combine(newPluginPath, "plugin.cs");
+        internal static void CreateNewPlugin()
+        {
+            var plugins = Manager.GetPlugins();
 
-            // Search and replace keywords in templates.
-            var replacements = new Dictionary<string, string> {
-                { "%PLUGIN_NAME%", pluginName }
-            };
+            string pluginName = PromptPluginName();
+            if (pluginName == null)
+                return;
 
-            if (!Utils.CreateDir(newPluginPath))
+            var pluginPath = plugins.CreatePluginTemplate(pluginName);
+            if (pluginPath == null)
             {
-                // ERROR.
+                MessageBox.Show("Failed to create new plugin\n");
+                return;
             }
 
-            if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_json, replacements, pluginJsonPath))
-            {
-                // ERROR.
-            }
-
-            if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_cs, replacements, pluginCsPath))
-            {
-                // ERROR.
-            }
-
-            OpenFolder(newPluginPath);
+            OpenFolder(pluginPath);
         }
 
         internal static void InitializeMainMenu()

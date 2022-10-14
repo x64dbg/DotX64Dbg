@@ -8,13 +8,31 @@ namespace Dotx64Dbg
 {
     internal class PluginInfo
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Version { get; set; }
-        public string Author { get; set; }
-        public string Website { get; set; }
+        public string Name
+        {
+            get; set;
+        }
+        public string Description
+        {
+            get; set;
+        }
+        public string Version
+        {
+            get; set;
+        }
+        public string Author
+        {
+            get; set;
+        }
+        public string Website
+        {
+            get; set;
+        }
 
-        public string[] Dependencies { get; set; }
+        public string[] Dependencies
+        {
+            get; set;
+        }
     }
 
     internal class Plugin
@@ -47,7 +65,6 @@ namespace Dotx64Dbg
         string AppDataPath;
         string PluginOutputPath;
 
-        FileSystemWatcher PluginWatch;
         DependencyResolver dependencyResolver;
 
         List<Plugin> Registered = new();
@@ -85,23 +102,18 @@ namespace Dotx64Dbg
         public void Initialize()
         {
             SetupDirectories();
-
-            PluginWatch = new FileSystemWatcher(PluginsPath, "*.*");
-            PluginWatch.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.Attributes;
-            PluginWatch.IncludeSubdirectories = true;
-            PluginWatch.EnableRaisingEvents = true;
-            PluginWatch.Created += OnPluginCreate;
-            PluginWatch.Deleted += OnPluginRemove;
-            PluginWatch.Renamed += OnPluginRename;
-            PluginWatch.Changed += OnPluginChange;
+            InitializeWatcher();
 
             dependencyResolver = new();
             dependencyResolver.AddResolver(new NuGetDependencyResolver());
             dependencyResolver.AddResolver(new LocalAssembliesResolver());
 
+            SkipRebuilding = true;
             RegisterPlugins();
             GenerateProjects();
             StartBuildWorker();
+
+            SkipRebuilding = false;
             TriggerRebuild();
         }
 
@@ -158,12 +170,12 @@ namespace Dotx64Dbg
             }
         }
 
-        List<string> EnumerateSourceFiles(string path)
+        List<string> EnumerateSourceFiles(string pluginPath)
         {
-            return new List<string>(Directory.EnumerateFiles(path, "*.cs", new EnumerationOptions()
+            return Directory.EnumerateFiles(pluginPath, "*.cs", new EnumerationOptions()
             {
                 RecurseSubdirectories = true,
-            }));
+            }).Where(file => !IsExcludedFileOrFolder(pluginPath, file)).ToList();
         }
 
         PluginInfo GetPluginInfo(string jsonFile)
@@ -220,8 +232,7 @@ namespace Dotx64Dbg
 
             if (plugin.Info != null)
             {
-                plugin.RequiresRebuild = true;
-                TriggerRebuild(50);
+                LoadPlugin(plugin);
             }
         }
 
@@ -259,7 +270,7 @@ namespace Dotx64Dbg
             }
 
             plugin.RequiresRebuild = true;
-            TriggerRebuild(50);
+            TriggerRebuild();
         }
 
         Plugin FindPlugin(string path)
@@ -274,217 +285,17 @@ namespace Dotx64Dbg
             return null;
         }
 
-        class PluginFileInfo
+        void RebuildOrUnloadPlugin(Plugin plugin)
         {
-            public bool PluginRootFolder { get; set; }
-            public string PluginName { get; set; }
-            public string FilePath { get; set; }
-        }
-
-        PluginFileInfo ParseInfo(string path)
-        {
-            var relativePath = Path.GetRelativePath(PluginsPath, path);
-            if (relativePath.Length == 0)
-                return null;
-
-            if (relativePath.Contains(Path.DirectorySeparatorChar))
+            if (plugin.SourceFiles.Count == 0)
             {
-                var pos = relativePath.IndexOf(Path.DirectorySeparatorChar);
-                var pluginName = relativePath.Substring(0, pos);
-
-                return new PluginFileInfo()
-                {
-                    PluginRootFolder = false,
-                    PluginName = pluginName,
-                    FilePath = relativePath.Substring(pos + 1)
-                };
-            }
-            else
-            {
-                return new PluginFileInfo()
-                {
-                    PluginRootFolder = true,
-                    PluginName = relativePath,
-                    FilePath = null
-                };
-            }
-        }
-
-        void OnPluginCreate(object sender, FileSystemEventArgs e)
-        {
-            Utils.DebugPrintLine($"[PluginWatch] Plugin File Create: {e.FullPath}");
-
-            var info = ParseInfo(e.FullPath);
-            if (info == null)
-                return;
-
-            if (info.PluginRootFolder)
-            {
-                RegisterPlugin(e.FullPath);
-            }
-            else
-            {
-                var pluginPath = Path.Combine(PluginsPath, info.PluginName);
-                var plugin = FindPlugin(pluginPath);
-                if (plugin == null)
-                {
-                    Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
-                    return;
-                }
-
-                // File was created.
-                OnPluginFileCreate(plugin, info);
-            }
-
-            TriggerRebuild(50);
-        }
-
-        void OnPluginFileCreate(Plugin plugin, PluginFileInfo info)
-        {
-            if (info.FilePath == "plugin.json")
-            {
-                LoadPlugin(plugin);
-            }
-            else
-            {
-                var fullPath = Path.Combine(PluginsPath, info.PluginName, info.FilePath);
-                if (!fullPath.EndsWith(".cs"))
-                    return;
-
-                if (!plugin.SourceFiles.Contains(fullPath))
-                    plugin.SourceFiles.Add(fullPath);
-
-                plugin.RequiresRebuild = true;
-                TriggerRebuild(50);
-            }
-        }
-
-        void OnPluginRemove(object sender, FileSystemEventArgs e)
-        {
-            Utils.DebugPrintLine($"[PluginWatch] Plugin File Remove: {e.FullPath}");
-
-            var info = ParseInfo(e.FullPath);
-            if (info == null)
-                return;
-
-            var pluginPath = Path.Combine(PluginsPath, info.PluginName);
-            var plugin = FindPlugin(pluginPath);
-            if (plugin == null)
-            {
-                Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
-                return;
-            }
-
-            if (info.PluginRootFolder)
-            {
-                RemovePlugin(plugin);
-            }
-            else
-            {
-                OnPluginFileRemove(plugin, info);
-            }
-        }
-
-        void OnPluginFileRemove(Plugin plugin, PluginFileInfo info)
-        {
-            var fullPath = Path.Combine(PluginsPath, info.PluginName, info.FilePath);
-
-            if (plugin.ConfigPath == fullPath)
-            {
-                Utils.DebugPrintLine("plugin.json got removed, unloading plugin");
-
-                plugin.Info = null;
+                Utils.DebugPrintLine($"[PluginWatch] Plugin {plugin.Info.Name} has no sources, unloading.");
                 UnloadPlugin(plugin);
             }
             else
             {
-                if (plugin.SourceFiles.Remove(fullPath))
-                {
-                    if (plugin.SourceFiles.Count == 0)
-                    {
-                        UnloadPlugin(plugin);
-                    }
-                    else
-                    {
-                        plugin.RequiresRebuild = true;
-                        TriggerRebuild(50);
-                    }
-                }
-            }
-        }
-
-        void OnPluginRename(object sender, RenamedEventArgs e)
-        {
-            Utils.DebugPrintLine($"[PluginWatch] Plugin File Rename: {e.OldFullPath} -> {e.FullPath}");
-
-            var info = ParseInfo(e.FullPath);
-            if (info == null)
-                return;
-
-            var pluginPath = Path.Combine(PluginsPath, info.PluginName);
-            var plugin = FindPlugin(pluginPath);
-            if (plugin == null)
-            {
-                Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
-                return;
-            }
-
-            if (info.PluginRootFolder)
-            {
-                RemovePlugin(plugin);
-                RegisterPlugin(e.FullPath);
-            }
-            else
-            {
-                OnPluginFileRename(plugin, info, e.OldFullPath);
-            }
-        }
-
-        void OnPluginFileRename(Plugin plugin, PluginFileInfo info, string oldFullPath)
-        {
-            var fullPath = Path.Combine(PluginsPath, info.PluginName, info.FilePath);
-
-            if (plugin.ConfigPath == oldFullPath)
-            {
-                UnloadPlugin(plugin);
-                plugin.Info = null;
-            }
-            else if (plugin.ConfigPath == fullPath)
-            {
-                LoadPlugin(plugin);
-            }
-            else
-            {
-                //Logging.WriteLine("File rename {0}, {1}", e.OldFullPath, e.FullPath);
-                plugin.SourceFiles.Remove(oldFullPath);
-
-                if (!plugin.SourceFiles.Contains(fullPath))
-                    plugin.SourceFiles.Add(fullPath);
-
                 plugin.RequiresRebuild = true;
-                TriggerRebuild(50);
-            }
-        }
-
-        void OnPluginChange(object sender, FileSystemEventArgs e)
-        {
-            Utils.DebugPrintLine($"[PluginWatch] Plugin Change: {e.FullPath}");
-
-            var info = ParseInfo(e.FullPath);
-            if (info == null)
-                return;
-
-            if (!info.PluginRootFolder)
-            {
-                var pluginPath = Path.Combine(PluginsPath, info.PluginName);
-                var plugin = FindPlugin(pluginPath);
-                if (plugin == null)
-                {
-                    Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
-                    return;
-                }
-
-                OnPluginFileChange(plugin, info);
+                TriggerRebuild();
             }
         }
 
@@ -499,64 +310,6 @@ namespace Dotx64Dbg
             return true;
         }
 
-        void OnPluginFileChange(Plugin plugin, PluginFileInfo info)
-        {
-            var fullPath = Path.Combine(PluginsPath, info.PluginName, info.FilePath);
-
-            if (plugin.ConfigPath == fullPath)
-            {
-                Utils.DebugPrintLine("Plugin info modified, reloading meta...");
-                var oldInfo = plugin.Info;
-
-                var pluginInfo = GetPluginInfo(fullPath);
-                if (pluginInfo == null)
-                {
-                    Utils.DebugPrintLine("Unable to read plugin meta");
-                }
-
-                plugin.Info = pluginInfo;
-
-                var requiresRebuild = false;
-                var dependeniesChanged = false;
-                if (oldInfo == null && pluginInfo != null)
-                {
-                    // No info previously
-                    requiresRebuild = true;
-                    dependeniesChanged = true;
-                }
-                else if (oldInfo != null && pluginInfo != null)
-                {
-                    dependeniesChanged = CheckDependeniesChanged(oldInfo.Dependencies, pluginInfo.Dependencies);
-                    if (dependeniesChanged)
-                    {
-                        Utils.DebugPrintLine("Dependencies changed");
-                        requiresRebuild = true;
-                    }
-                }
-
-                // The json drives the project settings.
-                if (dependeniesChanged)
-                {
-                    // Also generate new project, currently doesn't deal with nuget references.
-                    GenerateProject(plugin);
-                }
-
-                if (requiresRebuild)
-                {
-                    plugin.RequiresRebuild = true;
-                    TriggerRebuild(50);
-                }
-            }
-            else
-            {
-                if (plugin.SourceFiles.Contains(fullPath))
-                {
-                    plugin.RequiresRebuild = true;
-                    TriggerRebuild(50);
-                }
-            }
-        }
-
         public List<IPlugin> GetPluginInstances()
         {
             // If we are currently rebuilding we have to wait.
@@ -566,6 +319,52 @@ namespace Dotx64Dbg
                 .Select(x => x.Instance as IPlugin)
                 .Where(x => x != null)
                 .ToList();
+        }
+
+        internal bool IsPluginNameTaken(string pluginName)
+        {
+            var path = Path.Combine(Settings.PluginsPath, pluginName);
+            if (Directory.Exists(path))
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        public string CreatePluginTemplate(string pluginName)
+        {
+            var pluginPath = Path.Combine(Settings.PluginsPath, pluginName);
+            if (Directory.Exists(pluginPath))
+            {
+                return null;
+            }
+
+            var pluginJsonPath = Path.Combine(pluginPath, "plugin.json");
+            var pluginCsPath = Path.Combine(pluginPath, "plugin.cs");
+
+            // Search and replace keywords in templates.
+            var replacements = new Dictionary<string, string> {
+                { "%PLUGIN_NAME%", pluginName }
+            };
+
+            if (!Utils.CreateDir(pluginPath))
+            {
+                // ERROR.
+                return null;
+            }
+
+            if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_json, replacements, pluginJsonPath))
+            {
+                // ERROR.
+            }
+
+            if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_cs, replacements, pluginCsPath))
+            {
+                // ERROR.
+            }
+
+            return pluginPath;
         }
     }
 }

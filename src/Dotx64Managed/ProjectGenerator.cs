@@ -26,69 +26,139 @@ namespace Dotx64Dbg
                 XmlDocument doc = new();
 
                 var nodeProject = doc.CreateElement("Project");
-                nodeProject.SetAttribute("Sdk", Sdk);
+                doc.AppendChild(nodeProject);
 
-                var nodePropsGroup = doc.CreateElement("PropertyGroup");
+                // PropertyGroup
+                {
+                    var nodePropsGroup = doc.CreateElement("PropertyGroup");
+                    nodeProject.AppendChild(nodePropsGroup);
 
-                var nodeTargetFramework = doc.CreateElement("TargetFramework");
-                nodeTargetFramework.InnerText = TargetFramework;
+                    // BaseIntermediateOutputPath
+                    var nodeBaseIntermediateOutputPath = doc.CreateElement("BaseIntermediateOutputPath");
+                    nodeBaseIntermediateOutputPath.InnerText = ".vs\\obj";
+                    nodePropsGroup.AppendChild(nodeBaseIntermediateOutputPath);
 
-                nodePropsGroup.AppendChild(nodeTargetFramework);
+                    // BaseIntermediateOutputPath
+                    var nodeMSBUildProjectExtensionsPath = doc.CreateElement("MSBUildProjectExtensionsPath");
+                    nodeMSBUildProjectExtensionsPath.InnerText = ".vs\\obj";
+                    nodePropsGroup.AppendChild(nodeMSBUildProjectExtensionsPath);
+                }
 
-                var nodePlatforms = doc.CreateElement("Platforms");
+                // Import SDK
+                {
+                    var nodeImport = doc.CreateElement("Import");
+                    nodeImport.SetAttribute("Project", "Sdk.props");
+                    nodeImport.SetAttribute("Sdk", Sdk);
+                    nodeProject.AppendChild(nodeImport);
+                }
 
-                //var nodePlatformsInner = doc.CreateTextNode(Platforms);
-                nodePlatforms.InnerText = Platforms;
-                //nodePlatforms.Value = Platforms;
+                // PropertyGroup
+                {
+                    var nodePropsGroup = doc.CreateElement("PropertyGroup");
+                    nodeProject.AppendChild(nodePropsGroup);
 
-                nodePropsGroup.AppendChild(nodePlatforms);
+                    // TargetFrameWork
+                    var nodeTargetFramework = doc.CreateElement("TargetFramework");
+                    nodeTargetFramework.InnerText = TargetFramework;
+                    nodePropsGroup.AppendChild(nodeTargetFramework);
 
-                nodeProject.AppendChild(nodePropsGroup);
+                    // Platforms
+                    var nodePlatforms = doc.CreateElement("Platforms");
+                    nodePlatforms.InnerText = Platforms;
+                    nodePropsGroup.AppendChild(nodePlatforms);
+
+                    // AppendTargetFrameworkToOutputPath
+                    var nodeAppendTargetFrameworkToOutputPath = doc.CreateElement("AppendTargetFrameworkToOutputPath");
+                    nodeAppendTargetFrameworkToOutputPath.InnerText = "false";
+                    nodePropsGroup.AppendChild(nodeAppendTargetFrameworkToOutputPath);
+
+                    // AppendRuntimeIdentifierToOutputPath
+                    var nodeAppendRuntimeIdentifierToOutputPath = doc.CreateElement("AppendRuntimeIdentifierToOutputPath");
+                    nodeAppendRuntimeIdentifierToOutputPath.InnerText = "false";
+                    nodePropsGroup.AppendChild(nodeAppendRuntimeIdentifierToOutputPath);
+
+                    // BaseOutputPath
+                    var nodeBaseOutputPath = doc.CreateElement("BaseOutputPath");
+                    nodeBaseOutputPath.InnerText = ".vs\\bin";
+                    nodePropsGroup.AppendChild(nodeBaseOutputPath);
+
+                    // UseCommonOutputDirectory
+                    var nodeUseCommonOutputDirectory = doc.CreateElement("UseCommonOutputDirectory");
+                    nodeUseCommonOutputDirectory.InnerText = "false";
+                    nodePropsGroup.AppendChild(nodeUseCommonOutputDirectory);
+                }
 
                 // X86 References
-                var nodeItemsX86 = doc.CreateElement("ItemGroup");
-                nodeItemsX86.SetAttribute("Condition", "'$(PlatformName)' == 'x86'");
-
-                foreach (var fileRef in References)
                 {
-                    var nodeRef = doc.CreateElement("Reference");
-                    var refPath = System.IO.Path.Combine(ReferencePathX86, fileRef);
-                    nodeRef.SetAttribute("Include", refPath);
+                    var nodeItemGroup = doc.CreateElement("ItemGroup");
+                    nodeItemGroup.SetAttribute("Condition", "'$(PlatformName)' == 'x86'");
 
-                    nodeItemsX86.AppendChild(nodeRef);
+                    foreach (var fileRef in References)
+                    {
+                        var nodeRef = doc.CreateElement("Reference");
+                        var refPath = System.IO.Path.Combine(ReferencePathX86, fileRef);
+                        nodeRef.SetAttribute("Include", refPath);
+
+                        nodeItemGroup.AppendChild(nodeRef);
+                    }
+
+                    nodeProject.AppendChild(nodeItemGroup);
                 }
-
-                nodeProject.AppendChild(nodeItemsX86);
 
                 // X64 References
-                var nodeItemsX64 = doc.CreateElement("ItemGroup");
-                nodeItemsX64.SetAttribute("Condition", "'$(PlatformName)' == 'x64'");
-
-                foreach (var fileRef in References)
                 {
-                    var nodeRef = doc.CreateElement("Reference");
-                    var refPath = System.IO.Path.Combine(ReferencePathX64, fileRef);
-                    nodeRef.SetAttribute("Include", refPath);
+                    var nodeItemGroup = doc.CreateElement("ItemGroup");
+                    nodeItemGroup.SetAttribute("Condition", "'$(PlatformName)' == 'x64'");
 
-                    nodeItemsX64.AppendChild(nodeRef);
+                    foreach (var fileRef in References)
+                    {
+                        var nodeRef = doc.CreateElement("Reference");
+                        var refPath = System.IO.Path.Combine(ReferencePathX64, fileRef);
+                        nodeRef.SetAttribute("Include", refPath);
+
+                        nodeItemGroup.AppendChild(nodeRef);
+                    }
+
+                    nodeProject.AppendChild(nodeItemGroup);
                 }
-
-                nodeProject.AppendChild(nodeItemsX64);
 
                 // Packages References
-                var nodePkgRefs = doc.CreateElement("ItemGroup");
-                foreach(var pkg in Frameworks)
                 {
-                    var nodeRef = doc.CreateElement("PackageReference");
-                    nodeRef.SetAttribute("Include", pkg.Framework);
-                    nodeRef.SetAttribute("Version", pkg.Version.ToString(3));
+                    var nodePkgRefs = doc.CreateElement("ItemGroup");
+                    foreach (var pkg in Frameworks)
+                    {
+                        var nodeRef = doc.CreateElement("PackageReference");
+                        nodeRef.SetAttribute("Include", pkg.Framework);
+                        nodeRef.SetAttribute("Version", pkg.Version.ToString(3));
 
-                    nodePkgRefs.AppendChild(nodeRef);
+                        nodePkgRefs.AppendChild(nodeRef);
+                    }
+
+                    nodeProject.AppendChild(nodePkgRefs);
                 }
 
-                nodeProject.AppendChild(nodePkgRefs);
+                // Import targets
+                {
+                    var nodeImport = doc.CreateElement("Import");
+                    nodeImport.SetAttribute("Project", "Sdk.targets");
+                    nodeImport.SetAttribute("Sdk", Sdk);
+                    nodeProject.AppendChild(nodeImport);
+                }
 
-                doc.AppendChild(nodeProject);
+                // Override build target
+                {
+                    var nodeTarget = doc.CreateElement("Target");
+                    nodeTarget.SetAttribute("Name", "PostBuildWarn");
+                    nodeTarget.SetAttribute("AfterTargets", "PostBuildEvent");
+
+                    nodeProject.AppendChild(nodeTarget);
+
+                    var nodeMsg = doc.CreateElement("Message");
+                    nodeMsg.SetAttribute("Text", "NOTE: Building the project is not required, Dotx64Dbg will automatically build and reload on source code changes.");
+                    nodeMsg.SetAttribute("Importance", "High");
+
+                    nodeTarget.AppendChild(nodeMsg);
+                }
 
                 doc.Save(file);
             }
