@@ -131,7 +131,7 @@ namespace Dotx64Dbg
             }
         }
 
-        void GenerateProject(Plugin plugin)
+        public static void GenerateProject(Plugin plugin)
         {
             var binaryPathX86 = Path.Combine(Utils.GetRootPath(), "x86", "plugins");
             var binaryPathX64 = Path.Combine(Utils.GetRootPath(), "x64", "plugins");
