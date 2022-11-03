@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 
 namespace Dotx64Dbg
@@ -55,6 +56,16 @@ namespace Dotx64Dbg
                 if (Info == null)
                     return null;
                 return System.IO.Path.Combine(Path, Info.Name + ".csproj");
+            }
+        }
+
+        public string SolutionFilePath
+        {
+            get
+            {
+                if (Info == null)
+                    return null;
+                return System.IO.Path.Combine(Path, Info.Name + ".sln");
             }
         }
     }
@@ -131,6 +142,17 @@ namespace Dotx64Dbg
             }
         }
 
+        static Guid SeededGuid(int seed)
+        {
+            var random = new Random(seed);
+            return Guid.Parse(string.Format("{0:X4}{1:X4}-{2:X4}-{3:X4}-{4:X4}-{5:X4}{6:X4}{7:X4}",
+                random.Next(0, 0xffff), random.Next(0, 0xffff),
+                random.Next(0, 0xffff),
+                random.Next(0, 0xffff) | 0x4000,
+                random.Next(0, 0x3fff) | 0x8000,
+                random.Next(0, 0xffff), random.Next(0, 0xffff), random.Next(0, 0xffff)));
+        }
+
         public static void GenerateProject(Plugin plugin)
         {
             var binaryPathX86 = Path.Combine(Utils.GetRootPath(), "x86", "plugins");
@@ -143,7 +165,7 @@ namespace Dotx64Dbg
                 return;
 
             var projectFilePath = plugin.ProjectFilePath;
-            Console.WriteLine($"Generating project file for {plugin.Info.Name}");
+            Console.WriteLine($"Generating project for {plugin.Info.Name}");
 
             var projGen = new ProjectGenerator();
             projGen.ReferencePathX86 = binaryPathX86;
@@ -160,6 +182,49 @@ namespace Dotx64Dbg
             }
 
             projGen.Save(projectFilePath);
+
+            var guid = SeededGuid(plugin.Info.Name.GetHashCode()).ToString().ToUpper();
+            var solutionText = $@"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project(""{{9A19103F-16F7-4668-BE54-9A1E7A4F7556}}"") = ""{plugin.Info.Name}"", ""{plugin.Info.Name}.csproj"", ""{{{guid}}}""
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{{{guid}}}.Release|x64.ActiveCfg = Release|x64
+		{{{guid}}}.Release|x64.Build.0 = Release|x64
+		{{{guid}}}.Release|x86.ActiveCfg = Release|x86
+		{{{guid}}}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {{8BF78ACB-FDCE-407F-89A6-C8FE26E643E6}}
+	EndGlobalSection
+EndGlobal
+";
+
+            var solutionFilePath = plugin.SolutionFilePath;
+            if(File.Exists(solutionFilePath))
+            {
+                // Do not recreate the solution if it's already up to date
+                var existingText = File.ReadAllText(solutionFilePath, Encoding.UTF8);
+                if(existingText != solutionText)
+                {
+                    File.WriteAllText(solutionFilePath, solutionText, Encoding.UTF8);
+                }
+            }
+            else
+            {
+                File.WriteAllText(solutionFilePath, solutionText, Encoding.UTF8);
+            }
         }
 
         void GenerateProjects()
