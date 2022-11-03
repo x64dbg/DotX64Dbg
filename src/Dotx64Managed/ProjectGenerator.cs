@@ -33,15 +33,17 @@ namespace Dotx64Dbg
                     var nodePropsGroup = doc.CreateElement("PropertyGroup");
                     nodeProject.AppendChild(nodePropsGroup);
 
-                    // BaseIntermediateOutputPath
-                    var nodeBaseIntermediateOutputPath = doc.CreateElement("BaseIntermediateOutputPath");
-                    nodeBaseIntermediateOutputPath.InnerText = ".vs\\obj";
-                    nodePropsGroup.AppendChild(nodeBaseIntermediateOutputPath);
+                    void AppendTextNode(string name, string innerText)
+                    {
+                        var node = doc.CreateElement(name);
+                        node.InnerText = innerText;
+                        nodePropsGroup.AppendChild(node);
+                    }
 
-                    // BaseIntermediateOutputPath
-                    var nodeMSBUildProjectExtensionsPath = doc.CreateElement("MSBUildProjectExtensionsPath");
-                    nodeMSBUildProjectExtensionsPath.InnerText = ".vs\\obj";
-                    nodePropsGroup.AppendChild(nodeMSBUildProjectExtensionsPath);
+                    AppendTextNode("BaseIntermediateOutputPath", @".vs\obj");
+                    AppendTextNode("MSBUildProjectExtensionsPath", @".vs\obj");
+                    AppendTextNode("MSBuildWarningsAsMessages", "$(MSBuildWarningsAsMessages);MSB3277");
+                    AppendTextNode("Configurations", "Release");
                 }
 
                 // Import SDK
