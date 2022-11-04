@@ -67,6 +67,21 @@ namespace Dotx64Dbg
 
         Type GetPluginClass(Assembly assembly)
         {
+            Console.WriteLine("Yo");
+
+            foreach (var type in assembly.GetForwardedTypes())
+            {
+                Console.WriteLine($"Forwarded Type: {type.FullName}");
+            }
+
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.Module.Assembly != assembly)
+                    Console.WriteLine($"External Type: {type.FullName}");
+                else
+                    Console.WriteLine($"Type: {type.FullName}");
+            }
+
             var entries = assembly.GetTypes().Where(a => a.GetInterface(nameof(IPlugin)) != null).ToArray();
             if (entries.Length > 1)
             {
@@ -235,51 +250,7 @@ namespace Dotx64Dbg
             }
         }
 
-        void UnloadPluginInstanceRecursive(Plugin plugin, object obj, HashSet<object> processed)
-        {
-            if (obj == null)
-                return;
-
-            if (obj.GetType().Assembly != plugin.Loader.Current)
-                return;
-
-            processed.Add(obj);
-
-            var instType = obj.GetType();
-
-            var fields = instType.GetRuntimeFields();
-            foreach (var field in fields)
-            {
-                var fieldType = field.FieldType;
-                if (IsSystemType(field.FieldType))
-                    continue;
-
-                if (fieldType.IsClass && !fieldType.IsArray)
-                {
-                    var nextObj = field.GetValue(obj);
-                    if (!processed.Contains(nextObj))
-                        UnloadPluginInstanceRecursive(plugin, nextObj, processed);
-                }
-            }
-
-            var props = instType.GetRuntimeProperties();
-            foreach (var prop in props)
-            {
-                var fieldType = prop.PropertyType;
-                if (IsSystemType(fieldType))
-                    continue;
-                if (prop.GetIndexParameters().Count() > 0)
-                    continue;
-                if (fieldType.IsClass && !fieldType.IsArray)
-                {
-                    var nextObj = prop.GetValue(obj);
-                    if (!processed.Contains(nextObj))
-                        UnloadPluginInstanceRecursive(plugin, nextObj, processed);
-                }
-            }
-        }
-
-        void UnloadPluginInstance(Plugin plugin, CancellationToken token)
+        void UnloadPluginInstance(Plugin plugin, CancellationToken token, bool isReloading = false)
         {
             token.ThrowIfCancellationRequested();
 
@@ -289,7 +260,10 @@ namespace Dotx64Dbg
             var pluginName = plugin.Info != null ? plugin.Info.Name : plugin.Path;
             Utils.DebugPrintLine($"Unloading plugin: {plugin.Path}");
 
-            UnloadPluginInstanceRecursive(plugin, plugin.Instance, new());
+            if (!isReloading)
+            {
+                plugin.Instance.Shutdown();
+            }
 
             Commands.RemoveAllFor(plugin);
             Expressions.RemoveAllFor(plugin);
@@ -473,12 +447,12 @@ namespace Dotx64Dbg
         {
             token.ThrowIfCancellationRequested();
 
-            var isReload = plugin.Instance != null;
-            Console.WriteLine($"{(isReload ? "Reloading" : "Loading")} '{plugin.Info.Name}'");
+            var hotReload = plugin.Instance != null;
+            Console.WriteLine($"{(hotReload ? "Reloading" : "Loading")} '{plugin.Info.Name}'");
 
             try
             {
-                UnloadPluginInstance(plugin, token);
+                UnloadPluginInstance(plugin, token, hotReload);
 
                 var loader = new AssemblyLoader();
                 loader.AddExternalRequiredAssemblies(plugin.ResolveDependencies(dependencyResolver, token));
@@ -496,17 +470,12 @@ namespace Dotx64Dbg
                 // it must be disposed first.
                 using (var ctx = new TransitionContext(plugin.Loader?.Current, newAssembly))
                 {
-                    var newInstance = ctx.Create(pluginClass);
-                    var hotReload = false;
+                    var newInstance = ctx.Create(pluginClass) as IPlugin;
 
-                    if (plugin.Instance != null)
+                    if (hotReload)
                     {
                         AdaptClasses(ctx, plugin.Loader.Current, newAssembly);
                         AdaptInstance(ctx, plugin.Instance, plugin.InstanceType, newInstance, pluginClass);
-
-                        plugin.Instance = newInstance as IPlugin;
-                        plugin.InstanceType = pluginClass;
-                        hotReload = true;
                     }
                     else
                     {
@@ -531,7 +500,7 @@ namespace Dotx64Dbg
                         }
                     }
 
-                    plugin.Instance = newInstance as IPlugin;
+                    plugin.Instance = newInstance;
                     plugin.InstanceType = pluginClass;
 
                     if (hotReload)
@@ -608,7 +577,7 @@ namespace Dotx64Dbg
                 return false;
             }
 
-            Console.WriteLine($"{(isReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
+            Console.WriteLine($"{(hotReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
             return true;
         }
 
@@ -625,6 +594,8 @@ namespace Dotx64Dbg
                 plugin.Loader.UnloadCurrent();
                 plugin.Loader = null;
             }
+
+            plugin.RequiresRebuild = false;
         }
 
     }

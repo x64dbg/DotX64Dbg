@@ -46,7 +46,7 @@ namespace Dotx64Dbg
         public bool RequiresRebuild;
         internal AssemblyLoader Loader;
         internal string AssemblyPath;
-        internal object Instance;
+        internal IPlugin Instance;
         internal Type InstanceType;
 
         public string ProjectFilePath
@@ -350,18 +350,20 @@ EndGlobal
             return null;
         }
 
-        void RebuildOrUnloadPlugin(Plugin plugin)
+        void RebuildOrUnloadPlugin(Plugin plugin, bool unloadWithoutSources = true)
         {
-            if (plugin.SourceFiles.Count == 0)
+            if (unloadWithoutSources)
             {
-                Utils.DebugPrintLine($"[PluginWatch] Plugin {plugin.Info.Name} has no sources, unloading.");
-                UnloadPlugin(plugin);
+                if (plugin.Instance != null && plugin.SourceFiles.Count == 0)
+                {
+                    Utils.DebugPrintLine($"[PluginWatch] Plugin {plugin.Info.Name} has no sources, unloading.");
+                    UnloadPlugin(plugin);
+                    return;
+                }
             }
-            else
-            {
-                plugin.RequiresRebuild = true;
-                TriggerRebuild();
-            }
+
+            plugin.RequiresRebuild = true;
+            TriggerRebuild();
         }
 
         bool CheckDependeniesChanged(string[] left, string[] right)
