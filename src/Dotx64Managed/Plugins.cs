@@ -131,6 +131,10 @@ namespace Dotx64Dbg
         public void Shutdown()
         {
             StopBuildWorker();
+            foreach (var plugin in Registered)
+            {
+                UnloadPlugin(plugin);
+            }
         }
 
         void RegisterPlugins()
@@ -212,11 +216,11 @@ EndGlobal
 ";
 
             var solutionFilePath = plugin.SolutionFilePath;
-            if(File.Exists(solutionFilePath))
+            if (File.Exists(solutionFilePath))
             {
                 // Do not recreate the solution if it's already up to date
                 var existingText = File.ReadAllText(solutionFilePath, Encoding.UTF8);
-                if(existingText != solutionText)
+                if (existingText != solutionText)
                 {
                     File.WriteAllText(solutionFilePath, solutionText, Encoding.UTF8);
                 }
