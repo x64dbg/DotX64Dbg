@@ -1,5 +1,5 @@
-﻿using System;
-using Dotx64Dbg;
+﻿using Dotx64Dbg;
+using System;
 
 // Plugin Entry. 
 // The hot-load system will try to preserve all members of all classes
@@ -21,6 +21,8 @@ public partial class ExamplePlugin : IPlugin, IHotload
     public void Startup()
     {
         Console.WriteLine("ExamplePlugin Startup");
+
+        Nested.TestFunc();
     }
 
     // Called whenever code changes are hot-loaded.
