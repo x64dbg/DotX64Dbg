@@ -41,6 +41,10 @@ namespace Dotx64Dbg
             {
                 return oldInstance;
             }
+            else if (newType.IsArray)
+            {
+                res = AdaptArray(ctx, oldInstance, newType);
+            }
             else if (newType.IsClass)
             {
                 if (newType.IsGenericType)
@@ -80,10 +84,6 @@ namespace Dotx64Dbg
                 {
                     res = AdaptClass(ctx, oldInstance, oldType, res, newType);
                 }
-            }
-            else if (newType.IsArray)
-            {
-                res = AdaptArray(ctx, oldInstance, newType);
             }
 
             return res;

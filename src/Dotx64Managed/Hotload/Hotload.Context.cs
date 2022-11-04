@@ -40,6 +40,13 @@ namespace Dotx64Dbg
                 return obj;
             }
 
+            public object CreateArray(Type elemType, int size)
+            {
+                var obj = Array.CreateInstance(elemType, size);
+                NewObjects.Add(obj);
+                return obj;
+            }
+
             public bool GetNewReference(object oldObj, out object newObj)
             {
                 return ReferenceMap.TryGetValue(oldObj, out newObj);

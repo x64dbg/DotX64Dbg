@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
@@ -49,7 +47,7 @@ namespace Dotx64Dbg
             var extenalDll = externalAssemblies.FirstOrDefault(file => System.IO.Path.GetFileNameWithoutExtension(file)
                 .Equals(assemblyName.Name, StringComparison.InvariantCultureIgnoreCase));
 
-            if(extenalDll is not null)
+            if (extenalDll is not null)
             {
                 externalAssemblies.Remove(extenalDll);
                 return Assembly.LoadFile(extenalDll);
@@ -78,7 +76,7 @@ namespace Dotx64Dbg
         public void AddExternalRequiredAssemblies(ICollection<string> assembliesPath)
         {
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach(string assemblyPath in assembliesPath)
+            foreach (string assemblyPath in assembliesPath)
             {
                 // Filter assemblies that are already loaded
                 var assemblyName = System.Reflection.AssemblyName.GetAssemblyName(assemblyPath);

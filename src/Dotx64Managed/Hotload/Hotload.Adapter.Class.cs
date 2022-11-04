@@ -8,13 +8,19 @@ namespace Dotx64Dbg
     {
         internal static void AdaptField(Hotload.Context ctx, object oldInstance, FieldInfo oldField, object newInstance, FieldInfo newField)
         {
-            var newFieldType = newField.FieldType;
             var oldFieldType = oldField.FieldType;
+            var newFieldType = newField.FieldType;
 
             var oldValue = oldField.GetValue(oldInstance);
             var newObject = AdaptObject(ctx, oldValue, oldFieldType, newFieldType);
 
+            if (newFieldType.IsEnum)
+            {
+                newObject = Enum.ToObject(newFieldType, newObject);
+            }
+
             newField.SetValue(newInstance, newObject);
+
             if (Nullable.GetUnderlyingType(oldFieldType) != null)
             {
                 oldField.SetValue(oldInstance, null);
