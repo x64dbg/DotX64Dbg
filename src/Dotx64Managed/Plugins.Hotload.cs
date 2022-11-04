@@ -1,63 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
-    class TransitionContext : IDisposable
-    {
-        Dictionary<object, object> ReferenceMap = new();
-        List<object> NewObjects = new();
-        public Assembly OldAssembly
-        {
-            get;
-        }
-        public Assembly NewAssembly
-        {
-            get;
-        }
-
-        public TransitionContext(Assembly oldAssembly, Assembly newAssembly)
-        {
-            OldAssembly = oldAssembly;
-            NewAssembly = newAssembly;
-        }
-
-        public void Dispose()
-        {
-            ReferenceMap.Clear();
-            ReferenceMap = null;
-        }
-
-        public object Create(Type type)
-        {
-            var obj = FormatterServices.GetUninitializedObject(type);
-            NewObjects.Add(obj);
-            return obj;
-        }
-
-        public bool GetNewReference(object oldObj, out object newObj)
-        {
-            return ReferenceMap.TryGetValue(oldObj, out newObj);
-        }
-
-        public void MapReference(object oldObj, object newObj)
-        {
-            ReferenceMap.Add(oldObj, newObj);
-        }
-
-        public object[] GetObjectsWithInterface(Type type)
-        {
-            var res = NewObjects.Where(a => a.GetType().GetInterface(type.Name) != null).ToArray();
-            return res;
-        }
-    }
-
     internal partial class Plugins
     {
         internal bool IsSystemType(Type t)
@@ -77,242 +26,6 @@ namespace Dotx64Dbg
                 throw new Exception("Assembly has no IPlugin class.");
             }
             return entries.First();
-        }
-
-        object AdaptArray(TransitionContext ctx, object oldInstance, Type newArrayType)
-        {
-            object res;
-            if (ctx.GetNewReference(oldInstance, out res))
-            {
-                return res;
-            }
-
-            var oldArrayType = oldInstance.GetType();
-            var oldSize = oldArrayType.GetArrayRank();
-
-            var elemType = oldArrayType.GetElementType();
-            if (elemType.IsValueType || elemType.IsPrimitive)
-            {
-                return oldInstance;
-            }
-            else if (elemType.IsClass)
-            {
-                throw new Exception("Unsupported state transfer of nested array");
-            }
-            else
-            {
-                res = ctx.Create(newArrayType);
-                var dst = (object[])res;
-                var src = (object[])oldInstance;
-                for (int i = 0; i < oldSize; i++)
-                {
-                    dst[i] = AdaptObject(ctx, src[i], elemType, elemType);
-                }
-            }
-
-            return res;
-        }
-
-        object AdaptList(TransitionContext ctx, object oldInstance, Type newListType)
-        {
-            object res;
-            if (ctx.GetNewReference(oldInstance, out res))
-            {
-                return res;
-            }
-
-            var elemType = newListType.GenericTypeArguments[0];
-            if (elemType.IsValueType || elemType.IsPrimitive)
-            {
-                Utils.DebugPrintLine("[Hotload] Adapting list by move.");
-                return oldInstance;
-            }
-            else
-            {
-                Utils.DebugPrintLine("[Hotload] Adapting List<> by copy.");
-
-                var oldList = (IList)oldInstance;
-                var newList = (IList)typeof(List<>)
-                    .MakeGenericType(newListType.GenericTypeArguments)
-                    .GetConstructor(System.Type.EmptyTypes)
-                    .Invoke(null);
-
-                foreach (var entry in oldList)
-                {
-                    var newEntry = AdaptObject(ctx, entry, elemType, elemType);
-                    newList.Add(newEntry);
-                }
-
-                res = newList;
-            }
-
-            return res;
-        }
-
-        object AdaptDictionary(TransitionContext ctx, object oldInstance, Type newListType)
-        {
-            object res;
-            if (ctx.GetNewReference(oldInstance, out res))
-            {
-                return res;
-            }
-
-            var elemKeyType = newListType.GenericTypeArguments[0];
-            var elemValType = newListType.GenericTypeArguments[1];
-            if ((elemKeyType.IsValueType || elemKeyType.IsPrimitive) && (elemValType.IsValueType || elemValType.IsPrimitive))
-            {
-                Utils.DebugPrintLine("[Hotload] Adapting Dictionary<> by move.");
-                return oldInstance;
-            }
-            else
-            {
-                Utils.DebugPrintLine("[Hotload] Adapting Dictionary by copy.");
-
-                var oldList = (IDictionary)oldInstance;
-                var newList = (IDictionary)typeof(Dictionary<,>)
-                    .MakeGenericType(newListType.GenericTypeArguments)
-                    .GetConstructor(System.Type.EmptyTypes)
-                    .Invoke(null);
-
-                var enumerator = oldList.GetEnumerator();
-                while (enumerator.MoveNext())
-                {
-                    var newKey = AdaptObject(ctx, enumerator.Key, elemKeyType, elemKeyType);
-                    var newVal = AdaptObject(ctx, enumerator.Value, elemValType, elemValType);
-                    newList.Add(newKey, newVal);
-                }
-
-                res = newList;
-            }
-
-            return res;
-        }
-
-        object AdaptObject(TransitionContext ctx, object oldInstance, Type oldType, Type newType)
-        {
-            if (oldInstance == null)
-                return null;
-
-            // Types from other assemblies will be moved.
-            if (oldType.Assembly != ctx.OldAssembly)
-            {
-                return oldInstance;
-            }
-
-            if (oldType.FullName != newType.FullName)
-            {
-                Utils.DebugPrintLine($"[Hotload] Type mismatch '{oldType.FullName}' to '{newType.FullName}', skipping.");
-                return null;
-            }
-
-            if (oldType.IsValueType && newType.IsValueType)
-            {
-                return oldInstance;
-            }
-
-            if (oldType.IsPrimitive && newType.IsPrimitive)
-            {
-                return oldInstance;
-            }
-
-            object res;
-            if (ctx.GetNewReference(oldInstance, out res))
-            {
-                return res;
-            }
-
-            if (newType == typeof(string))
-            {
-                return oldInstance;
-            }
-            else if (newType.IsClass)
-            {
-                if (newType.IsGenericType)
-                {
-                    var genericType = newType.GetGenericTypeDefinition();
-                    if (genericType == typeof(List<>))
-                    {
-                        res = AdaptList(ctx, oldInstance, newType);
-                    }
-                    else if (genericType == typeof(Dictionary<,>))
-                    {
-                        res = AdaptDictionary(ctx, oldInstance, newType);
-                    }
-                    else
-                    {
-                        Utils.DebugPrintLine($"[Hotload] Unsupported transition for '{oldType.FullName}', skipping.");
-                    }
-                    // TODO: Add more support for generic collections.
-                }
-                else
-                {
-                    res = AdaptClass(ctx, oldInstance, oldType, res, newType);
-                }
-            }
-            else if (newType.IsArray)
-            {
-                res = AdaptArray(ctx, oldInstance, newType);
-            }
-
-            return res;
-        }
-
-        void AdaptField(TransitionContext ctx, object oldInstance, FieldInfo oldField, object newInstance, FieldInfo newField)
-        {
-            var newFieldType = newField.FieldType;
-            var oldFieldType = oldField.FieldType;
-
-            var oldValue = oldField.GetValue(oldInstance);
-            var newObject = AdaptObject(ctx, oldValue, oldFieldType, newFieldType);
-
-            newField.SetValue(newInstance, newObject);
-            if (Nullable.GetUnderlyingType(oldFieldType) != null)
-            {
-                oldField.SetValue(oldInstance, null);
-            }
-        }
-
-        object AdaptClass(TransitionContext ctx, object oldInstance, Type oldType, object newInstance, Type newType)
-        {
-            if (oldType.Assembly != ctx.OldAssembly)
-            {
-                return oldInstance;
-            }
-
-            Utils.DebugPrintLine($"[Hotload] Adapting instance of Class: {oldType.Name}");
-
-            if (newInstance == null)
-                newInstance = ctx.Create(newType);
-
-            ctx.MapReference(oldInstance, newInstance);
-
-            var fields = newType.GetRuntimeFields();
-            foreach (var newField in fields)
-            {
-                Utils.DebugPrintLine($"[Hotload] Field: {newField.Name}, Type: {newField.FieldType}");
-
-                var oldField = oldType.GetRuntimeFields().FirstOrDefault(a => a.Name == newField.Name);
-                if (oldField != null)
-                {
-                    if (oldField.FieldType.Name == newField.FieldType.Name)
-                    {
-                        AdaptField(ctx, oldInstance, oldField, newInstance, newField);
-                    }
-                }
-            }
-
-            return newInstance;
-        }
-
-        void AdaptClasses(TransitionContext ctx, Assembly oldAssembly, Assembly newAssembly)
-        {
-            foreach (var newType in newAssembly.GetTypes())
-            {
-                if (!newType.IsClass)
-                    continue;
-
-                // TODO: Fix all statics.
-            }
         }
 
         void UnloadPluginInstance(Plugin plugin, CancellationToken token, bool isReloading = false)
@@ -531,14 +244,14 @@ namespace Dotx64Dbg
 
                 // NOTE: RemapContext stores old references, to fully unload the dll
                 // it must be disposed first.
-                using (var ctx = new TransitionContext(plugin.Loader?.Current, newAssembly))
+                using (var ctx = new Hotload.Context(plugin.Loader?.Current, newAssembly))
                 {
                     var newInstance = ctx.Create(pluginClass);
 
                     if (hotReload)
                     {
-                        AdaptClasses(ctx, plugin.Loader.Current, newAssembly);
-                        AdaptClass(ctx, plugin.Instance, plugin.InstanceType, newInstance, pluginClass);
+                        Hotload.AdaptStatics(ctx, plugin.Loader.Current, newAssembly);
+                        Hotload.AdaptClass(ctx, plugin.Instance, plugin.InstanceType, newInstance, pluginClass);
                     }
                     else
                     {
