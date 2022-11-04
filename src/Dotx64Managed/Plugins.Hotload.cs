@@ -67,21 +67,6 @@ namespace Dotx64Dbg
 
         Type GetPluginClass(Assembly assembly)
         {
-            Console.WriteLine("Yo");
-
-            foreach (var type in assembly.GetForwardedTypes())
-            {
-                Console.WriteLine($"Forwarded Type: {type.FullName}");
-            }
-
-            foreach (var type in assembly.GetTypes())
-            {
-                if (type.Module.Assembly != assembly)
-                    Console.WriteLine($"External Type: {type.FullName}");
-                else
-                    Console.WriteLine($"Type: {type.FullName}");
-            }
-
             var entries = assembly.GetTypes().Where(a => a.GetInterface(nameof(IPlugin)) != null).ToArray();
             if (entries.Length > 1)
             {
@@ -92,6 +77,51 @@ namespace Dotx64Dbg
                 throw new Exception("Assembly has no IPlugin class.");
             }
             return entries.First();
+        }
+
+        private void AdaptListInstance(Type newFieldType,
+            Type oldFieldType,
+            FieldInfo newField,
+            object newInstance,
+            System.Object oldValue,
+            FieldInfo oldField,
+            object oldInstance,
+            TransitionContext ctx)
+        {
+            var newListType = newFieldType.GenericTypeArguments[0];
+            var oldListType = oldFieldType.GenericTypeArguments[0];
+            if (newListType != oldListType)
+            {
+                // Type arguments must match.
+                return;
+            }
+            if (newListType.IsValueType)
+            {
+                // Swap
+                newField.SetValue(newInstance, oldValue);
+                oldField.SetValue(oldInstance, null);
+            }
+            else if (newListType.IsClass)
+            {
+                var oldList = (IList)oldValue;
+                var newList = (IList)typeof(List<>)
+                    .MakeGenericType(newFieldType.GenericTypeArguments)
+                    .GetConstructor(System.Type.EmptyTypes)
+                    .Invoke(null);
+
+                foreach (var oldListEntry in oldList)
+                {
+                    object newValue;
+                    if (!ctx.GetNewReference(oldValue, out newValue))
+                    {
+                        newValue = ctx.Create(newListType);
+                        AdaptInstance(ctx, oldListEntry, oldListType, newValue, newListType);
+                    }
+                    newList.Add(newValue);
+                }
+
+                newField.SetValue(newInstance, newList);
+            }
         }
 
         void AdaptField(TransitionContext ctx, object oldInstance, FieldInfo oldField, object newInstance, FieldInfo newField)
@@ -139,35 +169,7 @@ namespace Dotx64Dbg
                 if (newFieldType.IsGenericType && newFieldType.GetGenericTypeDefinition() == typeof(List<>) &&
                     oldFieldType.IsGenericType && oldFieldType.GetGenericTypeDefinition() == typeof(List<>))
                 {
-                    var newListType = newFieldType.GenericTypeArguments[0];
-                    var oldListType = oldFieldType.GenericTypeArguments[0];
-                    if (newListType.IsValueType)
-                    {
-                        // Swap
-                        newField.SetValue(newInstance, oldValue);
-                        oldField.SetValue(oldInstance, null);
-                    }
-                    else if (newListType.IsClass)
-                    {
-                        var oldList = (IList)oldValue;
-                        var newList = (IList)typeof(List<>)
-                            .MakeGenericType(newListType)
-                            .GetConstructor(System.Type.EmptyTypes)
-                            .Invoke(null);
-
-                        foreach (var oldListEntry in oldList)
-                        {
-                            object newValue;
-                            if (!ctx.GetNewReference(oldValue, out newValue))
-                            {
-                                newValue = ctx.Create(newListType);
-                                AdaptInstance(ctx, oldListEntry, oldListType, newValue, newListType);
-                            }
-
-                            newList.Add(newValue);
-                        }
-                        newField.SetValue(newInstance, newList);
-                    }
+                    AdaptListInstance(newFieldType, oldFieldType, newField, newInstance, oldValue, oldField, oldInstance, ctx);
                 }
                 else if (newFieldType == typeof(Type))
                 {
@@ -185,12 +187,12 @@ namespace Dotx64Dbg
                         // External, swap.
                         newField.SetValue(newInstance, oldValue);
                         oldField.SetValue(oldInstance, null);
-
                     }
                 }
                 else if (newFieldType == typeof(System.Object) && oldValue.GetType().IsValueType)
                 {
                     newField.SetValue(newInstance, oldValue);
+                    oldField.SetValue(oldInstance, null);
                 }
                 else if (newFieldType == typeof(string))
                 {
@@ -216,18 +218,15 @@ namespace Dotx64Dbg
             if (oldType.Assembly != ctx.OldAssembly)
                 return;
 
-#if DEBUG
-            Console.WriteLine($"[DEBUG] Adapting instance of Class: {oldType.Name}");
-#endif
+            Utils.DebugPrintLine($"[DEBUG] Adapting instance of Class: {oldType.Name}");
 
             ctx.MapReference(oldInstance, newInstance);
 
             var fields = newType.GetRuntimeFields();
             foreach (var newField in fields)
             {
-#if DEBUG
-                Console.WriteLine($"[DEBUG] Field: {newField.Name}, Type: {newField.FieldType}");
-#endif
+                Utils.DebugPrintLine($"[DEBUG] Field: {newField.Name}, Type: {newField.FieldType}");
+
                 var oldField = oldType.GetRuntimeFields().FirstOrDefault(a => a.Name == newField.Name);
                 if (oldField != null)
                 {
@@ -461,9 +460,7 @@ namespace Dotx64Dbg
                 var pluginClass = GetPluginClass(newAssembly);
                 if (pluginClass != null)
                 {
-#if DEBUG
-                    Console.WriteLine("[DEBUG] Entry class: {0}", pluginClass.Name);
-#endif
+                    Utils.DebugPrintLine("[DEBUG] Entry class: {0}", pluginClass.Name);
                 }
 
                 // NOTE: RemapContext stores old references, to fully unload the dll
@@ -544,9 +541,7 @@ namespace Dotx64Dbg
                         }
                         catch (Exception)
                         {
-#if DEBUG
-                            Console.WriteLine("WARNING: Unable to remove old assembly, ensure no references are stored.");
-#endif
+                            Utils.DebugPrintLine("WARNING: Unable to remove old assembly, ensure no references are stored.");
                         }
 
                         // Remove previous debug symbols.
@@ -557,9 +552,7 @@ namespace Dotx64Dbg
                         }
                         catch (Exception)
                         {
-#if DEBUG
-                            Console.WriteLine("WARNING: Unable to remove old PDB file, will be removed next start, probably locked by debugger.");
-#endif
+                            Utils.DebugPrintLine("WARNING: Unable to remove old PDB file, will be removed next start, probably locked by debugger.");
                         }
                     });
                 }

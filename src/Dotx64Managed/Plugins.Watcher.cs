@@ -316,7 +316,6 @@ namespace Dotx64Dbg
 
                 if (IsPathIgnored(info.RelativeFilePath))
                 {
-                    Utils.DebugPrintLine($"Path Blocked: {info.RelativeFilePath}");
                     return;
                 }
 
