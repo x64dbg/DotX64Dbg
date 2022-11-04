@@ -1,3 +1,4 @@
+using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -89,6 +90,10 @@ namespace Dotx64Dbg
                 string projectPath = plugin.ProjectFilePath;
                 AddMenu(plugin, path, delegate ()
                 {
+                    if (!File.Exists(plugin.ProjectFilePath))
+                    {
+                        Plugins.GenerateProject(plugin);
+                    }
                     OpenEditor(projectPath);
                 });
             }
