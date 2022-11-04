@@ -74,37 +74,23 @@ namespace Dotx64Dbg
                 {
                     PluginRootFolder = true,
                     PluginName = relativePath,
-                    RelativeFilePath = null,
+                    RelativeFilePath = "",
                     FilePath = Path.Combine(PluginsPath, relativePath),
                     PluginPath = Path.Combine(PluginsPath, relativePath),
                 };
             }
         }
 
-        void OnPluginCreate(object sender, FileSystemEventArgs e)
+        bool IsPathIgnored(string relativePluginPath)
         {
-            var info = ParseInfo(e.FullPath);
-            if (info == null)
-                return;
-
-            if (info.PluginRootFolder)
+            string[] blockedPaths = { ".vs", "bin", "obj", ".git", ".vscode" };
+            foreach (var blockedPath in blockedPaths)
             {
-                RegisterPlugin(e.FullPath);
+                if (relativePluginPath.Contains(blockedPath))
+                    return true;
             }
-            else
-            {
-                var plugin = FindPlugin(info.PluginPath);
-                if (plugin == null)
-                {
-                    Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
-                    return;
-                }
-
-                // File was created.
-                OnPluginFileCreate(plugin, info);
-            }
+            return false;
         }
-
 
         bool IsExcludedFileOrFolder(string pluginPath, string filePath)
         {
@@ -121,6 +107,39 @@ namespace Dotx64Dbg
             }
 
             return false;
+        }
+
+        // FileWatcher Event
+        void OnPluginCreate(object sender, FileSystemEventArgs e)
+        {
+            lock (PluginWatch)
+            {
+                var info = ParseInfo(e.FullPath);
+                if (info == null)
+                    return;
+
+                if (IsPathIgnored(info.RelativeFilePath))
+                {
+                    return;
+                }
+
+                if (info.PluginRootFolder)
+                {
+                    RegisterPlugin(e.FullPath);
+                }
+                else
+                {
+                    var plugin = FindPlugin(info.PluginPath);
+                    if (plugin == null)
+                    {
+                        Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
+                        return;
+                    }
+
+                    // File was created.
+                    OnPluginFileCreate(plugin, info);
+                }
+            }
         }
 
         void OnPluginFileCreate(Plugin plugin, PluginFileInfo info)
@@ -145,26 +164,35 @@ namespace Dotx64Dbg
             }
         }
 
+        // FileWatcher Event
         void OnPluginRemove(object sender, FileSystemEventArgs e)
         {
-            var info = ParseInfo(e.FullPath);
-            if (info == null)
-                return;
+            lock (PluginWatch)
+            {
+                var info = ParseInfo(e.FullPath);
+                if (info == null)
+                    return;
 
-            var plugin = FindPlugin(info.PluginPath);
-            if (plugin == null)
-            {
-                Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
-                return;
-            }
+                if (IsPathIgnored(info.RelativeFilePath))
+                {
+                    return;
+                }
 
-            if (info.PluginRootFolder)
-            {
-                RemovePlugin(plugin);
-            }
-            else
-            {
-                OnPluginFileRemove(plugin, info);
+                var plugin = FindPlugin(info.PluginPath);
+                if (plugin == null)
+                {
+                    Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
+                    return;
+                }
+
+                if (info.PluginRootFolder)
+                {
+                    RemovePlugin(plugin);
+                }
+                else
+                {
+                    OnPluginFileRemove(plugin, info);
+                }
             }
         }
 
@@ -188,40 +216,49 @@ namespace Dotx64Dbg
             }
         }
 
+        // FileWatcher Event
         void OnPluginRename(object sender, RenamedEventArgs e)
         {
-            // Use old path first to identify the current plugin.
-            var info = ParseInfo(e.OldFullPath);
-            if (info == null)
-                return;
-
-            var plugin = FindPlugin(info.PluginPath);
-            if (plugin == null)
+            lock (PluginWatch)
             {
-                Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
-                return;
-            }
-
-            if (info.PluginRootFolder)
-            {
-                RemovePlugin(plugin);
-                RegisterPlugin(e.FullPath);
-            }
-            else
-            {
-                // If its not the root folder use the new full path.
-                info = ParseInfo(e.FullPath);
+                // Use old path first to identify the current plugin.
+                var info = ParseInfo(e.OldFullPath);
                 if (info == null)
                     return;
 
-                plugin = FindPlugin(info.PluginPath);
+                if (IsPathIgnored(info.RelativeFilePath))
+                {
+                    return;
+                }
+
+                var plugin = FindPlugin(info.PluginPath);
                 if (plugin == null)
                 {
                     Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
                     return;
                 }
 
-                OnPluginFileRename(plugin, info, e.OldFullPath);
+                if (info.PluginRootFolder)
+                {
+                    RemovePlugin(plugin);
+                    RegisterPlugin(e.FullPath);
+                }
+                else
+                {
+                    // If its not the root folder use the new full path.
+                    info = ParseInfo(e.FullPath);
+                    if (info == null)
+                        return;
+
+                    plugin = FindPlugin(info.PluginPath);
+                    if (plugin == null)
+                    {
+                        Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
+                        return;
+                    }
+
+                    OnPluginFileRename(plugin, info, e.OldFullPath);
+                }
             }
         }
 
@@ -240,38 +277,59 @@ namespace Dotx64Dbg
             {
                 var isSourceRemoved = plugin.SourceFiles.Remove(oldFullPath);
                 var isExcluded = IsExcludedFileOrFolder(info.PluginPath, info.FilePath);
+                var isAdded = false;
 
                 if (!isExcluded)
                 {
                     if (!plugin.SourceFiles.Contains(info.FilePath))
+                    {
                         plugin.SourceFiles.Add(info.FilePath);
+                        isAdded = true;
+                    }
                 }
 
-                if (isSourceRemoved || !isExcluded)
+                // Work-around for issue #66
+                // VS temporarily renames source files, don't unload as the next event is another rename.
+                var allowUnload = true;
+                if (isSourceRemoved && info.FilePath.ToLower().EndsWith(".tmp"))
+                {
+                    allowUnload = false;
+                }
+
+                if (isSourceRemoved || isAdded)
                 {
                     Utils.DebugPrintLine($"[PluginWatch] Plugin File Rename: {oldFullPath} -> {info.FilePath}");
 
-                    RebuildOrUnloadPlugin(plugin);
+                    RebuildOrUnloadPlugin(plugin, allowUnload);
                 }
             }
         }
 
+        // FileWatcher Event
         void OnPluginChange(object sender, FileSystemEventArgs e)
         {
-            var info = ParseInfo(e.FullPath);
-            if (info == null)
-                return;
-
-            if (!info.PluginRootFolder)
+            lock (PluginWatch)
             {
-                var plugin = FindPlugin(info.PluginPath);
-                if (plugin == null)
+                var info = ParseInfo(e.FullPath);
+                if (info == null)
+                    return;
+
+                if (IsPathIgnored(info.RelativeFilePath))
                 {
-                    Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
                     return;
                 }
 
-                OnPluginFileChange(plugin, info);
+                if (!info.PluginRootFolder)
+                {
+                    var plugin = FindPlugin(info.PluginPath);
+                    if (plugin == null)
+                    {
+                        Utils.DebugPrintLine($"[PluginWatch] Unable to find registered plugin for {info.PluginName}");
+                        return;
+                    }
+
+                    OnPluginFileChange(plugin, info);
+                }
             }
         }
 
