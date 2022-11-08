@@ -1,63 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
-    class TransitionContext : IDisposable
-    {
-        Dictionary<object, object> ReferenceMap = new();
-        List<object> NewObjects = new();
-        public Assembly OldAssembly
-        {
-            get;
-        }
-        public Assembly NewAssembly
-        {
-            get;
-        }
-
-        public TransitionContext(Assembly oldAssembly, Assembly newAssembly)
-        {
-            OldAssembly = oldAssembly;
-            NewAssembly = newAssembly;
-        }
-
-        public void Dispose()
-        {
-            ReferenceMap.Clear();
-            ReferenceMap = null;
-        }
-
-        public object Create(Type type)
-        {
-            var obj = FormatterServices.GetUninitializedObject(type);
-            NewObjects.Add(obj);
-            return obj;
-        }
-
-        public bool GetNewReference(object oldObj, out object newObj)
-        {
-            return ReferenceMap.TryGetValue(oldObj, out newObj);
-        }
-
-        public void MapReference(object oldObj, object newObj)
-        {
-            ReferenceMap.Add(oldObj, newObj);
-        }
-
-        public object[] GetObjectsWithInterface(Type type)
-        {
-            var res = NewObjects.Where(a => a.GetType().GetInterface(type.Name) != null).ToArray();
-            return res;
-        }
-    }
-
     internal partial class Plugins
     {
         internal bool IsSystemType(Type t)
@@ -77,176 +26,6 @@ namespace Dotx64Dbg
                 throw new Exception("Assembly has no IPlugin class.");
             }
             return entries.First();
-        }
-
-        private void AdaptListInstance(Type newFieldType,
-            Type oldFieldType,
-            FieldInfo newField,
-            object newInstance,
-            System.Object oldValue,
-            FieldInfo oldField,
-            object oldInstance,
-            TransitionContext ctx)
-        {
-            var newListType = newFieldType.GenericTypeArguments[0];
-            var oldListType = oldFieldType.GenericTypeArguments[0];
-            if (newListType != oldListType)
-            {
-                // Type arguments must match.
-                return;
-            }
-            if (newListType.IsValueType)
-            {
-                // Swap
-                newField.SetValue(newInstance, oldValue);
-                oldField.SetValue(oldInstance, null);
-            }
-            else if (newListType.IsClass)
-            {
-                var oldList = (IList)oldValue;
-                var newList = (IList)typeof(List<>)
-                    .MakeGenericType(newFieldType.GenericTypeArguments)
-                    .GetConstructor(System.Type.EmptyTypes)
-                    .Invoke(null);
-
-                foreach (var oldListEntry in oldList)
-                {
-                    object newValue;
-                    if (!ctx.GetNewReference(oldValue, out newValue))
-                    {
-                        newValue = ctx.Create(newListType);
-                        AdaptInstance(ctx, oldListEntry, oldListType, newValue, newListType);
-                    }
-                    newList.Add(newValue);
-                }
-
-                newField.SetValue(newInstance, newList);
-            }
-        }
-
-        void AdaptField(TransitionContext ctx, object oldInstance, FieldInfo oldField, object newInstance, FieldInfo newField)
-        {
-            var newFieldType = newField.FieldType;
-            var oldFieldType = oldField.FieldType;
-
-            var oldValue = oldField.GetValue(oldInstance);
-            if (oldValue == null)
-            {
-                newField.SetValue(newInstance, null);
-            }
-            else if (newFieldType.IsValueType)
-            {
-                newField.SetValue(newInstance, oldValue);
-            }
-            else if (newFieldType.IsPrimitive)
-            {
-                newField.SetValue(newInstance, oldValue);
-            }
-            else if (newFieldType.IsArray)
-            {
-                var elemType = newField.FieldType.GetElementType();
-                if (elemType.IsValueType)
-                {
-                    newField.SetValue(newInstance, oldValue);
-                }
-                else if (elemType.IsClass)
-                {
-                    throw new Exception("Unsupported state transfer of nested array");
-                }
-                else
-                {
-                    // TODO: Iterate and swap everything.
-                    object newValue;
-                    if (!ctx.GetNewReference(oldValue, out newValue))
-                    {
-                        newValue = ctx.Create(newField.FieldType);
-                        AdaptInstance(ctx, oldValue, oldField.FieldType, newValue, newField.FieldType);
-                    }
-                }
-            }
-            else if (newField.FieldType.IsClass)
-            {
-                if (newFieldType.IsGenericType && newFieldType.GetGenericTypeDefinition() == typeof(List<>) &&
-                    oldFieldType.IsGenericType && oldFieldType.GetGenericTypeDefinition() == typeof(List<>))
-                {
-                    AdaptListInstance(newFieldType, oldFieldType, newField, newInstance, oldValue, oldField, oldInstance, ctx);
-                }
-                else if (newFieldType == typeof(Type))
-                {
-                    // Lookup the new type info.
-                    var typeInfo = oldValue as Type;
-                    if (typeInfo.Assembly == ctx.OldAssembly)
-                    {
-                        // From plugin assembly.
-                        var types = ctx.NewAssembly.GetTypes();
-                        var newTypeInfo = Array.Find(types, x => x.FullName == typeInfo.FullName);
-                        newField.SetValue(newInstance, newTypeInfo);
-                    }
-                    else
-                    {
-                        // External, swap.
-                        newField.SetValue(newInstance, oldValue);
-                        oldField.SetValue(oldInstance, null);
-                    }
-                }
-                else if (newFieldType == typeof(System.Object) && oldValue.GetType().IsValueType)
-                {
-                    newField.SetValue(newInstance, oldValue);
-                    oldField.SetValue(oldInstance, null);
-                }
-                else if (newFieldType == typeof(string))
-                {
-                    newField.SetValue(newInstance, oldValue);
-                    oldField.SetValue(oldInstance, null);
-                }
-                else
-                {
-                    object newValue;
-                    if (!ctx.GetNewReference(oldValue, out newValue))
-                    {
-                        newValue = ctx.Create(newField.FieldType);
-                        AdaptInstance(ctx, oldValue, oldField.FieldType, newValue, newField.FieldType);
-                    }
-
-                    newField.SetValue(newInstance, newValue);
-                }
-            }
-        }
-
-        void AdaptInstance(TransitionContext ctx, object oldInstance, Type oldType, object newInstance, Type newType)
-        {
-            if (oldType.Assembly != ctx.OldAssembly)
-                return;
-
-            Utils.DebugPrintLine($"[DEBUG] Adapting instance of Class: {oldType.Name}");
-
-            ctx.MapReference(oldInstance, newInstance);
-
-            var fields = newType.GetRuntimeFields();
-            foreach (var newField in fields)
-            {
-                Utils.DebugPrintLine($"[DEBUG] Field: {newField.Name}, Type: {newField.FieldType}");
-
-                var oldField = oldType.GetRuntimeFields().FirstOrDefault(a => a.Name == newField.Name);
-                if (oldField != null)
-                {
-                    if (oldField.FieldType.Name == newField.FieldType.Name)
-                    {
-                        AdaptField(ctx, oldInstance, oldField, newInstance, newField);
-                    }
-                }
-
-            }
-        }
-        void AdaptClasses(TransitionContext ctx, Assembly oldAssembly, Assembly newAssembly)
-        {
-            foreach (var newType in newAssembly.GetTypes())
-            {
-                if (!newType.IsClass)
-                    continue;
-
-                // TODO: Fix all statics.
-            }
         }
 
         void UnloadPluginInstance(Plugin plugin, CancellationToken token, bool isReloading = false)
@@ -465,14 +244,14 @@ namespace Dotx64Dbg
 
                 // NOTE: RemapContext stores old references, to fully unload the dll
                 // it must be disposed first.
-                using (var ctx = new TransitionContext(plugin.Loader?.Current, newAssembly))
+                using (var ctx = new Hotload.Context(plugin.Loader?.Current, newAssembly))
                 {
-                    var newInstance = ctx.Create(pluginClass) as IPlugin;
+                    var newInstance = ctx.Create(pluginClass);
 
                     if (hotReload)
                     {
-                        AdaptClasses(ctx, plugin.Loader.Current, newAssembly);
-                        AdaptInstance(ctx, plugin.Instance, plugin.InstanceType, newInstance, pluginClass);
+                        Hotload.AdaptStatics(ctx, plugin.Loader.Current, newAssembly);
+                        Hotload.AdaptClass(ctx, plugin.Instance, plugin.InstanceType, newInstance, pluginClass);
                     }
                     else
                     {
@@ -497,7 +276,7 @@ namespace Dotx64Dbg
                         }
                     }
 
-                    plugin.Instance = newInstance;
+                    plugin.Instance = newInstance as IPlugin;
                     plugin.InstanceType = pluginClass;
 
                     if (hotReload)
