@@ -1,5 +1,5 @@
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Dotx64Dbg
@@ -69,7 +69,7 @@ namespace Dotx64Dbg
         internal static void InitializeMainMenu()
         {
             // Plugin icon
-            Native.UI.Menu.SetIcon(MainMenu, Properties.Resources.Dotx64DbgIcon);
+            Native.UI.Menu.SetIcon(MainMenu, ImageToBytes(Properties.Resources.Dotx64DbgIcon));
 
             AddMenu("Main/Run Script", Properties.Resources.RunIcon, RunScript);
             AddMenu("Main/Create Plugin", Properties.Resources.NewScriptIcon, CreateNewPlugin);

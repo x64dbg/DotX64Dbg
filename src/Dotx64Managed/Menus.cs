@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dotx64Dbg
 {
@@ -39,22 +38,59 @@ namespace Dotx64Dbg
             Handlers = new();
         }
 
+        internal static byte[] ImageToBytes(System.Drawing.Image image)
+        {
+            if (image == null)
+                return null;
+
+            var ms = new MemoryStream();
+#pragma warning disable CA1416 // We only support Windows.
+            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+#pragma warning restore CA1416
+            return ms.ToArray();
+        }
+
         internal static void InitializeMenus(MenuData data)
         {
             MainMenu = data.hMenu;
-            Registered.Add("Main", new() { plugin = null, id = data.hMenu, parent = -1 });
+            Registered.Add("Main", new()
+            {
+                plugin = null,
+                id = data.hMenu,
+                parent = -1
+            });
 
             UI.Disassembly.SetMenuId(data.hMenuDisasm);
-            Registered.Add("Disassembly", new() { plugin = null, id = data.hMenuDisasm, parent = -1 });
+            Registered.Add("Disassembly", new()
+            {
+                plugin = null,
+                id = data.hMenuDisasm,
+                parent = -1
+            });
 
             UI.Dump.SetMenuId(data.hMenuDump);
-            Registered.Add("Dump", new() { plugin = null, id = data.hMenuDump, parent = -1 });
+            Registered.Add("Dump", new()
+            {
+                plugin = null,
+                id = data.hMenuDump,
+                parent = -1
+            });
 
             UI.MemoryMap.SetMenuId(data.hMenuMemmap);
-            Registered.Add("MemoryMap", new() { plugin = null, id = data.hMenuMemmap, parent = -1 });
+            Registered.Add("MemoryMap", new()
+            {
+                plugin = null,
+                id = data.hMenuMemmap,
+                parent = -1
+            });
 
             UI.Stack.SetMenuId(data.hMenuStack);
-            Registered.Add("Stack", new() { plugin = null, id = data.hMenuStack, parent = -1 });
+            Registered.Add("Stack", new()
+            {
+                plugin = null,
+                id = data.hMenuStack,
+                parent = -1
+            });
 
             InitializeMainMenu();
         }
@@ -139,7 +175,10 @@ namespace Dotx64Dbg
             entryName = path.Substring(prev);
             Native.UI.Menu.AddEntry(nextEntry.parent, nextEntry.id, entryName);
             if (image is not null)
-                Native.UI.Menu.SetEntryIcon(Manager.PluginHandle, nextEntry.id, image);
+            {
+                byte[] imageData = ImageToBytes(image);
+                Native.UI.Menu.SetEntryIcon(Manager.PluginHandle, nextEntry.id, imageData);
+            }
 
             NextInternalId++;
         }
