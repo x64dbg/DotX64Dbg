@@ -164,21 +164,21 @@ namespace Dotx64Dbg
                 }
 
                 // Only write a new project file if the contents have changed
-                using (var ms = new MemoryStream())
+                using (var sw = new StringWriter())
                 {
-                    doc.Save(ms);
-                    var data = ms.ToArray();
+                    doc.Save(sw);
+                    var text = sw.ToString();
                     if (File.Exists(file))
                     {
-                        var existingData = File.ReadAllBytes(file);
-                        if (existingData != data)
+                        var existingText = File.ReadAllText(file);
+                        if (text != existingText)
                         {
-                            File.WriteAllBytes(file, data);
+                            File.WriteAllText(file, text);
                         }
                     }
                     else
                     {
-                        File.WriteAllBytes(file, data);
+                        File.WriteAllText(file, text);
                     }
                 }
             }
