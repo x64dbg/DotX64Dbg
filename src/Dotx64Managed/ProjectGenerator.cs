@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Xml;
 
 namespace Dotx64Dbg
@@ -98,7 +99,7 @@ namespace Dotx64Dbg
                     foreach (var fileRef in References)
                     {
                         var nodeRef = doc.CreateElement("Reference");
-                        var refPath = System.IO.Path.Combine(ReferencePathX86, fileRef);
+                        var refPath = Path.Combine(ReferencePathX86, fileRef);
                         nodeRef.SetAttribute("Include", refPath);
 
                         nodeItemGroup.AppendChild(nodeRef);
@@ -115,7 +116,7 @@ namespace Dotx64Dbg
                     foreach (var fileRef in References)
                     {
                         var nodeRef = doc.CreateElement("Reference");
-                        var refPath = System.IO.Path.Combine(ReferencePathX64, fileRef);
+                        var refPath = Path.Combine(ReferencePathX64, fileRef);
                         nodeRef.SetAttribute("Include", refPath);
 
                         nodeItemGroup.AppendChild(nodeRef);
@@ -162,9 +163,26 @@ namespace Dotx64Dbg
                     nodeTarget.AppendChild(nodeMsg);
                 }
 
-                doc.Save(file);
+                // Only write a new project file if the contents have changed
+                using (var ms = new MemoryStream())
+                {
+                    doc.Save(ms);
+                    var data = ms.ToArray();
+                    if (File.Exists(file))
+                    {
+                        var existingData = File.ReadAllBytes(file);
+                        if (existingData != data)
+                        {
+                            File.WriteAllBytes(file, data);
+                        }
+                    }
+                    else
+                    {
+                        File.WriteAllBytes(file, data);
+                    }
+                }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Utils.PrintException(ex);
                 return false;
