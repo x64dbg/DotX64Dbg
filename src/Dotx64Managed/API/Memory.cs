@@ -36,14 +36,33 @@ namespace Dotx64Dbg
             return Native.Memory.Read(addr, length);
         }
 
+        /// <see cref="Read(nuint, int)"/>
         public static byte[] Read(nuint addr, nuint length)
         {
             return Native.Memory.Read(addr, (int)length);
         }
 
+        /// <see cref="Read(nuint, int)"/>
         public static byte[] Read(ulong addr, int length)
         {
             return Native.Memory.Read((nuint)addr, length);
+        }
+
+        /// <summary>
+        /// Attempt to read pointer sized value from the debugged process.
+        /// </summary>
+        /// <param name="addr">Virtual address in the debugged process space</param>
+        /// <returns>Value as nuint</returns>
+        public static nuint ReadPtr(ulong addr)
+        {
+#if _X64_
+            var data = Read(addr, 8);
+            var val = BitConverter.ToInt64(data, 0);
+#else
+            var data = Read(addr, 4);
+            var val = BitConverter.ToInt32(data, 0);
+#endif
+            return (nuint)val;
         }
 
         /// <summary>
@@ -57,14 +76,29 @@ namespace Dotx64Dbg
         {
             return Native.Memory.Write(address, data, length);
         }
+
+        /// <see cref="Write(nuint, byte[], int)"/>
         public static int Write(nuint address, byte[] data, nuint length)
         {
             return Native.Memory.Write(address, data, (int)length);
         }
 
+        /// <see cref="Write(nuint, byte[], int)"/>
         public static int Write(ulong address, byte[] data, int length)
         {
             return Native.Memory.Write((nuint)address, data, length);
+        }
+
+        /// <summary>
+        /// Attempt to write value of pointer size to the debugged process.
+        /// </summary>
+        /// <param name="addr">Virtual address in the debugged process space</param>
+        /// <param name="value">Value to write</param>
+        /// <returns>true if successful, false on failure.</returns>
+        public static bool WritePtr(ulong addr, nuint value)
+        {
+            var data = BitConverter.GetBytes(value);
+            return Write(addr, data) == data.Length;
         }
 
         /// <summary>
@@ -78,24 +112,39 @@ namespace Dotx64Dbg
             return Write(address, data, data.Length);
         }
 
+        /// <see cref="Write(nuint, byte[])"/>
         public static int Write(ulong address, byte[] data)
         {
             return Write((nuint)address, data, data.Length);
         }
 
+        /// <summary>
+        /// Returns the size of the specified memory region, the address must be the base address of the region.
+        /// </summary>
+        /// <param name="address">Virtual address in the debugged process space</param>
+        /// <returns>Size of memory region</returns>
         public static nuint GetSize(nuint address)
         {
             return (nuint)Native.Memory.GetSize(address);
         }
+
+        /// <see cref="GetSize(nuint)"/> 
         public static nuint GetSize(ulong address)
         {
             return GetSize((nuint)address);
         }
 
+        /// <summary>
+        /// Returns the address of where the memory region starts.
+        /// </summary>
+        /// <param name="address">Virtual address in the debugged process space</param>
+        /// <returns>Base address</returns>
         public static nuint GetBase(nuint address)
         {
             return Native.Memory.GetBase(address);
         }
+
+        /// <see cref="GetBase(nuint)"/>
         public static nuint GetBase(ulong address)
         {
             return GetBase((nuint)address);
