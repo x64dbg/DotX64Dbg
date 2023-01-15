@@ -157,6 +157,17 @@ namespace Dotx64Dbg
                 random.Next(0, 0xffff), random.Next(0, 0xffff), random.Next(0, 0xffff)));
         }
 
+        static uint FNV1a(string str)
+        {
+            uint hash = 0x811C9DC5;
+            foreach (var ch in Encoding.UTF8.GetBytes(str))
+            {
+                hash ^= (byte)ch;
+                hash *= 0x1000193;
+            }
+            return hash;
+        }
+
         public static void GenerateProject(Plugin plugin)
         {
             var binaryPathX86 = Path.Combine(Utils.GetRootPath(), "x86", "plugins");
@@ -187,7 +198,7 @@ namespace Dotx64Dbg
 
             projGen.Save(projectFilePath);
 
-            var guid = SeededGuid(plugin.Info.Name.GetHashCode()).ToString().ToUpper();
+            var guid = SeededGuid((int)FNV1a(plugin.Info.Name)).ToString().ToUpper();
             var solutionText = $@"
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
