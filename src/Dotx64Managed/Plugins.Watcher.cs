@@ -125,7 +125,10 @@ namespace Dotx64Dbg
 
                 if (info.PluginRootFolder)
                 {
-                    RegisterPlugin(e.FullPath);
+                    if (Directory.Exists(e.FullPath))
+                    {
+                        RegisterPlugin(e.FullPath);
+                    }
                 }
                 else
                 {
