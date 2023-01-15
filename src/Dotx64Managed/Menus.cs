@@ -32,6 +32,13 @@ namespace Dotx64Dbg
         internal static UI.Menu.Id NextInternalId = 0;
         internal static UI.Menu.Id MainMenu;
 
+        // Reserved menu paths that can not belong to a plugin.
+        private static readonly string[] PreservedMenus =
+        {
+            "Main",
+            "Main/Plugins",
+        };
+
         internal static void Initialize()
         {
             Registered = new();
@@ -146,6 +153,10 @@ namespace Dotx64Dbg
                         id = Native.UI.Menu.Add(parentId, entryName),
                         subEntry = false,
                     };
+                    if (PreservedMenus.Contains(currentPath))
+                    {
+                        nextEntry.plugin = null;
+                    }
                     Registered.Add(currentPath, nextEntry);
 
                     entry = nextEntry;
@@ -167,7 +178,10 @@ namespace Dotx64Dbg
                 id = NextInternalId,
                 subEntry = true,
             };
-
+            if (PreservedMenus.Contains(path))
+            {
+                nextEntry.plugin = null;
+            }
             Registered.Add(path, nextEntry);
 
             Handlers.Add(nextEntry.id, func);
@@ -216,7 +230,6 @@ namespace Dotx64Dbg
                     Native.UI.Menu.Remove(entry.id);
 
                 Handlers.Remove(entry.id);
-
                 Registered.Remove(name);
 
                 return true;
