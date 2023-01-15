@@ -213,7 +213,7 @@ Global
 		SolutionGuid = {{8BF78ACB-FDCE-407F-89A6-C8FE26E643E6}}
 	EndGlobalSection
 EndGlobal
-";
+".ReplaceLineEndings();
 
             var solutionFilePath = plugin.SolutionFilePath;
             if (File.Exists(solutionFilePath))
