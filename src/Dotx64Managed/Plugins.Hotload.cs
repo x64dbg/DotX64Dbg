@@ -225,7 +225,8 @@ namespace Dotx64Dbg
         {
             token.ThrowIfCancellationRequested();
 
-            var hotReload = plugin.Instance != null;
+            var hotReload = Settings.EnableHotloading && plugin.Instance != null;
+
             Console.WriteLine($"{(hotReload ? "Reloading" : "Loading")} '{plugin.Info.Name}'");
 
             try
@@ -239,7 +240,7 @@ namespace Dotx64Dbg
                 var pluginClass = GetPluginClass(newAssembly);
                 if (pluginClass != null)
                 {
-                    Utils.DebugPrintLine("[DEBUG] Entry class: {0}", pluginClass.Name);
+                    Utils.DebugPrintLine("Entry class: {0}", pluginClass.Name);
                 }
 
                 // NOTE: RemapContext stores old references, to fully unload the dll

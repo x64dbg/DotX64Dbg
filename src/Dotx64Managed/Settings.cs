@@ -1,27 +1,49 @@
 using System;
-using System.Text.Json;
 using System.IO;
+using System.Text.Json;
 
 namespace Dotx64Dbg
 {
     class SettingsData
     {
-        public string PluginsPath { get; set; }
-        public bool EnableTests { get; set; }
+        public string PluginsPath
+        {
+            get; set;
+        }
+        public bool EnableTests
+        {
+            get; set;
+        } = false;
+        public bool EnableHotloading
+        {
+            get; set;
+        } = false;
     }
 
     static class Settings
     {
         private static SettingsData Data = new();
 
-        public static string PluginsPath { get => Data.PluginsPath; }
+        public static string PluginsPath
+        {
+            get => Data.PluginsPath;
+        }
 
-        public static bool EnableTests { get => Data.EnableTests; }
+        public static bool EnableTests
+        {
+            get => Data.EnableTests;
+        }
+
+        public static bool EnableHotloading
+        {
+            get => Data.EnableHotloading;
+        }
 
         static void LoadDefaults()
         {
             Data.PluginsPath = "dotplugins";
             Data.EnableTests = false;
+            Data.EnableHotloading = false;
         }
 
         public static bool Load(string file)
