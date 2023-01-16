@@ -1,4 +1,5 @@
 ﻿{
   "PluginsPath": ".\\dotplugins",
-  "EnableTests": false
+  "EnableTests": false,
+  "EnableHotloading": false
 }
