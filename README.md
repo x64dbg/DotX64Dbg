@@ -79,7 +79,7 @@ assembly references being setup. If you want to debug your plugins
 simply attach Visual Studio to x64Dbg and place the breakpoints where
 you would like to stop, its as simple as that.
 
-There is also test plugin available [here](bin/dotplugins/myplugin)
+There is also a comprehensive example plugin available [here](bin/dotplugins/example)
 
 # Scripting
 DotX64Dbg also provides a scripting interface, unlike plugins a script
