@@ -61,7 +61,7 @@ namespace Dotx64Dbg {
 
         Instruction()
         {
-            Init(Mnemonic::Invalid);
+            Init(::Dotx64Dbg::Mnemonic::Invalid);
         }
 
     internal:
@@ -130,6 +130,14 @@ namespace Dotx64Dbg {
             }
         }
 
+        property Mnemonic Mnemonic
+        {
+            ::Dotx64Dbg::Mnemonic get()
+            {
+                return _Id;
+            }
+        }
+
         property EFlags FlagsWrite
         {
             EFlags get()
@@ -184,7 +192,7 @@ namespace Dotx64Dbg {
         {
             bool get()
             {
-                return Id == Mnemonic::Jmp;
+                return Id == ::Dotx64Dbg::Mnemonic::Jmp;
             }
         }
 
