@@ -1,4 +1,4 @@
-﻿namespace Dotx64Dbg
+namespace Dotx64Dbg
 {
     using BreakpointsNative = Native.Breakpoints;
 
@@ -7,12 +7,14 @@
         public enum Type
         {
             None = 0,
-            Normal = (1 << 0),
+            Software = (1 << 0),
             Hardware = (1 << 1),
             Memory = (1 << 2),
             Dll = (1 << 3),
             Exception = (1 << 4),
             System = (1 << 5),
+
+            Normal = Software, // Backwards compatibility
         };
 
         public enum HardwareType

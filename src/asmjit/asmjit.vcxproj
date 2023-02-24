@@ -215,6 +215,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -246,6 +247,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

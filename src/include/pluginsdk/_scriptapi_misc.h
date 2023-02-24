@@ -12,7 +12,7 @@ namespace Script
         ///
         /// Expressions can consist of memory locations, registers, flags, API names, labels, symbols, variables etc.
         ///
-        /// Example: bool success = ParseExpression("[esp+8]", &val)
+        /// Example: bool success = ParseExpression("[esp+8]", &amp;val)
         /// </summary>
         /// <param name="expression">The expression to evaluate.</param>
         /// <param name="value">The result of the expression.</param>

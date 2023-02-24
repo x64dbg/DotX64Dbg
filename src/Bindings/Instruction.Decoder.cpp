@@ -230,4 +230,19 @@ namespace Dotx64Dbg
     private:
 
     };
+
+    // Alias for discoverability
+    public ref class Disassembler
+    {
+    private:
+        Disassembler()
+        {
+        }
+
+    public:
+        static Decoder^ Create()
+        {
+            return Decoder::Create();
+        }
+    };
 } // namespace Dotx64Dbg
