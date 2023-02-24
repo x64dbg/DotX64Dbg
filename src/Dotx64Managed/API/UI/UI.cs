@@ -83,16 +83,22 @@ namespace Dotx64Dbg
         {
             Native.UI.Update();
         }
+
         public class UpdateSuppressor : IDisposable
         {
+            private bool wasEnabled;
+
             public UpdateSuppressor()
             {
-                UpdatesEnabled = false;
+                wasEnabled = UpdatesEnabled;
+                if(wasEnabled)
+                    UpdatesEnabled = false;
             }
 
             public void Dispose()
             {
-                UpdatesEnabled = true;
+                if(wasEnabled)
+                    UpdatesEnabled = true;
             }
         }
     }
