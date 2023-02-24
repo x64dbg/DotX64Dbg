@@ -308,7 +308,7 @@ namespace Dotx64Dbg {
             {
                 if (auto info = Detail::GetFuncInfo(address))
                 {
-                    Symbols::Function^ res = gcnew Symbols::Function(address, info->rvaStart);
+                    Symbols::Function^ res = gcnew Symbols::Function(address, (uint32_t)info->rvaStart);
                     return res;
                 }
                 return nullptr;
@@ -404,7 +404,7 @@ namespace Dotx64Dbg {
             {
                 if (auto info = Detail::GetCommentInfo(address))
                 {
-                    Symbols::Comment^ res = gcnew Symbols::Comment(address, info->rva);
+                    Symbols::Comment^ res = gcnew Symbols::Comment(address, (uint32_t)info->rva);
                     return res;
                 }
                 return nullptr;
