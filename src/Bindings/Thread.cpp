@@ -271,7 +271,7 @@ namespace Dotx64Dbg::Native
             case Registers::Id::Rdx:
                 return ReadRegister(hThread, UE_RDX, 8);
             case Registers::Id::Rbx:
-                return ReadRegister(hThread, UE_RBP, 8);
+                return ReadRegister(hThread, UE_RBX, 8);
             case Registers::Id::Rsp:
                 return ReadRegister(hThread, UE_RSP, 8);
             case Registers::Id::Rbp:
