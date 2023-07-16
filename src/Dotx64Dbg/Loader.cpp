@@ -142,6 +142,11 @@ struct Wrapper
         Dotx64Dbg::Manager::OnDebuggerResume();
     }
 
+    static void OnDebuggerPause()
+    {
+        Dotx64Dbg::Manager::OnDebuggerPause();
+    }
+
     static void OnModuleLoad(PLUG_CB_LOADDLL* info)
     {
         const auto imageBase = reinterpret_cast<duint>(info->LoadDll->lpBaseOfDll);
@@ -292,6 +297,7 @@ PLUG_EXPORT void CBEXCEPTION(CBTYPE cbType, PLUG_CB_EXCEPTION* info)
 
 PLUG_EXPORT void CBPAUSEDEBUG(CBTYPE cbType, PLUG_CB_PAUSEDEBUG* info)
 {
+    Wrapper::OnDebuggerPause();
 }
 
 PLUG_EXPORT void CBCREATEPROCESS(CBTYPE cbType, PLUG_CB_CREATEPROCESS* info)

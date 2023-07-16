@@ -49,6 +49,10 @@ public partial class ExamplePlugin
     {
     }
     
+    public void OnDebuggerPause()
+    {
+    }
+    
     public void OnModuleLoadEvent(ModuleLoadEventInfo ev)
     {
         Utils.PrintFields(ev);

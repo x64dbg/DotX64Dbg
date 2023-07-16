@@ -49,6 +49,9 @@ namespace Dotx64Dbg
         public void OnDebuggerResume()
         {
         }
+        public void OnDebuggerPause()
+        {
+        }
         public void OnModuleLoadEvent(ModuleLoadEventInfo ev)
         {
         }
