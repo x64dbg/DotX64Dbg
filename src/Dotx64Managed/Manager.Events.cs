@@ -49,11 +49,12 @@ namespace Dotx64Dbg
         public ulong ProcessHandle;
         public ulong ThreadHandle;
         public ulong ImageBase;
+        public ulong ImageSize;
         public uint DebugInfoFileOffset;
         public uint DebugInfoSize;
         public ulong ThreadLocalBase;
         public ulong StartAddress;
-        public ulong ImageName;
+        public string FilePath;
         public short Unicode;
     }
 
@@ -91,7 +92,8 @@ namespace Dotx64Dbg
 
     public struct ModuleLoadEventInfo
     {
-        public ulong Base;
+        public ulong ImageBase;
+        public ulong ImageSize;
         public string FilePath;
         public uint DebugInfoFileOffset;
         public uint DebugInfoSize;
@@ -99,7 +101,8 @@ namespace Dotx64Dbg
 
     public struct ModuleUnloadEventInfo
     {
-        public ulong Base;
+        public ulong ImageBase;
+        public ulong ImageSize;
         public string FilePath;
     }
 

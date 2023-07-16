@@ -38,18 +38,28 @@ struct Wrapper
     {
         auto* src = info->CreateProcessInfo;
 
+        const auto imageBase = reinterpret_cast<duint>(src->lpBaseOfImage);
+        char pathBuf[MAX_PATH]{};
+        if (!Script::Module::PathFromAddr(imageBase, pathBuf))
+        {
+            // TODO: Handle the error.
+        }
+
+        const auto imageSize = Script::Module::SizeFromAddr(imageBase);
+
         Dotx64Dbg::ProcessCreateEventInfo dst{};
         dst.ProcessId = info->fdProcessInfo->dwProcessId;
         dst.ThreadId = info->fdProcessInfo->dwThreadId;
         dst.FileHandle = reinterpret_cast<uint64_t>(src->hFile);
         dst.ProcessHandle = reinterpret_cast<uint64_t>(info->fdProcessInfo->hProcess);
         dst.ThreadHandle = reinterpret_cast<uint64_t>(info->fdProcessInfo->hThread);
-        dst.ImageBase = reinterpret_cast<uint64_t>(src->lpBaseOfImage);
+        dst.ImageBase = imageBase;
+        dst.ImageSize = imageSize;
         dst.DebugInfoFileOffset = src->dwDebugInfoFileOffset;
         dst.DebugInfoSize = src->nDebugInfoSize;
         dst.ThreadLocalBase = reinterpret_cast<uint64_t>(src->lpThreadLocalBase);
         dst.StartAddress = reinterpret_cast<uint64_t>(src->lpStartAddress);
-        dst.ImageName = reinterpret_cast<uint64_t>(src->lpImageName);
+        dst.FilePath = gcnew System::String(pathBuf);
         dst.Unicode = src->fUnicode;
 
         Dotx64Dbg::Manager::OnProcessCreateEvent(dst);
@@ -129,17 +139,20 @@ struct Wrapper
 
     static void OnModuleLoad(PLUG_CB_LOADDLL* info)
     {
-        const auto base = reinterpret_cast<duint>(info->LoadDll->lpBaseOfDll);
+        const auto imageBase = reinterpret_cast<duint>(info->LoadDll->lpBaseOfDll);
 
         char pathBuf[MAX_PATH]{};
-        if (!Script::Module::PathFromAddr(base, pathBuf))
+        if (!Script::Module::PathFromAddr(imageBase, pathBuf))
         {
             // TODO: Handle the error.
         }
 
+        const auto imageSize = Script::Module::SizeFromAddr(imageBase);
+
         Dotx64Dbg::ModuleLoadEventInfo ev{};
         ev.FilePath = gcnew System::String(pathBuf);
-        ev.Base = base;
+        ev.ImageBase = imageBase;
+        ev.ImageSize = imageSize;
         ev.DebugInfoFileOffset = info->LoadDll->dwDebugInfoFileOffset;
         ev.DebugInfoSize = info->LoadDll->nDebugInfoSize;
 
@@ -148,16 +161,19 @@ struct Wrapper
 
     static void OnModuleUnload(PLUG_CB_UNLOADDLL* info)
     {
-        const auto base = reinterpret_cast<duint>(info->UnloadDll->lpBaseOfDll);
+        const auto imageBase = reinterpret_cast<duint>(info->UnloadDll->lpBaseOfDll);
 
         char pathBuf[MAX_PATH]{};
-        if (!Script::Module::PathFromAddr(base, pathBuf))
+        if (!Script::Module::PathFromAddr(imageBase, pathBuf))
         {
             // TODO: Handle the error.
         }
 
+        const auto imageSize = Script::Module::SizeFromAddr(imageBase);
+
         Dotx64Dbg::ModuleUnloadEventInfo ev{};
-        ev.Base = base;
+        ev.ImageBase = imageBase;
+        ev.ImageSize = imageSize;
         ev.FilePath = gcnew System::String(pathBuf);
 
         Dotx64Dbg::Manager::OnModuleUnloadEvent(ev);
