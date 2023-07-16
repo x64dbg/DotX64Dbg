@@ -89,6 +89,20 @@ namespace Dotx64Dbg
         public string CommandCondition;
     }
 
+    public struct ModuleLoadEventInfo
+    {
+        public ulong Base;
+        public string FilePath;
+        public uint DebugInfoFileOffset;
+        public uint DebugInfoSize;
+    }
+
+    public struct ModuleUnloadEventInfo
+    {
+        public ulong Base;
+        public string FilePath;
+    }
+
     /// <summary>Class for synchronization between x64Dbg and this plugin.</summary>
     public static partial class Manager
     {
@@ -184,5 +198,20 @@ namespace Dotx64Dbg
             });
         }
 
+        public static void OnModuleLoadEvent(ModuleLoadEventInfo ev)
+        {
+            PluginEventCall(delegate (IPlugin instance)
+            {
+                instance.OnModuleLoadEvent(ev);
+            });
+        }
+
+        public static void OnModuleUnloadEvent(ModuleUnloadEventInfo ev)
+        {
+            PluginEventCall(delegate (IPlugin instance)
+            {
+                instance.OnModuleUnloadEvent(ev);
+            });
+        }
     }
 }

@@ -2,6 +2,7 @@
 #include "pluginsdk/_plugins.h"
 #include "pluginsdk/_scriptapi_memory.h"
 #include "pluginsdk/_scriptapi_register.h"
+#include "pluginsdk/_scriptapi_module.h"
 
 struct Wrapper
 {
@@ -31,91 +32,6 @@ struct Wrapper
         data.hMenuMemmap = setupStruct->hMenuMemmap;
         data.hMenuSymmod = setupStruct->hMenuSymmod;
         Dotx64Dbg::Manager::SetMenuData(data);
-    }
-
-    static void DebugEvent(PLUG_CB_DEBUGEVENT* ev)
-    {
-        switch (ev->DebugEvent->dwDebugEventCode)
-        {
-        case EXCEPTION_DEBUG_EVENT:
-        {
-            auto& src = ev->DebugEvent->u.Exception;
-
-            Dotx64Dbg::ExceptionEventInfo dst{};
-            dst.ProcessId = ev->DebugEvent->dwProcessId;
-            dst.ThreadId = ev->DebugEvent->dwThreadId;
-            dst.FirstChance = src.dwFirstChance ? true : false;
-            dst.ExceptionCode = src.ExceptionRecord.ExceptionCode;
-            dst.ExceptionFlags = src.ExceptionRecord.ExceptionFlags;
-            dst.ExceptionAddress = reinterpret_cast<uintptr_t>(src.ExceptionRecord.ExceptionAddress);
-
-            Dotx64Dbg::Manager::OnExceptionEvent(dst);
-            break;
-        }
-        case CREATE_THREAD_DEBUG_EVENT:
-        {
-            auto& src = ev->DebugEvent->u.CreateThread;
-
-            Dotx64Dbg::ThreadCreateEventInfo dst{};
-            dst.ProcessId = ev->DebugEvent->dwProcessId;
-            dst.ThreadId = ev->DebugEvent->dwThreadId;
-            dst.Handle = reinterpret_cast<uint64_t>(src.hThread);
-            dst.StartAddress = reinterpret_cast<uint64_t>(src.lpStartAddress);
-            dst.ThreadLocalBase = reinterpret_cast<uint64_t>(src.lpThreadLocalBase);
-
-            Dotx64Dbg::Manager::OnThreadCreateEvent(dst);
-            break;
-        }
-        case CREATE_PROCESS_DEBUG_EVENT:
-        {
-            // Moved to OnProcessCreate plugin callback.
-            break;
-        }
-        case EXIT_THREAD_DEBUG_EVENT:
-        {
-            auto& src = ev->DebugEvent->u.ExitThread;
-
-            Dotx64Dbg::ThreadExitEventInfo dst{};
-            dst.ProcessId = ev->DebugEvent->dwProcessId;
-            dst.ThreadId = ev->DebugEvent->dwThreadId;
-            dst.ExitCode = src.dwExitCode;
-
-            Dotx64Dbg::Manager::OnThreadExitEvent(dst);
-            break;
-        }
-        case EXIT_PROCESS_DEBUG_EVENT:
-        {
-            auto& src = ev->DebugEvent->u.ExitProcess;
-
-            Dotx64Dbg::ProcessExitEventInfo dst{};
-            dst.ProcessId = ev->DebugEvent->dwProcessId;
-            dst.ThreadId = ev->DebugEvent->dwThreadId;
-            dst.ExitCode = src.dwExitCode;
-
-            Dotx64Dbg::Manager::OnProcessExitEvent(dst);
-            break;
-        }
-        case LOAD_DLL_DEBUG_EVENT:
-        {
-
-            break;
-        }
-        case UNLOAD_DLL_DEBUG_EVENT:
-        {
-
-            break;
-        }
-        case OUTPUT_DEBUG_STRING_EVENT:
-        {
-
-            break;
-        }
-        case RIP_EVENT:
-        {
-
-            break;
-        }
-        }
     }
 
     static void OnProcessCreate(PLUG_CB_CREATEPROCESS* info)
@@ -210,6 +126,123 @@ struct Wrapper
     {
         Dotx64Dbg::Manager::OnDebuggerStop();
     }
+
+    static void OnModuleLoad(PLUG_CB_LOADDLL* info)
+    {
+        const auto base = reinterpret_cast<duint>(info->LoadDll->lpBaseOfDll);
+
+        char pathBuf[MAX_PATH]{};
+        if (!Script::Module::PathFromAddr(base, pathBuf))
+        {
+            // TODO: Handle the error.
+        }
+
+        Dotx64Dbg::ModuleLoadEventInfo ev{};
+        ev.FilePath = gcnew System::String(pathBuf);
+        ev.Base = base;
+        ev.DebugInfoFileOffset = info->LoadDll->dwDebugInfoFileOffset;
+        ev.DebugInfoSize = info->LoadDll->nDebugInfoSize;
+
+        Dotx64Dbg::Manager::OnModuleLoadEvent(ev);
+    }
+
+    static void OnModuleUnload(PLUG_CB_UNLOADDLL* info)
+    {
+        const auto base = reinterpret_cast<duint>(info->UnloadDll->lpBaseOfDll);
+
+        char pathBuf[MAX_PATH]{};
+        if (!Script::Module::PathFromAddr(base, pathBuf))
+        {
+            // TODO: Handle the error.
+        }
+
+        Dotx64Dbg::ModuleUnloadEventInfo ev{};
+        ev.Base = base;
+        ev.FilePath = gcnew System::String(pathBuf);
+
+        Dotx64Dbg::Manager::OnModuleUnloadEvent(ev);
+    }
+
+    static void DebugEvent(PLUG_CB_DEBUGEVENT* ev)
+    {
+        switch (ev->DebugEvent->dwDebugEventCode)
+        {
+        case EXCEPTION_DEBUG_EVENT:
+        {
+            auto& src = ev->DebugEvent->u.Exception;
+
+            Dotx64Dbg::ExceptionEventInfo dst{};
+            dst.ProcessId = ev->DebugEvent->dwProcessId;
+            dst.ThreadId = ev->DebugEvent->dwThreadId;
+            dst.FirstChance = src.dwFirstChance ? true : false;
+            dst.ExceptionCode = src.ExceptionRecord.ExceptionCode;
+            dst.ExceptionFlags = src.ExceptionRecord.ExceptionFlags;
+            dst.ExceptionAddress = reinterpret_cast<uintptr_t>(src.ExceptionRecord.ExceptionAddress);
+
+            Dotx64Dbg::Manager::OnExceptionEvent(dst);
+            break;
+        }
+        case CREATE_THREAD_DEBUG_EVENT:
+        {
+            auto& src = ev->DebugEvent->u.CreateThread;
+
+            Dotx64Dbg::ThreadCreateEventInfo dst{};
+            dst.ProcessId = ev->DebugEvent->dwProcessId;
+            dst.ThreadId = ev->DebugEvent->dwThreadId;
+            dst.Handle = reinterpret_cast<uint64_t>(src.hThread);
+            dst.StartAddress = reinterpret_cast<uint64_t>(src.lpStartAddress);
+            dst.ThreadLocalBase = reinterpret_cast<uint64_t>(src.lpThreadLocalBase);
+
+            Dotx64Dbg::Manager::OnThreadCreateEvent(dst);
+            break;
+        }
+        case CREATE_PROCESS_DEBUG_EVENT:
+        {
+            // Moved to OnProcessCreate plugin callback.
+            break;
+        }
+        case EXIT_THREAD_DEBUG_EVENT:
+        {
+            auto& src = ev->DebugEvent->u.ExitThread;
+
+            Dotx64Dbg::ThreadExitEventInfo dst{};
+            dst.ProcessId = ev->DebugEvent->dwProcessId;
+            dst.ThreadId = ev->DebugEvent->dwThreadId;
+            dst.ExitCode = src.dwExitCode;
+
+            Dotx64Dbg::Manager::OnThreadExitEvent(dst);
+            break;
+        }
+        case EXIT_PROCESS_DEBUG_EVENT:
+        {
+            auto& src = ev->DebugEvent->u.ExitProcess;
+
+            Dotx64Dbg::ProcessExitEventInfo dst{};
+            dst.ProcessId = ev->DebugEvent->dwProcessId;
+            dst.ThreadId = ev->DebugEvent->dwThreadId;
+            dst.ExitCode = src.dwExitCode;
+
+            Dotx64Dbg::Manager::OnProcessExitEvent(dst);
+            break;
+        }
+        case LOAD_DLL_DEBUG_EVENT:
+        {
+            break;
+        }
+        case UNLOAD_DLL_DEBUG_EVENT:
+        {
+            break;
+        }
+        case OUTPUT_DEBUG_STRING_EVENT:
+        {
+            break;
+        }
+        case RIP_EVENT:
+        {
+            break;
+        }
+        }
+    }
 };
 
 // Unmanaged section.
@@ -271,19 +304,22 @@ PLUG_EXPORT void CBDEBUGEVENT(CBTYPE cbType, PLUG_CB_DEBUGEVENT* info)
 
 PLUG_EXPORT void CBLOADDLL(CBTYPE cbType, PLUG_CB_LOADDLL* info)
 {
-
+    Wrapper::OnModuleLoad(info);
 }
 
 PLUG_EXPORT void CBUNLOADDLL(CBTYPE cbType, PLUG_CB_UNLOADDLL* info)
 {
+    Wrapper::OnModuleUnload(info);
 }
 
 PLUG_EXPORT void CBCREATETHREAD(CBTYPE cbType, PLUG_CB_CREATETHREAD* info)
 {
+    // Handled in DebugEvent callback.
 }
 
 PLUG_EXPORT void CBEXITTHREAD(CBTYPE cbType, PLUG_CB_EXITTHREAD* info)
 {
+    // Handled in DebugEvent callback.
 }
 
 bool CBEXECUTESCRIPT(const char* text)

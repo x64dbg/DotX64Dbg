@@ -1,7 +1,7 @@
 ﻿using Dotx64Dbg;
 using System;
 
-public partial class MyPlugin
+public partial class ExamplePlugin
 {
     public void OnExceptionEvent(ExceptionEventInfo ev)
     {
@@ -44,4 +44,14 @@ public partial class MyPlugin
     public void OnDebuggerStop()
     {
     }
+    
+    public void OnModuleLoadEvent(ModuleLoadEventInfo ev)
+    {
+        //Utils.PrintFields(ev);
+    }
+    
+    public void OnModuleUnloadEvent(ModuleUnloadEventInfo ev)
+    {
+        //Utils.PrintFields(ev);
+    } 
 }

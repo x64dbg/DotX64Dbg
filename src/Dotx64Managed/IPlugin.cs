@@ -1,4 +1,4 @@
-﻿namespace Dotx64Dbg
+namespace Dotx64Dbg
 {
     public interface IHotload
     {
@@ -9,20 +9,48 @@
     public interface IPlugin
     {
         // Called when the plugin is loaded.
-        public void Startup() { }
+        public void Startup()
+        {
+        }
 
         // Called when the plugin is unloaded.
-        public void Shutdown() { }
+        public void Shutdown()
+        {
+        }
 
         // Debug Events
-        public void OnExceptionEvent(ExceptionEventInfo ev) { }
-        public void OnThreadCreateEvent(ThreadCreateEventInfo ev) { }
-        public void OnThreadExitEvent(ThreadExitEventInfo ev) { }
-        public void OnProcessCreateEvent(ProcessCreateEventInfo ev) { }
-        public void OnProcessExitEvent(ProcessExitEventInfo ev) { }
-        public void OnBreakpointEvent(BreakpointEventInfo ev) { }
-        public void OnSteppedEvent() { }
-        public void OnDebuggerStart(string fileName) { }
-        public void OnDebuggerStop() { }
+        public void OnExceptionEvent(ExceptionEventInfo ev)
+        {
+        }
+        public void OnThreadCreateEvent(ThreadCreateEventInfo ev)
+        {
+        }
+        public void OnThreadExitEvent(ThreadExitEventInfo ev)
+        {
+        }
+        public void OnProcessCreateEvent(ProcessCreateEventInfo ev)
+        {
+        }
+        public void OnProcessExitEvent(ProcessExitEventInfo ev)
+        {
+        }
+        public void OnBreakpointEvent(BreakpointEventInfo ev)
+        {
+        }
+        public void OnSteppedEvent()
+        {
+        }
+        public void OnDebuggerStart(string fileName)
+        {
+        }
+        public void OnDebuggerStop()
+        {
+        }
+        public void OnModuleLoadEvent(ModuleLoadEventInfo ev)
+        {
+        }
+        public void OnModuleUnloadEvent(ModuleUnloadEventInfo ev)
+        {
+        }
     }
 }
