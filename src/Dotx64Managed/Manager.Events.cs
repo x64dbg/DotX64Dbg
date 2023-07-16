@@ -200,6 +200,13 @@ namespace Dotx64Dbg
                 instance.OnDebuggerStop();
             });
         }
+        public static void OnDebuggerResume()
+        {
+            PluginEventCall(delegate (IPlugin instance)
+            {
+                instance.OnDebuggerResume();
+            });
+        }
 
         public static void OnModuleLoadEvent(ModuleLoadEventInfo ev)
         {

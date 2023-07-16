@@ -137,6 +137,11 @@ struct Wrapper
         Dotx64Dbg::Manager::OnDebuggerStop();
     }
 
+    static void OnDebuggerResume()
+    {
+        Dotx64Dbg::Manager::OnDebuggerResume();
+    }
+
     static void OnModuleLoad(PLUG_CB_LOADDLL* info)
     {
         const auto imageBase = reinterpret_cast<duint>(info->LoadDll->lpBaseOfDll);
@@ -306,6 +311,7 @@ PLUG_EXPORT void CBSYSTEMBREAKPOINT(CBTYPE cbType, PLUG_CB_SYSTEMBREAKPOINT* inf
 
 PLUG_EXPORT void CBRESUMEDEBUG(CBTYPE cbType, PLUG_CB_RESUMEDEBUG* info)
 {
+    Wrapper::OnDebuggerResume();
 }
 
 PLUG_EXPORT void CBSTEPPED(CBTYPE cbType, PLUG_CB_STEPPED* info)

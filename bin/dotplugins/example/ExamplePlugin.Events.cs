@@ -20,7 +20,7 @@ public partial class ExamplePlugin
 
     public void OnProcessCreateEvent(ProcessCreateEventInfo ev)
     {
-        //Utils.PrintFields(ev);
+        Utils.PrintFields(ev);
     }
 
     public void OnProcessExitEvent(ProcessExitEventInfo ev)
@@ -45,13 +45,17 @@ public partial class ExamplePlugin
     {
     }
     
+    public void OnDebuggerResume()
+    {
+    }
+    
     public void OnModuleLoadEvent(ModuleLoadEventInfo ev)
     {
-        //Utils.PrintFields(ev);
+        Utils.PrintFields(ev);
     }
     
     public void OnModuleUnloadEvent(ModuleUnloadEventInfo ev)
     {
-        //Utils.PrintFields(ev);
+        Utils.PrintFields(ev);
     } 
 }
