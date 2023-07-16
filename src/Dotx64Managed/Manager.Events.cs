@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Dotx64Dbg
 {
@@ -92,146 +92,97 @@ namespace Dotx64Dbg
     /// <summary>Class for synchronization between x64Dbg and this plugin.</summary>
     public static partial class Manager
     {
+        internal static void PluginEventCall(Action<IPlugin> action)
+        {
+            PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
+            {
+                try
+                {
+                    action(instance);
+                }
+                catch (Exception ex)
+                {
+                    Utils.PrintException(ex);
+                }
+            });
+        }
+
         /// <summary>Internal function, do not call this.</summary>
         public static void OnExceptionEvent(ExceptionEventInfo ev)
         {
-            try
+            PluginEventCall(delegate (IPlugin instance)
             {
-                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
-                {
-                    instance.OnExceptionEvent(ev);
-                });
-            }
-            catch (System.Exception ex)
-            {
-                Console.WriteLine($"Exception {ex.ToString()}");
-            }
+                instance.OnExceptionEvent(ev);
+            });
         }
 
         /// <summary>Internal function, do not call this.</summary>
         public static void OnThreadCreateEvent(ThreadCreateEventInfo ev)
         {
-            try
+            PluginEventCall(delegate (IPlugin instance)
             {
-
-                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
-                {
-                    instance.OnThreadCreateEvent(ev);
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception {ex.ToString()}");
-            }
+                instance.OnThreadCreateEvent(ev);
+            });
         }
 
         /// <summary>Internal function, do not call this.</summary>
         public static void OnProcessCreateEvent(ProcessCreateEventInfo ev)
         {
-            try
+            PluginEventCall(delegate (IPlugin instance)
             {
-                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
-                {
-                    instance.OnProcessCreateEvent(ev);
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception {ex.ToString()}");
-            }
+                instance.OnProcessCreateEvent(ev);
+            });
         }
 
         /// <summary>Internal function, do not call this.</summary>
         public static void OnThreadExitEvent(ThreadExitEventInfo ev)
         {
-            try
+            PluginEventCall(delegate (IPlugin instance)
             {
-                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
-                {
-                    instance.OnThreadExitEvent(ev);
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception {ex.ToString()}");
-            }
+                instance.OnThreadExitEvent(ev);
+            });
         }
 
         /// <summary>Internal function, do not call this.</summary>
         public static void OnProcessExitEvent(ProcessExitEventInfo ev)
         {
-            try
+            PluginEventCall(delegate (IPlugin instance)
             {
-                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
-                {
-                    instance.OnProcessExitEvent(ev);
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception {ex.ToString()}");
-            }
-
+                instance.OnProcessExitEvent(ev);
+            });
         }
 
         public static void OnBreakpointEvent(BreakpointEventInfo ev)
         {
-            try
+            PluginEventCall(delegate (IPlugin instance)
             {
-                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
-                {
-                    instance.OnBreakpointEvent(ev);
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception {ex.ToString()}");
-            }
+                instance.OnBreakpointEvent(ev);
+            });
         }
 
         public static void OnSteppedEvent()
         {
-            try
+            PluginEventCall(delegate (IPlugin instance)
             {
-                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
-                {
-                    instance.OnSteppedEvent();
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception {ex.ToString()}");
-            }
+                instance.OnSteppedEvent();
+            });
         }
 
         public static void OnDebuggerStart(string fileName)
         {
-            try
+            PluginEventCall(delegate (IPlugin instance)
             {
-                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
-                {
-                    instance.OnDebuggerStart(fileName);
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception {ex.ToString()}");
-            }
+                instance.OnDebuggerStart(fileName);
+            });
         }
 
         public static void OnDebuggerStop()
         {
-            try
+            PluginEventCall(delegate (IPlugin instance)
             {
-                PluginManager.GetPluginInstances().ForEach(delegate (IPlugin instance)
-                {
-                    instance.OnDebuggerStop();
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception {ex.ToString()}");
-            }
+                instance.OnDebuggerStop();
+            });
         }
+
     }
 }
