@@ -1,7 +1,7 @@
 using Dotx64Dbg;
 using System;
 
-public partial class MyPlugin
+public partial class ExamplePlugin
 {
     [Expression("expr_no_input")]
     public nuint MyExpr1()

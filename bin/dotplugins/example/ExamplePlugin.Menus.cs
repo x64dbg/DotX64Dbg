@@ -3,7 +3,7 @@ using System;
 
 using static Dotx64Dbg.UI;
 
-public partial class MyPlugin
+public partial class ExamplePlugin
 {
     [Menu(Disassembly.Menu, "Print selection")]
     public void TestMenu01()
