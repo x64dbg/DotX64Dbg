@@ -3,14 +3,6 @@
 #include "pluginsdk/_scriptapi_memory.h"
 #include "pluginsdk/_scriptapi_register.h"
 
-#ifdef _WIN64
-#pragma comment(lib, "pluginsdk/x64dbg.lib")
-#pragma comment(lib, "pluginsdk/x64bridge.lib")
-#else
-#pragma comment(lib, "pluginsdk/x32dbg.lib")
-#pragma comment(lib, "pluginsdk/x32bridge.lib")
-#endif //_WIN64
-
 static HMODULE _module{};
 
 template<typename T>
@@ -158,16 +150,21 @@ void CBSCRIPTAUTOCOMPLETE(const char* text, char** entries, int* entryCount)
         return f(text, entries, entryCount);
 }
 
+static HMODULE _thisModule = nullptr;
+
+int DllMain(HMODULE hmodule, DWORD reason, LPVOID reserved)
+{
+    if (reason == DLL_PROCESS_ATTACH)
+    {
+        _thisModule = hmodule;
+    }
+    return TRUE;
+}
+
 PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 {
-#ifdef _M_AMD64
-    HMODULE curModule = GetModuleHandleA("Dotx64Dbg.Loader.dp64");
-#else
-    HMODULE curModule = GetModuleHandleA("Dotx64Dbg.Loader.dp32");
-#endif
-
     char curPath[1024]{};
-    GetModuleFileNameA(curModule, curPath, sizeof(curPath));
+    GetModuleFileNameA(_thisModule, curPath, sizeof(curPath));
 
     if (auto* p = strrchr(curPath, '\\'); p != nullptr)
     {
@@ -180,9 +177,10 @@ PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
     _module = LoadLibraryA(dllPath);
     if (_module == nullptr)
     {
-        _plugin_logprintf("Unable to load Dotx64Dbg, make sure you have following installed:\n"
+        _plugin_logprintf("Unable to load Dotx64Dbg (%08X), make sure you have following installed:\n"
             "- .NET 6.0 Runtime (https://dotnet.microsoft.com/download/dotnet/6.0)\n"
-            "- Visual Studio 2019 Runtime (https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)\n"
+            "- Visual Studio 2019 Runtime (https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)\n",
+            GetLastError()
         );
         return false;
     }

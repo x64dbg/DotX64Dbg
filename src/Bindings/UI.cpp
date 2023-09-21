@@ -17,7 +17,7 @@ namespace Dotx64Dbg::Native
         /// <summary>
         /// Selection holds the start and end address of the selected elements in a window.
         /// </summary>
-        ref class Selection
+        ref struct Selection
         {
         public:
             /// <summary>

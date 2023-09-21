@@ -79,16 +79,16 @@ namespace Dotx64Dbg
         return Operand::None;
     }
 
-    static Instruction^ Convert(ZydisDecodedInstruction& instr, uint64_t addr)
+    static Instruction^ Convert(ZydisDecodedInstruction& instr, ZydisDecodedOperand* operands, uint64_t addr)
     {
         const auto id = convertZydisMnemonic(instr.mnemonic);
 
         auto attribs = Instruction::Attributes::None;
 
         auto addAttribute = [&](Instruction::Attributes a, Instruction::Attributes b)
-        {
-            return static_cast<Instruction::Attributes>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
-        };
+            {
+                return static_cast<Instruction::Attributes>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+            };
 
         if (instr.attributes & ZYDIS_ATTRIB_HAS_LOCK)
         {
@@ -118,13 +118,13 @@ namespace Dotx64Dbg
         auto res = gcnew Instruction(attribs, id);
         res->_Size = instr.length;
         res->_Address = addr;
-        res->_FlagsModified = (EFlags)instr.cpu_flags_written;
-        res->_FlagsRead = (EFlags)instr.cpu_flags_read;
+        res->_FlagsModified = (EFlags)(instr.cpu_flags->modified | instr.cpu_flags->set_0 | instr.cpu_flags->set_1);
+        res->_FlagsRead = (EFlags)instr.cpu_flags->tested;
 
         int opIndex = 0;
         for (int i = 0; i < instr.operand_count; i++)
         {
-            auto& op = instr.operands[i];
+            auto& op = operands[i];
 
             IOperand^ newOp = ConvertOperand(instr, op, addr);
             OperandVisibility vis = OperandVisibility::Invalid;
@@ -162,12 +162,13 @@ namespace Dotx64Dbg
         Instruction^ decodeInstruction(const ZydisDecoder* decoder, const uint8_t* buf, size_t len, uint64_t address)
         {
             ZydisDecodedInstruction instr{};
-            if (auto status = ZydisDecoderDecodeBuffer(decoder, buf, len, &instr); status != ZYAN_STATUS_SUCCESS)
+            ZydisDecodedOperand operands[ZYDIS_MAX_OPERAND_COUNT];
+            if (auto status = ZydisDecoderDecodeFull(decoder, buf, len, &instr, operands); status != ZYAN_STATUS_SUCCESS)
             {
                 return nullptr;
             }
 
-            return Convert(instr, address);
+            return Convert(instr, operands, address);
         }
 
     }
@@ -182,10 +183,10 @@ namespace Dotx64Dbg
             _decoder = new ZydisDecoder();
 #ifdef _M_AMD64
             auto mode = ZYDIS_MACHINE_MODE_LONG_64;
-            auto addrSize = ZYDIS_ADDRESS_WIDTH_64;
+            auto addrSize = ZYDIS_STACK_WIDTH_64;
 #else
             auto mode = ZYDIS_MACHINE_MODE_LEGACY_32;
-            auto addrSize = ZYDIS_ADDRESS_WIDTH_32;
+            auto addrSize = ZYDIS_STACK_WIDTH_32;
 #endif
             if (auto status = ZydisDecoderInit(_decoder, mode, addrSize);
                 status != ZYAN_STATUS_SUCCESS)
