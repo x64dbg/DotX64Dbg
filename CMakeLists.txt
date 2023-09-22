@@ -143,6 +143,8 @@ target_link_libraries(Dotx64DbgBindings PRIVATE
 )
 
 set_target_properties(Dotx64DbgBindings PROPERTIES
+	RUNTIME_OUTPUT_NAME
+		Dotx64Dbg.Bindings
 	DOTNET_TARGET_FRAMEWORK
 		net6.0
 	DOTNET_TARGET_FRAMEWORK_VERSION
@@ -418,6 +420,8 @@ target_link_libraries(Dotx64DbgLoader PRIVATE
 set_target_properties(Dotx64DbgLoader PROPERTIES
 	VS_GLOBAL_ResolveNuGetPackages
 		false
+	RUNTIME_OUTPUT_NAME
+		Dotx64Dbg
 )
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
@@ -433,7 +437,7 @@ endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
 	set_target_properties(Dotx64DbgLoader PROPERTIES
-		SUFFIC
+		SUFFIX
 			.dp32
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE
 			"${CMAKE_SOURCE_DIR}/bin/x32/plugins"

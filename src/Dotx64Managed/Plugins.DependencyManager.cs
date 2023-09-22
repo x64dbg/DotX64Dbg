@@ -1,19 +1,18 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Reflection;
-
+using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Common;
 
 namespace Dotx64Dbg
 {
@@ -21,7 +20,10 @@ namespace Dotx64Dbg
     {
         internal class PluginDependencyConsumer
         {
-            public PluginInfo PluginInfo { get; }
+            public PluginInfo PluginInfo
+            {
+                get;
+            }
 
             public bool HasNext => (_currentNode is null & _head.Next is not null) | _currentNode?.Next is not null;
 
@@ -43,7 +45,7 @@ namespace Dotx64Dbg
             {
                 if (!HasNext)
                 {
-                    if(_head.Next?.Resolved ?? false)
+                    if (_head.Next?.Resolved ?? false)
                         _head.Next = null; // The last item was consumed
                     return false;
                 }
@@ -54,7 +56,7 @@ namespace Dotx64Dbg
                     return true;
                 }
 
-                if(_currentNode.Resolved) // Detach from list
+                if (_currentNode.Resolved) // Detach from list
                 {
                     _currentNode.Previous.Next = _currentNode.Next;
                     if (_currentNode.Next is not null)
@@ -116,8 +118,14 @@ namespace Dotx64Dbg
             {
                 public static DependencyNode Null => new();
 
-                public DependencyNode Next { get; set; }
-                public DependencyNode Previous { get; set; }
+                public DependencyNode Next
+                {
+                    get; set;
+                }
+                public DependencyNode Previous
+                {
+                    get; set;
+                }
                 public bool Resolved { get; set; } = false;
 
                 public int Id { get; } = 0;
@@ -129,7 +137,9 @@ namespace Dotx64Dbg
                     Id = name.GetHashCode();
                 }
 
-                private DependencyNode() { }
+                private DependencyNode()
+                {
+                }
 
                 public bool Equals(DependencyNode other) => Id == other.Id;
 
@@ -163,7 +173,7 @@ namespace Dotx64Dbg
                 if (!HasDependenciesChanged(plugin))
                     return pluginDepsCache[plugin.GetHashCode()].cachedResolvedDependencies;
 
-                PluginDependencyConsumer dependencyConsumer = new (plugin.Info);
+                PluginDependencyConsumer dependencyConsumer = new(plugin.Info);
 
                 foreach (var resolver in resolvers)
                 {
@@ -173,7 +183,7 @@ namespace Dotx64Dbg
                     dependencyConsumer.ResetIterator();
                 }
 
-                if(dependencyConsumer.HasAny)
+                if (dependencyConsumer.HasAny)
                 {
                     // TODO: Create a proper exception for this
                     throw new Exception("The current resolvers where not able to resolve all the dependencies");
@@ -225,7 +235,7 @@ namespace Dotx64Dbg
         internal class NuGetDependencyResolver : IDependencyResolver
         {
             static readonly string NugetSource = "https://api.nuget.org/v3/index.json";
-            static string LocalNugetRepo => Path.Combine(Manager.PluginManager.PluginsPath, ".nuget");
+            static string LocalNugetRepo => Manager.PluginManager.PluginsPath;
 
             private readonly NuGet.Common.ILogger Logger;
 
@@ -334,7 +344,7 @@ namespace Dotx64Dbg
 
                 //  NuGet package original hash
                 string hashFilePath = Path.Combine(
-                    Path.GetDirectoryName(pkgFullName), 
+                    Path.GetDirectoryName(pkgFullName),
                     Path.GetFileNameWithoutExtension(pkgFullName) + PackagingCoreConstants.HashFileExtension);
                 using var hashFile = File.Create(hashFilePath);
 
@@ -352,7 +362,8 @@ namespace Dotx64Dbg
                     // Hash file
                     hashFile.Write(Encoding.UTF8.GetBytes(nupkgMetadataFile.ContentHash));
 
-                } catch (IOException)
+                }
+                catch (IOException)
                 {
                     return false;
                 }
@@ -446,7 +457,7 @@ namespace Dotx64Dbg
                             if (!DownloadPackage(pkgId, version, fs, token))
                                 return null;
                         }
-                        if(!IsPackageInitialized(pkgFullName, token) && !InitializePackageFolder(pkgFullName, token))
+                        if (!IsPackageInitialized(pkgFullName, token) && !InitializePackageFolder(pkgFullName, token))
                         {
                             Logger.LogError($"Package '{pkgId}' directory initialization failed!");
                             File.Delete(pkgFullName); // Maybe the nupkg is corrupted?
@@ -484,7 +495,7 @@ namespace Dotx64Dbg
                 private static readonly string FrameworkNamePattern =
                     @"^(?<Name>[a-zA-Z.]+),Version=v(?<Version>(?<Major>[\d]+)\.(?<Minor>[\d]+)(?:\.(?<Build>[\d]+))?)$";
 
-                private readonly static System.Text.RegularExpressions.Regex Regex = new(FrameworkNamePattern); 
+                private readonly static System.Text.RegularExpressions.Regex Regex = new(FrameworkNamePattern);
 
                 public static NuGet.Frameworks.NuGetFramework GetFrameworkFromAssembly(System.Reflection.Assembly assembly)
                 {
@@ -539,7 +550,7 @@ namespace Dotx64Dbg
         {
             public void ResolveFullpathToDependency(PluginDependencyConsumer dependencyConsumer, CancellationToken token)
             {
-                while(dependencyConsumer.MoveNext())
+                while (dependencyConsumer.MoveNext())
                 {
                     token.ThrowIfCancellationRequested();
 
@@ -557,7 +568,7 @@ namespace Dotx64Dbg
         {
             return resolver.ResolvePluginDependencies(plugin, token);
         }
-        
+
         public static string[] ResolveDependencies(this Plugin plugin, Plugins.DependencyResolver resolver) =>
             plugin.ResolveDependencies(resolver, CancellationToken.None);
     }
