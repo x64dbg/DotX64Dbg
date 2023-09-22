@@ -5,6 +5,7 @@ languages = ["CSharp", "CXX"]
 cmake-after = '''
     # Only have Release and Debug, there are configuration errors with managed otherwise.
     SET(CMAKE_CONFIGURATION_TYPES "Debug;Release")
+    SET(CMAKE_VS_NUGET_PACKAGE_RESTORE ON)
 
     include(CSharpUtilities)
     
@@ -30,8 +31,41 @@ link-options = ["/DEBUG"]
 [target.Dotx64DbgBindings]
 type = "shared"
 alias = "dotx64dbg::bindings"
-sources = ["src/Bindings/**.cpp"]
-headers = ["src/Bindings/**.hpp"]
+sources = [
+    "src/Bindings/Breakpoints.cpp",
+    "src/Bindings/Commands.cpp",
+    "src/Bindings/Debugger.cpp",
+    "src/Bindings/Expressions.cpp",
+    "src/Bindings/Instruction.cpp",
+    "src/Bindings/Instruction.Decoder.cpp",
+    "src/Bindings/Instruction.Encoder.cpp",
+    "src/Bindings/Instruction.Generator.cpp",
+    "src/Bindings/Logging.cpp",
+    "src/Bindings/Memory.cpp",
+    "src/Bindings/Module.cpp",
+    "src/Bindings/Process.cpp",
+    "src/Bindings/Settings.cpp",
+    "src/Bindings/Symbols.cpp",
+    "src/Bindings/Thread.cpp",
+    "src/Bindings/UI.cpp",
+]
+headers = [
+    "src/Bindings/AsmJitHelper.hpp",
+    "src/Bindings/Decoder.Converter.hpp",
+    "src/Bindings/Encoder.Converter.hpp",
+    "src/Bindings/Instruction.Decoder.hpp",
+    "src/Bindings/Instruction.EFlags.hpp",
+    "src/Bindings/Instruction.Encoder.hpp",
+    "src/Bindings/Instruction.Generator.hpp",
+    "src/Bindings/Instruction.hpp",
+    "src/Bindings/Instruction.Meta.hpp",
+    "src/Bindings/Instruction.Operand.hpp",
+    "src/Bindings/Instruction.Operands.hpp",
+    "src/Bindings/Marshal.hpp",
+    "src/Bindings/Mnemonic.hpp",
+    "src/Bindings/Register.hpp",
+    "src/Bindings/Symbols.hpp",
+]
 private-link-libraries = [
     "dotx64dbg::common",
     "x64dbg::pluginsdk",
@@ -115,6 +149,8 @@ sources = [
 private-link-libraries = [
     "dotx64dbg::bindings",
 ]
+x32.private-compile-definitions = ["_X86_"]
+x64.private-compile-definitions = ["_X64_"]
 cmake-after = '''
 csharp_set_designer_cs_properties(
     src/Dotx64Managed/Manager.cs
@@ -123,30 +159,36 @@ csharp_set_designer_cs_properties(
 )
 set_property(SOURCE src/Dotx64Managed/Properties/Resources.resx PROPERTY VS_TOOL_OVERRIDE "EmbeddedResource")
 '''
+
 [target.Dotx64DbgManaged.properties]
 x32.VS_GLOBAL_PlatformTarget = "x86"
 x64.VS_GLOBAL_PlatformTarget = "x64"
 DOTNET_SDK = "Microsoft.NET.Sdk"
-DOTNET_TARGET_FRAMEWORK = "net6.0-windows"
+DOTNET_TARGET_FRAMEWORK = "net6.0"
 VS_GLOBAL_ROOTNAMESPACE = "Dotx64Dbg"
-VS_GLOBAL_UseWindowsForms = "true"
 VS_GLOBAL_AppendTargetFrameworkToOutputPath = "false"
 VS_GLOBAL_AppendRuntimeIdentifierToOutputPath = "false"
-VS_GLOBAL_ProduceReferenceAssembly = "true"
+VS_GLOBAL_ProduceReferenceAssembly = "false"
 VS_GLOBAL_ProduceReferenceAssemblyInOutDir = "false"
 VS_GLOBAL_CopyLocalLockFileAssemblies = "true"
-VS_PACKAGE_REFERENCES = "Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.0;NuGet.Frameworks_5.11.0;NuGet.Protocol_5.11.0;NuGet.Versioning_5.11.0;System.Drawing.Common_7.0.0"
+VS_GLOBAL_SatelliteResourceLanguages = "neutral"
+VS_PACKAGE_REFERENCES = "Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.0;NuGet.Frameworks_5.11.0;NuGet.Protocol_5.11.0;NuGet.Versioning_5.11.0;System.Drawing.Common_7.0.0;System.Resources.Extensions_6.0.0"
+VS_DOTNET_REFERENCES_COPY_LOCAL = "false"
 x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${CMAKE_SOURCE_DIR}/bin/x64/plugins"
 x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${CMAKE_SOURCE_DIR}/bin/x64/plugins"
 x32.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${CMAKE_SOURCE_DIR}/bin/x32/plugins"
 x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${CMAKE_SOURCE_DIR}/bin/x32/plugins"
+VS_GLOBAL_ResolveNuGetPackages = "true"
 
 ### Dotx64Dbg
 [target.Dotx64Dbg]
 type = "shared"
 alias = "dotx64dbg::dotx64dbg"
-sources = ["src/Dotx64Dbg/**.cpp"]
-headers = ["src/Dotx64Dbg/**.hpp"]
+sources = [
+    "src/Dotx64Dbg/Loader.cpp",
+    "src/Dotx64Dbg/Plugin.cpp",
+]
+headers = []
 private-link-libraries = [
     "dotx64dbg::common",
     "x64dbg::pluginsdk",
@@ -165,7 +207,7 @@ x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${CMAKE_SOURCE_DIR}/bin/x3/plugins"
 ### Dotx64DbgLoader
 [target.Dotx64DbgLoader]
 type = "shared"
-sources = ["src/Dotx64DbgLoader/**.cpp"]
+sources = ["src/Dotx64DbgLoader/Loader.cpp"]
 private-link-libraries = [
     "dotx64dbg::common",
     "x64dbg::pluginsdk",

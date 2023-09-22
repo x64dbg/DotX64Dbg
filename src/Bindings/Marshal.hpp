@@ -41,6 +41,15 @@ namespace interop {
         return buf;
     }
 
+    inline std::wstring toUTF16(System::String^ str)
+    {
+        msclr::interop::marshal_context oMarshalContext;
+
+        const wchar_t* cstr = oMarshalContext.marshal_as<const wchar_t*>(str);
+
+        return cstr;
+    }
+
     inline System::String^ stringFromUTF8(const char* str)
     {
         return Marshal::PtrToStringUTF8(System::IntPtr((void*)str));

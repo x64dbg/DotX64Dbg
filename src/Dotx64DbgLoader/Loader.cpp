@@ -177,9 +177,10 @@ PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
     _module = LoadLibraryA(dllPath);
     if (_module == nullptr)
     {
-        _plugin_logprintf("Unable to load Dotx64Dbg (%08X), make sure you have following installed:\n"
+        _plugin_logprintf("Unable to load Dotx64Dbg (%s) (%08X), make sure you have following installed:\n"
             "- .NET 6.0 Runtime (https://dotnet.microsoft.com/download/dotnet/6.0)\n"
             "- Visual Studio 2019 Runtime (https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)\n",
+            dllPath,
             GetLastError()
         );
         return false;

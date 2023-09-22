@@ -35,6 +35,7 @@ project(DotNetTest
 
     # Only have Release and Debug, there are configuration errors with managed otherwise.
     SET(CMAKE_CONFIGURATION_TYPES "Debug;Release")
+    SET(CMAKE_VS_NUGET_PACKAGE_RESTORE ON)
 
     include(CSharpUtilities)
     
@@ -91,14 +92,13 @@ list(APPEND Dotx64DbgBindings_SOURCES
 	"src/Bindings/Commands.cpp"
 	"src/Bindings/Debugger.cpp"
 	"src/Bindings/Expressions.cpp"
+	"src/Bindings/Instruction.cpp"
 	"src/Bindings/Instruction.Decoder.cpp"
 	"src/Bindings/Instruction.Encoder.cpp"
 	"src/Bindings/Instruction.Generator.cpp"
-	"src/Bindings/Instruction.cpp"
 	"src/Bindings/Logging.cpp"
 	"src/Bindings/Memory.cpp"
 	"src/Bindings/Module.cpp"
-	"src/Bindings/Plugin.cpp"
 	"src/Bindings/Process.cpp"
 	"src/Bindings/Settings.cpp"
 	"src/Bindings/Symbols.cpp"
@@ -111,10 +111,10 @@ list(APPEND Dotx64DbgBindings_SOURCES
 	"src/Bindings/Instruction.EFlags.hpp"
 	"src/Bindings/Instruction.Encoder.hpp"
 	"src/Bindings/Instruction.Generator.hpp"
+	"src/Bindings/Instruction.hpp"
 	"src/Bindings/Instruction.Meta.hpp"
 	"src/Bindings/Instruction.Operand.hpp"
 	"src/Bindings/Instruction.Operands.hpp"
-	"src/Bindings/Instruction.hpp"
 	"src/Bindings/Marshal.hpp"
 	"src/Bindings/Mnemonic.hpp"
 	"src/Bindings/Register.hpp"
@@ -253,6 +253,18 @@ endif()
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Dotx64DbgManaged_SOURCES})
 
 add_library(dotx64dbg::managed ALIAS Dotx64DbgManaged)
+if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
+	target_compile_definitions(Dotx64DbgManaged PRIVATE
+		_X86_
+	)
+endif()
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
+	target_compile_definitions(Dotx64DbgManaged PRIVATE
+		_X64_
+	)
+endif()
+
 target_link_libraries(Dotx64DbgManaged PRIVATE
 	dotx64dbg::bindings
 )
@@ -283,23 +295,27 @@ set_target_properties(Dotx64DbgManaged PROPERTIES
 	DOTNET_SDK
 		Microsoft.NET.Sdk
 	DOTNET_TARGET_FRAMEWORK
-		net6.0-windows
+		net6.0
 	VS_GLOBAL_ROOTNAMESPACE
 		Dotx64Dbg
-	VS_GLOBAL_UseWindowsForms
-		true
 	VS_GLOBAL_AppendTargetFrameworkToOutputPath
 		false
 	VS_GLOBAL_AppendRuntimeIdentifierToOutputPath
 		false
 	VS_GLOBAL_ProduceReferenceAssembly
-		true
+		false
 	VS_GLOBAL_ProduceReferenceAssemblyInOutDir
 		false
 	VS_GLOBAL_CopyLocalLockFileAssemblies
 		true
+	VS_GLOBAL_SatelliteResourceLanguages
+		neutral
 	VS_PACKAGE_REFERENCES
-		"Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.0;NuGet.Frameworks_5.11.0;NuGet.Protocol_5.11.0;NuGet.Versioning_5.11.0;System.Drawing.Common_7.0.0"
+		"Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.0;NuGet.Frameworks_5.11.0;NuGet.Protocol_5.11.0;NuGet.Versioning_5.11.0;System.Drawing.Common_7.0.0;System.Resources.Extensions_6.0.0"
+	VS_DOTNET_REFERENCES_COPY_LOCAL
+		false
+	VS_GLOBAL_ResolveNuGetPackages
+		true
 )
 
 csharp_set_designer_cs_properties(

@@ -19,11 +19,9 @@ namespace Dotx64Dbg
 
         public static string GetPluginsPath()
         {
-            var process = System.Diagnostics.Process.GetCurrentProcess();
-            string fullPath = process.MainModule.FileName;
-            string processPath = Path.GetDirectoryName(fullPath);
-
-            return Path.GetFullPath(Path.Combine(processPath, "plugins"));
+            // Get the current assembly path
+            var fullPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            return Path.GetDirectoryName(fullPath);
         }
 
         public static string DotX64DbgNugetDepsPath => Path.Combine(GetPluginsPath(), ".nuget");
