@@ -17,9 +17,9 @@ cmake-after = '''
     string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x64/plugins)
+    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x64/plugins/Dotx64Dbg)
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x32/plugins)
+    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x32/plugins/Dotx64Dbg)
 endif()
 '''
 
@@ -49,7 +49,9 @@ sources = [
     "src/Bindings/Logging.cpp",
     "src/Bindings/Memory.cpp",
     "src/Bindings/Module.cpp",
+    "src/Bindings/Platform.cpp",
     "src/Bindings/Process.cpp",
+    "src/Bindings/Register.cpp",
     "src/Bindings/Settings.cpp",
     "src/Bindings/Symbols.cpp",
     "src/Bindings/Thread.cpp",
@@ -69,8 +71,6 @@ headers = [
     "src/Bindings/Instruction.Operands.hpp",
     "src/Bindings/Marshal.hpp",
     "src/Bindings/Mnemonic.hpp",
-    "src/Bindings/Register.hpp",
-    "src/Bindings/Symbols.hpp",
 ]
 private-link-libraries = [
     "dotx64dbg::common",
@@ -107,6 +107,7 @@ sources = [
     "src/Dotx64Managed/API/Module.Exports.cs",
     "src/Dotx64Managed/API/Module.Imports.cs",
     "src/Dotx64Managed/API/Module.Sections.cs",
+    "src/Dotx64Managed/API/Platform.cs",
     "src/Dotx64Managed/API/Process.cs",
     "src/Dotx64Managed/API/Thread.cs",
     "src/Dotx64Managed/API/Thread.Register.cs",
@@ -229,5 +230,4 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
       ${CMAKE_SOURCE_DIR}/src/Resources
       ${BUILD_OUTPUT_DIR}/Resources
 )
-add_dependencies(Dotx64DbgManaged Dotx64DbgResources)
 '''

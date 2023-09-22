@@ -158,7 +158,7 @@ namespace Dotx64Dbg::Native
 
             static bool SetIcon(int hMenu, array<System::Byte>^ image)
             {
-                if(image == nullptr)
+                if (image == nullptr)
                     return false;
 
                 pin_ptr<uint8_t> data = &image[0];

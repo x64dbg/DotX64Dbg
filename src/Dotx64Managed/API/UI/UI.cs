@@ -135,7 +135,6 @@ namespace Dotx64Dbg
         {
             return (MsgBoxResult)Native.UI.MsgBox(title, text, (Native.UI.MsgBoxType)type, (Native.UI.MsgBoxIcon)icon);
         }
+
     }
-
-
 }

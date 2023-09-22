@@ -7,17 +7,12 @@ namespace Dotx64Dbg
     {
         internal static void RunScript()
         {
-            /*
-            OpenFileDialog fdlg = new OpenFileDialog();
-            fdlg.Title = "Open Dotx64Dbg Script";
-            fdlg.Filter = ".cs (*.cs)|*.cs|All files (*.*)|*.*";
-            fdlg.FilterIndex = 1;
-            fdlg.RestoreDirectory = true;
-            if (fdlg.ShowDialog() == DialogResult.OK)
-            {
-                ScriptLoader.ExecuteScriptFile(fdlg.FileName);
-            }
-            */
+            var fileFilter = "C# File (*.cs)|*.cs|All files (*.*)|*.*";
+            var scriptPath = Platform.OpenFileBrowse("Open Dotx64Dbg Script", fileFilter);
+            if (scriptPath == null)
+                return;
+
+            ScriptLoader.ExecuteScriptFile(scriptPath);
         }
 
         internal static void OpenEditor(string projectPath)

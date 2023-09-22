@@ -141,9 +141,9 @@ namespace Dotx64Dbg
                 .WithOptimizationLevel(OptimizationLevel.Debug)
                 .WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default)
 #if _X86_
-                .WithPlatform(Platform.X86)
+                .WithPlatform(Microsoft.CodeAnalysis.Platform.X86)
 #else
-                .WithPlatform(Platform.X64)
+                .WithPlatform(Microsoft.CodeAnalysis.Platform.X64)
 #endif
                 .WithModuleName(Name + guid)
             ;

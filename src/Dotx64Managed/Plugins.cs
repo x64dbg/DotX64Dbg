@@ -413,7 +413,6 @@ EndGlobal
             return false;
         }
 
-
         public string CreatePluginTemplate(string pluginName)
         {
             var pluginPath = Path.Combine(Settings.PluginsPath, pluginName);

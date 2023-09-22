@@ -105,7 +105,9 @@ list(APPEND Dotx64DbgBindings_SOURCES
 	"src/Bindings/Logging.cpp"
 	"src/Bindings/Memory.cpp"
 	"src/Bindings/Module.cpp"
+	"src/Bindings/Platform.cpp"
 	"src/Bindings/Process.cpp"
+	"src/Bindings/Register.cpp"
 	"src/Bindings/Settings.cpp"
 	"src/Bindings/Symbols.cpp"
 	"src/Bindings/Thread.cpp"
@@ -123,8 +125,6 @@ list(APPEND Dotx64DbgBindings_SOURCES
 	"src/Bindings/Instruction.Operands.hpp"
 	"src/Bindings/Marshal.hpp"
 	"src/Bindings/Mnemonic.hpp"
-	"src/Bindings/Register.hpp"
-	"src/Bindings/Symbols.hpp"
 )
 
 list(APPEND Dotx64DbgBindings_SOURCES
@@ -200,6 +200,7 @@ list(APPEND Dotx64DbgManaged_SOURCES
 	"src/Dotx64Managed/API/Module.Exports.cs"
 	"src/Dotx64Managed/API/Module.Imports.cs"
 	"src/Dotx64Managed/API/Module.Sections.cs"
+	"src/Dotx64Managed/API/Platform.cs"
 	"src/Dotx64Managed/API/Process.cs"
 	"src/Dotx64Managed/API/Thread.cs"
 	"src/Dotx64Managed/API/Thread.Register.cs"
@@ -470,7 +471,6 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
       ${CMAKE_SOURCE_DIR}/src/Resources
       ${BUILD_OUTPUT_DIR}/Resources
 )
-add_dependencies(Dotx64DbgManaged Dotx64DbgResources)
 
 unset(CMKR_TARGET)
 unset(CMKR_SOURCES)
