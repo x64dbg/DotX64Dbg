@@ -436,6 +436,8 @@ EndGlobal
                 return null;
             }
 
+            // TODO: Fixme.
+            /*
             if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_json, replacements, pluginJsonPath))
             {
                 // ERROR.
@@ -445,6 +447,7 @@ EndGlobal
             {
                 // ERROR.
             }
+            */
 
             return pluginPath;
         }

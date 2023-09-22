@@ -17,14 +17,15 @@ namespace Dotx64Dbg
             return x64DbgPath;
         }
 
-        public static string GetPluginsPath()
+        // Returns the path to the folder of where this x64dbg plugin is located.
+        public static string GetPluginPath()
         {
             // Get the current assembly path
             var fullPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
             return Path.GetDirectoryName(fullPath);
         }
 
-        public static string DotX64DbgNugetDepsPath => Path.Combine(GetPluginsPath(), ".nuget");
+        public static string DotX64DbgNugetDepsPath => GetPluginPath();
 
         public static void PrintFields(object obj)
         {

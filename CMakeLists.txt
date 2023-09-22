@@ -27,7 +27,7 @@ if(CMKR_ROOT_PROJECT)
 	configure_file(cmake.toml cmake.toml COPYONLY)
 endif()
 
-project(DotNetTest
+project(Dotx64Dbg
 	LANGUAGES
 		CSharp
 		CXX
@@ -44,7 +44,13 @@ project(DotNetTest
     string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT}")
     string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG_INIT "${CMAKE_CXX_FLAGS_DEBUG_INIT}")
     string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")    
+    string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x64/plugins)
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x32/plugins)
+endif()
 
 # thirdparty
 set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
@@ -158,18 +164,18 @@ set_target_properties(Dotx64DbgBindings PROPERTIES
 if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
 	set_target_properties(Dotx64DbgBindings PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE
-			"${CMAKE_SOURCE_DIR}/bin/x64/plugins"
+			${BUILD_OUTPUT_DIR}
 		RUNTIME_OUTPUT_DIRECTORY_DEBUG
-			"${CMAKE_SOURCE_DIR}/bin/x64/plugins"
+			${BUILD_OUTPUT_DIR}
 	)
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
 	set_target_properties(Dotx64DbgBindings PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE
-			"${CMAKE_SOURCE_DIR}/bin/x32/plugins"
+			${BUILD_OUTPUT_DIR}
 		RUNTIME_OUTPUT_DIRECTORY_DEBUG
-			"${CMAKE_SOURCE_DIR}/bin/x3/plugins"
+			${BUILD_OUTPUT_DIR}
 	)
 endif()
 
@@ -182,15 +188,6 @@ set(Dotx64DbgManaged_SOURCES "")
 
 list(APPEND Dotx64DbgManaged_SOURCES
 	"src/Dotx64Managed/API/Analysis/RegisterMask.cs"
-	"src/Dotx64Managed/API/UI/Disassembly.cs"
-	"src/Dotx64Managed/API/UI/Dump.cs"
-	"src/Dotx64Managed/API/UI/Log.cs"
-	"src/Dotx64Managed/API/UI/MemoryMap.cs"
-	"src/Dotx64Managed/API/UI/Menu.cs"
-	"src/Dotx64Managed/API/UI/Stack.cs"
-	"src/Dotx64Managed/API/UI/StatusBar.cs"
-	"src/Dotx64Managed/API/UI/Types.cs"
-	"src/Dotx64Managed/API/UI/UI.cs"
 	"src/Dotx64Managed/API/Assembler.cs"
 	"src/Dotx64Managed/API/Assembler.Instructions.cs"
 	"src/Dotx64Managed/API/Breakpoints.cs"
@@ -206,6 +203,17 @@ list(APPEND Dotx64DbgManaged_SOURCES
 	"src/Dotx64Managed/API/Process.cs"
 	"src/Dotx64Managed/API/Thread.cs"
 	"src/Dotx64Managed/API/Thread.Register.cs"
+	"src/Dotx64Managed/API/UI/Disassembly.cs"
+	"src/Dotx64Managed/API/UI/Dump.cs"
+	"src/Dotx64Managed/API/UI/Log.cs"
+	"src/Dotx64Managed/API/UI/MemoryMap.cs"
+	"src/Dotx64Managed/API/UI/Menu.cs"
+	"src/Dotx64Managed/API/UI/Stack.cs"
+	"src/Dotx64Managed/API/UI/StatusBar.cs"
+	"src/Dotx64Managed/API/UI/Types.cs"
+	"src/Dotx64Managed/API/UI/UI.cs"
+	"src/Dotx64Managed/AssemblyLoader.cs"
+	"src/Dotx64Managed/Compiler.cs"
 	"src/Dotx64Managed/Hotload/Hotload.Adapter.Array.cs"
 	"src/Dotx64Managed/Hotload/Hotload.Adapter.Class.cs"
 	"src/Dotx64Managed/Hotload/Hotload.Adapter.cs"
@@ -215,13 +223,6 @@ list(APPEND Dotx64DbgManaged_SOURCES
 	"src/Dotx64Managed/Hotload/Hotload.Adapter.Statics.cs"
 	"src/Dotx64Managed/Hotload/Hotload.Context.cs"
 	"src/Dotx64Managed/Hotload/Hotload.cs"
-	"src/Dotx64Managed/Properties/launchSettings.json"
-	"src/Dotx64Managed/Properties/Resources.Designer.cs"
-	"src/Dotx64Managed/Properties/Resources.resx"
-	"src/Dotx64Managed/Scripting/Scripting.cs"
-	"src/Dotx64Managed/Scripting/Scripting.Register.cs"
-	"src/Dotx64Managed/AssemblyLoader.cs"
-	"src/Dotx64Managed/Compiler.cs"
 	"src/Dotx64Managed/IPlugin.cs"
 	"src/Dotx64Managed/Logging.cs"
 	"src/Dotx64Managed/Manager.cs"
@@ -235,6 +236,9 @@ list(APPEND Dotx64DbgManaged_SOURCES
 	"src/Dotx64Managed/Plugins.Hotload.cs"
 	"src/Dotx64Managed/Plugins.Watcher.cs"
 	"src/Dotx64Managed/ProjectGenerator.cs"
+	"src/Dotx64Managed/Resources.cs"
+	"src/Dotx64Managed/Scripting/Scripting.cs"
+	"src/Dotx64Managed/Scripting/Scripting.Register.cs"
 	"src/Dotx64Managed/ScriptLoader.cs"
 	"src/Dotx64Managed/Settings.cs"
 	"src/Dotx64Managed/Tests.cs"
@@ -271,33 +275,15 @@ target_link_libraries(Dotx64DbgManaged PRIVATE
 	dotx64dbg::bindings
 )
 
-if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
-	set_target_properties(Dotx64DbgManaged PROPERTIES
-		VS_GLOBAL_PlatformTarget
-			x86
-		RUNTIME_OUTPUT_DIRECTORY_RELEASE
-			"${CMAKE_SOURCE_DIR}/bin/x32/plugins"
-		RUNTIME_OUTPUT_DIRECTORY_DEBUG
-			"${CMAKE_SOURCE_DIR}/bin/x32/plugins"
-	)
-endif()
-
-if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
-	set_target_properties(Dotx64DbgManaged PROPERTIES
-		VS_GLOBAL_PlatformTarget
-			x64
-		RUNTIME_OUTPUT_DIRECTORY_RELEASE
-			"${CMAKE_SOURCE_DIR}/bin/x64/plugins"
-		RUNTIME_OUTPUT_DIRECTORY_DEBUG
-			"${CMAKE_SOURCE_DIR}/bin/x64/plugins"
-	)
-endif()
-
 set_target_properties(Dotx64DbgManaged PROPERTIES
+	RUNTIME_OUTPUT_NAME
+		Dotx64Dbg.Managed
 	DOTNET_SDK
 		Microsoft.NET.Sdk
 	DOTNET_TARGET_FRAMEWORK
 		net6.0
+	VS_GLOBAL_ResolveNuGetPackages
+		true
 	VS_GLOBAL_ROOTNAMESPACE
 		Dotx64Dbg
 	VS_GLOBAL_AppendTargetFrameworkToOutputPath
@@ -313,19 +299,32 @@ set_target_properties(Dotx64DbgManaged PROPERTIES
 	VS_GLOBAL_SatelliteResourceLanguages
 		neutral
 	VS_PACKAGE_REFERENCES
-		"Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.0;NuGet.Frameworks_5.11.0;NuGet.Protocol_5.11.0;NuGet.Versioning_5.11.0;System.Drawing.Common_7.0.0;System.Resources.Extensions_6.0.0"
+		"Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.0;NuGet.Frameworks_5.11.0;NuGet.Protocol_5.11.0;NuGet.Versioning_5.11.0"
 	VS_DOTNET_REFERENCES_COPY_LOCAL
 		false
-	VS_GLOBAL_ResolveNuGetPackages
-		true
 )
 
-csharp_set_designer_cs_properties(
-    src/Dotx64Managed/Manager.cs
-    src/Dotx64Managed/Properties/Resources.Designer.cs
-    src/Dotx64Managed/Properties/Resources.resx
-)
-set_property(SOURCE src/Dotx64Managed/Properties/Resources.resx PROPERTY VS_TOOL_OVERRIDE "EmbeddedResource")
+if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
+	set_target_properties(Dotx64DbgManaged PROPERTIES
+		VS_GLOBAL_PlatformTarget
+			x86
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE
+			${BUILD_OUTPUT_DIR}
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG
+			${BUILD_OUTPUT_DIR}
+	)
+endif()
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
+	set_target_properties(Dotx64DbgManaged PROPERTIES
+		VS_GLOBAL_PlatformTarget
+			x64
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE
+			${BUILD_OUTPUT_DIR}
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG
+			${BUILD_OUTPUT_DIR}
+	)
+endif()
 
 unset(CMKR_TARGET)
 unset(CMKR_SOURCES)
@@ -368,23 +367,25 @@ set_target_properties(Dotx64Dbg PROPERTIES
 		netcore
 	VS_GLOBAL_ResolveNuGetPackages
 		false
+	VS_GLOBAL_SatelliteResourceLanguages
+		neutral
 )
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
 	set_target_properties(Dotx64Dbg PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE
-			"${CMAKE_SOURCE_DIR}/bin/x64/plugins"
+			${BUILD_OUTPUT_DIR}
 		RUNTIME_OUTPUT_DIRECTORY_DEBUG
-			"${CMAKE_SOURCE_DIR}/bin/x64/plugins"
+			${BUILD_OUTPUT_DIR}
 	)
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
 	set_target_properties(Dotx64Dbg PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE
-			"${CMAKE_SOURCE_DIR}/bin/x32/plugins"
+			${BUILD_OUTPUT_DIR}
 		RUNTIME_OUTPUT_DIRECTORY_DEBUG
-			"${CMAKE_SOURCE_DIR}/bin/x3/plugins"
+			${BUILD_OUTPUT_DIR}
 	)
 endif()
 
@@ -429,9 +430,9 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
 		SUFFIX
 			.dp64
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE
-			"${CMAKE_SOURCE_DIR}/bin/x64/plugins"
+			${BUILD_OUTPUT_DIR}
 		RUNTIME_OUTPUT_DIRECTORY_DEBUG
-			"${CMAKE_SOURCE_DIR}/bin/x64/plugins"
+			${BUILD_OUTPUT_DIR}
 	)
 endif()
 
@@ -440,11 +441,36 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
 		SUFFIX
 			.dp32
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE
-			"${CMAKE_SOURCE_DIR}/bin/x32/plugins"
+			${BUILD_OUTPUT_DIR}
 		RUNTIME_OUTPUT_DIRECTORY_DEBUG
-			"${CMAKE_SOURCE_DIR}/bin/x3/plugins"
+			${BUILD_OUTPUT_DIR}
 	)
 endif()
+
+unset(CMKR_TARGET)
+unset(CMKR_SOURCES)
+
+# Target Dotx64DbgResources
+set(CMKR_TARGET Dotx64DbgResources)
+set(Dotx64DbgResources_SOURCES "")
+
+list(APPEND Dotx64DbgResources_SOURCES
+	cmake.toml
+)
+
+set(CMKR_SOURCES ${Dotx64DbgResources_SOURCES})
+add_custom_target(Dotx64DbgResources SOURCES)
+
+if(Dotx64DbgResources_SOURCES)
+	target_sources(Dotx64DbgResources PRIVATE ${Dotx64DbgResources_SOURCES})
+endif()
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_SOURCE_DIR}/src/Resources
+      ${BUILD_OUTPUT_DIR}/Resources
+)
+add_dependencies(Dotx64DbgManaged Dotx64DbgResources)
 
 unset(CMKR_TARGET)
 unset(CMKR_SOURCES)

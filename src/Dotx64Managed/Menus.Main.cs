@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 
 namespace Dotx64Dbg
@@ -68,26 +67,13 @@ namespace Dotx64Dbg
             OpenFolder(pluginPath);
         }
 
-        internal static Bitmap GetBitmapResourceSafe(string name)
-        {
-            try
-            {
-                return (Bitmap)Properties.Resources.ResourceManager.GetObject(name);
-            }
-            catch (System.Exception)
-            {
-
-            }
-            return null;
-        }
-
         internal static void InitializeMainMenu()
         {
             // Plugin icon
-            Native.UI.Menu.SetIcon(MainMenu, ImageToBytes(GetBitmapResourceSafe("Dotx64DbgIcon")));
+            Native.UI.Menu.SetIcon(MainMenu, Resources.GetData("Dotx64DbgIcon"));
 
-            AddMenu("Main/Run Script", GetBitmapResourceSafe("RunIcon"), RunScript);
-            AddMenu("Main/Create Plugin", GetBitmapResourceSafe("NewScriptIcon"), CreateNewPlugin);
+            AddMenu("Main/Run Script", Resources.GetData("RunIcon"), RunScript);
+            AddMenu("Main/Create Plugin", Resources.GetData("NewScriptIcon"), CreateNewPlugin);
             AddSeperator("Main");
         }
 
