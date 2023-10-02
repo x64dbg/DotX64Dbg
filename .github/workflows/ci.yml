@@ -14,31 +14,31 @@ jobs:
       matrix:
         dotnet-version: ['6.0.x']
         platform: 
-          - {arch: 'Win32', dir: 'x32'}
-          - {arch: 'x64', dir: 'x64'}
+          - {build: 'Win32', arch: 'x32'}
+          - {build: 'x64', arch: 'x64'}
     env:
       CONFIGURATION: Release
       PLATFORM: ${{ matrix.platform.arch }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v1.3
       - name: Build
         run: |
-          cmake . -B build -DCMAKE_BUILD_TYPE=Release -A ${{ matrix.platform.arch }}
+          cmake . -B build -DCMAKE_BUILD_TYPE=Release -A ${{ matrix.platform.build }}
           cmake --build build
       - name: Tests
         run: |
           pushd .
-          cd bin\${{ matrix.platform.dir }}\tests
-          Tests.exe
+          cd bin\${{ matrix.platform.arch }}\tests
+          Dotx64DbgTests.exe
           popd
       - name: Upload artifacts (CI)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dotx64Dbg-${{ runner.os }}-${{ matrix.platform.arch }}
-          path: bin
+          path: bin/
           if-no-files-found: error
   package:
     needs: build
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch artifacts 
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with: 
           path: artifacts
       - name: Display structure of downloaded files
@@ -56,22 +56,28 @@ jobs:
       - name: Merge artifacts
         shell: bash
         run: |
-          mkdir package
-          cp -R -n ./artifacts/dotx64Dbg-Windows-x64/* ./package/
-          cp -R -n ./artifacts/dotx64Dbg-Windows-x86/* ./package/
-          rm -R ./package/x32/tests
-          rm -R ./package/x64/tests
+          mkdir -p package/x64/plugins/Dotx64Dbg
+          mkdir -p package/x32/plugins/Dotx64Dbg
+          mkdir package/dotplugins
+          mkdir package/dotscripts
+          rm -R ./artifacts/dotx64Dbg-Windows-x32/x32/tests
+          rm -R ./artifacts/dotx64Dbg-Windows-x64/x64/tests
+          cp -R -n ./artifacts/dotx64Dbg-Windows-x64/x64/* ./package/x64/plugins/Dotx64Dbg
+          cp -R -n ./artifacts/dotx64Dbg-Windows-x32/x32/* ./package/x32/plugins/Dotx64Dbg
+          cp -R -n ./artifacts/dotx64Dbg-Windows-x32/dotplugins/* ./package/dotplugins/
+          cp -R -n ./artifacts/dotx64Dbg-Windows-x32/dotscripts/* ./package/dotscripts/
+          cp -R -n ./artifacts/dotx64Dbg-Windows-x32/dotx64dbg.json ./package/dotx64dbg.json
           find ./package -type f -name '*.pdb' -delete
           find ./package -type f -name '*.lib' -delete
           find ./package -type f -name '*.exp' -delete
           find ./package -type f -name '*.ilk' -delete
       - name: Upload package (CI)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dotx64dbg
           path: package
           if-no-files-found: error
-      - name: Compress artifacts
+      - name: Compress package
         uses: papeloto/action-zip@v1
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         with:

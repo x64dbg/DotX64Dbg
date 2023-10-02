@@ -17,9 +17,9 @@ cmake-after = '''
     string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x64/plugins/Dotx64Dbg)
+    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x64)
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x32/plugins/Dotx64Dbg)
+    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x32)
 endif()
 '''
 
@@ -79,8 +79,13 @@ private-link-libraries = [
     "Zydis",
 ]
 cmake-after = '''
-target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64dbg.dll")
-target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64bridge.dll")
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64dbg.dll")
+    target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64bridge.dll")
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x32dbg.dll")
+    target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x32bridge.dll")
+endif()
 target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:titanengine.dll")
 '''
 
@@ -185,17 +190,17 @@ x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
 x32.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
 x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
 
-[target.Dotx64DbgManagedTests]
+[target.Dotx64DbgTests]
 type = "executable"
 sources = [
-    "src/Dotx64DbgManagedTests/Testing.cs",
-    "src/Dotx64DbgManagedTests/Runner.cs",
-    "src/Dotx64DbgManagedTests/Tests/Tests.Assembler.cs",
-    "src/Dotx64DbgManagedTests/Tests/Tests.Decoder.cs",
-    "src/Dotx64DbgManagedTests/Tests/Tests.Generator.cs",
-    "src/Dotx64DbgManagedTests/Tests/Tests.Operands.cs",
-    "src/Dotx64DbgManagedTests/Tests/Tests.RegisterMaskGp.cs",
-    "src/Dotx64DbgManagedTests/Tests/Tests.Registers.cs",
+    "src/Dotx64DbgTests/Testing.cs",
+    "src/Dotx64DbgTests/Runner.cs",
+    "src/Dotx64DbgTests/Tests/Tests.Assembler.cs",
+    "src/Dotx64DbgTests/Tests/Tests.Decoder.cs",
+    "src/Dotx64DbgTests/Tests/Tests.Generator.cs",
+    "src/Dotx64DbgTests/Tests/Tests.Operands.cs",
+    "src/Dotx64DbgTests/Tests/Tests.RegisterMaskGp.cs",
+    "src/Dotx64DbgTests/Tests/Tests.Registers.cs",
 ]
 private-link-libraries = [
     "dotx64dbg::managed",
@@ -204,7 +209,7 @@ private-link-libraries = [
 x32.private-compile-definitions = ["_X86_"]
 x64.private-compile-definitions = ["_X64_"]
 
-[target.Dotx64DbgManagedTests.properties]
+[target.Dotx64DbgTests.properties]
 RUNTIME_OUTPUT_NAME = "Dotx64DbgTests"
 x32.VS_GLOBAL_PlatformTarget = "x86"
 x64.VS_GLOBAL_PlatformTarget = "x64"
@@ -217,11 +222,11 @@ VS_GLOBAL_ProduceReferenceAssembly = "false"
 VS_GLOBAL_ProduceReferenceAssemblyInOutDir = "false"
 VS_GLOBAL_CopyLocalLockFileAssemblies = "true"
 VS_GLOBAL_SatelliteResourceLanguages = "neutral"
-VS_DOTNET_REFERENCES_COPY_LOCAL = "false"
-x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
-x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
-x32.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
-x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+VS_DOTNET_REFERENCES_COPY_LOCAL = "true"
+x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}/tests"
+x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}/tests"
+x32.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}/tests"
+x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}/tests"
 
 ### Dotx64Dbg
 [target.Dotx64Dbg]
