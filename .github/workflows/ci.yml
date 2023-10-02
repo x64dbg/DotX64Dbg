@@ -14,7 +14,7 @@ jobs:
       matrix:
         dotnet-version: ['6.0.x']
         platform: 
-          - {arch: 'x86', dir: 'x32'}
+          - {arch: 'Win32', dir: 'x32'}
           - {arch: 'x64', dir: 'x64'}
     env:
       CONFIGURATION: Release
@@ -24,24 +24,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
-      - name: Nuget dependencies
-        run: |
-          cd src
-          msbuild Dotx64Dbg.sln -t:restore -p:RestorePackagesConfig=true -maxcpucount:2 /m
-          IF %ERRORLEVEL% NEQ 0 (
-            ECHO MSBuild for Debug x64 returned error code %ERRORLEVEL%
-            EXIT /B %ERRORLEVEL%
-          )
-          cd ..
       - name: Build
         run: |
-          cd src
-          msbuild Dotx64Dbg.sln /p:platform=${{ matrix.platform.arch }} /m
-          IF %ERRORLEVEL% NEQ 0 (
-            ECHO MSBuild for Debug x64 returned error code %ERRORLEVEL%
-            EXIT /B %ERRORLEVEL%
-          )
-          cd ..
+          cmake . -B build -DCMAKE_BUILD_TYPE=Release -A ${{ matrix.platform.arch }}
+          cmake --build build
       - name: Tests
         run: |
           pushd .
