@@ -19,13 +19,6 @@ namespace Dotx64Dbg.Managed.Tests
             Console.ForegroundColor = col;
         }
 
-        private static void WriteLine(ConsoleColor color, string str)
-        {
-            var col = Console.ForegroundColor;
-            Console.ForegroundColor = color;
-            Console.Write(str);
-            Console.ForegroundColor = col;
-        }
         private static void WriteLine(string str)
         {
             Console.WriteLine(str);

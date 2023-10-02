@@ -150,7 +150,7 @@ target_link_libraries(Dotx64DbgBindings PRIVATE
 
 set_target_properties(Dotx64DbgBindings PROPERTIES
 	RUNTIME_OUTPUT_NAME
-		Dotx64Dbg.Bindings
+		Dotx64DbgBindings
 	DOTNET_TARGET_FRAMEWORK
 		net6.0
 	DOTNET_TARGET_FRAMEWORK_VERSION
@@ -178,6 +178,10 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
 			${BUILD_OUTPUT_DIR}
 	)
 endif()
+
+target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64dbg.dll")
+target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64bridge.dll")
+target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:titanengine.dll")
 
 unset(CMKR_TARGET)
 unset(CMKR_SOURCES)
@@ -278,7 +282,7 @@ target_link_libraries(Dotx64DbgManaged PRIVATE
 
 set_target_properties(Dotx64DbgManaged PROPERTIES
 	RUNTIME_OUTPUT_NAME
-		Dotx64Dbg.Managed
+		Dotx64DbgManaged
 	DOTNET_SDK
 		Microsoft.NET.Sdk
 	DOTNET_TARGET_FRAMEWORK
@@ -318,6 +322,106 @@ endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
 	set_target_properties(Dotx64DbgManaged PROPERTIES
+		VS_GLOBAL_PlatformTarget
+			x64
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE
+			${BUILD_OUTPUT_DIR}
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG
+			${BUILD_OUTPUT_DIR}
+	)
+endif()
+
+unset(CMKR_TARGET)
+unset(CMKR_SOURCES)
+
+# Target Dotx64DbgManagedTests
+set(CMKR_TARGET Dotx64DbgManagedTests)
+set(Dotx64DbgManagedTests_SOURCES "")
+
+list(APPEND Dotx64DbgManagedTests_SOURCES
+	"src/Dotx64DbgManagedTests/Testing.cs"
+	"src/Dotx64DbgManagedTests/Runner.cs"
+	"src/Dotx64DbgManagedTests/Tests/Tests.Assembler.cs"
+	"src/Dotx64DbgManagedTests/Tests/Tests.Decoder.cs"
+	"src/Dotx64DbgManagedTests/Tests/Tests.Generator.cs"
+	"src/Dotx64DbgManagedTests/Tests/Tests.Operands.cs"
+	"src/Dotx64DbgManagedTests/Tests/Tests.RegisterMaskGp.cs"
+	"src/Dotx64DbgManagedTests/Tests/Tests.Registers.cs"
+)
+
+list(APPEND Dotx64DbgManagedTests_SOURCES
+	cmake.toml
+)
+
+set(CMKR_SOURCES ${Dotx64DbgManagedTests_SOURCES})
+add_executable(Dotx64DbgManagedTests)
+
+if(Dotx64DbgManagedTests_SOURCES)
+	target_sources(Dotx64DbgManagedTests PRIVATE ${Dotx64DbgManagedTests_SOURCES})
+endif()
+
+get_directory_property(CMKR_VS_STARTUP_PROJECT DIRECTORY ${PROJECT_SOURCE_DIR} DEFINITION VS_STARTUP_PROJECT)
+if(NOT CMKR_VS_STARTUP_PROJECT)
+	set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Dotx64DbgManagedTests)
+endif()
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Dotx64DbgManagedTests_SOURCES})
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
+	target_compile_definitions(Dotx64DbgManagedTests PRIVATE
+		_X86_
+	)
+endif()
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
+	target_compile_definitions(Dotx64DbgManagedTests PRIVATE
+		_X64_
+	)
+endif()
+
+target_link_libraries(Dotx64DbgManagedTests PRIVATE
+	dotx64dbg::managed
+	dotx64dbg::bindings
+)
+
+set_target_properties(Dotx64DbgManagedTests PROPERTIES
+	RUNTIME_OUTPUT_NAME
+		Dotx64DbgTests
+	DOTNET_SDK
+		Microsoft.NET.Sdk
+	DOTNET_TARGET_FRAMEWORK
+		net6.0
+	VS_GLOBAL_ROOTNAMESPACE
+		Dotx64Dbg
+	VS_GLOBAL_AppendTargetFrameworkToOutputPath
+		false
+	VS_GLOBAL_AppendRuntimeIdentifierToOutputPath
+		false
+	VS_GLOBAL_ProduceReferenceAssembly
+		false
+	VS_GLOBAL_ProduceReferenceAssemblyInOutDir
+		false
+	VS_GLOBAL_CopyLocalLockFileAssemblies
+		true
+	VS_GLOBAL_SatelliteResourceLanguages
+		neutral
+	VS_DOTNET_REFERENCES_COPY_LOCAL
+		false
+)
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
+	set_target_properties(Dotx64DbgManagedTests PROPERTIES
+		VS_GLOBAL_PlatformTarget
+			x86
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE
+			${BUILD_OUTPUT_DIR}
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG
+			${BUILD_OUTPUT_DIR}
+	)
+endif()
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
+	set_target_properties(Dotx64DbgManagedTests PROPERTIES
 		VS_GLOBAL_PlatformTarget
 			x64
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE

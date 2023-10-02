@@ -78,8 +78,14 @@ private-link-libraries = [
     "asmjit::asmjit",
     "Zydis",
 ]
+cmake-after = '''
+target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64dbg.dll")
+target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64bridge.dll")
+target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:titanengine.dll")
+'''
+
 [target.Dotx64DbgBindings.properties]
-RUNTIME_OUTPUT_NAME = "Dotx64Dbg.Bindings"
+RUNTIME_OUTPUT_NAME = "Dotx64DbgBindings"
 DOTNET_TARGET_FRAMEWORK = "net6.0"
 DOTNET_TARGET_FRAMEWORK_VERSION = "6.0"
 COMMON_LANGUAGE_RUNTIME = "netcore"
@@ -159,7 +165,7 @@ x32.private-compile-definitions = ["_X86_"]
 x64.private-compile-definitions = ["_X64_"]
 
 [target.Dotx64DbgManaged.properties]
-RUNTIME_OUTPUT_NAME = "Dotx64Dbg.Managed"
+RUNTIME_OUTPUT_NAME = "Dotx64DbgManaged"
 x32.VS_GLOBAL_PlatformTarget = "x86"
 x64.VS_GLOBAL_PlatformTarget = "x64"
 DOTNET_SDK = "Microsoft.NET.Sdk"
@@ -173,6 +179,44 @@ VS_GLOBAL_ProduceReferenceAssemblyInOutDir = "false"
 VS_GLOBAL_CopyLocalLockFileAssemblies = "true"
 VS_GLOBAL_SatelliteResourceLanguages = "neutral"
 VS_PACKAGE_REFERENCES = "Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.0;NuGet.Frameworks_5.11.0;NuGet.Protocol_5.11.0;NuGet.Versioning_5.11.0"
+VS_DOTNET_REFERENCES_COPY_LOCAL = "false"
+x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
+x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+x32.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
+x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+
+[target.Dotx64DbgManagedTests]
+type = "executable"
+sources = [
+    "src/Dotx64DbgManagedTests/Testing.cs",
+    "src/Dotx64DbgManagedTests/Runner.cs",
+    "src/Dotx64DbgManagedTests/Tests/Tests.Assembler.cs",
+    "src/Dotx64DbgManagedTests/Tests/Tests.Decoder.cs",
+    "src/Dotx64DbgManagedTests/Tests/Tests.Generator.cs",
+    "src/Dotx64DbgManagedTests/Tests/Tests.Operands.cs",
+    "src/Dotx64DbgManagedTests/Tests/Tests.RegisterMaskGp.cs",
+    "src/Dotx64DbgManagedTests/Tests/Tests.Registers.cs",
+]
+private-link-libraries = [
+    "dotx64dbg::managed",
+    "dotx64dbg::bindings",
+]
+x32.private-compile-definitions = ["_X86_"]
+x64.private-compile-definitions = ["_X64_"]
+
+[target.Dotx64DbgManagedTests.properties]
+RUNTIME_OUTPUT_NAME = "Dotx64DbgTests"
+x32.VS_GLOBAL_PlatformTarget = "x86"
+x64.VS_GLOBAL_PlatformTarget = "x64"
+DOTNET_SDK = "Microsoft.NET.Sdk"
+DOTNET_TARGET_FRAMEWORK = "net6.0"
+VS_GLOBAL_ROOTNAMESPACE = "Dotx64Dbg"
+VS_GLOBAL_AppendTargetFrameworkToOutputPath = "false"
+VS_GLOBAL_AppendRuntimeIdentifierToOutputPath = "false"
+VS_GLOBAL_ProduceReferenceAssembly = "false"
+VS_GLOBAL_ProduceReferenceAssemblyInOutDir = "false"
+VS_GLOBAL_CopyLocalLockFileAssemblies = "true"
+VS_GLOBAL_SatelliteResourceLanguages = "neutral"
 VS_DOTNET_REFERENCES_COPY_LOCAL = "false"
 x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
 x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"

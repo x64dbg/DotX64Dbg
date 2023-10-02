@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dotx64Dbg;
-
 namespace Dotx64Dbg.Managed.Tests
 {
-    using static Testing;
     using static Operands;
+    using static Testing;
 
     class TestInstructionGenerator
     {
