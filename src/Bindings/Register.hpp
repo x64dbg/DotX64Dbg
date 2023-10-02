@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 
 namespace Dotx64Dbg

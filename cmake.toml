@@ -51,7 +51,6 @@ sources = [
     "src/Bindings/Module.cpp",
     "src/Bindings/Platform.cpp",
     "src/Bindings/Process.cpp",
-    "src/Bindings/Register.cpp",
     "src/Bindings/Settings.cpp",
     "src/Bindings/Symbols.cpp",
     "src/Bindings/Thread.cpp",
@@ -65,12 +64,13 @@ headers = [
     "src/Bindings/Instruction.EFlags.hpp",
     "src/Bindings/Instruction.Encoder.hpp",
     "src/Bindings/Instruction.Generator.hpp",
-    "src/Bindings/Instruction.hpp",
     "src/Bindings/Instruction.Meta.hpp",
     "src/Bindings/Instruction.Operand.hpp",
     "src/Bindings/Instruction.Operands.hpp",
+    "src/Bindings/Instruction.hpp",
     "src/Bindings/Marshal.hpp",
     "src/Bindings/Mnemonic.hpp",
+    "src/Bindings/Register.hpp",
 ]
 private-link-libraries = [
     "dotx64dbg::common",

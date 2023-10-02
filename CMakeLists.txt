@@ -47,9 +47,9 @@ project(Dotx64Dbg
     string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x64/plugins)
+    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x64/plugins/Dotx64Dbg)
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x32/plugins)
+    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x32/plugins/Dotx64Dbg)
 endif()
 
 # thirdparty
@@ -107,7 +107,6 @@ list(APPEND Dotx64DbgBindings_SOURCES
 	"src/Bindings/Module.cpp"
 	"src/Bindings/Platform.cpp"
 	"src/Bindings/Process.cpp"
-	"src/Bindings/Register.cpp"
 	"src/Bindings/Settings.cpp"
 	"src/Bindings/Symbols.cpp"
 	"src/Bindings/Thread.cpp"
@@ -119,12 +118,13 @@ list(APPEND Dotx64DbgBindings_SOURCES
 	"src/Bindings/Instruction.EFlags.hpp"
 	"src/Bindings/Instruction.Encoder.hpp"
 	"src/Bindings/Instruction.Generator.hpp"
-	"src/Bindings/Instruction.hpp"
 	"src/Bindings/Instruction.Meta.hpp"
 	"src/Bindings/Instruction.Operand.hpp"
 	"src/Bindings/Instruction.Operands.hpp"
+	"src/Bindings/Instruction.hpp"
 	"src/Bindings/Marshal.hpp"
 	"src/Bindings/Mnemonic.hpp"
+	"src/Bindings/Register.hpp"
 )
 
 list(APPEND Dotx64DbgBindings_SOURCES
