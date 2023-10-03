@@ -8,7 +8,7 @@ public partial class ExamplePlugin
     {
         // Evaluate the expression "cip"
         var result = Expressions.Evaluate("cip");
-        System.Diagnostics.Debug.Assert(result == Dotx64Dbg.Thread.Active.Rip);
+        System.Diagnostics.Debug.Assert(result == Dotx64Dbg.Thread.Active.Nip);
         Console.WriteLine($"cip = {result:X}");
     }
 
@@ -30,7 +30,7 @@ public partial class ExamplePlugin
     {
         // Evaluate the value of eax+5
         var result = Expressions.Evaluate("eax+5");
-        System.Diagnostics.Debug.Assert(result == Thread.Active.Rax + 5);
+        System.Diagnostics.Debug.Assert(result == Thread.Active.Eax + 5);
 
         Console.WriteLine($"eax+5 = {result:X}");
     }
@@ -40,7 +40,7 @@ public partial class ExamplePlugin
     {
         // Use a sub expression like ReadPtr to read memory
         var result = Expressions.Evaluate("ReadPtr(csp)");
-        System.Diagnostics.Debug.Assert(result == Memory.ReadPtr(Thread.Active.Rsp));
+        System.Diagnostics.Debug.Assert(result == Memory.ReadPtr(Thread.Active.Nsp));
 
         Console.WriteLine($"ReadPtr(csp) = {result:X}");
     } 
