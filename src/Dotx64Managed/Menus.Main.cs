@@ -115,11 +115,11 @@ namespace Dotx64Dbg
                         return;
 
                     var info = plugin.Info;
-                    UI.MsgBox($"Name: {info.Name}\n" +
+                    UI.MsgBox(info.Name,
                         $"Author: {info.Author}\n" +
                         $"Version: {info.Version}\n" +
                         $"Website: {info.Website}\n" +
-                        $"Description: {info.Description}", info.Name, UI.MsgBoxType.Ok, UI.MsgBoxIcon.Information);
+                        $"Description: {info.Description}", UI.MsgBoxType.Ok, UI.MsgBoxIcon.Information);
                 });
             }
 
