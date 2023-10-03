@@ -167,8 +167,39 @@ static int exceptionHandler(int code, PEXCEPTION_POINTERS ex)
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
+static bool checkLegacyInstall()
+{
+    // If Dotx64Dbg.Loader.dp32 exists in the main plugin folder refuse to load.
+    wchar_t curPath[1024]{};
+    GetModuleFileNameW(nullptr, curPath, sizeof(curPath) / sizeof(wchar_t));
+
+    if (auto* p = wcsrchr(curPath, L'\\'); p != nullptr)
+    {
+        *p = '\0';
+    }
+
+    wchar_t dllPath[1024]{};
+#if _X86_
+    swprintf_s(dllPath, L"%s\\plugins\\Dotx64Dbg.Loader.dp32", curPath);
+#else
+    swprintf_s(dllPath, L"%s\\plugins\\Dotx64Dbg.Loader.dp64", curPath);
+#endif
+
+    if (GetFileAttributesW(dllPath) != INVALID_FILE_ATTRIBUTES)
+    {
+        _plugin_lograw_html("<b style=\"color: red\">Dotx64Dbg.Loader.dp32 found in main plugin folder, please delete the old install.</b>\n");
+        return true;
+    }
+
+    return false;
+}
+
 PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 {
+    // Check for the legacy install.
+    if (checkLegacyInstall())
+        return false;
+
     wchar_t curPath[1024]{};
     GetModuleFileNameW(_thisModule, curPath, sizeof(curPath) / sizeof(wchar_t));
 
@@ -202,10 +233,9 @@ PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 #else
         static const wchar_t* arch = L"x64";
 #endif
-        _plugin_logprintf("Unable to load Dotx64Dbg (%ws) (%08X), make sure you have following installed:\n"
+        _plugin_logprintf("Unable to load Dotx64Dbg (%08X), make sure you have following installed:\n"
             "- .NET 6.0 %s Runtime (https://dotnet.microsoft.com/download/dotnet/6.0)\n"
             "- Visual Studio 2019 Runtime (https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)\n",
-            dllPath,
             GetLastError(),
             arch
         );
