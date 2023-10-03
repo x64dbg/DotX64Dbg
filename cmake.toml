@@ -261,6 +261,8 @@ private-link-libraries = [
     "dotx64dbg::common",
     "x64dbg::pluginsdk",
 ]
+x32.private-compile-definitions = ["_X86_"]
+x64.private-compile-definitions = ["_X64_"]
 [target.Dotx64DbgLoader.properties]
 VS_GLOBAL_ResolveNuGetPackages = "false"
 x64.SUFFIX = ".dp64"

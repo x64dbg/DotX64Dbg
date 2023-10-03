@@ -523,6 +523,18 @@ endif()
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Dotx64DbgLoader_SOURCES})
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
+	target_compile_definitions(Dotx64DbgLoader PRIVATE
+		_X86_
+	)
+endif()
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
+	target_compile_definitions(Dotx64DbgLoader PRIVATE
+		_X64_
+	)
+endif()
+
 target_link_libraries(Dotx64DbgLoader PRIVATE
 	dotx64dbg::common
 	x64dbg::pluginsdk

@@ -161,27 +161,53 @@ int DllMain(HMODULE hmodule, DWORD reason, LPVOID reserved)
     return TRUE;
 }
 
+static int exceptionHandler(int code, PEXCEPTION_POINTERS ex)
+{
+    _plugin_logprintf("Exception while trying to load Dotx64Dbg (%08X)\n", code);
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+
 PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 {
-    char curPath[1024]{};
-    GetModuleFileNameA(_thisModule, curPath, sizeof(curPath));
+    wchar_t curPath[1024]{};
+    GetModuleFileNameW(_thisModule, curPath, sizeof(curPath) / sizeof(wchar_t));
 
-    if (auto* p = strrchr(curPath, '\\'); p != nullptr)
+    if (auto* p = wcsrchr(curPath, L'\\'); p != nullptr)
     {
         *p = '\0';
     }
 
-    char dllPath[1024]{};
-    sprintf_s(dllPath, "%s\\Dotx64Dbg.dll", curPath);
+    wchar_t dllPath[1024]{};
+    swprintf_s(dllPath, L"%s\\Dotx64Dbg.dll", curPath);
 
-    _module = LoadLibraryA(dllPath);
-    if (_module == nullptr)
+    bool loadingError = false;
+
+    __try
     {
-        _plugin_logprintf("Unable to load Dotx64Dbg (%s) (%08X), make sure you have following installed:\n"
-            "- .NET 6.0 Runtime (https://dotnet.microsoft.com/download/dotnet/6.0)\n"
+        _module = LoadLibraryW(dllPath);
+        if (_module == nullptr)
+        {
+            loadingError = true;
+        }
+    }
+    __except (exceptionHandler(GetExceptionCode(), GetExceptionInformation()))
+    {
+        loadingError = true;
+    }
+
+    if (loadingError)
+    {
+#if _X86_
+        static const wchar_t* arch = L"x86";
+#else
+        static const wchar_t* arch = L"x64";
+#endif
+        _plugin_logprintf("Unable to load Dotx64Dbg (%ws) (%08X), make sure you have following installed:\n"
+            "- .NET 6.0 %s Runtime (https://dotnet.microsoft.com/download/dotnet/6.0)\n"
             "- Visual Studio 2019 Runtime (https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)\n",
             dllPath,
-            GetLastError()
+            GetLastError(),
+            arch
         );
         return false;
     }
