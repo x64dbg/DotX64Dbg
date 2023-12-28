@@ -10,6 +10,9 @@ namespace Dotx64Dbg
         System.Threading.AutoResetEvent WorkerWakeup = new(false);
         System.Threading.CancellationTokenSource BuildCancellation = new();
 
+        const UInt32 PluginCacheMagic = 0x58746F44; // DotX.
+        const UInt32 PluginCacheVersion = 0x00000002;
+
         bool RebuildInProgress = false;
         bool SkipRebuilding = false;
 
@@ -204,11 +207,13 @@ namespace Dotx64Dbg
                 using System.IO.Compression.ZipArchive zipArchive = new(fs, System.IO.Compression.ZipArchiveMode.Create);
                 var entry = zipArchive.CreateEntry(nameof(Plugin));
                 using BinaryWriter bw = new(entry.Open());
-                bw.Write((uint)0x4D5A); // ZM magic number ;)
+                bw.Write(PluginCacheMagic);
+                bw.Write(PluginCacheVersion);
+                bw.Write(Utils.GetVersionHash());
                 bw.Write(ComputePluginSourcesHash(plugin)); // uint32 hash
                 bw.Write(plugin.AssemblyPath);
                 bw.Write(plugin.BuildOutputPath);
-                bw.Write((uint)0x4D5A);
+                bw.Write(PluginCacheMagic);
             }
 
             bool InitializePluginFromCache(Plugin plugin, string cacheFilePath)
@@ -222,20 +227,46 @@ namespace Dotx64Dbg
 
                     using BinaryReader br = new(entry.Open());
 
-                    if (br.ReadUInt32() != 0x4D5A) // Check magic
+                    if (br.ReadUInt32() != PluginCacheMagic)
+                    {
+                        Utils.DebugPrintLine($"Invalid cache for plugin '{plugin.Path}'");
                         return false;
+                    }
+
+                    var cacheVersion = br.ReadUInt32();
+                    if (cacheVersion < PluginCacheVersion)
+                    {
+                        Utils.DebugPrintLine($"Cache version mismatch for plugin '{plugin.Path}': {cacheVersion} < {PluginCacheVersion}");
+                        return false;
+                    }
+
+                    var versionHash = br.ReadUInt32();
+                    if (versionHash != Utils.GetVersionHash())
+                    {
+                        Utils.DebugPrintLine($"Version hash mismatch for plugin '{plugin.Path}': {versionHash} != {Utils.GetVersionHash()}");
+                        return false;
+                    }
 
                     uint hash = br.ReadUInt32();
-                    if (hash != ComputePluginSourcesHash(plugin)) // Modified source files
+                    if (hash != ComputePluginSourcesHash(plugin))
+                    {
+                        Utils.DebugPrintLine($"Source hash mismatch for plugin '{plugin.Path}': {hash} != {ComputePluginSourcesHash(plugin)}");
                         return false;
+                    }
 
                     string assemblyPath = br.ReadString();
-                    if (!File.Exists(assemblyPath)) // Invalid cache
+                    if (!File.Exists(assemblyPath))
+                    {
+                        Utils.DebugPrintLine($"Assembly '{assemblyPath}' does not exist for plugin '{plugin.Path}'");
                         return false;
+                    }
                     string buildOutputPath = br.ReadString();
 
-                    if (br.ReadUInt32() != 0x4D5A) // Check magic
+                    if (br.ReadUInt32() != PluginCacheMagic)
+                    {
+                        Utils.DebugPrintLine($"Invalid cache for plugin '{plugin.Path}'");
                         return false;
+                    }
 
                     plugin.AssemblyPath = assemblyPath;
                     plugin.BuildOutputPath = buildOutputPath;
@@ -245,7 +276,10 @@ namespace Dotx64Dbg
                 catch (Exception ex)
                 {
                     if (ex is FormatException || ex is EndOfStreamException || ex is InvalidDataException)
+                    {
+                        Utils.DebugPrintLine($"Failed to read cache for plugin '{plugin.Path}': {ex.Message}");
                         return false;
+                    }
                     throw;
                 }
             }

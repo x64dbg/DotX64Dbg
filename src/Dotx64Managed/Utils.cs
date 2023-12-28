@@ -8,6 +8,31 @@ namespace Dotx64Dbg
 {
     public static class Utils
     {
+        public static UInt32 VersionHash = 0x00000000;
+
+        public static UInt32 GetVersionHash()
+        {
+            if (VersionHash != 0)
+                return VersionHash;
+
+            // Get the hash of the executing assembly
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var assemblyPath = assembly.Location;
+            var fileData = File.ReadAllBytes(assemblyPath);
+
+            // Create a simple hash of all the bytes in the assembly.
+            UInt32 hash = UInt32.MaxValue;
+            foreach (var b in fileData)
+            {
+                // Rotate and xor.
+                hash = (hash << 1) | (hash >> 31);
+                hash ^= b;
+            }
+
+            VersionHash = hash;
+            return VersionHash;
+        }
+
         public static string GetRootPath()
         {
             var process = System.Diagnostics.Process.GetCurrentProcess();
