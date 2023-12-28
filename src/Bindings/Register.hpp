@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace Dotx64Dbg
 {
     public ref class Registers

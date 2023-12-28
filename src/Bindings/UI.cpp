@@ -17,7 +17,7 @@ namespace Dotx64Dbg::Native
         /// <summary>
         /// Selection holds the start and end address of the selected elements in a window.
         /// </summary>
-        ref class Selection
+        ref struct Selection
         {
         public:
             /// <summary>
@@ -158,6 +158,9 @@ namespace Dotx64Dbg::Native
 
             static bool SetIcon(int hMenu, array<System::Byte>^ image)
             {
+                if (image == nullptr)
+                    return false;
+
                 pin_ptr<uint8_t> data = &image[0];
 
                 ICONDATA icon{ 0 };
@@ -220,6 +223,47 @@ namespace Dotx64Dbg::Native
             }
 
             return interop::stringFromUTF8(buf.get());
+        }
+
+        enum class MsgBoxType
+        {
+            Ok = MB_OK,
+            OkCancel = MB_OKCANCEL,
+            YesNo = MB_YESNO,
+            YesNoCancel = MB_YESNOCANCEL,
+            RetryCancel = MB_RETRYCANCEL,
+            AbortRetryIgnore = MB_ABORTRETRYIGNORE,
+            CancelTryContinue = MB_CANCELTRYCONTINUE,
+        };
+
+        enum class MsgBoxIcon
+        {
+            None = 0,
+            Error = MB_ICONERROR,
+            Question = MB_ICONQUESTION,
+            Warning = MB_ICONWARNING,
+            Information = MB_ICONINFORMATION,
+        };
+
+        enum class MsgBoxResult
+        {
+            Ok = IDOK,
+            Cancel = IDCANCEL,
+            Yes = IDYES,
+            No = IDNO,
+            Retry = IDRETRY,
+            Abort = IDABORT,
+            Ignore = IDIGNORE,
+            TryAgain = IDTRYAGAIN,
+            Continue = IDCONTINUE,
+        };
+
+        static MsgBoxResult MsgBox(System::String^ title, System::String^ message, MsgBoxType type, MsgBoxIcon icon)
+        {
+            const auto titleStr = interop::toUTF16(title);
+            const auto messageStr = interop::toUTF16(message);
+            const auto msgBoxType = (UINT)type | (UINT)icon;
+            return (MsgBoxResult)MessageBoxW(nullptr, messageStr.c_str(), titleStr.c_str(), msgBoxType);
         }
     };
 }

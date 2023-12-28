@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include "Register.hpp"
 #include "Mnemonic.hpp"
 #include "Instruction.Operand.hpp"
 #include "Instruction.EFlags.hpp"

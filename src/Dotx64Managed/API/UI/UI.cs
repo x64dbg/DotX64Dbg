@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dotx64Dbg;
 
 namespace Dotx64Dbg
 {
@@ -20,11 +15,42 @@ namespace Dotx64Dbg
             Types = Native.UI.WindowType.Types,
         };
 
+        public enum MsgBoxType
+        {
+            Ok = Native.UI.MsgBoxType.Ok,
+            OkCancel = Native.UI.MsgBoxType.OkCancel,
+            YesNo = Native.UI.MsgBoxType.YesNo,
+            YesNoCancel = Native.UI.MsgBoxType.YesNoCancel,
+        };
+
+        public enum MsgBoxResult
+        {
+            Ok = Native.UI.MsgBoxResult.Ok,
+            Cancel = Native.UI.MsgBoxResult.Cancel,
+            Yes = Native.UI.MsgBoxResult.Yes,
+            No = Native.UI.MsgBoxResult.No,
+        };
+
+        public enum MsgBoxIcon
+        {
+            None = Native.UI.MsgBoxIcon.None,
+            Error = Native.UI.MsgBoxIcon.Error,
+            Warning = Native.UI.MsgBoxIcon.Warning,
+            Information = Native.UI.MsgBoxIcon.Information,
+            Question = Native.UI.MsgBoxIcon.Question,
+        };
+
         public class Selection
         {
-            public Selection() { }
+            public Selection()
+            {
+            }
 
-            public Selection(ulong start, ulong end) { Start = (nuint)start; End = (nuint)end; }
+            public Selection(ulong start, ulong end)
+            {
+                Start = (nuint)start;
+                End = (nuint)end;
+            }
 
             internal Selection(Native.UI.Selection sel)
             {
@@ -60,7 +86,10 @@ namespace Dotx64Dbg
             //
             // Summary:
             //     The size of the selection, End - Start.
-            public nuint Size { get => End - Start; }
+            public nuint Size
+            {
+                get => End - Start;
+            }
         }
 
         /// <summary>
@@ -91,17 +120,21 @@ namespace Dotx64Dbg
             public UpdateSuppressor()
             {
                 wasEnabled = UpdatesEnabled;
-                if(wasEnabled)
+                if (wasEnabled)
                     UpdatesEnabled = false;
             }
 
             public void Dispose()
             {
-                if(wasEnabled)
+                if (wasEnabled)
                     UpdatesEnabled = true;
             }
         }
+
+        public static MsgBoxResult MsgBox(string title, string text, MsgBoxType type = MsgBoxType.Ok, MsgBoxIcon icon = MsgBoxIcon.None)
+        {
+            return (MsgBoxResult)Native.UI.MsgBox(title, text, (Native.UI.MsgBoxType)type, (Native.UI.MsgBoxIcon)icon);
+        }
+
     }
-
-
 }

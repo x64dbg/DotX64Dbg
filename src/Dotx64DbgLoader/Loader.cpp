@@ -3,14 +3,6 @@
 #include "pluginsdk/_scriptapi_memory.h"
 #include "pluginsdk/_scriptapi_register.h"
 
-#ifdef _WIN64
-#pragma comment(lib, "pluginsdk/x64dbg.lib")
-#pragma comment(lib, "pluginsdk/x64bridge.lib")
-#else
-#pragma comment(lib, "pluginsdk/x32dbg.lib")
-#pragma comment(lib, "pluginsdk/x32bridge.lib")
-#endif //_WIN64
-
 static HMODULE _module{};
 
 template<typename T>
@@ -158,31 +150,94 @@ void CBSCRIPTAUTOCOMPLETE(const char* text, char** entries, int* entryCount)
         return f(text, entries, entryCount);
 }
 
-PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
+static HMODULE _thisModule = nullptr;
+
+int DllMain(HMODULE hmodule, DWORD reason, LPVOID reserved)
 {
-#ifdef _M_AMD64
-    HMODULE curModule = GetModuleHandleA("Dotx64Dbg.Loader.dp64");
-#else
-    HMODULE curModule = GetModuleHandleA("Dotx64Dbg.Loader.dp32");
-#endif
+    if (reason == DLL_PROCESS_ATTACH)
+    {
+        _thisModule = hmodule;
+    }
+    return TRUE;
+}
 
-    char curPath[1024]{};
-    GetModuleFileNameA(curModule, curPath, sizeof(curPath));
+static int exceptionHandler(int code, PEXCEPTION_POINTERS ex)
+{
+    _plugin_logprintf("Exception while trying to load Dotx64Dbg (%08X)\n", code);
+    return EXCEPTION_EXECUTE_HANDLER;
+}
 
-    if (auto* p = strrchr(curPath, '\\'); p != nullptr)
+static bool checkLegacyInstall()
+{
+    // If Dotx64Dbg.Loader.dp32 exists in the main plugin folder refuse to load.
+    wchar_t curPath[1024]{};
+    GetModuleFileNameW(nullptr, curPath, sizeof(curPath) / sizeof(wchar_t));
+
+    if (auto* p = wcsrchr(curPath, L'\\'); p != nullptr)
     {
         *p = '\0';
     }
 
-    char dllPath[1024]{};
-    sprintf_s(dllPath, "%s\\Dotx64Dbg.dll", curPath);
+    wchar_t dllPath[1024]{};
+#if _X86_
+    swprintf_s(dllPath, L"%s\\plugins\\Dotx64Dbg.Loader.dp32", curPath);
+#else
+    swprintf_s(dllPath, L"%s\\plugins\\Dotx64Dbg.Loader.dp64", curPath);
+#endif
 
-    _module = LoadLibraryA(dllPath);
-    if (_module == nullptr)
+    if (GetFileAttributesW(dllPath) != INVALID_FILE_ATTRIBUTES)
     {
-        _plugin_logprintf("Unable to load Dotx64Dbg, make sure you have following installed:\n"
-            "- .NET 6.0 Runtime (https://dotnet.microsoft.com/download/dotnet/6.0)\n"
-            "- Visual Studio 2019 Runtime (https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)\n"
+        _plugin_lograw_html("<b style=\"color: red\">Dotx64Dbg.Loader.dp32 found in main plugin folder, please delete the old install.</b>\n");
+        return true;
+    }
+
+    return false;
+}
+
+PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
+{
+    // Check for the legacy install.
+    if (checkLegacyInstall())
+        return false;
+
+    wchar_t curPath[1024]{};
+    GetModuleFileNameW(_thisModule, curPath, sizeof(curPath) / sizeof(wchar_t));
+
+    if (auto* p = wcsrchr(curPath, L'\\'); p != nullptr)
+    {
+        *p = '\0';
+    }
+
+    wchar_t dllPath[1024]{};
+    swprintf_s(dllPath, L"%s\\Dotx64Dbg.dll", curPath);
+
+    bool loadingError = false;
+
+    __try
+    {
+        _module = LoadLibraryW(dllPath);
+        if (_module == nullptr)
+        {
+            loadingError = true;
+        }
+    }
+    __except (exceptionHandler(GetExceptionCode(), GetExceptionInformation()))
+    {
+        loadingError = true;
+    }
+
+    if (loadingError)
+    {
+#if _X86_
+        static const wchar_t* arch = L"x86";
+#else
+        static const wchar_t* arch = L"x64";
+#endif
+        _plugin_logprintf("Unable to load Dotx64Dbg (%08X), make sure you have following installed:\n"
+            "- .NET 6.0 %s Runtime (https://dotnet.microsoft.com/download/dotnet/6.0)\n"
+            "- Visual Studio 2019 Runtime (https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)\n",
+            GetLastError(),
+            arch
         );
         return false;
     }

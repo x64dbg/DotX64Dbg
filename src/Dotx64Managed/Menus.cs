@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Dotx64Dbg
@@ -45,16 +44,9 @@ namespace Dotx64Dbg
             Handlers = new();
         }
 
-        internal static byte[] ImageToBytes(System.Drawing.Image image)
+        internal static byte[] ImageToBytes(Object image)
         {
-            if (image == null)
-                return null;
-
-            var ms = new MemoryStream();
-#pragma warning disable CA1416 // We only support Windows.
-            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-#pragma warning restore CA1416
-            return ms.ToArray();
+            return null;
         }
 
         internal static void InitializeMenus(MenuData data)
@@ -121,13 +113,13 @@ namespace Dotx64Dbg
         internal static void AddMenu(string path, UI.Menu.MenuDelegate func) =>
             AddMenu(path, null, func);
 
-        internal static void AddMenu(string path, System.Drawing.Image image, UI.Menu.MenuDelegate func) =>
-            AddMenu(null, path, image, func);
+        internal static void AddMenu(string path, byte[] imageData, UI.Menu.MenuDelegate func) =>
+            AddMenu(null, path, imageData, func);
 
         internal static void AddMenu(Plugin plugin, string path, UI.Menu.MenuDelegate func) =>
             AddMenu(plugin, path, null, func);
 
-        internal static void AddMenu(Plugin plugin, string path, System.Drawing.Image image, UI.Menu.MenuDelegate func)
+        internal static void AddMenu(Plugin plugin, string path, byte[] imageData, UI.Menu.MenuDelegate func)
         {
             var pos = 0;
             var prev = 0;
@@ -188,9 +180,8 @@ namespace Dotx64Dbg
 
             entryName = path.Substring(prev);
             Native.UI.Menu.AddEntry(nextEntry.parent, nextEntry.id, entryName);
-            if (image is not null)
+            if (imageData is not null)
             {
-                byte[] imageData = ImageToBytes(image);
                 Native.UI.Menu.SetEntryIcon(Manager.PluginHandle, nextEntry.id, imageData);
             }
 

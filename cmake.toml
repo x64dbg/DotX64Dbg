@@ -1,0 +1,284 @@
+# Reference: https://build-cpp.github.io/cmkr/cmake-toml
+[project]
+name = "Dotx64Dbg"
+languages = ["CSharp", "CXX"]
+cmake-after = '''
+    # Only have Release and Debug, there are configuration errors with managed otherwise.
+    SET(CMAKE_CONFIGURATION_TYPES "Debug;Release")
+    SET(CMAKE_VS_NUGET_PACKAGE_RESTORE ON)
+
+    include(CSharpUtilities)
+    
+    # Workaround for CLR projects, there is a pending fix for this:
+    # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/7807 which corrects the exception option in use of CLR
+    string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT}")
+    string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG_INIT "${CMAKE_CXX_FLAGS_DEBUG_INIT}")
+    string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x64)
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x32)
+endif()
+'''
+
+[subdir.thirdparty]
+
+### Dotx64DbgCommon
+[target.Dotx64DbgCommon]
+type = "interface"
+alias = "dotx64dbg::common"
+compile-features = ["cxx_std_17"]
+compile-options = ["/MP"]
+link-options = ["/DEBUG"]
+
+### Dotx64DbgBindings
+[target.Dotx64DbgBindings]
+type = "shared"
+alias = "dotx64dbg::bindings"
+sources = [
+    "src/Bindings/Breakpoints.cpp",
+    "src/Bindings/Commands.cpp",
+    "src/Bindings/Debugger.cpp",
+    "src/Bindings/Expressions.cpp",
+    "src/Bindings/Instruction.cpp",
+    "src/Bindings/Instruction.Decoder.cpp",
+    "src/Bindings/Instruction.Encoder.cpp",
+    "src/Bindings/Instruction.Generator.cpp",
+    "src/Bindings/Logging.cpp",
+    "src/Bindings/Memory.cpp",
+    "src/Bindings/Module.cpp",
+    "src/Bindings/Platform.cpp",
+    "src/Bindings/Process.cpp",
+    "src/Bindings/Settings.cpp",
+    "src/Bindings/Symbols.cpp",
+    "src/Bindings/Thread.cpp",
+    "src/Bindings/UI.cpp",
+]
+headers = [
+    "src/Bindings/AsmJitHelper.hpp",
+    "src/Bindings/Decoder.Converter.hpp",
+    "src/Bindings/Encoder.Converter.hpp",
+    "src/Bindings/Instruction.Decoder.hpp",
+    "src/Bindings/Instruction.EFlags.hpp",
+    "src/Bindings/Instruction.Encoder.hpp",
+    "src/Bindings/Instruction.Generator.hpp",
+    "src/Bindings/Instruction.Meta.hpp",
+    "src/Bindings/Instruction.Operand.hpp",
+    "src/Bindings/Instruction.Operands.hpp",
+    "src/Bindings/Instruction.hpp",
+    "src/Bindings/Marshal.hpp",
+    "src/Bindings/Mnemonic.hpp",
+    "src/Bindings/Register.hpp",
+]
+private-link-libraries = [
+    "dotx64dbg::common",
+    "x64dbg::pluginsdk",
+    "asmjit::asmjit",
+    "Zydis",
+]
+cmake-after = '''
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64dbg.dll")
+    target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64bridge.dll")
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x32dbg.dll")
+    target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x32bridge.dll")
+endif()
+target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:titanengine.dll")
+'''
+
+[target.Dotx64DbgBindings.properties]
+RUNTIME_OUTPUT_NAME = "Dotx64DbgBindings"
+DOTNET_TARGET_FRAMEWORK = "net6.0"
+DOTNET_TARGET_FRAMEWORK_VERSION = "6.0"
+COMMON_LANGUAGE_RUNTIME = "netcore"
+VS_GLOBAL_ResolveNuGetPackages = "false"
+x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
+x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+x32.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
+x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+
+### Dotx64DbgManaged
+[target.Dotx64DbgManaged]
+type = "shared"
+alias = "dotx64dbg::managed"
+sources = [
+    "src/Dotx64Managed/API/Analysis/RegisterMask.cs",
+    "src/Dotx64Managed/API/Assembler.cs",
+    "src/Dotx64Managed/API/Assembler.Instructions.cs",
+    "src/Dotx64Managed/API/Breakpoints.cs",
+    "src/Dotx64Managed/API/Commands.cs",
+    "src/Dotx64Managed/API/Debugger.cs",
+    "src/Dotx64Managed/API/Expressions.cs",
+    "src/Dotx64Managed/API/Memory.cs",
+    "src/Dotx64Managed/API/Memory.Stream.cs",
+    "src/Dotx64Managed/API/Module.cs",
+    "src/Dotx64Managed/API/Module.Exports.cs",
+    "src/Dotx64Managed/API/Module.Imports.cs",
+    "src/Dotx64Managed/API/Module.Sections.cs",
+    "src/Dotx64Managed/API/Platform.cs",
+    "src/Dotx64Managed/API/Process.cs",
+    "src/Dotx64Managed/API/Thread.cs",
+    "src/Dotx64Managed/API/Thread.Register.cs",
+    "src/Dotx64Managed/API/UI/Disassembly.cs",
+    "src/Dotx64Managed/API/UI/Dump.cs",
+    "src/Dotx64Managed/API/UI/Log.cs",
+    "src/Dotx64Managed/API/UI/MemoryMap.cs",
+    "src/Dotx64Managed/API/UI/Menu.cs",
+    "src/Dotx64Managed/API/UI/Stack.cs",
+    "src/Dotx64Managed/API/UI/StatusBar.cs",
+    "src/Dotx64Managed/API/UI/Types.cs",
+    "src/Dotx64Managed/API/UI/UI.cs",
+    "src/Dotx64Managed/AssemblyLoader.cs",
+    "src/Dotx64Managed/Compiler.cs",
+    "src/Dotx64Managed/Hotload/Hotload.Adapter.Array.cs",
+    "src/Dotx64Managed/Hotload/Hotload.Adapter.Class.cs",
+    "src/Dotx64Managed/Hotload/Hotload.Adapter.cs",
+    "src/Dotx64Managed/Hotload/Hotload.Adapter.GenericDictionary.cs",
+    "src/Dotx64Managed/Hotload/Hotload.Adapter.GenericList.cs",
+    "src/Dotx64Managed/Hotload/Hotload.Adapter.Object.cs",
+    "src/Dotx64Managed/Hotload/Hotload.Adapter.Statics.cs",
+    "src/Dotx64Managed/Hotload/Hotload.Context.cs",
+    "src/Dotx64Managed/Hotload/Hotload.cs",
+    "src/Dotx64Managed/IPlugin.cs",
+    "src/Dotx64Managed/Logging.cs",
+    "src/Dotx64Managed/Manager.cs",
+    "src/Dotx64Managed/Manager.Events.cs",
+    "src/Dotx64Managed/Menus.cs",
+    "src/Dotx64Managed/Menus.Main.cs",
+    "src/Dotx64Managed/NodeList.cs",
+    "src/Dotx64Managed/Plugins.Builder.cs",
+    "src/Dotx64Managed/Plugins.cs",
+    "src/Dotx64Managed/Plugins.DependencyManager.cs",
+    "src/Dotx64Managed/Plugins.Hotload.cs",
+    "src/Dotx64Managed/Plugins.Watcher.cs",
+    "src/Dotx64Managed/ProjectGenerator.cs",
+    "src/Dotx64Managed/Resources.cs",
+    "src/Dotx64Managed/Scripting/Scripting.cs",
+    "src/Dotx64Managed/Scripting/Scripting.Register.cs",
+    "src/Dotx64Managed/ScriptLoader.cs",
+    "src/Dotx64Managed/Settings.cs",
+    "src/Dotx64Managed/Tests.cs",
+    "src/Dotx64Managed/Utils.cs",
+]
+private-link-libraries = [
+    "dotx64dbg::bindings",
+]
+x32.private-compile-definitions = ["_X86_"]
+x64.private-compile-definitions = ["_X64_"]
+
+[target.Dotx64DbgManaged.properties]
+RUNTIME_OUTPUT_NAME = "Dotx64DbgManaged"
+x32.VS_GLOBAL_PlatformTarget = "x86"
+x64.VS_GLOBAL_PlatformTarget = "x64"
+DOTNET_SDK = "Microsoft.NET.Sdk"
+DOTNET_TARGET_FRAMEWORK = "net6.0"
+VS_GLOBAL_ResolveNuGetPackages = "true"
+VS_GLOBAL_ROOTNAMESPACE = "Dotx64Dbg"
+VS_GLOBAL_AppendTargetFrameworkToOutputPath = "false"
+VS_GLOBAL_AppendRuntimeIdentifierToOutputPath = "false"
+VS_GLOBAL_ProduceReferenceAssembly = "false"
+VS_GLOBAL_ProduceReferenceAssemblyInOutDir = "false"
+VS_GLOBAL_CopyLocalLockFileAssemblies = "true"
+VS_GLOBAL_SatelliteResourceLanguages = "neutral"
+VS_PACKAGE_REFERENCES = "Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.0;NuGet.Frameworks_5.11.0;NuGet.Protocol_5.11.0;NuGet.Versioning_5.11.0"
+VS_DOTNET_REFERENCES_COPY_LOCAL = "false"
+x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
+x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+x32.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
+x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+
+[target.Dotx64DbgTests]
+type = "executable"
+sources = [
+    "src/Dotx64DbgTests/Testing.cs",
+    "src/Dotx64DbgTests/Runner.cs",
+    "src/Dotx64DbgTests/Tests/Tests.Assembler.cs",
+    "src/Dotx64DbgTests/Tests/Tests.Decoder.cs",
+    "src/Dotx64DbgTests/Tests/Tests.Generator.cs",
+    "src/Dotx64DbgTests/Tests/Tests.Operands.cs",
+    "src/Dotx64DbgTests/Tests/Tests.RegisterMaskGp.cs",
+    "src/Dotx64DbgTests/Tests/Tests.Registers.cs",
+]
+private-link-libraries = [
+    "dotx64dbg::managed",
+    "dotx64dbg::bindings",
+]
+x32.private-compile-definitions = ["_X86_"]
+x64.private-compile-definitions = ["_X64_"]
+
+[target.Dotx64DbgTests.properties]
+RUNTIME_OUTPUT_NAME = "Dotx64DbgTests"
+x32.VS_GLOBAL_PlatformTarget = "x86"
+x64.VS_GLOBAL_PlatformTarget = "x64"
+DOTNET_SDK = "Microsoft.NET.Sdk"
+DOTNET_TARGET_FRAMEWORK = "net6.0"
+VS_GLOBAL_ROOTNAMESPACE = "Dotx64Dbg"
+VS_GLOBAL_AppendTargetFrameworkToOutputPath = "false"
+VS_GLOBAL_AppendRuntimeIdentifierToOutputPath = "false"
+VS_GLOBAL_ProduceReferenceAssembly = "false"
+VS_GLOBAL_ProduceReferenceAssemblyInOutDir = "false"
+VS_GLOBAL_CopyLocalLockFileAssemblies = "true"
+VS_GLOBAL_SatelliteResourceLanguages = "neutral"
+VS_DOTNET_REFERENCES_COPY_LOCAL = "true"
+x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}/tests"
+x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}/tests"
+x32.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}/tests"
+x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}/tests"
+
+### Dotx64Dbg
+[target.Dotx64Dbg]
+type = "shared"
+alias = "dotx64dbg::dotx64dbg"
+sources = [
+    "src/Dotx64Dbg/Loader.cpp",
+    "src/Dotx64Dbg/Plugin.cpp",
+]
+headers = []
+private-link-libraries = [
+    "dotx64dbg::common",
+    "x64dbg::pluginsdk",
+    "dotx64dbg::managed",
+]
+[target.Dotx64Dbg.properties]
+DOTNET_TARGET_FRAMEWORK = "net6.0"
+DOTNET_TARGET_FRAMEWORK_VERSION = "6.0"
+COMMON_LANGUAGE_RUNTIME = "netcore"
+VS_GLOBAL_ResolveNuGetPackages = "false"
+VS_GLOBAL_SatelliteResourceLanguages = "neutral"
+x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
+x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+x32.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
+x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+
+### Dotx64DbgLoader
+[target.Dotx64DbgLoader]
+type = "shared"
+sources = ["src/Dotx64DbgLoader/Loader.cpp"]
+private-link-libraries = [
+    "dotx64dbg::common",
+    "x64dbg::pluginsdk",
+]
+x32.private-compile-definitions = ["_X86_"]
+x64.private-compile-definitions = ["_X64_"]
+[target.Dotx64DbgLoader.properties]
+VS_GLOBAL_ResolveNuGetPackages = "false"
+x64.SUFFIX = ".dp64"
+x32.SUFFIX = ".dp32"
+RUNTIME_OUTPUT_NAME = "Dotx64Dbg"
+x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
+x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+x32.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
+x32.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
+
+[target.Dotx64DbgResources]
+type = "custom"
+cmake-after = '''
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_SOURCE_DIR}/src/Resources
+      ${BUILD_OUTPUT_DIR}/Resources
+)
+'''

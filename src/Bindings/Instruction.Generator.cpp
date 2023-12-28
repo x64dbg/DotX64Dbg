@@ -153,10 +153,10 @@ namespace Dotx64Dbg
         ZydisDecoder decoder;
 #ifdef _M_AMD64
         auto mode = ZYDIS_MACHINE_MODE_LONG_64;
-        auto addrSize = ZYDIS_ADDRESS_WIDTH_64;
+        auto addrSize = ZYDIS_STACK_WIDTH_64;
 #else
         auto mode = ZYDIS_MACHINE_MODE_LEGACY_32;
-        auto addrSize = ZYDIS_ADDRESS_WIDTH_32;
+        auto addrSize = ZYDIS_STACK_WIDTH_32;
 #endif
         if (auto status = ZydisDecoderInit(&decoder, mode, addrSize);
             status != ZYAN_STATUS_SUCCESS)

@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Emit;
@@ -21,7 +21,10 @@ namespace Dotx64Dbg
         public class Result
         {
             internal bool success = false;
-            public bool Success { get => success; }
+            public bool Success
+            {
+                get => success;
+            }
             public string OutputAssemblyPath;
             public MemoryStream AssemblyStream;
             public MemoryStream DebugStream;
@@ -67,7 +70,7 @@ namespace Dotx64Dbg
                         success = false
                     };
                 }
-                return Compile(parsed, forScripting);
+                return CompileInternal(parsed, forScripting);
             }
             catch (System.Exception ex)
             {
@@ -82,7 +85,7 @@ namespace Dotx64Dbg
             try
             {
                 List<SyntaxTree> parsed = new() { ParseCode(code, true) };
-                return Compile(parsed, true);
+                return CompileInternal(parsed, true);
             }
             catch (System.Exception ex)
             {
@@ -92,7 +95,7 @@ namespace Dotx64Dbg
             return new Result();
         }
 
-        private Result Compile(List<SyntaxTree> parsed, bool forScripting = false)
+        private Result CompileInternal(List<SyntaxTree> parsed, bool forScripting = false)
         {
             var coreAssemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
 
@@ -104,9 +107,6 @@ namespace Dotx64Dbg
             assemblyRefs.Add(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location);
             assemblyRefs.Add(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location);
             assemblyRefs.Add(typeof(Native.Logging).Assembly.Location);
-            assemblyRefs.Add(typeof(System.Windows.Forms.Application).Assembly.Location);
-            assemblyRefs.Add(typeof(System.Drawing.Bitmap).Assembly.Location);
-            assemblyRefs.Add(typeof(System.Drawing.SizeF).Assembly.Location);
             assemblyRefs.Add(typeof(System.ComponentModel.Component).Assembly.Location);
 
             assemblyRefs.Add(typeof(System.Data.AcceptRejectRule).Assembly.Location);
@@ -141,9 +141,9 @@ namespace Dotx64Dbg
                 .WithOptimizationLevel(OptimizationLevel.Debug)
                 .WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default)
 #if _X86_
-                .WithPlatform(Platform.X86)
+                .WithPlatform(Microsoft.CodeAnalysis.Platform.X86)
 #else
-                .WithPlatform(Platform.X64)
+                .WithPlatform(Microsoft.CodeAnalysis.Platform.X64)
 #endif
                 .WithModuleName(Name + guid)
             ;
