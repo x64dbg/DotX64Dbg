@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: |
           cmake . -B build -DCMAKE_BUILD_TYPE=Release -A ${{ matrix.platform.build }}
-          cmake --build build
+          cmake --build build --config Release
       - name: Tests
         run: |
           pushd .
