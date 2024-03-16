@@ -125,7 +125,8 @@ namespace Dotx64Dbg
                 {
                     inputText = inputText.Replace(kv.Key, kv.Value);
                 }
-                File.WriteAllText(targetFile, inputText, Encoding.UTF8);
+                
+                File.WriteAllText(targetFile, inputText, new UTF8Encoding(false));
             }
             catch (Exception)
             {

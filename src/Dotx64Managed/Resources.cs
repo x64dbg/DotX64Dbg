@@ -8,7 +8,6 @@ namespace Dotx64Dbg
     class Resources
     {
         private static Dictionary<string, byte[]> _resources = new Dictionary<string, byte[]>();
-        private static string[] _resourceExtensions = new string[] { ".png", ".bmp", ".gif", ".jpg", ".jpeg", ".ico" };
 
         static Resources()
         {
@@ -25,14 +24,9 @@ namespace Dotx64Dbg
             var files = Directory.EnumerateFiles(resourcesPath, "*.*", SearchOption.AllDirectories);
             foreach (var file in files)
             {
-                var ext = Path.GetExtension(file);
-                if (_resourceExtensions.Contains(ext))
-                {
-                    // Load the contents and map filename to contents
-                    var contents = File.ReadAllBytes(file);
-                    var name = Path.GetFileNameWithoutExtension(file);
-                    _resources[name] = contents;
-                }
+                var name = file.Substring(resourcesPath.Length + 1);
+                name = name.Replace('\\', '/');
+                _resources[name] = File.ReadAllBytes(file);
             }
 
             Utils.DebugPrintLine($"Loaded {_resources.Count} resources");
@@ -40,11 +34,22 @@ namespace Dotx64Dbg
 
         public static byte[] GetData(string name)
         {
+            name = name.Replace('\\', '/');
             if (_resources.TryGetValue(name, out var data))
                 return data;
 
             Utils.DebugPrintLine($"Resource not found: {name}");
             return null;
+        }
+
+        public static string GetString(string name)
+        {
+            name = name.Replace('\\', '/');
+            var data = GetData(name);
+            if (data == null)
+                return null;
+
+            return System.Text.Encoding.UTF8.GetString(data);
         }
     }
 }

@@ -435,18 +435,18 @@ EndGlobal
                 return null;
             }
 
-            // TODO: Fixme.
-            /*
-            if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_json, replacements, pluginJsonPath))
+
+            if (!Utils.WriteReplacedContents(Resources.GetString("Template/plugin.json"), replacements, pluginJsonPath))
             {
                 // ERROR.
+                return null;
             }
 
-            if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_cs, replacements, pluginCsPath))
+            if (!Utils.WriteReplacedContents(Resources.GetString("Template/plugin.cs"), replacements, pluginCsPath))
             {
                 // ERROR.
+                return null;
             }
-            */
 
             return pluginPath;
         }
