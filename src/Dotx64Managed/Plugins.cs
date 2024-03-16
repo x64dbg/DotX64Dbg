@@ -170,10 +170,10 @@ namespace Dotx64Dbg
 
         public static void GenerateProject(Plugin plugin)
         {
-            var binaryPathX86 = Path.Combine(Utils.GetRootPath(), "x86", "plugins");
-            var binaryPathX64 = Path.Combine(Utils.GetRootPath(), "x64", "plugins");
+            var binaryPathX86 = Path.Combine(Utils.GetRootPath(), "x86", "plugins", "Dotx64Dbg");
+            var binaryPathX64 = Path.Combine(Utils.GetRootPath(), "x64", "plugins", "Dotx64Dbg");
             var assemblies = new string[] {
-                "Dotx64Dbg.Bindings.dll", "Dotx64Dbg.Managed.dll"
+                "Dotx64DbgBindings.dll", "Dotx64DbgManaged.dll"
             };
 
             if (plugin.Info == null)
