@@ -68,6 +68,8 @@ namespace Dotx64Dbg
                 return System.IO.Path.Combine(Path, Info.Name + ".sln");
             }
         }
+
+        public string Name => Info?.Name;
     }
 
     internal partial class Plugins
@@ -290,8 +292,13 @@ EndGlobal
         {
             var jsonFile = Path.Combine(path, "plugin.json");
             var pluginInfo = GetPluginInfo(jsonFile);
-            var pathName = Path.GetFileName(path);
+            if(pluginInfo == null)
+            {
+                Console.WriteLine($"Unable to load plugin info: {jsonFile}");
+                return;
+            }
 
+            var pathName = Path.GetFileName(path);
             var plugin = new Plugin()
             {
                 Info = pluginInfo,
@@ -337,11 +344,11 @@ EndGlobal
             var pluginInfo = GetPluginInfo(plugin.ConfigPath);
             if (pluginInfo == null)
             {
-                Utils.DebugPrintLine("Unable to load plugin info.");
+                Utils.DebugPrintLine($"[{plugin.Name}] Unable to load plugin info.");
                 return;
             }
 
-            Utils.DebugPrintLine("Plugin meta loaded, activating plugin.");
+            Utils.DebugPrintLine($"[{plugin.Name}] Plugin meta loaded, activating plugin.");
             plugin.Info = pluginInfo;
 
             if (!File.Exists(plugin.ProjectFilePath))
@@ -371,7 +378,7 @@ EndGlobal
             {
                 if (plugin.Instance != null && plugin.SourceFiles.Count == 0)
                 {
-                    Utils.DebugPrintLine($"[PluginWatch] Plugin {plugin.Info.Name} has no sources, unloading.");
+                    Utils.DebugPrintLine($"[PluginWatch] Plugin {plugin.Name} has no sources, unloading.");
                     UnloadPlugin(plugin);
                     return;
                 }
