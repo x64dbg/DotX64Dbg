@@ -24,7 +24,7 @@ namespace Dotx64Dbg
         {
             var assemblyName = new System.Reflection.AssemblyName(args.Name);
 
-            Utils.DebugPrintLine("[DEBUG] LoaderContext.AssemblyResolve({0})", assemblyName.Name);
+            Utils.DebugPrintLine("LoaderContext.AssemblyResolve({0})", assemblyName.Name);
 
             var extenalDll = externalAssemblies.FirstOrDefault(file => System.IO.Path.GetFileNameWithoutExtension(file)
                 .Equals(assemblyName.Name, StringComparison.InvariantCultureIgnoreCase));
@@ -43,7 +43,7 @@ namespace Dotx64Dbg
 
         protected override Assembly Load(AssemblyName assemblyName)
         {
-            Utils.DebugPrintLine("[DEBUG] LoaderContext.Load({0})", assemblyName.Name);
+            Utils.DebugPrintLine("LoaderContext.Load({0})", assemblyName.Name);
 
             // See if the assembly is already loaded including the version.
             var loadedAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(assembly =>

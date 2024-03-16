@@ -16,7 +16,7 @@ namespace Dotx64Dbg
         {
             if (args.Length != 2)
             {
-                Console.WriteLine("ERROR: Missing argument <file>");
+                Console.WriteLine("[DotX64Dbg] ERROR: Missing argument <file>");
                 return false;
             }
 
@@ -67,22 +67,18 @@ namespace Dotx64Dbg
             var scriptClass = GetScriptClass(newAssembly);
             if (scriptClass != null)
             {
-#if DEBUG
-                Console.WriteLine("[DEBUG] Entry class: {0}", scriptClass.Name);
-#endif
+                Utils.DebugPrintLine($"Entry class: {scriptClass.Name}");
             }
 
             // Auto-generated method from Roslyn.
             var entry = scriptClass.GetMethod("<Main>", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
             if (entry == null)
             {
-                Console.WriteLine("No entrypoint defined");
+                Console.WriteLine("[DotX64Dbg] No entrypoint defined");
                 return false;
             }
 
-#if DEBUG
-            Console.WriteLine($"[DEBUG] Entrypoint {entry}");
-#endif
+            Utils.DebugPrintLine($"Entrypoint: {entry}");
 
             ActiveScript = Task.Run(delegate ()
             {
@@ -109,7 +105,7 @@ namespace Dotx64Dbg
 
             var stopwatch = new Stopwatch();
 
-            Console.WriteLine("Building script '{0}'...", file);
+            Console.WriteLine("[DotX64Dbg] Building script '{0}'...", file);
             stopwatch.Start();
 
             var compiler = new Compiler(scriptName);
@@ -119,11 +115,11 @@ namespace Dotx64Dbg
 
             if (!res.Success)
             {
-                Console.WriteLine("Build failed");
+                Console.WriteLine("[DotX64Dbg] Build failed");
             }
             else
             {
-                Console.WriteLine("Compiled script '{0}' in {1} ms", file, stopwatch.ElapsedMilliseconds);
+                Console.WriteLine("[DotX64Dbg] Compiled script '{0}' in {1} ms", file, stopwatch.ElapsedMilliseconds);
                 ExecuteScriptAssembly(res);
             }
 

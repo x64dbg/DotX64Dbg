@@ -180,7 +180,7 @@ namespace Dotx64Dbg
 
                 if (!result.Success)
                 {
-                    Console.WriteLine("Build failed");
+                    Console.WriteLine("[DotX64Dbg] Build failed");
 
                     foreach (var info in result.Diagnostics)
                     {

@@ -93,11 +93,11 @@ namespace Dotx64Dbg
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("Unable to create directory for plugins: {0}", PluginsPath);
+                    Console.WriteLine("[DotX64Dbg] Unable to create directory for plugins: {0}", PluginsPath);
                 }
             }
 
-            Console.WriteLine("DotX64Dbg Plugins Path: {0}", PluginsPath);
+            Console.WriteLine("[DotX64Dbg] Plugins Path: {0}", PluginsPath);
 
             AppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DotX64Dbg");
 #if _X64_
@@ -182,7 +182,7 @@ namespace Dotx64Dbg
                 return;
 
             var projectFilePath = plugin.ProjectFilePath;
-            Console.WriteLine($"Generating project for {plugin.Info.Name}");
+            Console.WriteLine($"[DotX64Dbg] Generating project for {plugin.Info.Name}");
 
             var projGen = new ProjectGenerator();
             projGen.ReferencePathX86 = binaryPathX86;
@@ -294,7 +294,7 @@ EndGlobal
             var pluginInfo = GetPluginInfo(jsonFile);
             if(pluginInfo == null)
             {
-                Console.WriteLine($"Unable to load plugin info: {jsonFile}");
+                Console.WriteLine($"[DotX64Dbg] Unable to load plugin info: {jsonFile}");
                 return;
             }
 

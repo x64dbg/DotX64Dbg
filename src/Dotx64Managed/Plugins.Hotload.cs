@@ -47,7 +47,7 @@ namespace Dotx64Dbg
             Expressions.RemoveAllFor(plugin);
             Menus.RemoveAllFor(plugin);
 
-            Console.WriteLine($"Unloaded plugin: {pluginName}");
+            Console.WriteLine($"[DotX64Dbg] Unloaded plugin: {pluginName}");
         }
 
         void RegisterPluginCommand(Plugin plugin, MethodInfo fn, Command cmd, object obj)
@@ -227,7 +227,7 @@ namespace Dotx64Dbg
 
             var hotReload = Settings.EnableHotloading && plugin.Instance != null;
 
-            Console.WriteLine($"{(hotReload ? "Reloading" : "Loading")} '{plugin.Info.Name}'");
+            Console.WriteLine($"[DotX64Dbg] {(hotReload ? "Reloading" : "Loading")} '{plugin.Info.Name}'");
 
             try
             {
@@ -350,7 +350,7 @@ namespace Dotx64Dbg
                 return false;
             }
 
-            Console.WriteLine($"{(hotReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
+            Console.WriteLine($"[DotX64Dbg] {(hotReload ? "Reloaded" : "Loaded")} '{plugin.Info.Name}'");
             return true;
         }
 

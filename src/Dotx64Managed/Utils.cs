@@ -76,7 +76,7 @@ namespace Dotx64Dbg
         internal static void PrintException(Exception ex)
         {
             ex = ex.InnerException ?? ex;
-            Console.WriteLine($"Exception: {GetExceptionMessage(ex)}");
+            Console.WriteLine($"[DotX64Dbg] Exception: {GetExceptionMessage(ex)}");
         }
 
         internal static string ReadFileContents(string path, int retryAttempts = 5, int retryTime = 100)
@@ -104,14 +104,13 @@ namespace Dotx64Dbg
         [Conditional("DEBUG")]
         internal static void DebugPrintLine(string fmt, params object[] args)
         {
-            string strOut = string.Format(fmt, args);
-            Console.WriteLine($"[DEBUG] {strOut}");
+            DebugPrintLine(string.Format(fmt, args));
         }
 
         [Conditional("DEBUG")]
         internal static void DebugPrintLine(string line)
         {
-            Console.WriteLine($"[DEBUG] {line}");
+            Console.WriteLine($"[DotX64Dbg][DEBUG] {line}");
         }
 
         /// <summary>

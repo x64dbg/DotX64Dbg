@@ -97,7 +97,7 @@ namespace Dotx64Dbg
         {
             var stopwatch = new Stopwatch();
 
-            Console.WriteLine("Rebuilding plugin '{0}'...", plugin.Info.Name);
+            Console.WriteLine("[DotX64Dbg] Rebuilding plugin '{0}'...", plugin.Info.Name);
             stopwatch.Start();
 
             var compiler = new Compiler(plugin.Info.Name, plugin.BuildOutputPath)
@@ -108,11 +108,11 @@ namespace Dotx64Dbg
 
             if (!res.Success)
             {
-                Console.WriteLine("Build failed");
+                Console.WriteLine("[DotX64Dbg] Build failed");
                 return false;
             }
 
-            Console.WriteLine("Compiled plugin '{0}' in {1} ms", plugin.Info.Name, stopwatch.ElapsedMilliseconds);
+            Console.WriteLine("[DotX64Dbg] Compiled plugin '{0}' in {1} ms", plugin.Info.Name, stopwatch.ElapsedMilliseconds);
 
             // Successfully built.
             plugin.RequiresRebuild = false;

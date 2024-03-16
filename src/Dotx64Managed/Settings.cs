@@ -60,7 +60,7 @@ namespace Dotx64Dbg
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception while loading settings, using defaults.\n{ex}");
+                Console.WriteLine($"[DotX64Dbg] Exception while loading settings, using defaults.\n{ex}");
                 LoadDefaults();
                 return false;
             }
