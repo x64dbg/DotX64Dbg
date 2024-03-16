@@ -156,7 +156,10 @@ namespace Dotx64Dbg
                         return;
                     }
                     else
-                        Utils.DebugPrintLine($"Skipking cache...");
+                    {
+                        Utils.DebugPrintLine($"[{plugin.Name}] Deleting cache...");
+                        File.Delete(cacheFile);
+                    }
                 }
                 if (RebuildPlugin(plugin, token))
                 {
