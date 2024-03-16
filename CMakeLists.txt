@@ -273,7 +273,7 @@ set_target_properties(Dotx64DbgManaged PROPERTIES
 	VS_GLOBAL_SatelliteResourceLanguages
 		neutral
 	VS_PACKAGE_REFERENCES
-		"Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.0;NuGet.Frameworks_5.11.0;NuGet.Protocol_5.11.0;NuGet.Versioning_5.11.0"
+		"Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.5;NuGet.Frameworks_5.11.5;NuGet.Protocol_5.11.5;NuGet.Versioning_5.11.5"
 	VS_DOTNET_REFERENCES_COPY_LOCAL
 		false
 )
