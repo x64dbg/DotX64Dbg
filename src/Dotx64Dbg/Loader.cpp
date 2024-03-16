@@ -374,9 +374,7 @@ PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 
     SCRIPTTYPEINFO sti = {};
     sti.execute = CBEXECUTESCRIPT;
-    // Lets hope this never collides with any other plugin :shrug:
-    sti.id = 'D' + 'o' + 't' + 'x' + '6' + '4' + 'D' + 'b' + 'g';
-    strcpy_s(sti.name, "Dotx64Dbg");
+    strcpy_s(sti.name, "DotX64Dbg");
 
     GuiRegisterScriptLanguage(&sti);
 
