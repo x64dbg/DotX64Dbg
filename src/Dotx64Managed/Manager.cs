@@ -37,7 +37,7 @@ namespace Dotx64Dbg
 
                     if (!Settings.Load(Path.Combine(Utils.GetRootPath(), "dotx64dbg.json")))
                     {
-                        Console.WriteLine("Failed to load settings, using default configuration");
+                        Console.WriteLine("[DotX64Dbg] Failed to load settings, using default configuration");
                     }
 
                     if (Settings.EnableTests)
@@ -45,7 +45,7 @@ namespace Dotx64Dbg
                         RunTests();
                     }
 
-                    Console.WriteLine("Dotx64Dbg.Managed initialized");
+                    Console.WriteLine("[DotX64Dbg] Manager initialized");
                 }
             }
             catch (Exception ex)

@@ -65,10 +65,10 @@ namespace Dotx64Dbg
         internal static void InitializeMainMenu()
         {
             // Plugin icon
-            Native.UI.Menu.SetIcon(MainMenu, Resources.GetData("Dotx64DbgIcon"));
+            Native.UI.Menu.SetIcon(MainMenu, Resources.GetData("Dotx64DbgIcon.png"));
 
-            AddMenu("Main/Run Script", Resources.GetData("RunIcon"), RunScript);
-            AddMenu("Main/Create Plugin", Resources.GetData("NewScriptIcon"), CreateNewPlugin);
+            AddMenu("Main/Run Script", Resources.GetData("RunIcon.png"), RunScript);
+            AddMenu("Main/Create Plugin", Resources.GetData("NewScriptIcon.png"), CreateNewPlugin);
             AddSeperator("Main");
         }
 

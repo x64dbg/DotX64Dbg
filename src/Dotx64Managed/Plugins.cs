@@ -68,6 +68,8 @@ namespace Dotx64Dbg
                 return System.IO.Path.Combine(Path, Info.Name + ".sln");
             }
         }
+
+        public string Name => Info?.Name;
     }
 
     internal partial class Plugins
@@ -91,11 +93,11 @@ namespace Dotx64Dbg
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("Unable to create directory for plugins: {0}", PluginsPath);
+                    Console.WriteLine("[DotX64Dbg] Unable to create directory for plugins: {0}", PluginsPath);
                 }
             }
 
-            Console.WriteLine("DotX64Dbg Plugins Path: {0}", PluginsPath);
+            Console.WriteLine("[DotX64Dbg] Plugins Path: {0}", PluginsPath);
 
             AppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DotX64Dbg");
 #if _X64_
@@ -170,17 +172,17 @@ namespace Dotx64Dbg
 
         public static void GenerateProject(Plugin plugin)
         {
-            var binaryPathX86 = Path.Combine(Utils.GetRootPath(), "x86", "plugins");
-            var binaryPathX64 = Path.Combine(Utils.GetRootPath(), "x64", "plugins");
+            var binaryPathX86 = Path.Combine(Utils.GetRootPath(), "x86", "plugins", "Dotx64Dbg");
+            var binaryPathX64 = Path.Combine(Utils.GetRootPath(), "x64", "plugins", "Dotx64Dbg");
             var assemblies = new string[] {
-                "Dotx64Dbg.Bindings.dll", "Dotx64Dbg.Managed.dll"
+                "Dotx64DbgBindings.dll", "Dotx64DbgManaged.dll"
             };
 
             if (plugin.Info == null)
                 return;
 
             var projectFilePath = plugin.ProjectFilePath;
-            Console.WriteLine($"Generating project for {plugin.Info.Name}");
+            Console.WriteLine($"[DotX64Dbg] Generating project for {plugin.Info.Name}");
 
             var projGen = new ProjectGenerator();
             projGen.ReferencePathX86 = binaryPathX86;
@@ -290,8 +292,13 @@ EndGlobal
         {
             var jsonFile = Path.Combine(path, "plugin.json");
             var pluginInfo = GetPluginInfo(jsonFile);
-            var pathName = Path.GetFileName(path);
+            if(pluginInfo == null)
+            {
+                Console.WriteLine($"[DotX64Dbg] Unable to load plugin info: {jsonFile}");
+                return;
+            }
 
+            var pathName = Path.GetFileName(path);
             var plugin = new Plugin()
             {
                 Info = pluginInfo,
@@ -337,11 +344,11 @@ EndGlobal
             var pluginInfo = GetPluginInfo(plugin.ConfigPath);
             if (pluginInfo == null)
             {
-                Utils.DebugPrintLine("Unable to load plugin info.");
+                Utils.DebugPrintLine($"[{plugin.Name}] Unable to load plugin info.");
                 return;
             }
 
-            Utils.DebugPrintLine("Plugin meta loaded, activating plugin.");
+            Utils.DebugPrintLine($"[{plugin.Name}] Plugin meta loaded, activating plugin.");
             plugin.Info = pluginInfo;
 
             if (!File.Exists(plugin.ProjectFilePath))
@@ -371,7 +378,7 @@ EndGlobal
             {
                 if (plugin.Instance != null && plugin.SourceFiles.Count == 0)
                 {
-                    Utils.DebugPrintLine($"[PluginWatch] Plugin {plugin.Info.Name} has no sources, unloading.");
+                    Utils.DebugPrintLine($"[PluginWatch] Plugin {plugin.Name} has no sources, unloading.");
                     UnloadPlugin(plugin);
                     return;
                 }
@@ -435,18 +442,18 @@ EndGlobal
                 return null;
             }
 
-            // TODO: Fixme.
-            /*
-            if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_json, replacements, pluginJsonPath))
+
+            if (!Utils.WriteReplacedContents(Resources.GetString("Template/plugin.json"), replacements, pluginJsonPath))
             {
                 // ERROR.
+                return null;
             }
 
-            if (!Utils.WriteReplacedContents(Dotx64Dbg.Properties.Resources.plugin_cs, replacements, pluginCsPath))
+            if (!Utils.WriteReplacedContents(Resources.GetString("Template/plugin.cs"), replacements, pluginCsPath))
             {
                 // ERROR.
+                return null;
             }
-            */
 
             return pluginPath;
         }
