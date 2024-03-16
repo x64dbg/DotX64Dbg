@@ -7,12 +7,11 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 	message(FATAL_ERROR "In-tree builds are not supported. Run CMake from a separate directory: cmake -B build")
 endif()
 
-# Regenerate CMakeLists.txt automatically in the root project
 set(CMKR_ROOT_PROJECT OFF)
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 	set(CMKR_ROOT_PROJECT ON)
 
-	# Bootstrap cmkr
+	# Bootstrap cmkr and automatically regenerate CMakeLists.txt
 	include(cmkr.cmake OPTIONAL RESULT_VARIABLE CMKR_INCLUDE_RESULT)
 	if(CMKR_INCLUDE_RESULT)
 		cmkr()
@@ -20,10 +19,8 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
 	# Enable folder support
 	set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-endif()
 
-# Create a configure-time dependency on cmake.toml to improve IDE support
-if(CMKR_ROOT_PROJECT)
+	# Create a configure-time dependency on cmake.toml to improve IDE support
 	configure_file(cmake.toml cmake.toml COPYONLY)
 endif()
 
@@ -33,18 +30,18 @@ project(Dotx64Dbg
 		CXX
 )
 
-    # Only have Release and Debug, there are configuration errors with managed otherwise.
-    SET(CMAKE_CONFIGURATION_TYPES "Debug;Release")
-    SET(CMAKE_VS_NUGET_PACKAGE_RESTORE ON)
+include(CSharpUtilities)
 
-    include(CSharpUtilities)
-    
-    # Workaround for CLR projects, there is a pending fix for this:
-    # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/7807 which corrects the exception option in use of CLR
-    string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT}")
-    string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG_INIT "${CMAKE_CXX_FLAGS_DEBUG_INIT}")
-    string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+# Only have Release and Debug, there are configuration errors with managed otherwise.
+SET(CMAKE_CONFIGURATION_TYPES "Debug;Release")
+SET(CMAKE_VS_NUGET_PACKAGE_RESTORE ON)
+
+# Workaround for CLR projects, there is a pending fix for this:
+# https://gitlab.kitware.com/cmake/cmake/-/merge_requests/7807 which corrects the exception option in use of CLR
+string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT}")
+string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG_INIT "${CMAKE_CXX_FLAGS_DEBUG_INIT}")
+string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x64)
@@ -52,7 +49,7 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
     set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x32)
 endif()
 
-# thirdparty
+# Subdirectory: thirdparty
 set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
 if(CMAKE_FOLDER)
 	set(CMAKE_FOLDER "${CMAKE_FOLDER}/thirdparty")
@@ -62,16 +59,8 @@ endif()
 add_subdirectory(thirdparty)
 set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
 
-# Target Dotx64DbgCommon
-set(CMKR_TARGET Dotx64DbgCommon)
-set(Dotx64DbgCommon_SOURCES "")
-
-set(CMKR_SOURCES ${Dotx64DbgCommon_SOURCES})
+# Target: Dotx64DbgCommon
 add_library(Dotx64DbgCommon INTERFACE)
-
-if(Dotx64DbgCommon_SOURCES)
-	target_sources(Dotx64DbgCommon INTERFACE ${Dotx64DbgCommon_SOURCES})
-endif()
 
 add_library(dotx64dbg::common ALIAS Dotx64DbgCommon)
 target_compile_features(Dotx64DbgCommon INTERFACE
@@ -86,14 +75,8 @@ target_link_options(Dotx64DbgCommon INTERFACE
 	"/DEBUG"
 )
 
-unset(CMKR_TARGET)
-unset(CMKR_SOURCES)
-
-# Target Dotx64DbgBindings
-set(CMKR_TARGET Dotx64DbgBindings)
-set(Dotx64DbgBindings_SOURCES "")
-
-list(APPEND Dotx64DbgBindings_SOURCES
+# Target: Dotx64DbgBindings
+set(Dotx64DbgBindings_SOURCES
 	"src/Bindings/Breakpoints.cpp"
 	"src/Bindings/Commands.cpp"
 	"src/Bindings/Debugger.cpp"
@@ -125,19 +108,12 @@ list(APPEND Dotx64DbgBindings_SOURCES
 	"src/Bindings/Marshal.hpp"
 	"src/Bindings/Mnemonic.hpp"
 	"src/Bindings/Register.hpp"
-)
-
-list(APPEND Dotx64DbgBindings_SOURCES
 	cmake.toml
 )
 
-set(CMKR_SOURCES ${Dotx64DbgBindings_SOURCES})
 add_library(Dotx64DbgBindings SHARED)
 
-if(Dotx64DbgBindings_SOURCES)
-	target_sources(Dotx64DbgBindings PRIVATE ${Dotx64DbgBindings_SOURCES})
-endif()
-
+target_sources(Dotx64DbgBindings PRIVATE ${Dotx64DbgBindings_SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Dotx64DbgBindings_SOURCES})
 
 add_library(dotx64dbg::bindings ALIAS Dotx64DbgBindings)
@@ -179,6 +155,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
 	)
 endif()
 
+set(CMKR_TARGET Dotx64DbgBindings)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64dbg.dll")
     target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:x64bridge.dll")
@@ -188,14 +165,8 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
 endif()
 target_link_options(Dotx64DbgBindings PRIVATE "/DELAYLOAD:titanengine.dll")
 
-unset(CMKR_TARGET)
-unset(CMKR_SOURCES)
-
-# Target Dotx64DbgManaged
-set(CMKR_TARGET Dotx64DbgManaged)
-set(Dotx64DbgManaged_SOURCES "")
-
-list(APPEND Dotx64DbgManaged_SOURCES
+# Target: Dotx64DbgManaged
+set(Dotx64DbgManaged_SOURCES
 	"src/Dotx64Managed/API/Analysis/RegisterMask.cs"
 	"src/Dotx64Managed/API/Assembler.cs"
 	"src/Dotx64Managed/API/Assembler.Instructions.cs"
@@ -253,19 +224,12 @@ list(APPEND Dotx64DbgManaged_SOURCES
 	"src/Dotx64Managed/Settings.cs"
 	"src/Dotx64Managed/Tests.cs"
 	"src/Dotx64Managed/Utils.cs"
-)
-
-list(APPEND Dotx64DbgManaged_SOURCES
 	cmake.toml
 )
 
-set(CMKR_SOURCES ${Dotx64DbgManaged_SOURCES})
 add_library(Dotx64DbgManaged SHARED)
 
-if(Dotx64DbgManaged_SOURCES)
-	target_sources(Dotx64DbgManaged PRIVATE ${Dotx64DbgManaged_SOURCES})
-endif()
-
+target_sources(Dotx64DbgManaged PRIVATE ${Dotx64DbgManaged_SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Dotx64DbgManaged_SOURCES})
 
 add_library(dotx64dbg::managed ALIAS Dotx64DbgManaged)
@@ -336,14 +300,8 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
 	)
 endif()
 
-unset(CMKR_TARGET)
-unset(CMKR_SOURCES)
-
-# Target Dotx64DbgTests
-set(CMKR_TARGET Dotx64DbgTests)
-set(Dotx64DbgTests_SOURCES "")
-
-list(APPEND Dotx64DbgTests_SOURCES
+# Target: Dotx64DbgTests
+set(Dotx64DbgTests_SOURCES
 	"src/Dotx64DbgTests/Testing.cs"
 	"src/Dotx64DbgTests/Runner.cs"
 	"src/Dotx64DbgTests/Tests/Tests.Assembler.cs"
@@ -352,24 +310,12 @@ list(APPEND Dotx64DbgTests_SOURCES
 	"src/Dotx64DbgTests/Tests/Tests.Operands.cs"
 	"src/Dotx64DbgTests/Tests/Tests.RegisterMaskGp.cs"
 	"src/Dotx64DbgTests/Tests/Tests.Registers.cs"
-)
-
-list(APPEND Dotx64DbgTests_SOURCES
 	cmake.toml
 )
 
-set(CMKR_SOURCES ${Dotx64DbgTests_SOURCES})
 add_executable(Dotx64DbgTests)
 
-if(Dotx64DbgTests_SOURCES)
-	target_sources(Dotx64DbgTests PRIVATE ${Dotx64DbgTests_SOURCES})
-endif()
-
-get_directory_property(CMKR_VS_STARTUP_PROJECT DIRECTORY ${PROJECT_SOURCE_DIR} DEFINITION VS_STARTUP_PROJECT)
-if(NOT CMKR_VS_STARTUP_PROJECT)
-	set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Dotx64DbgTests)
-endif()
-
+target_sources(Dotx64DbgTests PRIVATE ${Dotx64DbgTests_SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Dotx64DbgTests_SOURCES})
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
@@ -436,29 +382,21 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8) # x64
 	)
 endif()
 
-unset(CMKR_TARGET)
-unset(CMKR_SOURCES)
+get_directory_property(CMKR_VS_STARTUP_PROJECT DIRECTORY ${PROJECT_SOURCE_DIR} DEFINITION VS_STARTUP_PROJECT)
+if(NOT CMKR_VS_STARTUP_PROJECT)
+	set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Dotx64DbgTests)
+endif()
 
-# Target Dotx64Dbg
-set(CMKR_TARGET Dotx64Dbg)
-set(Dotx64Dbg_SOURCES "")
-
-list(APPEND Dotx64Dbg_SOURCES
+# Target: Dotx64Dbg
+set(Dotx64Dbg_SOURCES
 	"src/Dotx64Dbg/Loader.cpp"
 	"src/Dotx64Dbg/Plugin.cpp"
-)
-
-list(APPEND Dotx64Dbg_SOURCES
 	cmake.toml
 )
 
-set(CMKR_SOURCES ${Dotx64Dbg_SOURCES})
 add_library(Dotx64Dbg SHARED)
 
-if(Dotx64Dbg_SOURCES)
-	target_sources(Dotx64Dbg PRIVATE ${Dotx64Dbg_SOURCES})
-endif()
-
+target_sources(Dotx64Dbg PRIVATE ${Dotx64Dbg_SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Dotx64Dbg_SOURCES})
 
 add_library(dotx64dbg::dotx64dbg ALIAS Dotx64Dbg)
@@ -499,28 +437,15 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
 	)
 endif()
 
-unset(CMKR_TARGET)
-unset(CMKR_SOURCES)
-
-# Target Dotx64DbgLoader
-set(CMKR_TARGET Dotx64DbgLoader)
-set(Dotx64DbgLoader_SOURCES "")
-
-list(APPEND Dotx64DbgLoader_SOURCES
+# Target: Dotx64DbgLoader
+set(Dotx64DbgLoader_SOURCES
 	"src/Dotx64DbgLoader/Loader.cpp"
-)
-
-list(APPEND Dotx64DbgLoader_SOURCES
 	cmake.toml
 )
 
-set(CMKR_SOURCES ${Dotx64DbgLoader_SOURCES})
 add_library(Dotx64DbgLoader SHARED)
 
-if(Dotx64DbgLoader_SOURCES)
-	target_sources(Dotx64DbgLoader PRIVATE ${Dotx64DbgLoader_SOURCES})
-endif()
-
+target_sources(Dotx64DbgLoader PRIVATE ${Dotx64DbgLoader_SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Dotx64DbgLoader_SOURCES})
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
@@ -569,30 +494,19 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4) # x32
 	)
 endif()
 
-unset(CMKR_TARGET)
-unset(CMKR_SOURCES)
-
-# Target Dotx64DbgResources
-set(CMKR_TARGET Dotx64DbgResources)
-set(Dotx64DbgResources_SOURCES "")
-
-list(APPEND Dotx64DbgResources_SOURCES
+# Target: Dotx64DbgResources
+set(Dotx64DbgResources_SOURCES
 	cmake.toml
 )
 
-set(CMKR_SOURCES ${Dotx64DbgResources_SOURCES})
 add_custom_target(Dotx64DbgResources SOURCES)
 
-if(Dotx64DbgResources_SOURCES)
-	target_sources(Dotx64DbgResources PRIVATE ${Dotx64DbgResources_SOURCES})
-endif()
+target_sources(Dotx64DbgResources PRIVATE ${Dotx64DbgResources_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Dotx64DbgResources_SOURCES})
 
+set(CMKR_TARGET Dotx64DbgResources)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
       ${CMAKE_SOURCE_DIR}/src/Resources
       ${BUILD_OUTPUT_DIR}/Resources
 )
-
-unset(CMKR_TARGET)
-unset(CMKR_SOURCES)
-

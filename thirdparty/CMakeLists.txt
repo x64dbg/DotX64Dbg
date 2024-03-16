@@ -16,8 +16,12 @@ option(ZYDIS_BUILD_DOXYGEN "" OFF)
 
 include(FetchContent)
 
+# Fix warnings about DOWNLOAD_EXTRACT_TIMESTAMP
+if(POLICY CMP0135)
+	cmake_policy(SET CMP0135 NEW)
+endif()
 message(STATUS "Fetching Zydis (53dd088062c734e7882b3a77ff287bdf3356d977)...")
-FetchContent_Declare(Zydis
+FetchContent_Declare(Zydis SYSTEM
 	GIT_REPOSITORY
 		"https://github.com/zyantific/zydis"
 	GIT_TAG
@@ -26,7 +30,7 @@ FetchContent_Declare(Zydis
 FetchContent_MakeAvailable(Zydis)
 
 message(STATUS "Fetching asmjit (0c03ed2f7497441ac0de232bda2e6b8cc041b2dc)...")
-FetchContent_Declare(asmjit
+FetchContent_Declare(asmjit SYSTEM
 	GIT_REPOSITORY
 		"https://github.com/asmjit/asmjit"
 	GIT_TAG
@@ -35,11 +39,10 @@ FetchContent_Declare(asmjit
 FetchContent_MakeAvailable(asmjit)
 
 message(STATUS "Fetching x64dbg_pluginsdk (11536beb42ec7cb9c0c8112af02d78fe083256d3)...")
-FetchContent_Declare(x64dbg_pluginsdk
+FetchContent_Declare(x64dbg_pluginsdk SYSTEM
 	GIT_REPOSITORY
 		"https://github.com/ZehMatt/x64dbg-pluginsdk"
 	GIT_TAG
 		11536beb42ec7cb9c0c8112af02d78fe083256d3
 )
 FetchContent_MakeAvailable(x64dbg_pluginsdk)
-

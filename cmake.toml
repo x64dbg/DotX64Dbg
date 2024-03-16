@@ -3,18 +3,16 @@
 name = "Dotx64Dbg"
 languages = ["CSharp", "CXX"]
 cmake-after = '''
-    # Only have Release and Debug, there are configuration errors with managed otherwise.
-    SET(CMAKE_CONFIGURATION_TYPES "Debug;Release")
-    SET(CMAKE_VS_NUGET_PACKAGE_RESTORE ON)
+# Only have Release and Debug, there are configuration errors with managed otherwise.
+SET(CMAKE_CONFIGURATION_TYPES "Debug;Release")
+SET(CMAKE_VS_NUGET_PACKAGE_RESTORE ON)
 
-    include(CSharpUtilities)
-    
-    # Workaround for CLR projects, there is a pending fix for this:
-    # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/7807 which corrects the exception option in use of CLR
-    string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT}")
-    string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG_INIT "${CMAKE_CXX_FLAGS_DEBUG_INIT}")
-    string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+# Workaround for CLR projects, there is a pending fix for this:
+# https://gitlab.kitware.com/cmake/cmake/-/merge_requests/7807 which corrects the exception option in use of CLR
+string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT}")
+string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG_INIT "${CMAKE_CXX_FLAGS_DEBUG_INIT}")
+string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(BUILD_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin/x64)
@@ -183,7 +181,13 @@ VS_GLOBAL_ProduceReferenceAssembly = "false"
 VS_GLOBAL_ProduceReferenceAssemblyInOutDir = "false"
 VS_GLOBAL_CopyLocalLockFileAssemblies = "true"
 VS_GLOBAL_SatelliteResourceLanguages = "neutral"
-VS_PACKAGE_REFERENCES = "Microsoft.CodeAnalysis.Compilers_3.10.0;NuGet.Configuration_5.11.0;NuGet.Frameworks_5.11.0;NuGet.Protocol_5.11.0;NuGet.Versioning_5.11.0"
+VS_PACKAGE_REFERENCES = [
+    "Microsoft.CodeAnalysis.Compilers_3.10.0",
+    "NuGet.Configuration_5.11.0",
+    "NuGet.Frameworks_5.11.0",
+    "NuGet.Protocol_5.11.0",
+    "NuGet.Versioning_5.11.0"
+]
 VS_DOTNET_REFERENCES_COPY_LOCAL = "false"
 x64.RUNTIME_OUTPUT_DIRECTORY_RELEASE = "${BUILD_OUTPUT_DIR}"
 x64.RUNTIME_OUTPUT_DIRECTORY_DEBUG = "${BUILD_OUTPUT_DIR}"
