@@ -22,5 +22,15 @@ namespace Dotx64Dbg
         {
             Native.Platform.SetClipboardText(text);
         }
+
+        public static void MessageBoxInfo(string text, string title = null)
+        {
+            Native.Platform.MessageBoxInfo(text, title);
+        }
+
+        public static void MessageBoxError(string text, string title = null)
+        {
+            Native.Platform.MessageBoxError(text, title);
+        }
     }
 }
