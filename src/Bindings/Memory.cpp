@@ -119,5 +119,16 @@ namespace Dotx64Dbg::Native
             const uintptr_t size = Script::Memory::GetSize(va);
             return System::UIntPtr(size);
         }
+
+        static System::UIntPtr RemoteAlloc(System::UIntPtr addr, int size)
+        {
+            uintptr_t va = Script::Memory::RemoteAlloc(addr.ToUInt64(), (duint)size);
+            return System::UIntPtr(va);
+        }
+
+        static bool RemoteFree(System::UIntPtr addr)
+        {
+            return Script::Memory::RemoteFree(addr.ToUInt64());
+        }
     };
 }

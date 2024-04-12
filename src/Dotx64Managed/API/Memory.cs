@@ -187,5 +187,24 @@ namespace Dotx64Dbg
         {
             return SetProtection((nuint)address, protect, size);
         }
+
+        public static nuint RemoteAlloc(nuint address, int size)
+        {
+            return Native.Memory.RemoteAlloc(address, size);
+        }
+        public static nuint RemoteAlloc(ulong address, int size)
+        {
+            return RemoteAlloc((nuint)address, size);
+        }
+
+        public static bool RemoteFree(nuint address)
+        {
+            return Native.Memory.RemoteFree(address);
+        }
+
+        public static bool RemoteFree(ulong address)
+        {
+            return RemoteFree((nuint)address);
+        }
     };
 }

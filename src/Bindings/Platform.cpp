@@ -132,6 +132,20 @@ namespace Dotx64Dbg::Native {
             SetClipboardData(CF_UNICODETEXT, hMem);
             CloseClipboard();
         }
+
+        static void MessageBoxInfo(System::String^ text, System::String^ title)
+        {
+            const auto textStr = interop::toUTF16(text);
+            const auto titleStr = title ? interop::toUTF16(title) : L"Information";
+            MessageBoxW(GuiGetWindowHandle(), textStr.c_str(), titleStr.c_str(), MB_ICONINFORMATION);
+        }
+
+        static void MessageBoxError(System::String^ text, System::String^ title)
+        {
+            const auto textStr = interop::toUTF16(text);
+            const auto titleStr = title ? interop::toUTF16(title) : L"Error";
+            MessageBoxW(GuiGetWindowHandle(), textStr.c_str(), titleStr.c_str(), MB_ICONERROR);
+        }
     };
 
 }
